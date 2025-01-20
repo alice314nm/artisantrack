@@ -1,21 +1,21 @@
 "use client";
 
-import Header from "./components/header";
-import Menu from "./components/menu";
-import SearchBar from "./components/search-bar";
-import BlockHolder from "./components/block-holder";
+import BlockHolder from "@/app/components/block-holder";
+import DocumentHolder from "@/app/components/document-holder";
+import FilterWindow from "@/app/components/filter-window";
+import Header from "@/app/components/header";
+import Menu from "@/app/components/menu";
+import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
-import FilterWindow from "./components/filter-window";
 import { useState } from "react";
-import products from "./components/products.json";
 
-export default function Home() {  
+export default function Page() {  
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState(true)
 
   const handleNavigateToCreatePage = () => {
-    window.location.href = "/pages/create_product";
+    window.location.href = "/pages/create_document";
   };
 
   const toggleConfirmation = () => {
@@ -29,56 +29,44 @@ export default function Home() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Products" userName={"Olga Ivanova"} />
+        <Header title="Documents" userName={"Olga Ivanova"} />
 
         <div className="flex flex-row justify-between mx-4">
           <p className="font-bold">Total: 30</p>
-
-          <div className="bg-green rounded-xl px-4 font-bold cursor-pointer">
-            Create document
-          </div>
         </div>
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
           onSearch={(term) => setSearchTerm(term)}
-          filterOn={true}
         />
 
-        <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
+        <div className="items-center mx-4 grid-cols-1 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
 
-              <Link href='/pages/productid' key={123}>
-                <BlockHolder
+              <Link href='/' key={123}>
+                <DocumentHolder
                   key={123}
                   id={123}
                   title={'testTitle'}
                   category={'testCategory'}
                   total={123}
-                  imageSource={'Sweater.jpg'}
-                  type={'product'}
+                  type={'material'}
                 />
               </Link>
 
         </div>
 
-        <FilterWindow
-          onClose={closeConfirmation}
-          windowVisibility={confirmWindowVisibility}
-        />
-
         <Menu
-          type="TwoButtonsMenu"
+          type="OneButtonMenu"
           iconFirst="/link.png"
-          firstTitle="Copy for client"
-          secondTitle="Create product +"
-          onSecondFunction={handleNavigateToCreatePage}
+          firstTitle="Create document +"
+          onFirstFunction={handleNavigateToCreatePage}
         />
       </div>
     );
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Products" />
+        <Header title="Artisan Track" />
 
         <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
           <p>

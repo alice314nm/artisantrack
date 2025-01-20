@@ -10,6 +10,13 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        lightBeige: "#FFF8E8",
+        beige: "#F7EED3",
+        darkBeige: "#DED2AE",
+        blackBeige: "#22150F",
+        green: "#ACC86C",
+        red: "#CF4D4D",
+        yellow: "E0C05F",
       },
     },
   },

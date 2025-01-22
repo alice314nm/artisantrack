@@ -28,9 +28,10 @@ export default function SlideMenu({ menuVisible }) {
                 } fixed z-10`}
             >
                 <ul className="h-screen flex flex-col justify-end">
-                    <li className="py-2 px-4 text-right w-[200px] fixed top-0 hover:bg-darkBeige">
+                    <Link href="/pages/login" className="flex flex-row gap-2 py-2 px-4 justify-items-center left-20 w-[200px] fixed top-24 hover:bg-darkBeige">
                         <p>Log out</p>
-                    </li>
+                        <img src="/logout.png"/>
+                    </Link>
                     <Link className={buttonStyleLi} href='/pages/profile'>
                         <p>Profile</p>
                     </Link>

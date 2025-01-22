@@ -14,13 +14,7 @@ export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState(true)
 
-  const handleNavigateToCreatePage = () => {
-    window.location.href = "/pages/create_product";
-  };
-
-  const toggleConfirmation = () => {
-    setConfirmWindowVisibility((prev) => !prev);
-  };
+  const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60"
 
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
@@ -49,21 +43,21 @@ export default function Page() {
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>This month (january):</p>
           <p>Income: 1234$ Expenses: 123$</p>
-          <button className="bg-green px-2 py-1 rounded-lg w-60">Monthly Financial Report</button>
+          <button className={buttonStyle}>Monthly Financial Report</button>
         </div>
 
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>This year (2025):</p>
           <p>Income: 1234$ Expenses: 123$</p>
-          <button className="bg-green px-2 py-1 rounded-lg w-60">Yearly Financial Report</button>
+          <button className={buttonStyle}>Yearly Financial Report</button>
         </div>
 
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>Other reports:</p>
           <div className="flex flex-col gap-2 w-60">
-            <button className="bg-green px-2 py-1 rounded-lg w-60">Labor Cost</button>
-            <button className="bg-green px-2 py-1 rounded-lg w-60">Supply Expenses</button>
-            <button className="bg-green px-2 py-1 rounded-lg w-60">Order Payments</button>
+            <button className={buttonStyle}>Labor Cost</button>
+            <button className={buttonStyle}>Supply Expenses</button>
+            <button className={buttonStyle}>Order Payments</button>
           </div>
         </div>
 

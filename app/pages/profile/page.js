@@ -20,7 +20,7 @@ export default function Page() {
         <div className="flex flex-row justify-between gap-2 border-b border-b-darkBeige px-5 pb-3">
         <p className="underline">Artisan: <br></br>Olga Ivanova</p>
           <button className="flex flex-row h-8 bg-green w-20 gap-2 item-center justify-center py-1 rounded-lg">
-            <p>Edit</p>
+            <p className='font-bold'>Edit</p>
             <img src="/Pencil.png" className="w-5"/>
           </button>
         </div>

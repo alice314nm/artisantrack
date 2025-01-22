@@ -1,13 +1,14 @@
 "use client";
 
-import Header from "@/components/header";
+import Header from "@/app/components/header";
+import SignInOutWindow from "@/app/components/sign-in-out-window";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/_utils/firebase";
-import SignInOUtWindow from "@/components/sign-in-out-window";
-import SignInOutWindow from "@/components/sign-in-out-window";
+
+
+// import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+// import { doc, setDoc } from "firebase/firestore";
+// import { auth, db } from "@/_utils/firebase";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -20,50 +21,50 @@ export default function SignInPage() {
   const [success, setSuccess] = useState(false);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-          setUser(currentUser);
-      });
+  // useEffect(() => {
+  //     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //         setUser(currentUser);
+  //     });
   
-      // Cleanup subscription on unmount
-      return () => unsubscribe();
-  }, []);
+  //     // Cleanup subscription on unmount
+  //     return () => unsubscribe();
+  // }, []);
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess(false);
+  // const handleSignIn = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setSuccess(false);
 
-    if (!email || !name || !password || !repeatPassword) {
-      setError("All fields are required.");
-      return;
-    }
+  //   if (!email || !name || !password || !repeatPassword) {
+  //     setError("All fields are required.");
+  //     return;
+  //   }
 
-    if (password !== repeatPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
+  //   if (password !== repeatPassword) {
+  //     setError("Passwords do not match.");
+  //     return;
+  //   }
 
-    setIsLoading(true);
+  //   setIsLoading(true);
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+  //   try {
+  //     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  //     const user = userCredential.user;
 
-      // Save additional user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        name: name,
-        email: email,
-        tax: tax || null,
-      });
+  //     // Save additional user data in Firestore
+  //     await setDoc(doc(db, "users", user.uid), {
+  //       name: name,
+  //       email: email,
+  //       tax: tax || null,
+  //     });
 
-      setSuccess(true);
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-    }
-  };
+  //     setSuccess(true);
+  //     setIsLoading(false);
+  //   } catch (err) {
+  //     setError(err.message);
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <main className="">
@@ -73,7 +74,7 @@ export default function SignInPage() {
           <SignInOutWindow type="SignOut"/>
         ) : (
           <form
-          onSubmit={handleSignIn}
+          // onSubmit={handleSignIn}
           className="mt-10 flex flex-col gap-5 p-6 items-center justify-center"
         >
           <h2 className="text-xl font-bold">Sign In</h2>

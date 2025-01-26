@@ -8,10 +8,10 @@ import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Page() {  
+export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [user, setUser] = useState(true)
+  const [user, setUser] = useState(true);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_order";
@@ -45,19 +45,17 @@ export default function Page() {
         />
 
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-
-              <Link href='/' key={123}>
-                <BlockHolder
-                  key={123}
-                  id={123}
-                  title={'testTitle'}
-                  category={'testCategory'}
-                  total={123}
-                  imageSource={'/wool.png'}
-                  type={'order'}
-                />
-              </Link>
-
+          <Link href="/" key={123} data-id="order-block">
+            <BlockHolder
+              key={123}
+              id={123}
+              title={"testTitle"}
+              category={"testCategory"}
+              total={123}
+              imageSource={"/wool.png"}
+              type={"order"}
+            />
+          </Link>
         </div>
 
         <FilterWindow

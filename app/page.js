@@ -9,10 +9,10 @@ import FilterWindow from "./components/filter-window";
 import { useState } from "react";
 import products from "./components/products.json";
 
-export default function Home() {  
+export default function Home() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [user, setUser] = useState(true)
+  const [user, setUser] = useState(true);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_product";
@@ -46,19 +46,17 @@ export default function Home() {
         />
 
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-
-              <Link href='/pages/productid' key={123}>
-                <BlockHolder
-                  key={123}
-                  id={123}
-                  title={'testTitle'}
-                  category={'testCategory'}
-                  total={123}
-                  imageSource={'Sweater.jpg'}
-                  type={'product'}
-                />
-              </Link>
-
+          <Link href="/pages/productid" key={123} data-id="product-block">
+            <BlockHolder
+              key={123}
+              id={123}
+              title={"testTitle"}
+              category={"testCategory"}
+              total={123}
+              imageSource={"Sweater.jpg"}
+              type={"product"}
+            />
+          </Link>
         </div>
 
         <FilterWindow

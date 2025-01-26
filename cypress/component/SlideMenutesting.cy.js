@@ -27,29 +27,22 @@ describe("SlideMenu Component Tests", () => {
 
   it("should toggle the Inventory submenu", () => {
     cy.mount(<SlideMenu menuVisible={true} />);
-
-    // Initially collapsed (submenu is in the DOM but not visible)
     cy.get('[data-id="inventory-submenu"]').should("have.class", "opacity-0");
-
-    // Expand submenu
     cy.contains("Inventory").click();
     cy.get('[data-id="inventory-submenu"]').should("have.class", "opacity-100");
-
-    // Collapse submenu
     cy.contains("Inventory").click();
     cy.get('[data-id="inventory-submenu"]').should("have.class", "opacity-0");
   });
 
-  // it("should navigate correctly for submenu links", () => {
-  //   cy.mount(<SlideMenu menuVisible={true} />);
-  //   cy.contains("Inventory").click();
-  //   cy.get('[data-id="inventory-submenu"]')
-  //     .contains("Products")
-  //     .should("have.attr", "href", "/")
-  //     .click();
-  //   cy.get('[data-id="inventory-submenu"]')
-  //     .contains("Materials")
-  //     .should("have.attr", "href", "/pages/materials")
-  //     .click();
-  // });
+
+  it("should navigate correctly for submenu links", () => {
+    cy.mount(<SlideMenu menuVisible={true} />);
+    cy.contains("Inventory").click();
+    cy.get('[data-id="inventory-submenu"]')
+      .contains("Products")
+      .should("have.attr", "href", "/")
+    cy.get('[data-id="inventory-submenu"]')
+      .contains("Materials")
+      .should("have.attr", "href", "/pages/materials")
+  });
 });

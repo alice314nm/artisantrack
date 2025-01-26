@@ -23,11 +23,10 @@ export default function SlideMenu({ menuVisible }) {
     <div className="z-10 fixed w-full bottom-0 right-0 flex flex-col justify-end">
       {/* Slide Menu */}
       <div
-        className={`transition-all duration-300 overflow-hidden w-[200px] h-screen bg-beige font-bold bottom-20 ${
-          menuVisible
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-0 hidden"
-        } fixed z-10`}
+        className={`transition-all duration-300 overflow-hidden w-[200px] h-screen bg-beige font-bold bottom-20 ${menuVisible
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-0 hidden"
+          } fixed z-10`}
         data-id="slide-menu"
       >
         <ul className="h-screen flex flex-col justify-end">
@@ -71,11 +70,10 @@ export default function SlideMenu({ menuVisible }) {
 
             {/* Submenu */}
             <div
-              className={`transition-all duration-300 overflow-hidden flex flex-col ${
-                inventoryVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
-              }`}
+              className={`transition-all duration-300 overflow-hidden flex flex-col ${inventoryVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-4"
+                }`}
               style={{
                 maxHeight: inventoryVisible ? "200px" : "0px",
               }}

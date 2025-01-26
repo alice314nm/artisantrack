@@ -21,26 +21,48 @@ describe("Home Page E2E Tests", () => {
     cy.url().should("include", "/pages/productid");
   });
 
-  it("should display and interact with the filter window", () => {
-    cy.get('[data-id="filter-button"]').click();
-    cy.get('[data-id="filter-window"]').should("be.visible");
-    cy.get(".bg-beige").contains("Scarf");
-    cy.get('[data-id="sort-by-button"]').click();
-    cy.get(".bg-beige").contains("category");
-    cy.get(".bg-beige").contains("name descending");
-    cy.get('[data-id="categories-button"]').click();
-    cy.get(".bg-beige").contains("Scarf");
-    cy.get('[data-id="close-button"]').click();
-    cy.get('[data-id="filter-window"]').should("not.visible");
-    cy.get('[data-id="filter-button"]').click();
-    cy.get('[data-id="filter-window"]').should("be.visible");
-    cy.get(".bg-beige").contains("Scarf");
+  describe("Filter and Search Component Tests", () => {
+    it("should display and interact with the filter window", () => {
+      cy.get('[data-id="filter-button"]').click();
+      cy.get('[data-id="filter-window"]').should("be.visible");
+      cy.get(".bg-beige").contains("Scarf");
+      cy.get('[data-id="sort-by-button"]').click();
+      cy.get(".bg-beige").contains("category");
+      cy.get(".bg-beige").contains("name descending");
+      cy.get('[data-id="categories-button"]').click();
+      cy.get(".bg-beige").contains("Scarf");
+      cy.get('[data-id="close-button"]').click();
+      cy.get('[data-id="filter-window"]').should("not.visible");
+      cy.get('[data-id="filter-button"]').click();
+      cy.get('[data-id="filter-window"]').should("be.visible");
+      cy.get(".bg-beige").contains("Scarf");
+    });
+
+    it("should search for products correctly", () => {
+      const searchQuery = "testTitle";
+      cy.get('input[type="text"]').type(searchQuery);
+      cy.get('input[type="text"]').should("have.value", searchQuery);
+      cy.get('[data-id="product-block"]').should("contain", searchQuery);
+    });
   });
 
-  it("should search for products correctly", () => {
-    const searchQuery = "testTitle";
-    cy.get('input[type="text"]').type(searchQuery);
-    cy.get('input[type="text"]').should("have.value", searchQuery);
-    cy.get('[data-id="product-block"]').should("contain", searchQuery);
+  describe("SlideMenu Component Tests", () => {
+    it("should toggle the slide menu visibility when clicking the menu button", () => {
+      cy.get('[data-id="menu-button"]').click();
+      cy.get('[data-id="slide-menu"]').should("be.visible");
+      cy.get('[data-id="menu-button"]').click();
+      cy.get('[data-id="slide-menu"]').should("have.class", "hidden");
+    });
+
+    it("should display the menu with correct links after opening", () => {
+      cy.get('[data-id="menu-button"]').click();
+      cy.contains("Profile").should("have.attr", "href", "/pages/profile");
+      cy.contains("Documents").should("have.attr", "href", "/pages/documents");
+      cy.contains("Finance").should("have.attr", "href", "/pages/finances");
+      cy.contains("Orders").should("have.attr", "href", "/pages/orders");
+      cy.get('[data-id="menu-button"]').click({ force: true });
+      cy.get('[data-id="slide-menu"]').should("have.class", "hidden");
+    });
   });
+
 });

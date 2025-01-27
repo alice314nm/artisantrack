@@ -1,4 +1,4 @@
-describe("Home Page E2E Tests", () => {
+describe("End Phase E2E Tests", () => {
   beforeEach(() => {
     cy.visit("http://localhost:3000/");
   });

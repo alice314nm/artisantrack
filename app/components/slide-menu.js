@@ -55,41 +55,6 @@ export default function SlideMenu({ menuVisible }) {
               className={`flex flex-row gap-1 items-center cursor-pointer ${buttonStyleLi}`}
               onClick={toggleInventory}
             >
-<<<<<<< master
-                <ul className="h-screen flex flex-col justify-end">
-                    <Link href="/pages/login" className="flex flex-row gap-2 py-2 px-4 justify-items-center left-20 w-[200px] fixed top-24 hover:bg-darkBeige">
-                        <p>Log out</p>
-                        <img src="/logout.png"/>
-                    </Link>
-                    <Link className={buttonStyleLi} href='/pages/profile'>
-                        <p>Profile</p>
-                    </Link>
-
-                    <Link className={buttonStyleLi} href='/pages/documents'>
-                        <p>Documents</p>
-                    </Link>
-                    
-                    <Link className={buttonStyleLi} href='/pages/finances'>
-                        <p>Finance</p>
-                    </Link>
-                    <li>
-                        <div
-                            className={`flex flex-row gap-1 items-center cursor-pointer ${buttonStyleLi}`}
-                            onClick={toggleInventory}
-                        >
-                            <p>Inventory</p>
-                            <img
-                                src="/angle-small-down.png"
-                                className={`w-5 ${inventoryVisible ? "hidden" : ""}`}
-                                alt="Expand"
-                            />
-                            <img
-                                src="/angle-small-up.png"
-                                className={`w-5 ${inventoryVisible ? "" : "hidden"}`}
-                                alt="Collapse"
-                            />
-                        </div>
-=======
               <p>Inventory</p>
               <img
                 src="/angle-small-down.png"
@@ -102,7 +67,6 @@ export default function SlideMenu({ menuVisible }) {
                 alt="Collapse"
               />
             </div>
->>>>>>> Thong
 
             {/* Submenu */}
             <div

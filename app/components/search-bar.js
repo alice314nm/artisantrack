@@ -16,51 +16,54 @@ export default function SearchBar({ onOpenFilters, onSearch, filterOn }) {
     onSearch(e.target.value);
   };
 
-  if (filterOn){
-  return (
-    <div className="flex flex-row mx-4 gap-2 items-center justify-between">
-      {/* Filter Button */}
-      <button onClick={onOpenFilters} className="w-8 h-8">
-        <img src="/Filter.png" alt="Filter" />
-      </button>
+  if (filterOn) {
+    return (
+      <div className="flex flex-row mx-4 gap-2 items-center justify-between">
+        {/* Filter Button */}
+        <button
+          onClick={onOpenFilters}
+          className="w-8 h-8"
+          data-id="filter-button"
+        >
+          <img src="/Filter.png" alt="Filter" />
+        </button>
 
-      {/* Search Input */}
-      <div className="relative flex-grow">
-        <input
-          className="w-full h-10 border rounded-xl px-3 pr-10"
-          type="text"
-          value={search}
-          placeholder="Search..."
-          onChange={handleSearch}
-        />
-        <img
-          src="/Search.png"
-          alt="Search"
-          className="w-5 h-5 absolute top-1/2 transform -translate-y-1/2 right-3"
-        />
+        {/* Search Input */}
+        <div className="relative flex-grow">
+          <input
+            className="w-full h-10 border rounded-xl px-3 pr-10"
+            type="text"
+            value={search}
+            placeholder="Search..."
+            onChange={handleSearch}
+          />
+          <img
+            src="/Search.png"
+            alt="Search"
+            className="w-5 h-5 absolute top-1/2 transform -translate-y-1/2 right-3"
+          />
+        </div>
       </div>
-    </div>
-  );
-}
-else {
-  return (
-    <div className="flex flex-row mx-4 gap-2 items-center justify-between">
-      {/* Search Input */}
-      <div className="relative flex-grow">
-        <input
-          className="w-full h-10 border rounded-xl px-3 pr-10"
-          type="text"
-          value={search}
-          placeholder="Search..."
-          onChange={handleSearch}
-        />
-        <img
-          src="/Search.png"
-          alt="Search"
-          className="w-5 h-5 absolute top-1/2 transform -translate-y-1/2 right-3"
-        />
+    );
+  } else {
+    return (
+      <div className="flex flex-row mx-4 gap-2 items-center justify-between">
+        {/* Search Input */}
+        <div className="relative flex-grow">
+          <input
+            className="w-full h-10 border rounded-xl px-3 pr-10"
+            type="text"
+            value={search}
+            placeholder="Search..."
+            onChange={handleSearch}
+          />
+          <img
+            src="/Search.png"
+            alt="Search"
+            className="w-5 h-5 absolute top-1/2 transform -translate-y-1/2 right-3"
+          />
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 }

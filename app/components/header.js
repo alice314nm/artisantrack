@@ -17,7 +17,7 @@ export default function Header({title, userName}){
                 src="/LogoArtisanTrack.png"
                 className="w-12 h-12 bg-gray-200"
                 />
-                <Link href="/pages/login"><p className="italic text-xl">{title}</p></Link>
+                <Link href="/"><p className="italic text-xl">{title}</p></Link>
             </div>
             {userName && (
                 <div className="text-right">

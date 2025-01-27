@@ -55,7 +55,7 @@ export default function Page(){
                         
                         <div className="flex flex-col">
                             <div className="flex flex-row justify-between">
-                                <label>Customer name <span className="text-red">*</span></label>
+                                <label>Description<span className="text-red">*</span></label>
                                 <img src="/cross.png" className="h-4"/>
                             </div>
                             <textarea className="rounded-lg border p-2" name="description"    //changes

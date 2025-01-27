@@ -2,11 +2,8 @@
 
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
-import SearchBar from "@/app/components/search-bar";
-import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useState } from "react";
-
 
 
 export default function Page(){
@@ -31,8 +28,7 @@ export default function Page(){
                                 <img src="/cross.png" className="h-4"/>
                             </div>
                             <input className={inputStyle} type="text"
-                                name="category"     //changes
-                                
+                                name="category"                                
                                 list="categories"/>
                             <datalist id="categories">                               
                                 <option value="Sweater"/>

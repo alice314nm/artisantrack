@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-export default function ProductPage() {
+export default function MaterialPage() {
 
   const [user, setUser] = useState(true);
 

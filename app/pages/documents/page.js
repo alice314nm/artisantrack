@@ -29,7 +29,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Documents" userName={"Olga Ivanova"} />
+        <Header title="Documents" showUserName={true} />
 
         <div className="flex flex-row justify-between mx-4">
           <p className="font-bold">Total: 30</p>

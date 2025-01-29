@@ -18,7 +18,7 @@ export default function Page(){
     if (user) {
         return (
             <div className="flex flex-col min-h-screen gap-4">
-            <Header title="Products" userName="Olga Ivanova"/>
+            <Header title="Products" showUserName={true}/>
                     <form className="mx-4 flex flex-col gap-4"> 
                         <p className="font-bold italic text-lg">Create a document</p> 
 

@@ -1,13 +1,12 @@
 import { collection, getDoc, updateDoc } from "firebase/firestore";
 
-export async function dbDeleteProductById(userId, productId, productSetter){
+export async function dbDeleteProductById(userId, productId){
     try {
         const productRef = collection(db, 'users', userId, 'products', productId)
         const documentSnapshot = await getDoc(productRef);
         
         if (documentSnapshot.exists()) {
-            const productData = documentSnapshot.data();
-            return productSetter(productData);
+            await deleteDoc(productRef);
           } else {
             console.log("The product in the database fdoes not exist under user");
           }

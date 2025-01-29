@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 /*
   FilterWindow - component of the filter window to choose filters and sort options
@@ -13,7 +13,7 @@ export default function FilterWindow({ windowVisibility, onClose }) {
   const [selectedCategory, setSelectedCategory] = useState("Categories");
 
   const filters = {
-    "Categories": ["Scarf", "Top", "Vest", "Sweater"],
+    Categories: ["Scarf", "Top", "Vest", "Sweater"],
     "Sort by": ["category", "name descending", "name ascending"],
   };
 
@@ -22,6 +22,7 @@ export default function FilterWindow({ windowVisibility, onClose }) {
       className={`fixed flex h-screen w-screen items-center justify-center bg-opacity-20 bg-black z-10 ${
         windowVisibility ? "" : "hidden"
       }`}
+      data-id="filter-window"
     >
       <div className="w-[380px] fixed bg-beige border border-darkBeige rounded-lg shadow-lg">
         {/* Header */}
@@ -29,6 +30,7 @@ export default function FilterWindow({ windowVisibility, onClose }) {
           <p className="text-lg font-bold">Filters</p>
           {/* Close Button */}
           <button
+            data-id="close-button"
             onClick={onClose}
             className="text-dark font-bold text-lg"
           >
@@ -42,6 +44,11 @@ export default function FilterWindow({ windowVisibility, onClose }) {
             {Object.keys(filters).map((category) => (
               <button
                 key={category}
+                data-id={
+                  category === "Categories"
+                    ? "categories-button"
+                    : "sort-by-button"
+                }
                 onClick={() => setSelectedCategory(category)}
                 className={`py-4 px-2 text-left text-dark border-b border-b-darkBeige hover:bg-beige ${
                   selectedCategory === category ? "bg-beige" : ""

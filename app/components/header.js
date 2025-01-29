@@ -6,10 +6,10 @@ import React from 'react';
 
     props:
     - title - title for the current page
-    - userName - name of the user to show it in the header
+    - showUserName - true: show header with user name
 */
 
-export default function Header({title, userName}){
+export default function Header({title, showUserName}){
     return(
         <header className="bg-beige font-bold flex flex-row p-4 items-center justify-between">
             <div className="gap-2 flex flex-row items-center justify-between">
@@ -19,10 +19,10 @@ export default function Header({title, userName}){
                 />
                 <Link href="/"><p className="italic text-xl">{title}</p></Link>
             </div>
-            {userName && (
+            {showUserName && (
                 <div className="text-right">
                     <p>ArtisanTrack:</p>
-                    <p>{userName}</p>
+                    {/* <p>{userName}</p> */}
                 </div>
             )}
         </header>

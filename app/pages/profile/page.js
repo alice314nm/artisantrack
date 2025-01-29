@@ -11,7 +11,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Profile" userName={"Olga Ivanova"} />
+        <Header title="Profile" showUserName={true} />
 
         <div className="flex flex-row justify-between gap-2 border-b border-b-darkBeige px-5 pb-3">
         <p className="underline">Artisan: <br></br>Olga Ivanova</p>

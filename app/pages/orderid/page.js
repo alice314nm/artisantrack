@@ -34,7 +34,7 @@ export default function OrderPage() {
     if (!clientView) {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Order" userName={"Olga Ivanova"} />
+          <Header title="Order" showUserName={true} />
   
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
@@ -179,7 +179,7 @@ export default function OrderPage() {
     else {
       return(
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Order" userName={"Olga Ivanova"} />
+          <Header title="Order" showUserName={true} />
   
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">

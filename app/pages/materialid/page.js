@@ -32,7 +32,7 @@ export default function ProductPage() {
     if (!clientView) {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Materials" userName={"Olga Ivanova"} />
+          <Header title="Materials" showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
@@ -131,7 +131,7 @@ export default function ProductPage() {
     else {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Materials" userName="Olga Ivanova" />
+          <Header title="Materials" showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">

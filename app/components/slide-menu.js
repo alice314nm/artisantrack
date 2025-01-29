@@ -30,15 +30,18 @@ export default function SlideMenu({ menuVisible }) {
         data-id="slide-menu"
       >
         <ul className="h-screen flex flex-col justify-end">
-          <li
-            className="py-4 px-4 text-right w-full bg-darkBeige hover:bg-darkerBeige text-black"
+          <Link href="/pages/login"
+            className="flex gap-2 justify-end py-2 px-4 text-right border-b border-green w-full bg-beige hover:bg-darkBeige"
             style={{
               position: "sticky",
               top: 0,
             }}
           >
             <p>Log out</p>
-          </li>
+            <img 
+            src="logout.png"
+            className="w-5"/>
+          </Link>
           <Link className={buttonStyleLi} href="/pages/profile">
             <p>Profile</p>
           </Link>

@@ -1,11 +1,7 @@
 "use client";
 
-import BlockHolder from "@/app/components/block-holder";
-import DocumentHolder from "@/app/components/document-holder";
-import FilterWindow from "@/app/components/filter-window";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
-import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -19,12 +15,12 @@ export default function Page() {
 
         <div className="flex flex-row justify-between gap-2 border-b border-b-darkBeige px-5 pb-3">
         <p className="underline">Artisan: <br></br>Olga Ivanova</p>
-          <button className="flex flex-row h-8 bg-green w-20 gap-2 item-center justify-center py-1 rounded-lg">
+          <Link href="/pages/profile_settings" className="flex flex-row h-8 bg-green w-20 gap-2 item-center justify-center py-1 rounded-lg">
             <p className='font-bold'>Edit</p>
             <img src="/Pencil.png" className="w-5"/>
-          </button>
+          </Link>
         </div>
-
+        
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
             <p className="underline">Current email:</p>
             <p>email@example.com</p>

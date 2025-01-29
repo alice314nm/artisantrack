@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function ProductPage() {
+
   const [user, setUser] = useState(true);
 
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);

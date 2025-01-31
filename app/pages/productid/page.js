@@ -14,14 +14,14 @@ export default function ProductPage() {
   const [clientView, setClientView] = useState(false);
   const params = useParams();
   const [isEditing, setIsEditing] = useState(false);
-  const [productName, setProductName] = useState("testNameProduct");
-  const [productCategory, setProductCategory] = useState(
-    "testCategory1, testCategory2"
-  );
-  const [productDescription, setProductDescription] = useState(
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."
-  );
-  const [avgTotal, setAvgTotal] = useState(123);
+  const [productData, setProducts] = useState({
+    name: "testNameProduct",
+    categories: ["testCategory1", "testCategory2"],
+    description:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley",
+    avgTotal: 123,
+  });
+
 
   const openConfirmation = () => {
     setConfirmWindowVisibility(true);
@@ -101,13 +101,12 @@ export default function ProductPage() {
               {isEditing ? (
                 <input
                   type="text"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
+                  value={productData.name}
+                  onChange={(e) => setProducts({ ...productData, name: e.target.value })}
                   className="text-xl border p-2 rounded w-[300px]"
                 />
               ) : (
-                <p className="text-xl">
-                  {productName}
+                <p className="text-xl">{productData.name}
                   {/* {filteredProducts.length > 0
                   ? filteredProducts[0].title
                   : "Product not found"} */}
@@ -119,14 +118,13 @@ export default function ProductPage() {
                   <p>Category: </p>
                   <input
                     type="text"
-                    value={productCategory}
-                    onChange={(e) => setProductCategory(e.target.value)}
+                    value={productData.categories.join(", ")}
+                    onChange={(e) => setProducts({ ...productData, categories: e.target.value.split(", ") })}
                     className="border p-2 rounded w-[300px]"
                   />
                 </div>
               ) : (
-                <p>
-                  Category: {productCategory}
+                <p>Category: {productData.categories}
                   {/* {filteredProducts.length > 0
                   ? filteredProducts[0].category
                   : "Product not found"} */}
@@ -137,14 +135,13 @@ export default function ProductPage() {
                 <p>Pattern description</p>
                 {isEditing ? (
                   <textarea
-                    value={productDescription}
-                    onChange={(e) => setProductDescription(e.target.value)}
+                    value={productData.description}
+                    onChange={(e) => setProducts({ ...productData, description: e.target.value })}
                     className="border p-2 rounded w-full"
                     rows={3}
                   />
                 ) : (
-                  <p>
-                    {productDescription}
+                  <p>{productData.description}
                     {/* The code below should replace to show the description of product */}
                     {/* <p>
                   {filteredProducts.length > 0
@@ -160,14 +157,13 @@ export default function ProductPage() {
                   <p>Average Total:</p>
                   <input
                     type="number"
-                    value={avgTotal}
-                    onChange={(e) => setAvgTotal(e.target.value)}
+                    value={productData.avgTotal}
+                    onChange={(e) => setProducts({ ...productData, avgTotal: e.target.value })}
                     className="border p-2 rounded"
                   />
                 </div>
               ) : (
-                <p>
-                  Average Total: {avgTotal}$
+                <p>Average Total: {productData.avgTotal}$
                   {/* {filteredProducts.length > 0
                   ? filteredProducts[0].total
                   : "Product not found"}$ */}
@@ -233,26 +229,26 @@ export default function ProductPage() {
 
             <div className="flex flex-col gap-2">
               <p className="text-xl">
-                {productName}
+                {productData.name}
                 {/* {filteredProducts.length > 0
                   ? filteredProducts[0].title
                   : "Product not found"} */}
               </p>
               <p>
-                Category: {productCategory}
+                Category: {productData.categories}
                 {/* {filteredProducts.length > 0
                   ? filteredProducts[0].category
                   : "Product not found"} */}
               </p>
               <div>
                 <p>Pattern description</p>
-                {productDescription}
+                {productData.description}
                 {/* {filteredProducts.length > 0
                   ? filteredProducts[0].description
                   : "Product not found"} */}
               </div>
               <p>
-                Average Total: {avgTotal}$
+                Average Total: {productData.avgTotal}$
                 {/* {filteredProducts.length > 0
                   ? filteredProducts[0].total
                   : "Product not found"}$ */}

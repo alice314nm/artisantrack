@@ -12,30 +12,44 @@ import { useState } from "react";
 export default function Page() {
   const [user, setUser] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [userName, setUserName] = useState("Olga Ivanova");
-  const [email, setEmail] = useState("email@example.com");
-  const [tax, setTax] = useState(4);
+  const [changePasswordVisibility, setChangePasswordVisibility] = useState(false);
+  const [profileData, setProfileData] = useState({
+    name: "Olga Ivanova",
+    email: "email@example.com",
+    tax: 4,
+  });
 
   const handleSave = () => {
     setIsEditing(false);
   };
 
+  const openChangePasswordWindow = () => {
+    setChangePasswordVisibility(true);
+  };
+
+  const closeChangePasswordWindow = () => {
+    setChangePasswordVisibility(false);
+  };
+
+
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Profile" userName={userName} />
+        <Header title="Profile" userName={profileData.name} />
 
         <div className="flex flex-row justify-between gap-2 border-b border-b-darkBeige px-5 pb-3">
           {isEditing ? (
             <input
               type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              value={profileData.name}
+              onChange={(e) =>
+                setProfileData({ ...profileData, name: e.target.value })
+              }
               className="border border-gray-400 rounded p-1"
             />
           ) : (
             <p className="underline">
-              Artisan: <br /> {userName}
+              Artisan: <br /> {profileData.name}
             </p>
           )}
           <button
@@ -55,12 +69,14 @@ export default function Page() {
           {isEditing ? (
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border border-gray-400 rounded p-1"
+              value={profileData.email}
+              onChange={(e) =>
+                setProfileData({ ...profileData, email: e.target.value })
+              }
+              className="border border-gray-400 rounded p-1 w-[300px]"
             />
           ) : (
-            <p>{email}</p>
+            <p>{profileData.email}</p>
           )}
         </div>
 
@@ -81,12 +97,17 @@ export default function Page() {
           {isEditing ? (
             <input
               type="number"
-              value={tax}
-              onChange={(e) => setTax(e.target.value)}
-              className="border border-gray-400 rounded p-1"
+              value={profileData.tax}
+              onChange={(e) =>
+                setProfileData({
+                  ...profileData,
+                  tax: e.target.value,
+                })
+              }
+              className="border border-gray-400 rounded p-1 w-[100px]"
             />
           ) : (
-            <p>{tax}%</p>
+            <p>{profileData.tax}%</p>
           )}
         </div>
 

@@ -12,6 +12,19 @@ export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [material, setMaterialData] = useState({
+    name: "testNameMaterial",
+    id: "testId",
+    categories: ["testCategory1", "testCategory2"],
+    description:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley",
+    costItems: [
+      { name: "Artic", price: 1.4, weight: 400, total: 100 },
+      { name: "Artic", price: 1.4, weight: 400, total: 100 },
+    ],
+    totalCost: 200,
+  });
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_material";
@@ -23,6 +36,10 @@ export default function Page() {
 
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
+  };
+
+  const toggleEdit = () => {
+    setIsEditing((prev) => !prev);
   };
 
   if (user) {

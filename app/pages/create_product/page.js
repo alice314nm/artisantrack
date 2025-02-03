@@ -1,5 +1,6 @@
 'use client'
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import SearchBar from "@/app/components/search-bar";
@@ -10,7 +11,7 @@ import { useState } from "react";
 
 
 export default function Page(){
-    const [user, setUser] = useState(true);
+    const { user } = useUserAuth();
     const inputStyle = 'h-9 rounded-lg border p-2';
 
     const handleNavigateToListPage = () => {

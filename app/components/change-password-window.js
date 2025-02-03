@@ -28,12 +28,11 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
-        windowVisibility ? "" : "hidden"
-      }`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${windowVisibility ? "" : "hidden"
+        }`}
       data-id="changing-password-window"
     >
-      <div className="bg-beige border border-darkBeige rounded-md w-[300px]">
+      <div className="bg-beige border border-darkBeige rounded-md w-[400px]">
         {/* Header */}
         <div className="border-b border-b-darkBeige">
           <p

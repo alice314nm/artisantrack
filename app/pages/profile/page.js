@@ -13,11 +13,11 @@ export default function Page() {
 
 
   useEffect(() => {
-    // if (user) {
-    //   getUserData(user, setUserData);
-    //   console.log(userData, 123)
-    // }
-  }, [user]); 
+    if (user) {
+      getUserData(user, setUserData);
+    }
+  }, [user]);
+
 
   const sectionStyle = "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
   const contentStyle = "";
@@ -45,15 +45,15 @@ export default function Page() {
           {/* Inventory Section */}
           <div className={sectionStyle}>
             <p>Inventory:</p>
-            <p className={contentStyle}>Total products: {userData?.productCount || "Loading..."}</p>
-            <p className={contentStyle}>Total materials: {userData?.materialCount || "Loading..."}</p>
-          </div>
+            <p className={contentStyle}>Total products: {userData ? Math.max(0, userData.productCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Total materials: {userData ? Math.max(0, userData.materialCount - 1) : "Loading..."}</p>
+            </div>
 
           {/* Orders Section */}
           <div className={sectionStyle}>
             <p>Orders:</p>
-            <p className={contentStyle}>In progress: {userData?.orderCount || "Loading..."}</p>
-            <p className={contentStyle}>Completed: 30</p>  {/* Example static data, adjust as needed */}
+            <p className={contentStyle}>In progress: {userData ? Math.max(0, userData.orderCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Completed: 0</p>  {/* Example static data, adjust as needed */}
           </div>
 
           {/* Tax Section */}

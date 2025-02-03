@@ -8,11 +8,12 @@ import Menu from "@/app/components/menu";
 import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
 import { useState } from "react";
+import ChangePasswordWindow from "@/app/components/change-password-window";
 
 export default function Page() {
   const [user, setUser] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [changePasswordVisibility, setChangePasswordVisibility] = useState(false);
+  const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [profileData, setProfileData] = useState({
     name: "Olga Ivanova",
     email: "email@example.com",
@@ -24,13 +25,12 @@ export default function Page() {
   };
 
   const openChangePasswordWindow = () => {
-    setChangePasswordVisibility(true);
+    setConfirmWindowVisibility(true);
   };
 
   const closeChangePasswordWindow = () => {
-    setChangePasswordVisibility(false);
+    setConfirmWindowVisibility(false);
   };
-
 
   if (user) {
     return (
@@ -77,6 +77,23 @@ export default function Page() {
             />
           ) : (
             <p>{profileData.email}</p>
+          )}
+        </div>
+
+        {/* Button to open Change Password Window */}
+        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
+          <button
+            className="text-black underline bg-green self-start p-2 rounded-md"
+            onClick={openChangePasswordWindow}
+          >
+            Change Password
+          </button>
+          {/* Conditionally render the ChangePasswordWindow component */}
+          {confirmWindowVisibility && (
+            <ChangePasswordWindow
+              windowVisibility={confirmWindowVisibility}
+              onClose={closeChangePasswordWindow}
+            />
           )}
         </div>
 

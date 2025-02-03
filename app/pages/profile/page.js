@@ -1,24 +1,27 @@
 "use client";
 
-import BlockHolder from "@/app/components/block-holder";
-import DocumentHolder from "@/app/components/document-holder";
-import FilterWindow from "@/app/components/filter-window";
+import { getUserData } from "@/app/_services/user-data";
+import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
-import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChangePasswordWindow from "@/app/components/change-password-window";
 
 export default function Page() {
-  const [user, setUser] = useState(true);
+  const { user } = useUserAuth();
+  const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: "Olga Ivanova",
-    email: "email@example.com",
-    tax: 4,
-  });
+
+  useEffect(() => {
+    if (user) {
+      getUserData(user, setUserData);
+    }
+  }, [user]);
+
+  const sectionStyle = "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
+  const contentStyle = "";
 
   const handleSave = () => {
     setIsEditing(false);
@@ -32,118 +35,84 @@ export default function Page() {
     setConfirmWindowVisibility(false);
   };
 
-  if (user) {
-    return (
-      <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Profile" userName={profileData.name} />
+  return (
+    <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
+      <Header title="Profile" />
+      {user ? (
+        <div className="flex flex-col gap-4">
+          {/* Profile Header */}
+          <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
+            {isEditing ? (
+              <input
+                type="text"
+                value={user.displayName}
+                onChange={(e) => {}}
+                className="border border-gray-400 rounded p-1"
+              />
+            ) : (
+              <p className="text-xl font-semibold">Artisan: {user.displayName}</p>
+            )}
+            <button
+              className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-200"
+              onClick={isEditing ? handleSave : () => setIsEditing(true)}
+            >
+              <p className="font-semibold">{isEditing ? "Save" : "Edit"}</p>
+              <img src={isEditing ? "/Save.png" : "/Pencil.png"} className="w-5" />
+            </button>
+          </div>
 
-        <div className="flex flex-row justify-between gap-2 border-b border-b-darkBeige px-5 pb-3">
-          {isEditing ? (
-            <input
-              type="text"
-              value={profileData.name}
-              onChange={(e) =>
-                setProfileData({ ...profileData, name: e.target.value })
-              }
-              className="border border-gray-400 rounded p-1"
-            />
-          ) : (
-            <p className="underline">
-              Artisan: <br /> {profileData.name}
-            </p>
-          )}
-          <button
-            className="flex flex-row h-8 bg-green w-20 gap-2 items-center justify-center py-1 rounded-lg"
-            onClick={isEditing ? handleSave : () => setIsEditing(true)}
-          >
-            <p className="font-bold">{isEditing ? "Save" : "Edit"}</p>
-            <img
-              src={isEditing ? "/Save.png" : "/Pencil.png"}
-              className="w-5"
-            />
-          </button>
+          {/* Email Section */}
+          <div className={sectionStyle}>
+            <p>Current email:</p>
+            <p className={contentStyle}>{user.email || "email@example.com"}</p>
+          </div>
+
+          {/* Change Password Section */}
+          <div className={sectionStyle}>
+            <button
+              className="text-black underline bg-green self-start p-2 rounded-md"
+              onClick={openChangePasswordWindow}
+            >
+              Change Password
+            </button>
+            {confirmWindowVisibility && (
+              <ChangePasswordWindow
+                windowVisibility={confirmWindowVisibility}
+                onClose={closeChangePasswordWindow}
+              />
+            )}
+          </div>
+
+          {/* Inventory Section */}
+          <div className={sectionStyle}>
+            <p>Inventory:</p>
+            <p className={contentStyle}>Total products: {userData ? Math.max(0, userData.productCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Total materials: {userData ? Math.max(0, userData.materialCount - 1) : "Loading..."}</p>
+          </div>
+
+          {/* Orders Section */}
+          <div className={sectionStyle}>
+            <p>Orders:</p>
+            <p className={contentStyle}>In progress: {userData ? Math.max(0, userData.orderCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Completed: 0</p>
+          </div>
+
+          {/* Tax Section */}
+          <div className={sectionStyle}>
+            <p>Set tax: {userData?.tax || "Tax not set"}</p>
+          </div>
+          <Menu type="OnlySlideMenu" />
         </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <p className="underline">Current email:</p>
-          {isEditing ? (
-            <input
-              type="email"
-              value={profileData.email}
-              onChange={(e) =>
-                setProfileData({ ...profileData, email: e.target.value })
-              }
-              className="border border-gray-400 rounded p-1 w-[300px]"
-            />
-          ) : (
-            <p>{profileData.email}</p>
-          )}
-        </div>
-
-        {/* Button to open Change Password Window */}
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <button
-            className="text-black underline bg-green self-start p-2 rounded-md"
-            onClick={openChangePasswordWindow}
-          >
-            Change Password
-          </button>
-          {/* Conditionally render the ChangePasswordWindow component */}
-          {confirmWindowVisibility && (
-            <ChangePasswordWindow
-              windowVisibility={confirmWindowVisibility}
-              onClose={closeChangePasswordWindow}
-            />
-          )}
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <p className="underline">Inventory:</p>
-          <p>Total products: 123</p>
-          <p>Total materials: 40</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <p className="underline">Orders:</p>
-          <p>In progress: 4</p>
-          <p>Completed: 30</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <p className="underline">Set tax:</p>
-          {isEditing ? (
-            <input
-              type="number"
-              value={profileData.tax}
-              onChange={(e) =>
-                setProfileData({
-                  ...profileData,
-                  tax: e.target.value,
-                })
-              }
-              className="border border-gray-400 rounded p-1 w-[100px]"
-            />
-          ) : (
-            <p>{profileData.tax}%</p>
-          )}
-        </div>
-
-        <Menu type="OnlySlideMenu" />
-      </div>
-    );
-  } else {
-    return (
-      <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Artisan Track" />
+      ) : (
         <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
           <p>
             Create account to start your <br /> artisan track
           </p>
-          <button className="font-bold bg-green py-2 px-4 rounded-lg">
-            Sign in
-          </button>
+          <Link href="/pages/signin">
+            <button className="font-bold bg-green py-2 px-4 rounded-lg">Sign in</button>
+          </Link>
         </div>
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }

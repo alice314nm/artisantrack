@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import BlockHolder from "@/app/components/block-holder";
 import DocumentHolder from "@/app/components/document-holder";
 import FilterWindow from "@/app/components/filter-window";
@@ -12,7 +13,7 @@ import { useState } from "react";
 export default function Page() {  
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [user, setUser] = useState(true)
+  const { user } = useUserAuth();
 
   const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60"
 
@@ -23,7 +24,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Finance" userName={"Olga Ivanova"} />
+        <Header title="Finance" showUserName={true} />
         
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <div className="flex flex-row justify-between">

@@ -1,5 +1,6 @@
 'use client'
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import SearchBar from "@/app/components/search-bar";
@@ -10,7 +11,7 @@ import { useState } from "react";
 
 
 export default function Page(){
-    const [user, setUser] = useState(true);
+    const { user } = useUserAuth();
     const inputStyle = 'h-9 rounded-lg border p-2';
 
     const handleNavigateToListPage = () => {
@@ -21,7 +22,7 @@ export default function Page(){
     if (user) {
         return (
             <div className="flex flex-col min-h-screen gap-4">
-            <Header title="Products" userName="Olga Ivanova"/>
+            <Header title="Products" showUserName={true}/>
                     <form className="mx-4 flex flex-col gap-4"> 
                         <p className="font-bold italic text-lg">Create a product</p> 
  

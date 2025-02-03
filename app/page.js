@@ -8,11 +8,13 @@ import Link from "next/link";
 import FilterWindow from "./components/filter-window";
 import { useState } from "react";
 import products from "./components/products.json";
+import { useUserAuth } from "./_utils/auth-context";
 
 export default function Home() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [user, setUser] = useState(true);
+  const { user } = useUserAuth();
+
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_product";
@@ -29,7 +31,7 @@ export default function Home() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Products" userName={"Olga Ivanova"} />
+        <Header title="Products" showUserName={true} />
 
         <div className="flex flex-row justify-between mx-4">
           <p className="font-bold">Total: 30</p>

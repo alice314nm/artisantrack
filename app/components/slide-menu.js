@@ -17,7 +17,7 @@ export default function SlideMenu({ menuVisible }) {
   const [inventoryVisible, setInventoryVisible] = useState(false);
 
   const { firebaseSignOut } = useUserAuth();
-
+  
 
   const toggleInventory = () => {
     setInventoryVisible((prev) => !prev);
@@ -34,7 +34,7 @@ export default function SlideMenu({ menuVisible }) {
         data-id="slide-menu"
       >
         <ul className="h-screen flex flex-col justify-end">
-          <a onClick={firebaseSignOut}
+        <a onClick={firebaseSignOut}
             className="flex gap-2 justify-end py-2 px-4 text-right border-b border-green w-full bg-beige hover:bg-darkBeige"
             style={{
               position: "sticky",
@@ -42,9 +42,9 @@ export default function SlideMenu({ menuVisible }) {
             }}
           >
             <p>Log out</p>
-            <img
-              src="/logout.png"
-              className="w-5" />
+            <img 
+            src="/logout.png"
+            className="w-5"/>
           </a>
           <Link className={buttonStyleLi} href="/pages/profile">
             <p>Profile</p>

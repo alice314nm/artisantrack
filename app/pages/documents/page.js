@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import BlockHolder from "@/app/components/block-holder";
 import DocumentHolder from "@/app/components/document-holder";
 import FilterWindow from "@/app/components/filter-window";
@@ -12,7 +13,7 @@ import { useState } from "react";
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [user, setUser] = useState(true);
+  const { user } = useUserAuth();
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_document";
@@ -29,7 +30,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Documents" userName={"Olga Ivanova"} />
+        <Header title="Documents" showUserName={true} />
 
         <div className="flex flex-row justify-between mx-4">
           <p className="font-bold">Total: 30</p>

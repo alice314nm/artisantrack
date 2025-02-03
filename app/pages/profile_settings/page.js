@@ -1,12 +1,12 @@
 "use client";
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
-import Menu from "@/app/components/menu";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function Page() {  
-  const [user, setUser] = useState(true)
+  const { user } = useUserAuth();
 
   if (user) {
     return (

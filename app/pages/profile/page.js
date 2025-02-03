@@ -1,60 +1,69 @@
 "use client";
 
+import { getUserData } from "@/app/_services/user-data";
+import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Page() {  
-  const [user, setUser] = useState(true)
+  const { user } = useUserAuth();
+  const [userData, setUserData] = useState(null); 
 
-  if (user) {
-    return (
-      <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Profile" showUserName={true} />
 
-        <div className="flex flex-row justify-between gap-2 border-b border-b-darkBeige px-5 pb-3">
-        <p className="underline">Artisan: <br></br>Olga Ivanova</p>
-          <Link href="/pages/profile_settings" className="flex flex-row h-8 bg-green w-20 gap-2 item-center justify-center py-1 rounded-lg">
-            <p className='font-bold'>Edit</p>
-            <img src="/Pencil.png" className="w-5"/>
-          </Link>
+  useEffect(() => {
+    // if (user) {
+    //   getUserData(user, setUserData);
+    //   console.log(userData, 123)
+    // }
+  }, [user]); 
+
+  const sectionStyle = "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
+  const contentStyle = "";
+
+  return (
+    <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
+      <Header title="Profile" />
+      {user ? (
+        <div className="flex flex-col gap-4">
+          {/* Profile Header */}
+          <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
+            <p className="text-xl font-semibold">Artisan: {user.displayName}</p>
+            <Link href="/pages/profile_settings" className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-200">
+              <p className="font-semibold">Edit</p>
+              <img src="/Pencil.png" className="w-5" />
+            </Link>
+          </div>
+
+          {/* Email Section */}
+          <div className={sectionStyle}>
+            <p>Current email:</p>
+            <p className={contentStyle}>{user.email || "email@example.com"}</p>
+          </div>
+
+          {/* Inventory Section */}
+          <div className={sectionStyle}>
+            <p>Inventory:</p>
+            <p className={contentStyle}>Total products: {userData?.productCount || "Loading..."}</p>
+            <p className={contentStyle}>Total materials: {userData?.materialCount || "Loading..."}</p>
+          </div>
+
+          {/* Orders Section */}
+          <div className={sectionStyle}>
+            <p>Orders:</p>
+            <p className={contentStyle}>In progress: {userData?.orderCount || "Loading..."}</p>
+            <p className={contentStyle}>Completed: 30</p>  {/* Example static data, adjust as needed */}
+          </div>
+
+          {/* Tax Section */}
+          <div className={sectionStyle}>
+            <p>Set tax: {userData?.tax || "Tax not set"}</p>
+          </div>
+          <Menu type="OnlySlideMenu" />
         </div>
-        
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Current email:</p>
-            <p>email@example.com</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Inventory:</p>
-            <p>Total products: 123</p>
-            <p>Total materials: 40</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Orders:</p>
-            <p>In progress: 4</p>
-            <p>Completed: 30</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Set tax:</p>
-            <p>4%</p>
-        </div>
-
-
-        <Menu
-          type="OnlySlideMenu"
-        />
-      </div>
-    );
-  } else {
-    return (
-      <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Artisan Track" />
-
-        <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
+      ) : (
+        <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
           <p>
             Create account to start your <br />
             artisan track
@@ -65,7 +74,7 @@ export default function Page() {
             </button>
           </Link>
         </div>
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import BlockHolder from "@/app/components/block-holder";
 import DocumentHolder from "@/app/components/document-holder";
 import FilterWindow from "@/app/components/filter-window";
@@ -12,7 +13,7 @@ import { useState } from "react";
 export default function Page() {  
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [user, setUser] = useState(true)
+  const { user } = useUserAuth();
 
   const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60"
 

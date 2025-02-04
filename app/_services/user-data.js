@@ -18,7 +18,8 @@ export const initializeUserData = async (user, db, displayName, tax) => {
         "productCategories",
         "materialCategories",
         "shops",
-        "documents"
+        "documents",
+        "colors"
     ];
 
     const batch = writeBatch(db);

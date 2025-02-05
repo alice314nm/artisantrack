@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { sendPasswordResetEmail } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+} from "firebase/auth";
 import { auth } from "/app/_utils/firebase";
 
 export default function ChangePasswordWindow({ windowVisibility, onClose }) {
@@ -14,7 +19,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   const [resetPasswordMode, setResetPasswordMode] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (newPassword !== confirmNewPassword) {
       setError("New passwords do not match.");
       return;
@@ -23,8 +28,31 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
       setError("New password cannot be empty.");
       return;
     }
-    setError("");
-    onClose();
+
+    try {
+      const user = auth.currentUser;
+
+      if (!user) {
+        setError("No user is signed in.");
+        return;
+      }
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, newPassword);
+      setMessage("Password successfully updated!");
+      setError("");
+      onClose();
+    } catch (error) {
+      if (error.code === "auth/invalid-credential") {
+        setError("Current password is incorrect.");
+      } else {
+        setError(error.message);
+      }
+      console.error("Error updating password:", error);
+    }
   };
 
   const handleResetPassword = async (e) => {
@@ -40,8 +68,9 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${windowVisibility ? "" : "hidden"
-        }`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
+        windowVisibility ? "" : "hidden"
+      }`}
       data-id="changing-password-window"
     >
       <div className="bg-beige border border-darkBeige rounded-md w-[400px]">
@@ -92,7 +121,10 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
             <div className="px-4 py-4">
               {/* Current Password */}
               <div className="mb-4">
-                <label htmlFor="current-password" className="block text-sm font-medium">
+                <label
+                  htmlFor="current-password"
+                  className="block text-sm font-medium"
+                >
                   Current Password
                 </label>
                 <div className="relative">
@@ -110,7 +142,9 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
                     <img
-                      src={showCurrentPassword ? "/eye.png" : "/eye-crossed.png"}
+                      src={
+                        showCurrentPassword ? "/eye.png" : "/eye-crossed.png"
+                      }
                       alt="Toggle visibility"
                       className="w-5 h-5"
                     />
@@ -120,7 +154,10 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
 
               {/* New Password */}
               <div className="mb-4">
-                <label htmlFor="new-password" className="block text-sm font-medium">
+                <label
+                  htmlFor="new-password"
+                  className="block text-sm font-medium"
+                >
                   New Password
                 </label>
                 <div className="relative">
@@ -148,7 +185,10 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
 
               {/* Confirm New Password */}
               <div className="mb-4">
-                <label htmlFor="confirm-new-password" className="block text-sm font-medium">
+                <label
+                  htmlFor="confirm-new-password"
+                  className="block text-sm font-medium"
+                >
                   Confirm New Password
                 </label>
                 <div className="relative">
@@ -163,10 +203,14 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                   <button
                     type="button"
                     className="absolute right-3 top-3"
-                    onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                    onClick={() =>
+                      setShowConfirmNewPassword(!showConfirmNewPassword)
+                    }
                   >
                     <img
-                      src={showConfirmNewPassword ? "/eye.png" : "/eye-crossed.png"}
+                      src={
+                        showConfirmNewPassword ? "/eye.png" : "/eye-crossed.png"
+                      }
                       alt="Toggle visibility"
                       className="w-5 h-5"
                     />

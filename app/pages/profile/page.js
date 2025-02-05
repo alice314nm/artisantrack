@@ -6,21 +6,34 @@ import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ChangePasswordWindow from "@/app/components/change-password-window";
 
-export default function Page() {  
+export default function Page() {
   const { user } = useUserAuth();
-  const [userData, setUserData] = useState(null); 
-
+  const [userData, setUserData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
 
   useEffect(() => {
-    // if (user) {
-    //   getUserData(user, setUserData);
-    //   console.log(userData, 123)
-    // }
-  }, [user]); 
+    if (user) {
+      getUserData(user, setUserData);
+    }
+  }, [user]);
 
   const sectionStyle = "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
   const contentStyle = "";
+
+  const handleSave = () => {
+    setIsEditing(false);
+  };
+
+  const openChangePasswordWindow = () => {
+    setConfirmWindowVisibility(true);
+  };
+
+  const closeChangePasswordWindow = () => {
+    setConfirmWindowVisibility(false);
+  };
 
   return (
     <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
@@ -29,11 +42,23 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           {/* Profile Header */}
           <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
-            <p className="text-xl font-semibold">Artisan: {user.displayName}</p>
-            <Link href="/pages/profile_settings" className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-200">
-              <p className="font-semibold">Edit</p>
-              <img src="/Pencil.png" className="w-5" />
-            </Link>
+            {isEditing ? (
+              <input
+                type="text"
+                value={user.displayName}
+                onChange={(e) => {}}
+                className="border border-gray-400 rounded p-1"
+              />
+            ) : (
+              <p className="text-xl font-semibold">Artisan: {user.displayName}</p>
+            )}
+            <button
+              className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-200"
+              onClick={isEditing ? handleSave : () => setIsEditing(true)}
+            >
+              <p className="font-semibold">{isEditing ? "Save" : "Edit"}</p>
+              <img src={isEditing ? "/Save.png" : "/Pencil.png"} className="w-5" />
+            </button>
           </div>
 
           {/* Email Section */}
@@ -42,18 +67,34 @@ export default function Page() {
             <p className={contentStyle}>{user.email || "email@example.com"}</p>
           </div>
 
+          {/* Change Password Section */}
+          <div className={sectionStyle}>
+            <button
+              className="text-black underline bg-green self-start p-2 rounded-md"
+              onClick={openChangePasswordWindow}
+            >
+              Change Password
+            </button>
+            {confirmWindowVisibility && (
+              <ChangePasswordWindow
+                windowVisibility={confirmWindowVisibility}
+                onClose={closeChangePasswordWindow}
+              />
+            )}
+          </div>
+
           {/* Inventory Section */}
           <div className={sectionStyle}>
             <p>Inventory:</p>
-            <p className={contentStyle}>Total products: {userData?.productCount || "Loading..."}</p>
-            <p className={contentStyle}>Total materials: {userData?.materialCount || "Loading..."}</p>
+            <p className={contentStyle}>Total products: {userData ? Math.max(0, userData.productCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Total materials: {userData ? Math.max(0, userData.materialCount - 1) : "Loading..."}</p>
           </div>
 
           {/* Orders Section */}
           <div className={sectionStyle}>
             <p>Orders:</p>
-            <p className={contentStyle}>In progress: {userData?.orderCount || "Loading..."}</p>
-            <p className={contentStyle}>Completed: 30</p>  {/* Example static data, adjust as needed */}
+            <p className={contentStyle}>In progress: {userData ? Math.max(0, userData.orderCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Completed: 0</p>
           </div>
 
           {/* Tax Section */}
@@ -65,13 +106,10 @@ export default function Page() {
       ) : (
         <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
           <p>
-            Create account to start your <br />
-            artisan track
+            Create account to start your <br /> artisan track
           </p>
           <Link href="/pages/signin">
-            <button className="font-bold bg-green py-2 px-4 rounded-lg">
-              Sign in
-            </button>
+            <button className="font-bold bg-green py-2 px-4 rounded-lg">Sign in</button>
           </Link>
         </div>
       )}

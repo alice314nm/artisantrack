@@ -13,6 +13,10 @@ export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUserAuth();
+  const materialCategories = ["Felting Wool", "Merino Wool"];
+  const handleApplyFilters = (selectedFilters) => {
+    console.log("Applied Filters:", selectedFilters);
+  };
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_material";
@@ -29,7 +33,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Materials" showUserName={true}/>
+        <Header title="Materials" showUserName={true} />
 
         <div className="flex flex-row justify-between mx-4">
           <p className="font-bold">Total: 30</p>
@@ -58,11 +62,25 @@ export default function Page() {
               type={"material"}
             />
           </Link>
+          <Link href="/pages/materialid" key={124} data-id="material-block">
+            <BlockHolder
+              key={124}
+              id={124}
+              title={"testTitle"}
+              category={"testCategory"}
+              total={124}
+              color={"black"}
+              imageSource={"/wool.png"}
+              type={"material"}
+            />
+          </Link>
         </div>
 
         <FilterWindow
           onClose={closeConfirmation}
           windowVisibility={confirmWindowVisibility}
+          categories={materialCategories}
+          onApplyFilters={handleApplyFilters}
         />
 
         <Menu

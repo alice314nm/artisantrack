@@ -1,20 +1,48 @@
 import React, { useState } from "react";
 
 /*
-  FilterWindow - component of the filter window to choose filters and sort options
+  FilterWindow - component for selecting filters and sort options.
 
   props:
-  - windowVisibility - state for its visibility on the page
-  - onClose - function to close the window on the page
-  
+  - windowVisibility - state for visibility on the page
+  - onClose - function to close the window
+  - onApplyFilters - function to apply the selected filters
+  - categories - list of categories to display (depends on the page)
 */
 
-export default function FilterWindow({ windowVisibility, onClose }) {
+export default function FilterWindow({
+  windowVisibility,
+  onClose,
+  onApplyFilters,
+  categories,
+}) {
   const [selectedCategory, setSelectedCategory] = useState("Categories");
+  const [selectedFilters, setSelectedFilters] = useState({
+    Categories: [],
+    "Sort by": "",
+  });
 
   const filters = {
-    Categories: ["Scarf", "Top", "Vest", "Sweater"],
+    Categories: categories,
     "Sort by": ["category", "name descending", "name ascending"],
+  };
+
+  const handleFilterClick = (filter, category) => {
+    if (category === "Categories") {
+      setSelectedFilters((prev) => {
+        const newCategories = prev.Categories.includes(filter)
+          ? prev.Categories.filter((item) => item !== filter)
+          : [...prev.Categories, filter];
+        return { ...prev, Categories: newCategories };
+      });
+    } else if (category === "Sort by") {
+      setSelectedFilters((prev) => ({ ...prev, "Sort by": filter }));
+    }
+  };
+
+  const handleApplyFilters = () => {
+    onApplyFilters(selectedFilters);
+    onClose();
   };
 
   return (
@@ -66,7 +94,18 @@ export default function FilterWindow({ windowVisibility, onClose }) {
               {filters[selectedCategory]?.map((item) => (
                 <span
                   key={item}
-                  className="px-4 py-2 bg-lightBeige rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige"
+                  onClick={() => handleFilterClick(item, selectedCategory)}
+                  className={`px-4 py-2 bg-lightBeige rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
+                    selectedCategory === "Categories" &&
+                    selectedFilters.Categories.includes(item)
+                      ? "bg-darkBeige"
+                      : ""
+                  } ${
+                    selectedCategory === "Sort by" &&
+                    selectedFilters["Sort by"] === item
+                      ? "bg-darkBeige"
+                      : ""
+                  }`}
                 >
                   {item}
                 </span>
@@ -77,7 +116,7 @@ export default function FilterWindow({ windowVisibility, onClose }) {
             <div className="flex justify-end">
               <button
                 className="px-5 py-2 bg-green rounded-lg hover:bg-darkGreen"
-                onClick={onClose}
+                onClick={handleApplyFilters}
               >
                 Apply Filters
               </button>

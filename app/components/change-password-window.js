@@ -219,18 +219,25 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
               </div>
 
               {/* Error message */}
-              {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+              {error && (
+                <p className="text-red text-sm mb-4 font-semibold text-center">
+                  {error}
+                </p>
+              )}
 
               {/* Buttons */}
               <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-between font-bold">
+                <div className="flex flex-row justify-between font-bold gap-3">
                   <button
-                    className="flex-1 text-center text-red border-r border-darkBeige p-2"
+                    className="flex-1 text-center text-red border-r border-darkBeige p-2 bg-yellow rounded-full hover:bg-[#FFD369]"
                     onClick={handleSubmit}
                   >
                     Change
                   </button>
-                  <button className="flex-1 text-center p-2" onClick={onClose}>
+                  <button
+                    className="flex-1 text-center p-2 bg-yellow rounded-full hover:bg-[#FFD369]"
+                    onClick={onClose}
+                  >
                     Cancel
                   </button>
                 </div>

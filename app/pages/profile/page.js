@@ -1,71 +1,118 @@
 "use client";
 
+import { getUserData } from "@/app/_services/user-data";
+import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ChangePasswordWindow from "@/app/components/change-password-window";
 
-export default function Page() {  
-  const [user, setUser] = useState(true)
+export default function Page() {
+  const { user } = useUserAuth();
+  const [userData, setUserData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
 
-  if (user) {
-    return (
-      <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Profile" showUserName={true} />
+  useEffect(() => {
+    if (user) {
+      getUserData(user, setUserData);
+    }
+  }, [user]);
 
-        <div className="flex flex-row justify-between gap-2 border-b border-b-darkBeige px-5 pb-3">
-        <p className="underline">Artisan: <br></br>Olga Ivanova</p>
-          <Link href="/pages/profile_settings" className="flex flex-row h-8 bg-green w-20 gap-2 item-center justify-center py-1 rounded-lg">
-            <p className='font-bold'>Edit</p>
-            <img src="/Pencil.png" className="w-5"/>
-          </Link>
+  const sectionStyle = "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
+  const contentStyle = "";
+
+  const handleSave = () => {
+    setIsEditing(false);
+  };
+
+  const openChangePasswordWindow = () => {
+    setConfirmWindowVisibility(true);
+  };
+
+  const closeChangePasswordWindow = () => {
+    setConfirmWindowVisibility(false);
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
+      <Header title="Profile" />
+      {user ? (
+        <div className="flex flex-col gap-4">
+          {/* Profile Header */}
+          <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
+            {isEditing ? (
+              <input
+                type="text"
+                value={user.displayName}
+                onChange={(e) => {}}
+                className="border border-gray-400 rounded p-1"
+              />
+            ) : (
+              <p className="text-xl font-semibold">Artisan: {user.displayName}</p>
+            )}
+            <button
+              className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-200"
+              onClick={isEditing ? handleSave : () => setIsEditing(true)}
+            >
+              <p className="font-semibold">{isEditing ? "Save" : "Edit"}</p>
+              <img src={isEditing ? "/Save.png" : "/Pencil.png"} className="w-5" />
+            </button>
+          </div>
+
+          {/* Email Section */}
+          <div className={sectionStyle}>
+            <p>Current email:</p>
+            <p className={contentStyle}>{user.email || "email@example.com"}</p>
+          </div>
+
+          {/* Change Password Section */}
+          <div className={sectionStyle}>
+            <button
+              className="text-black underline bg-green self-start p-2 rounded-md"
+              onClick={openChangePasswordWindow}
+            >
+              Change Password
+            </button>
+            {confirmWindowVisibility && (
+              <ChangePasswordWindow
+                windowVisibility={confirmWindowVisibility}
+                onClose={closeChangePasswordWindow}
+              />
+            )}
+          </div>
+
+          {/* Inventory Section */}
+          <div className={sectionStyle}>
+            <p>Inventory:</p>
+            <p className={contentStyle}>Total products: {userData ? Math.max(0, userData.productCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Total materials: {userData ? Math.max(0, userData.materialCount - 1) : "Loading..."}</p>
+          </div>
+
+          {/* Orders Section */}
+          <div className={sectionStyle}>
+            <p>Orders:</p>
+            <p className={contentStyle}>In progress: {userData ? Math.max(0, userData.orderCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>Completed: 0</p>
+          </div>
+
+          {/* Tax Section */}
+          <div className={sectionStyle}>
+            <p>Set tax: {userData?.tax || "Tax not set"}</p>
+          </div>
+          <Menu type="OnlySlideMenu" />
         </div>
-        
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Current email:</p>
-            <p>email@example.com</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Inventory:</p>
-            <p>Total products: 123</p>
-            <p>Total materials: 40</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Orders:</p>
-            <p>In progress: 4</p>
-            <p>Completed: 30</p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-            <p className="underline">Set tax:</p>
-            <p>4%</p>
-        </div>
-
-
-        <Menu
-          type="OnlySlideMenu"
-        />
-      </div>
-    );
-  } else {
-    return (
-      <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Artisan Track" />
-
-        <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
+      ) : (
+        <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
           <p>
-            Create account to start your <br />
-            artisan track
+            Create account to start your <br /> artisan track
           </p>
           <Link href="/pages/signin">
-            <button className="font-bold bg-green py-2 px-4 rounded-lg">
-              Sign in
-            </button>
+            <button className="font-bold bg-green py-2 px-4 rounded-lg">Sign in</button>
           </Link>
         </div>
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import BlockHolder from "@/app/components/block-holder";
 import FilterWindow from "@/app/components/filter-window";
 import Header from "@/app/components/header";
@@ -11,7 +12,7 @@ import { useState } from "react";
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [user, setUser] = useState(true);
+  const { user } = useUserAuth();
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_material";

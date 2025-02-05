@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useUserAuth } from '../_utils/auth-context';
 
 /*
     Header - component for header on page
@@ -9,22 +12,27 @@ import React from 'react';
     - showUserName - true: show header with user name
 */
 
-export default function Header({title, showUserName}){
-    return(
+export default function Header({title, showUserName}) {
+    const { user } = useUserAuth();
+
+    useEffect(() => {
+    }, [user]);
+
+    return (
         <header className="bg-beige font-bold flex flex-row p-4 items-center justify-between">
             <div className="gap-2 flex flex-row items-center justify-between">
                 <img
-                src="/LogoArtisanTrack.png"
-                className="w-12 h-12 bg-gray-200"
+                    src="/LogoArtisanTrack.png"
+                    className="w-12 h-12 bg-gray-200"
                 />
                 <Link href="/"><p className="italic text-xl">{title}</p></Link>
             </div>
-            {showUserName && (
+            {showUserName && user && (
                 <div className="text-right">
-                    <p>ArtisanTrack:</p>
-                    {/* <p>{userName}</p> */}
+                    <p>Artisan:</p>
+                    <p>{user.displayName}</p>
                 </div>
             )}
         </header>
     );
-}; 
+}

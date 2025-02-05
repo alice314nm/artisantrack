@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import ConfirmationWindow from "@/app/components/confirmation-window";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
@@ -10,7 +11,7 @@ import { useState } from "react";
 
 export default function ProductPage() {
 
-  const [user, setUser] = useState(true);
+  const { user } = useUserAuth();
 
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [clientView, setClientView] = useState(false);

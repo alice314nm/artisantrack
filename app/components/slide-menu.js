@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
+import { useUserAuth } from "../_utils/auth-context";
 
 /*
     SlideMenu - component to show slide menu with: Log out, profile, documents
@@ -14,6 +15,9 @@ import React, { useState } from "react";
 export default function SlideMenu({ menuVisible }) {
   const buttonStyleLi = "py-2 px-4 border-b border-green hover:bg-lightBeige";
   const [inventoryVisible, setInventoryVisible] = useState(false);
+
+  const { firebaseSignOut } = useUserAuth();
+  
 
   const toggleInventory = () => {
     setInventoryVisible((prev) => !prev);
@@ -30,7 +34,7 @@ export default function SlideMenu({ menuVisible }) {
         data-id="slide-menu"
       >
         <ul className="h-screen flex flex-col justify-end">
-          <Link href="/pages/login"
+        <a onClick={firebaseSignOut}
             className="flex gap-2 justify-end py-2 px-4 text-right border-b border-green w-full bg-beige hover:bg-darkBeige"
             style={{
               position: "sticky",
@@ -39,9 +43,9 @@ export default function SlideMenu({ menuVisible }) {
           >
             <p>Log out</p>
             <img 
-            src="logout.png"
+            src="/logout.png"
             className="w-5"/>
-          </Link>
+          </a>
           <Link className={buttonStyleLi} href="/pages/profile">
             <p>Profile</p>
           </Link>

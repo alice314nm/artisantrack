@@ -7,14 +7,12 @@ import BlockHolder from "./components/block-holder";
 import Link from "next/link";
 import FilterWindow from "./components/filter-window";
 import { useState } from "react";
-import products from "./components/products.json";
 import { useUserAuth } from "./_utils/auth-context";
 
 export default function Home() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUserAuth();
-
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_product";

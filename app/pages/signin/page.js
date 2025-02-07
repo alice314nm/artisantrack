@@ -5,10 +5,11 @@ import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import SignInOutWindow from "@/app/components/sign-in-out-window";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SignInPage() {
   const { user, doCreateUserWithEmailAndPassword } = useUserAuth();
+  const [loading, setLoading] = useState(true);
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -20,6 +21,17 @@ export default function SignInPage() {
   const [success, setSuccess] = useState(false);
 
   const inputStyle = "w-80 border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500";
+
+  useEffect(() => {
+      // Simulating a delay for loading state
+      const timeout = setTimeout(() => {
+        setLoading(false);
+      }, 1000); // 1 second delay
+
+      return () => clearTimeout(timeout); // Cleanup timeout
+    }, []);
+
+    
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -50,6 +62,14 @@ export default function SignInPage() {
       setIsLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img src="/loading-gif.gif" className="h-10"/>      
+      </div>
+    );
+  }
 
   return (
     <main className="">

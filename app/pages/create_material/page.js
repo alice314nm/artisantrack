@@ -5,6 +5,7 @@ import { useUserAuth } from "@/app/_utils/auth-context";
 import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
+import NotLoggedWindow from "@/app/components/not-logged-window";
 import SearchBar from "@/app/components/search-bar";
 import SmallBlockHolder from "@/app/components/small-block-holder";
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
@@ -68,7 +69,7 @@ export default function Page(){
     
         if (!user) return;
     
-        const uploadedImages = await handleUpload() || []; // Ensure it's always an array
+        const uploadedImages = await handleUpload() || []; 
     
         const materialObj = {
             id,
@@ -78,7 +79,7 @@ export default function Page(){
             costItems: costItems || [],
             total,
             description: desc,
-            images: uploadedImages // This is now guaranteed to be an array
+            images: uploadedImages 
         };
     
         try {
@@ -342,18 +343,7 @@ export default function Page(){
         return (
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Artisan Track" />
-    
-            <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
-              <p>
-                Create account to start your <br />
-                artisan track
-              </p>
-              <Link href="/pages/signin">
-                <button className="font-bold bg-green py-2 px-4 rounded-lg">
-                  Sign in
-                </button>
-              </Link>
-            </div>
+            <NotLoggedWindow/>            
           </div>
         );
     }

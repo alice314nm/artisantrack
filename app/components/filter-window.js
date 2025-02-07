@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 /*
   FilterWindow - component for selecting filters and sort options.
+
   props:
   - windowVisibility - state for visibility on the page
   - onClose - function to close the window
@@ -23,7 +24,8 @@ export default function FilterWindow({
 
   const filters = {
     Categories: categories,
-    "Sort by": ["Category", "Name descending", "Name ascending"],
+    "Sort by": ["Category", "Name Descending", "Name Ascending", "Color", "ID Ascending",
+      "ID Descending"],
   };
 
   const handleFilterClick = (filter, category) => {
@@ -44,16 +46,15 @@ export default function FilterWindow({
 
   const handleApplyFilters = () => {
     if (onApplyFilters) {
-      onApplyFilters(selectedCategory);
+      onApplyFilters(selectedFilters);
     }
     onClose();
   };
 
   return (
     <div
-      className={`fixed flex h-screen w-screen items-center justify-center bg-opacity-20 bg-black z-10 ${
-        windowVisibility ? "" : "hidden"
-      }`}
+      className={`fixed flex h-screen w-screen items-center justify-center bg-opacity-20 bg-black z-10 ${windowVisibility ? "" : "hidden"
+        }`}
       data-id="filter-window"
     >
       <div className="w-[380px] fixed bg-beige border border-darkBeige rounded-lg shadow-lg">
@@ -82,9 +83,8 @@ export default function FilterWindow({
                     : "sort-by-button"
                 }
                 onClick={() => setSelectedCategory(category)}
-                className={`py-4 px-2 text-left text-dark border-b border-b-darkBeige hover:bg-beige ${
-                  selectedCategory === category ? "bg-beige" : ""
-                }`}
+                className={`py-4 px-2 text-left text-dark border-b border-b-darkBeige hover:bg-beige ${selectedCategory === category ? "bg-beige" : ""
+                  }`}
               >
                 {category}
               </button>
@@ -99,17 +99,15 @@ export default function FilterWindow({
                 <span
                   key={`${selectedCategory}-${item}-${index}`}
                   onClick={() => handleFilterClick(item, selectedCategory)}
-                  className={`px-4 py-2 bg-lightBeige rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
-                    selectedCategory === "Categories" &&
+                  className={`px-4 py-2 bg-[#FFF8E8] rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${selectedCategory === "Categories" &&
                     selectedFilters.Categories.includes(item)
-                      ? "bg-darkBeige"
+                    ? "bg-[#DED2AE]"
+                    : ""
+                    } ${selectedCategory === "Sort by" &&
+                      selectedFilters["Sort by"] === item
+                      ? "bg-[#DED2AE]"
                       : ""
-                  } ${
-                    selectedCategory === "Sort by" &&
-                    selectedFilters["Sort by"] === item
-                      ? "bg-darkBeige"
-                      : ""
-                  }`}
+                    }`}
                 >
                   {item}
                 </span>

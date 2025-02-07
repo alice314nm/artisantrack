@@ -8,12 +8,22 @@ import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
 import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUserAuth();
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+          const timeout = setTimeout(() => {
+          setLoading(false);
+          }, 500); 
+  
+          return () => clearTimeout(timeout);
+      }, []);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_material";
@@ -26,6 +36,14 @@ export default function Page() {
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img src="/loading-gif.gif" className="h-10"/>      
+      </div>
+    );
+  }
 
   if (user) {
     return (
@@ -79,9 +97,7 @@ export default function Page() {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
-
-        <NotLoggedWindow/>
-        
+        <NotLoggedWindow/>        
       </div>
     );
   }

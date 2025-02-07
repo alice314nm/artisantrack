@@ -17,7 +17,6 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
 
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -27,14 +26,13 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
-          const timeout = setTimeout(() => {
-          setLoading(false);
-          }, 500); 
-  
-          return () => clearTimeout(timeout);
-      }, []);
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -160,7 +158,7 @@ export default function Page() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <img src="/loading-gif.gif" className="h-10"/>      
+        <img src="/loading-gif.gif" className="h-10" />
       </div>
     );
   }
@@ -233,8 +231,7 @@ export default function Page() {
             </button>
           </Link>
         </div>
-        <NotLoggedWindow/>        
-
+        <NotLoggedWindow />
       </div>
     );
   }

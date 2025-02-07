@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 /*
   FilterWindow - component for selecting filters and sort options.
-
   props:
   - windowVisibility - state for visibility on the page
   - onClose - function to close the window
@@ -24,7 +23,7 @@ export default function FilterWindow({
 
   const filters = {
     Categories: categories,
-    "Sort by": ["Category", "Name Descending", "Name Ascending"],
+    "Sort by": ["Category", "Name descending", "Name ascending"],
   };
 
   const handleFilterClick = (filter, category) => {
@@ -45,7 +44,7 @@ export default function FilterWindow({
 
   const handleApplyFilters = () => {
     if (onApplyFilters) {
-      onApplyFilters(selectedFilters);
+      onApplyFilters(selectedCategory);
     }
     onClose();
   };

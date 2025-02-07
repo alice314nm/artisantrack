@@ -150,6 +150,17 @@ export default function Page() {
           a.categories.join(", ").localeCompare(b.categories.join(", "))
         );
         break;
+      case "Color":
+        filteredMaterials.sort((a, b) =>
+          a.colors.join(", ").localeCompare(b.colors.join(", "))
+        );
+        break;
+      case "ID Ascending":
+        filteredMaterials.sort((a, b) => Number(a.id) - Number(b.id));
+        break;
+      case "ID Descending":
+        filteredMaterials.sort((a, b) => Number(b.id) - Number(a.id));
+        break;
       default:
         break;
     }

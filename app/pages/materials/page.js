@@ -5,6 +5,7 @@ import BlockHolder from "@/app/components/block-holder";
 import FilterWindow from "@/app/components/filter-window";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
+import NotLoggedWindow from "@/app/components/not-logged-window";
 import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -16,6 +17,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -23,6 +25,16 @@ export default function Page() {
   const [filters, setFilters] = useState({ Categories: [], "Sort by": "" });
   const [materials, setMaterials] = useState([]);
   const { user } = useUserAuth();
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+          const timeout = setTimeout(() => {
+          setLoading(false);
+          }, 500); 
+  
+          return () => clearTimeout(timeout);
+      }, []);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -145,6 +157,14 @@ export default function Page() {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img src="/loading-gif.gif" className="h-10"/>      
+      </div>
+    );
+  }
+
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
@@ -213,6 +233,8 @@ export default function Page() {
             </button>
           </Link>
         </div>
+        <NotLoggedWindow/>        
+
       </div>
     );
   }

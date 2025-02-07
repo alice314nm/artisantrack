@@ -4,7 +4,7 @@ import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import SignInOutWindow from "@/app/components/sign-in-out-window";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
   const { user, doSignInUserWithEmailAndPassword, resetPassword } = useUserAuth();
@@ -13,12 +13,23 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [resetPasswordMode, setResetPasswordMode] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  useEffect(() => {
+      const timeout = setTimeout(() => {
+        setLoading(false);
+      }, 1000); 
+
+      return () => clearTimeout(timeout);
+    }, []);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await doSignInUserWithEmailAndPassword(email, password);
-      setError("");
       window.location.href = "/";
     } catch (err) {
       if (err.code === "auth/user-not-found") {
@@ -32,6 +43,8 @@ export default function LoginPage() {
       } else {
         setError(err.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,6 +59,14 @@ export default function LoginPage() {
       setError(err.message);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img src="/loading-gif.gif" className="h-10"/>      
+      </div>
+    );
+  }
 
   return (
     <main>
@@ -91,8 +112,10 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button type="submit" className="bg-green px-10 py-2 rounded-lg font-bold">
-                Log In
+              <button type="submit" className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"}`}
+ disabled={isLoading}>
+                
+              {isLoading ? "Logging in ..." : "Log In"}
               </button>
               <p className="text-sky-500 underline cursor-pointer" onClick={() => setResetPasswordMode(true)}>
                 Forgot password?

@@ -166,6 +166,12 @@ export default function Page() {
     }
   }
 
+  if (searchTerm) {
+    filteredMaterials = filteredMaterials.filter((material) =>
+      material.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">

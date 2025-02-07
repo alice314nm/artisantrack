@@ -7,16 +7,96 @@ import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { app } from "@/app/_utils/firebase";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({ Categories: [], "Sort by": "" });
+  const [materials, setMaterials] = useState([]);
   const { user } = useUserAuth();
-  const materialCategories = ["Felting Wool", "Merino Wool"];
-  const handleApplyFilters = (selectedFilters) => {
-    console.log("Applied Filters:", selectedFilters);
-  };
+
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      if (!user) return;
+      try {
+        const db = getFirestore(app);
+        const materialsCollection = collection(
+          db,
+          `users/${user.uid}/materials`
+        );
+        const materialsSnapshot = await getDocs(materialsCollection);
+        const materialsData = materialsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log(materialsData);
+
+        const materialsWithCategoriesColorsAndImages = await Promise.all(
+          materialsData.map(async (material) => {
+            const categoryNames = await Promise.all(
+              material.categories.map(async (categoryId) => {
+                const categoryDocRef = doc(
+                  db,
+                  `users/${user.uid}/materialCategories/${categoryId}`
+                );
+                const categoryDoc = await getDoc(categoryDocRef);
+                return categoryDoc.exists()
+                  ? categoryDoc.data().name
+                  : "Unknown";
+              })
+            );
+
+            let colorNames = [];
+            if (Array.isArray(material.color)) {
+              colorNames = await Promise.all(
+                material.color.map(async (colorId) => {
+                  const colorDocRef = doc(
+                    db,
+                    `users/${user.uid}/colors/${colorId}`
+                  );
+                  const colorDoc = await getDoc(colorDocRef);
+                  return colorDoc.exists() ? colorDoc.data().name : "Unknown";
+                })
+              );
+            } else if (material.color) {
+              const colorDocRef = doc(
+                db,
+                `users/${user.uid}/colors/${material.color}`
+              );
+              const colorDoc = await getDoc(colorDocRef);
+              colorNames = colorDoc.exists()
+                ? [colorDoc.data().name]
+                : ["Unknown"];
+            }
+
+            const imageUrls = material.images?.map((image) => image.url) || [];
+
+            return {
+              ...material,
+              categories: categoryNames,
+              colors: colorNames,
+              images: imageUrls,
+            };
+          })
+        );
+
+        setMaterials(materialsWithCategoriesColorsAndImages);
+      } catch (error) {
+        console.error("Error fetching materials:", error);
+      }
+    };
+
+    fetchMaterials();
+  }, [user]);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_material";
@@ -30,14 +110,48 @@ export default function Page() {
     setConfirmWindowVisibility(false);
   };
 
+  const handleApplyFilters = (selectedFilters) => {
+    setFilters(selectedFilters);
+  };
+
+  const categories = [
+    ...new Set(materials.flatMap((material) => material.categories)),
+  ];
+
+  let filteredMaterials = [...materials];
+  if (filters.Categories?.length > 0) {
+    filteredMaterials = filteredMaterials.filter((material) =>
+      material.categories.some((category) =>
+        filters.Categories.includes(category)
+      )
+    );
+  }
+
+  if (filters["Sort by"]) {
+    switch (filters["Sort by"]) {
+      case "Name Ascending":
+        filteredMaterials.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "Name Descending":
+        filteredMaterials.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "Category":
+        filteredMaterials.sort((a, b) =>
+          a.categories.join(", ").localeCompare(b.categories.join(", "))
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Materials" showUserName={true} />
 
         <div className="flex flex-row justify-between mx-4">
-          <p className="font-bold">Total: 30</p>
-
+          <p className="font-bold">Total: {filteredMaterials.length}</p>
           <div className="bg-green rounded-xl px-4 font-bold cursor-pointer">
             Create document
           </div>
@@ -45,42 +159,35 @@ export default function Page() {
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
-          onSearch={(term) => setSearchTerm(term)}
+          onSearch={setSearchTerm}
           filterOn={true}
         />
 
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-          <Link href="/pages/materialid" key={123} data-id="material-block">
-            <BlockHolder
-              key={123}
-              id={123}
-              title={"testTitle"}
-              category={"testCategory"}
-              total={123}
-              color={"black"}
-              imageSource={"/wool.png"}
-              type={"material"}
-            />
-          </Link>
-          <Link href="/pages/materialid" key={124} data-id="material-block">
-            <BlockHolder
-              key={124}
-              id={124}
-              title={"testTitle"}
-              category={"testCategory"}
-              total={124}
-              color={"black"}
-              imageSource={"/wool.png"}
-              type={"material"}
-            />
-          </Link>
+          {filteredMaterials.map((material) => (
+            <Link
+              href={`/pages/materialid`}
+              key={material.id}
+              data-id="material-block"
+            >
+              <BlockHolder
+                id={material.id}
+                title={material.name}
+                category={material.categories.join(", ")}
+                total={material.total}
+                color={material.colors.join(", ")}
+                imageSource={material.images[0]}
+                type={"material"}
+              />
+            </Link>
+          ))}
         </div>
 
         <FilterWindow
           onClose={closeConfirmation}
           windowVisibility={confirmWindowVisibility}
-          categories={materialCategories}
           onApplyFilters={handleApplyFilters}
+          categories={categories}
         />
 
         <Menu
@@ -96,11 +203,9 @@ export default function Page() {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
-
-        <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
+        <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
           <p>
-            Create account to start your <br />
-            artisan track
+            Create account to start your <br /> artisan track
           </p>
           <Link href="/pages/signin">
             <button className="font-bold bg-green py-2 px-4 rounded-lg">

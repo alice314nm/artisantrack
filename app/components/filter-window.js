@@ -24,7 +24,7 @@ export default function FilterWindow({
 
   const filters = {
     Categories: categories,
-    "Sort by": ["category", "name descending", "name ascending"],
+    "Sort by": ["Category", "Name Descending", "Name Ascending"],
   };
 
   const handleFilterClick = (filter, category) => {
@@ -36,12 +36,17 @@ export default function FilterWindow({
         return { ...prev, Categories: newCategories };
       });
     } else if (category === "Sort by") {
-      setSelectedFilters((prev) => ({ ...prev, "Sort by": filter }));
+      setSelectedFilters((prev) => ({
+        ...prev,
+        "Sort by": prev["Sort by"] === filter ? "" : filter,
+      }));
     }
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters(selectedFilters);
+    if (onApplyFilters) {
+      onApplyFilters(selectedFilters);
+    }
     onClose();
   };
 
@@ -91,9 +96,9 @@ export default function FilterWindow({
           <div className="flex-1 p-4 bg-beige">
             {/* Filter Chips */}
             <div className="flex flex-wrap gap-2 mb-4">
-              {filters[selectedCategory]?.map((item) => (
+              {filters[selectedCategory]?.map((item, index) => (
                 <span
-                  key={item}
+                  key={`${selectedCategory}-${item}-${index}`}
                   onClick={() => handleFilterClick(item, selectedCategory)}
                   className={`px-4 py-2 bg-lightBeige rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
                     selectedCategory === "Categories" &&

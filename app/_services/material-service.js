@@ -52,29 +52,30 @@ export async function dbAddMaterial(userId, materialObj) {
             materialObj.categories.map(category => getOrAddCategory(userId, category))
         );
 
-        // Get or create the color and retrieve its ID
-        const colorId = await getOrAddColor(userId, materialObj.color);  // Use color name to get or add the color
+        // Get color ID
+        const colorId = await getOrAddColor(userId, materialObj.color);
 
-        // Get shop ID for the first costItem shop
-        const shopId = (Array.isArray(materialObj.costItems) && materialObj.costItems.length > 0)
+        // Get shop ID (if applicable)
+        const shopId = (materialObj.costItems.length > 0)
             ? await getOrAddShop(userId, materialObj.costItems[0].shop)
             : null;
 
         // Add material to Firestore
         const materialsCollection = collection(db, "users", userId, "materials");
         const newMaterialRef = await addDoc(materialsCollection, {
+            id: materialObj.id,
             name: materialObj.name,
             categories: categoryIds,
-            color: colorId,  // Save the color ID, not the name
+            color: colorId,
             total: materialObj.total,
             description: materialObj.description,
-            // images: materialObj.images,
+            images: materialObj.images 
         });
 
-        // Add costItems as a subcollection under the material
+        // Add costItems as subcollection
         const costItemsCollection = collection(newMaterialRef, "costItems");
         for (const costItem of materialObj.costItems) {
-            const costShopId = await getOrAddShop(userId, costItem.shop); // Ensure the shop exists
+            const costShopId = await getOrAddShop(userId, costItem.shop);
             await addDoc(costItemsCollection, {
                 shopId: costShopId,
                 shopName: costItem.shop,
@@ -89,4 +90,5 @@ export async function dbAddMaterial(userId, materialObj) {
         console.error("Error adding material:", error);
     }
 }
+
 

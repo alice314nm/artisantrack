@@ -2,10 +2,12 @@
 
 import { dbAddMaterial } from "@/app/_services/material-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
+import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import SearchBar from "@/app/components/search-bar";
 import SmallBlockHolder from "@/app/components/small-block-holder";
+import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -28,13 +30,13 @@ export default function Page(){
     const [total, setTotal] = useState('');
     const [desc, setDesc] = useState('');
     const [images, setImages] = useState([]);
+    const [imageUrls, setImageUrls] = useState([]); 
     
     const [costItems, setCostItems] = useState([]); // New state to hold the cost items
 
 
 
     const handleNavigateToListPage = () => {
-        console.log('Navigating to the home page...');
         window.location.href = '/pages/materials';
     };
 
@@ -66,28 +68,30 @@ export default function Page(){
     
         if (!user) return;
     
-        // Ensure color is passed as a color ID
+        const uploadedImages = await handleUpload() || []; // Ensure it's always an array
     
-        // Create the material object with cost as an array of objects
         const materialObj = {
+            id,
             name,
             categories,
-            color,  // Use the colorId here
-            costItems: costItems || [],  // Ensure it is always an array
+            color,
+            costItems: costItems || [],
             total,
             description: desc,
-            images
+            images: uploadedImages // This is now guaranteed to be an array
         };
     
         try {
-            // Add the material to the database
             await dbAddMaterial(user.uid, materialObj);
-            // Redirect to materials page (optional)
+            console.log("Material added successfully");
             window.location.href = '/pages/materials';
+
         } catch (error) {
             console.error("Error adding material:", error);
         }
     };
+    
+    
 
     const handleAddCostItem = () => {
         if (shop && price && quantity && currency) {
@@ -113,6 +117,47 @@ export default function Page(){
             setQuantity('');
         }
     };
+
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        setImages((prev) => [...prev, ...files]);
+    };
+
+    const removeSelectedImage = (index) => {
+        const updatedImages = [...images];
+        updatedImages.splice(index, 1);
+        setImages(updatedImages);
+    };
+
+
+    const handleUpload = async () => {
+        if (!images.length) return []; // Ensure it returns an empty array instead of undefined
+    
+        const userId = user.uid;
+        const uploadedImages = [];
+    
+        for (const image of images) {
+            const filePath = `images/${userId}/${image.name}`;
+            const fileRef = ref(storage, filePath);
+    
+            try {
+                const snapshot = await uploadBytes(fileRef, image);
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+    
+                uploadedImages.push({ url: downloadUrl, path: filePath });
+            } catch (error) {
+                console.error("Upload failed:", error);
+            }
+        }
+    
+        setImageUrls((prev) => [...prev, ...uploadedImages.map(img => img.url)]);
+        setImages([]); 
+    
+        return uploadedImages;
+    };
+    
+    
 
 
     if (user) {
@@ -250,34 +295,37 @@ export default function Page(){
                         
 
                         <div className="flex flex-col gap-2">
+                            {/* Image Selection */}
                             <div className="flex flex-row justify-between">
-                                <label>Select image</label>
-                                <img src="/cross.png" className="h-4"/>
+                                <label>Select images</label>
+                                <img  src={images.length===0 ? "/cross.png" : "/check.png"}  className={images.length===0 ? "h-4" : "h-6 text-green"} />                            
                             </div>
-                            <button type="button" className="bg-green rounded-lg w-40">select image</button>
-                            <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
-                                <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id="1"
-                                imageSource="/wool.png"
+                            <div className="relative inline-block">
+                                <input 
+                                    type="file" 
+                                    className="absolute inset-0 w-40 opacity-0 cursor-pointer" 
+                                    multiple 
+                                    onChange={handleFileChange} 
                                 />
-                                <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id="1"
-                                imageSource="/wool.png"
-                                />
-                                <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id="1"
-                                imageSource="/wool.png"
-                                />
-                                <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id="1"
-                                imageSource="/wool.png"
-                                />
+                                <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
+                            </div>
 
-                            </div>
+                           
+                            {/* Preview Chosen Images */}
+                            {images.length > 0 && (
+                                <div className="flex flex-row gap-2 overflow-x-auto">
+                                {images.map((image, index) => (
+                                    <div key={index}>
+                                        <SmallBlockHolder
+                                        type="multiplePictureDelete"
+                                        id={index+1}
+                                        imageSource={URL.createObjectURL(image)}
+                                        onButtonFunction={() => removeSelectedImage(index)}
+                                        />
+                                    </div>
+                                ))}
+                                </div>
+                            )}                           
                         </div>
 
                         <Menu
@@ -295,7 +343,7 @@ export default function Page(){
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Artisan Track" />
     
-            <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
+            <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
               <p>
                 Create account to start your <br />
                 artisan track

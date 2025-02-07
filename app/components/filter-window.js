@@ -99,20 +99,19 @@ export default function FilterWindow({
                 <span
                   key={`${selectedCategory}-${item}-${index}`}
                   onClick={() => handleFilterClick(item, selectedCategory)}
-                  className={`px-4 py-2 bg-[#FFF8E8] rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${selectedCategory === "Categories" &&
-                    selectedFilters.Categories.includes(item)
-                    ? "bg-[#DED2AE]"
-                    : ""
-                    } ${selectedCategory === "Sort by" &&
-                      selectedFilters["Sort by"] === item
-                      ? "bg-[#DED2AE]"
-                      : ""
+                  className={`px-4 py-2 rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${selectedCategory === "Categories" && selectedFilters.Categories.includes(item)
+                    ? "!bg-darkBeige"
+                    : "bg-lightBeige"
+                    } ${selectedCategory === "Sort by" && selectedFilters["Sort by"] === item
+                      ? "!bg-darkBeige"
+                      : "bg-lightBeige"
                     }`}
                 >
                   {item}
                 </span>
               ))}
             </div>
+
 
             {/* Apply Filters Button */}
             <div className="flex justify-end">
@@ -126,6 +125,6 @@ export default function FilterWindow({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

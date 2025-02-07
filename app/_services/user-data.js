@@ -1,4 +1,4 @@
-import { doc, getDoc, writeBatch, collection, getCountFromServer } from "firebase/firestore";
+import { doc, getDoc, writeBatch, collection, getCountFromServer, query } from "firebase/firestore";
 import { db } from "../_utils/firebase";
 
 export const initializeUserData = async (user, db, displayName, tax) => {
@@ -8,18 +8,6 @@ export const initializeUserData = async (user, db, displayName, tax) => {
     }
 
     const userRef = doc(db, "users", user.uid);
-
-    // Subcollections
-    const subcollections = [
-        "products",
-        "materials",
-        "orders",
-        "clients",
-        "productCategories",
-        "materialCategories",
-        "shops",
-        "documents"
-    ];
 
     const batch = writeBatch(db);
 
@@ -33,12 +21,7 @@ export const initializeUserData = async (user, db, displayName, tax) => {
                 tax: tax || null,   // Store the tax
                 createdAt: new Date().toISOString(),
             });
-
-            // Initialize empty subcollections
-            subcollections.forEach((sub) => {
-                const subRef = doc(collection(userRef, sub)); // Creates empty refs
-                batch.set(subRef, {"isEmpty": true}); 
-            });
+    
 
             await batch.commit();
             console.log("User data initialized successfully.");
@@ -50,41 +33,60 @@ export const initializeUserData = async (user, db, displayName, tax) => {
     }
 };
 
+
 export const getUserData = async (user, setUserData) => {
-    const userRef = doc(db, "users", user.uid);
-  
-    const fetchUserData = async () => {
-      try {
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-  
-          // Get counts for products, materials, and orders
-          const productsRef = collection(userRef, "products");
-          const materialsRef = collection(userRef, "materials");
-          const ordersRef = collection(userRef, "orders");
-  
-          // Get the count of documents in each subcollection
-          const productCount = await getCountFromServer(productsRef);
-          const materialCount = await getCountFromServer(materialsRef);
-          const orderCount = await getCountFromServer(ordersRef);
-  
-          // Combine all data into one object
-          const userDataWithCounts = {
-            ...userData,
-            productCount: productCount.data().count,
-            materialCount: materialCount.data().count,
-            orderCount: orderCount.data().count,
-          };
-  
-          setUserData(userDataWithCounts);
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error.message);
+  const userRef = doc(db, "users", user.uid);
+
+  const fetchUserData = async () => {
+    try {
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        // Function to safely get document count, returning 0 if the collection does not exist
+        const getCollectionCount = async (collectionPath, queryFilter) => {
+          try {
+            const snapshot = await getCountFromServer(queryFilter);
+            return snapshot.data().count || 0;
+          } catch (error) {
+            console.warn(`Collection ${collectionPath} not found or empty.`);
+            return 0;
+          }
+        };
+
+        // Get references to subcollections
+        const productsRef = collection(userRef, "products");
+        const materialsRef = collection(userRef, "materials");
+        const ordersRef = collection(userRef, "orders");
+
+        // Queries to filter out placeholder documents
+        const productQuery = query(productsRef);
+        const materialQuery = query(materialsRef);
+        const orderQuery = query(ordersRef);
+
+        // Fetch counts, ensuring missing collections return 0
+        const [productCount, materialCount, orderCount] = await Promise.all([
+          getCollectionCount("products", productQuery),
+          getCollectionCount("materials", materialQuery),
+          getCollectionCount("orders", orderQuery),
+        ]);
+
+        // Combine all data into one object
+        const userDataWithCounts = {
+          ...userData,
+          productCount,
+          materialCount,
+          orderCount,
+        };
+
+        setUserData(userDataWithCounts); // Update the state with the data
+      } else {
+        console.log("No such document!");
       }
-    };
-  
-    fetchUserData();
+    } catch (error) {
+      console.error("Error fetching user data:", error.message);
+    }
   };
+
+  fetchUserData(); // Call the function to fetch data
+};

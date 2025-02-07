@@ -10,7 +10,6 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function ProductPage() {
-
   const { user } = useUserAuth();
 
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -70,6 +69,8 @@ export default function ProductPage() {
               <p className="text-xl">testNameMaterial | testId</p>
 
               <p>Category: testCategory1, testCategory2</p>
+
+              <p>Color: test purple</p>
 
               <div>
                 <p>Description</p>

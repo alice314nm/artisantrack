@@ -23,7 +23,7 @@ export default function SmallBlockHolder({ type, id, imageSource, onButtonFuncti
                 <div className="relative">
                     <img src={imageSource} className="object-cover relative w-24 h-28 rounded-lg"/>
                 </div>
-                <button className="bg-red rounded-xl w-24 text-white">delete</button>
+                <button type="button" className="bg-red rounded-xl w-24 text-white">delete</button>
             </div>
         );
     }
@@ -36,7 +36,7 @@ export default function SmallBlockHolder({ type, id, imageSource, onButtonFuncti
                         <p className="text-xs">{id}</p>
                     </div>
                 </div>
-                <button className="bg-red rounded-xl w-24 text-white ">delete</button>
+                <button type="button" onClick={onButtonFunction} className="bg-red rounded-xl w-24 text-white ">delete</button>
             </div>
         );
     }

@@ -26,17 +26,13 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 500);
 
-    return () => clearTimeout(timeout);
-  }, []);
+
 
   useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;
+      setLoading(true)
       try {
         const db = getFirestore(app);
         const materialsCollection = collection(
@@ -102,6 +98,8 @@ export default function Page() {
         setMaterials(materialsWithCategoriesColorsAndImages);
       } catch (error) {
         console.error("Error fetching materials:", error);
+      } finally{
+        setLoading(false)
       }
     };
 

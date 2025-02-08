@@ -14,6 +14,8 @@ export default function Home() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUserAuth();
+
+  const productCategories = ["Scarf", "Top", "Vest", "Sweater"];
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -80,6 +82,7 @@ export default function Home() {
         <FilterWindow
           onClose={closeConfirmation}
           windowVisibility={confirmWindowVisibility}
+          categories={productCategories}
         />
 
         <Menu

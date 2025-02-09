@@ -15,6 +15,7 @@ export default {
         darkBeige: "#DED2AE",
         blackBeige: "#22150F",
         green: "#ACC86C",
+        darkGreen: "#8AA85A",
         red: "#CF4D4D",
         yellow: "#E0C05F",
       },

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { app } from "@/app/_utils/firebase";
 import { useUserAuth } from "@/app/_utils/auth-context";
+import "@/app/globals.css";
 
 /*
   FilterWindow - component for selecting filters and sort options.
@@ -94,13 +95,7 @@ export default function FilterWindow({
       }`}
       data-id="filter-window"
     >
-      <div
-        className="w-[380px] fixed bg-beige border border-darkBeige rounded-lg shadow-lg overflow-x-auto"
-        style={{
-          scrollbarWidth: "thin", // For Firefox
-          scrollbarColor: "#888 #f1f1f1", // For Firefox
-        }}
-      >
+      <div className="w-[380px] fixed bg-beige border border-darkBeige shadow-lg">
         {/* Header */}
         <div className="flex justify-between items-center bg-darkBeige px-4 py-2">
           <p className="text-lg font-bold">Filters</p>
@@ -136,43 +131,72 @@ export default function FilterWindow({
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-4 bg-beige">
-            {/* Filter Chips */}
-            <div
-              className="flex flex-wrap gap-2 mb-4 overflow-x-auto"
-              style={{
-                scrollbarWidth: "thin", // For Firefox
-                scrollbarColor: "#888 #f1f1f1", // For Firefox
-              }}
-            >
-              {filters[selectedCategory]?.map((item, index) => (
-                <span
-                  key={`${selectedCategory}-${item}-${index}`}
-                  onClick={() => handleFilterClick(item, selectedCategory)}
-                  className={`px-4 py-2 rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
-                    selectedCategory === "Categories" &&
-                    selectedFilters.Categories.includes(item)
-                      ? "!bg-darkBeige"
-                      : "bg-lightBeige"
-                  } ${
-                    selectedCategory === "Colors" &&
-                    selectedFilters.Colors.includes(item)
-                      ? "!bg-darkBeige"
-                      : "bg-lightBeige"
-                  } ${
-                    selectedCategory === "Sort by" &&
-                    selectedFilters["Sort by"] === item
-                      ? "!bg-darkBeige"
-                      : "bg-lightBeige"
-                  }`}
-                >
-                  {item}
-                </span>
-              ))}
+          <div className="flex-1 p-4 bg-beige overflow-x-scroll scrollbar">
+            {/* Filter Chips Container */}
+            <div className="flex flex-col gap-2 mb-4 whitespace-nowrap">
+              {/* First Row of Filter Chips */}
+              <div className="flex gap-2">
+                {filters[selectedCategory]
+                  ?.slice(0, Math.ceil(filters[selectedCategory].length / 2))
+                  .map((item, index) => (
+                    <span
+                      key={`${selectedCategory}-${item}-${index}`}
+                      onClick={() => handleFilterClick(item, selectedCategory)}
+                      className={`px-4 py-2 rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
+                        selectedCategory === "Categories" &&
+                        selectedFilters.Categories.includes(item)
+                          ? "!bg-darkBeige"
+                          : "bg-lightBeige"
+                      } ${
+                        selectedCategory === "Colors" &&
+                        selectedFilters.Colors.includes(item)
+                          ? "!bg-darkBeige"
+                          : "bg-lightBeige"
+                      } ${
+                        selectedCategory === "Sort by" &&
+                        selectedFilters["Sort by"] === item
+                          ? "!bg-darkBeige"
+                          : "bg-lightBeige"
+                      }`}
+                    >
+                      {item}
+                    </span>
+                  ))}
+              </div>
+
+              {/* Second Row of Filter Chips */}
+              <div className="flex gap-2">
+                {filters[selectedCategory]
+                  ?.slice(Math.ceil(filters[selectedCategory].length / 2))
+                  .map((item, index) => (
+                    <span
+                      key={`${selectedCategory}-${item}-${index}`}
+                      onClick={() => handleFilterClick(item, selectedCategory)}
+                      className={`px-4 py-2 rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
+                        selectedCategory === "Categories" &&
+                        selectedFilters.Categories.includes(item)
+                          ? "!bg-darkBeige"
+                          : "bg-lightBeige"
+                      } ${
+                        selectedCategory === "Colors" &&
+                        selectedFilters.Colors.includes(item)
+                          ? "!bg-darkBeige"
+                          : "bg-lightBeige"
+                      } ${
+                        selectedCategory === "Sort by" &&
+                        selectedFilters["Sort by"] === item
+                          ? "!bg-darkBeige"
+                          : "bg-lightBeige"
+                      }`}
+                    >
+                      {item}
+                    </span>
+                  ))}
+              </div>
             </div>
 
             {/* Apply Filters Button */}
-            <div className="flex justify-end mt-16">
+            <div className="sticky bottom-0 left-0 mt-16 flex justify-end">
               <button
                 className="px-5 py-2 bg-green rounded-lg hover:bg-darkGreen"
                 onClick={handleApplyFilters}

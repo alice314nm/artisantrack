@@ -26,13 +26,10 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
 
-
-
-
   useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;
-      setLoading(true)
+      setLoading(true);
       try {
         const db = getFirestore(app);
         const materialsCollection = collection(
@@ -98,8 +95,8 @@ export default function Page() {
         setMaterials(materialsWithCategoriesColorsAndImages);
       } catch (error) {
         console.error("Error fetching materials:", error);
-      } finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -126,12 +123,22 @@ export default function Page() {
     ...new Set(materials.flatMap((material) => material.categories)),
   ];
 
+  const colors = [
+    ...new Set(materials.flatMap((material) => material.colors)), // Unique list of colors
+  ];
+
   let filteredMaterials = [...materials];
   if (filters.Categories?.length > 0) {
     filteredMaterials = filteredMaterials.filter((material) =>
       material.categories.some((category) =>
         filters.Categories.includes(category)
       )
+    );
+  }
+
+  if (filters.Colors?.length > 0) {
+    filteredMaterials = filteredMaterials.filter((material) =>
+      material.colors.some((color) => filters.Colors.includes(color))
     );
   }
 
@@ -146,11 +153,6 @@ export default function Page() {
       case "Category":
         filteredMaterials.sort((a, b) =>
           a.categories.join(", ").localeCompare(b.categories.join(", "))
-        );
-        break;
-      case "Color":
-        filteredMaterials.sort((a, b) =>
-          a.colors.join(", ").localeCompare(b.colors.join(", "))
         );
         break;
       case "ID Ascending":

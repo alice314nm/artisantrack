@@ -26,13 +26,10 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
 
-
-
-
   useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;
-      setLoading(true)
+      setLoading(true);
       try {
         const db = getFirestore(app);
         const materialsCollection = collection(
@@ -98,8 +95,8 @@ export default function Page() {
         setMaterials(materialsWithCategoriesColorsAndImages);
       } catch (error) {
         console.error("Error fetching materials:", error);
-      } finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -199,7 +196,7 @@ export default function Page() {
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
           {filteredMaterials.map((material) => (
             <Link
-              href={`/pages/materialid`}
+              href={`/pages/materialid/${material.id}`}
               key={material.id}
               data-id="material-block"
             >

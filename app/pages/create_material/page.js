@@ -20,7 +20,7 @@ export default function Page(){
     const [loading, setLoading] = useState(true);
 
 
-    const [id, setId] = useState('');
+    const [materialId, setMaterialId] = useState('');
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
@@ -80,7 +80,7 @@ export default function Page(){
         const uploadedImages = await handleUpload() || []; 
     
         const materialObj = {
-            id,
+            materialId,
             name,
             categories,
             color,
@@ -186,9 +186,9 @@ export default function Page(){
                             <div className="flex flex-row justify-between">
                                 <label>Id <span className="text-red">*</span></label>
                                 
-                                <img  src={id === "" ? "/cross.png" : "/check.png"}  className={id === "" ? "h-4" : "h-6 text-green"} />                            
+                                <img  src={materialId === "" ? "/cross.png" : "/check.png"}  className={materialId === "" ? "h-4" : "h-6 text-green"} />                            
                             </div>
-                            <input required className={inputStyle} value={id} onChange={(e) => setId(e.target.value)} />
+                            <input required className={inputStyle} value={materialId} onChange={(e) => setMaterialId(e.target.value)} />
                         </div>
 
 

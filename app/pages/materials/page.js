@@ -156,10 +156,10 @@ export default function Page() {
         );
         break;
       case "ID Ascending":
-        filteredMaterials.sort((a, b) => Number(a.id) - Number(b.id));
+        filteredMaterials.sort((a, b) => Number(a.materialId) - Number(b.materialId));
         break;
       case "ID Descending":
-        filteredMaterials.sort((a, b) => Number(b.id) - Number(a.id));
+        filteredMaterials.sort((a, b) => Number(b.materialId) - Number(a.materialId));
         break;
       default:
         break;
@@ -201,12 +201,12 @@ export default function Page() {
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
           {filteredMaterials.map((material) => (
             <Link
-              href={`/pages/materialid/${material.id}`}
+              href={`/pages/materials/${material.id}`}
               key={material.id}
               data-id="material-block"
             >
               <BlockHolder
-                id={material.id}
+                id={material.materialId}
                 title={material.name}
                 category={material.categories.join(", ")}
                 total={material.total}

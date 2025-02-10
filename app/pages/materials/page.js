@@ -201,12 +201,12 @@ export default function Page() {
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
           {filteredMaterials.map((material) => (
             <Link
-              href={`/pages/materialid/${material.id}`}
-              key={material.id}
+              href={`/pages/materialid/${material.materialId}`}
+              key={material.materialId}
               data-id="material-block"
             >
               <BlockHolder
-                id={material.id}
+                id={material.materialId}
                 title={material.name}
                 category={material.categories.join(", ")}
                 total={material.total}

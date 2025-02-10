@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function NotLoggedWindow() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bottom-44">
-      <div className="w-96 p-6 border border-darkBeige shadow-lg rounded-lg flex flex-col text-left items-center gap-4">
+      <div className="w-96 p-6 flex flex-col text-left items-center gap-4">
         <p className="text-lg text-center">
           Welcome to <span className="font-bold">Artisan Track</span>!  
           Manage your products, orders, materials and finance.  

@@ -73,7 +73,7 @@ export async function dbAddMaterial(userId, materialObj) {
 
         // Add material to Firestore
         const newMaterialRef = await addDoc(materialsCollection, {
-            id: materialObj.id,
+            materialId: materialObj.materialId,
             name: materialObj.name,
             categories: categoryIds,
             color: colorId,

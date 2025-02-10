@@ -100,10 +100,18 @@ export default function Page(){
 
                         <div className="flex flex-col gap-2" >
                             <div className="flex flex-row justify-between">
-                                <label>Select preview image</label>
-                                <img src="/cross.png" className="h-4"/>
+                                <label>Select images</label>
+                                <img  src="/cross.png"  className="h-4" />                            
                             </div>
-                            <button className="bg-green rounded-lg w-40">select image</button>
+                            <div className="relative inline-block">
+                                <input 
+                                    type="file" 
+                                    className="absolute inset-0 w-40 opacity-0 cursor-pointer" 
+                                    multiple 
+                                 
+                                />
+                                <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
+                            </div>
                             <SmallBlockHolder
                             type="singlePictureDelete"
                             imageSource="/Sweater.jpg"
@@ -113,10 +121,18 @@ export default function Page(){
 
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
-                                <label>Select pattern image</label>
-                                <img src="/cross.png" className="h-4"/>
+                                <label>Select images</label>
+                                <img  src="/cross.png"  className="h-4" />                            
                             </div>
-                            <button className="bg-green rounded-lg w-40">select image</button>
+                            <div className="relative inline-block">
+                                <input 
+                                    type="file" 
+                                    className="absolute inset-0 w-40 opacity-0 cursor-pointer" 
+                                    multiple 
+                                 
+                                />
+                                <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
+                            </div>
                             <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
                                 <SmallBlockHolder
                                 type="multiplePictureDelete"

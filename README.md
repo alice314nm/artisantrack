@@ -1,7 +1,6 @@
-# 📌 Handicraft Seller Management App  
-
+# 📌 Artisan Track
 ## 🎯 **Project Overview**  
-The **Handicraft Seller Management App** is a web-based solution designed for self-employed artisans, particularly those specializing in hand-knit crafts. The application aims to **simplify business operations**, providing a comprehensive system to track **expenses, profits, client orders, inventory, and financial reports**.  
+The **Artisan Track** is a web-based solution designed for self-employed artisans, particularly those specializing in hand-knit crafts. The application aims to **simplify business operations**, providing a comprehensive system to track **expenses, profits, client orders, inventory, and financial reports**.  
 
 
 ## 💡 **Proposed Solution**  

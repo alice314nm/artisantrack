@@ -1,5 +1,6 @@
 "use client";
 
+import { app } from "@/app/_utils/firebase";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import ConfirmationWindow from "@/app/components/confirmation-window";
 import Header from "@/app/components/header";
@@ -7,15 +8,161 @@ import Menu from "@/app/components/menu";
 import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 
 export default function ProductPage() {
-
   const { user } = useUserAuth();
-
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [clientView, setClientView] = useState(false);
+  const [materials, setMaterials] = useState([]);
+  const [loading, setLoading] = useState(true);
   const params = useParams();
+  const id = params.materialid;
+
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      if (!user) return;
+      setLoading(true);
+      try {
+        const db = getFirestore(app);
+        const materialsCollection = collection(
+          db,
+          `users/${user.uid}/materials`
+        );
+
+        const materialsSnapshot = await getDocs(materialsCollection);
+        const materialsData = materialsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        console.log(materialsData)
+
+        const materialsWithCategoriesColorsAndImages = await Promise.all(
+          materialsData.map(async (material) => {
+            const categoryNames = await Promise.all(
+              material.categories.map(async (categoryId) => {
+                const categoryDocRef = doc(
+                  db,
+                  `users/${user.uid}/materialCategories/${categoryId}`
+                );
+                const categoryDoc = await getDoc(categoryDocRef);
+                return categoryDoc.exists()
+                  ? categoryDoc.data().name
+                  : "Unknown";
+              })
+            );
+
+            let colorNames = [];
+            if (Array.isArray(material.color)) {
+              colorNames = await Promise.all(
+                material.color.map(async (colorId) => {
+                  const colorDocRef = doc(
+                    db,
+                    `users/${user.uid}/colors/${colorId}`
+                  );
+                  const colorDoc = await getDoc(colorDocRef);
+                  return colorDoc.exists() ? colorDoc.data().name : "Unknown";
+                })
+              );
+            } else if (material.color) {
+              const colorDocRef = doc(
+                db,
+                `users/${user.uid}/colors/${material.color}`
+              );
+              const colorDoc = await getDoc(colorDocRef);
+              colorNames = colorDoc.exists()
+                ? [colorDoc.data().name]
+                : ["Unknown"];
+            }
+            
+            const imageUrls = material.images?.map((image) => image.url) || [];
+
+            const pricingCollection = collection(db, `users/${user.uid}/materials/${material.id}/costItems`);///${material.id}/costItems`);
+            const pricingSnapshot = await getDocs(pricingCollection);
+            if (pricingSnapshot.empty) {
+              console.log("No cost items found.", material.id);
+            }
+            const pricingDetails = await Promise.all(
+              pricingSnapshot.docs.map(async (pricingDoc) => {
+                const pricingData = pricingDoc.data();
+                return {
+                  id: pricingDoc.id,
+                  currency: pricingData.currency || "$",
+                  price: pricingData.price || 0,
+                  quantity: pricingData.quantity || 0,
+                  shopId: pricingData.shopId || "",
+                  shopName: pricingData.Name || "",
+                };
+              })
+            );
+  
+            return {
+              ...material,
+              categories: categoryNames,
+              colors: colorNames,
+              images: imageUrls,
+              pricing: pricingDetails.length > 0 ? pricingDetails : [], // Handle empty costItems
+            };
+          })
+        );
+
+        setMaterials(materialsWithCategoriesColorsAndImages);
+        console.log(materialsWithCategoriesColorsAndImages)
+      } catch (error) {
+        console.error("Error fetching materials:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMaterials();
+  }, [user]);
+
+  const deleteMaterial = async () => {
+    const db = getFirestore();
+    const materialRef = doc(db, "users", user.uid, "materials", materialId[0].id);
+  
+    try {
+      const storage = getStorage();
+      const imagesToDelete = materialId[0].images || [];
+  
+      await Promise.all(
+        imagesToDelete.map(async (image) => {
+          if (!image.url) {
+            console.log("Image URL is undefined or missing", image);
+            return; // Skip deletion if the URL is invalid
+          }
+          // Create a reference to the image in Firebase Storage
+          const imageRef = ref(storage, `images/${user.uid}/${image.url}`);  // Adjust the path as per your rules
+          console.log(`Deleting image at path: ${imageRef.fullPath}`);
+          await deleteObject(imageRef);
+          console.log(`Image ${image.url} deleted from storage.`);
+        })
+      );
+      
+  
+      await deleteDoc(materialRef);
+      console.log("Material deleted successfully");
+      //window.location.href = '/pages/materials'; 
+    } catch (error) {
+      console.error("Error deleting material or images: ", error);
+    }
+  };
+  
+  
+
+  const filteredMaterials = [...materials];
+  const materialId = filteredMaterials.filter((material) => material.id == id);
 
   const openConfirmation = () => {
     setConfirmWindowVisibility(true);
@@ -28,6 +175,14 @@ export default function ProductPage() {
   const changeView = () => {
     setClientView((prev) => !prev);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img src="/loading-gif.gif" className="h-10" />
+      </div>
+    );
+  }
 
   if (user) {
     if (!clientView) {
@@ -49,13 +204,20 @@ export default function ProductPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <img src="/wool.png" alt="Sweater" className="rounded-xl" />
+              <img
+                src={materialId[0].images[0]}
+                alt="Material Image"
+                className="rounded-xl"
+              />
 
               <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
+                {materialId[0].images.map((image, index) => (
+                  <SmallBlockHolder
+                    key={index}
+                    type="plainPicture"
+                    imageSource={image}
+                  />
+                ))}
               </div>
             </div>
 
@@ -67,38 +229,29 @@ export default function ProductPage() {
                 </button>
               </div>
 
-              <p className="text-xl">testNameMaterial | testId</p>
+              <p className="text-xl">
+                {materialId[0].name} | {materialId[0].materialId}
+              </p>
 
-              <p>Category: testCategory1, testCategory2</p>
+              <p>Category: {materialId[0].categories.join(", ")}</p>
+
+              <p>Color: {materialId[0].colors}</p>
 
               <div>
                 <p>Description</p>
-                <p>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley
-                </p>
-
-                {/* The code below should replace to show the description of product */}
-                {/* <p>
-                  {filteredProducts.length > 0
-                  ? filteredProducts[0].description
-                  : "Product not found"}
-                </p> */}
+                <p>{materialId[0].description || "Material not found"}</p>
               </div>
 
               <p>Cost</p>
               <ul className="list-decimal pl-4">
-                <li>Artic, 1.4$, 400g = 100$</li>
-                <li>Artic, 1.4$, 400g = 100$</li>
+                {materialId[0].pricing.map((item, index) => (
+                  <li key={index}>{item.shopName} {item.price}{item.currency} {item.quantity}</li>
+                ))}
+                
               </ul>
 
               <p>
-                Total cost: 200$
-                {/* {filteredProducts.length > 0
-                  ? filteredProducts[0].total
-                  : "Product not found"}$ */}
+                Total cost: {materialId[0].total}
               </p>
               <button
                 className="hover:arrow bg-red text-white rounded-xl w-32"
@@ -114,6 +267,7 @@ export default function ProductPage() {
           <ConfirmationWindow
             windowVisibility={confirmWindowVisibility}
             onClose={closeConfirmation}
+            onDelete={deleteMaterial}
           />
 
           <Menu

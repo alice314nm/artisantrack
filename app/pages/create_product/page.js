@@ -3,6 +3,7 @@
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
+import NotLoggedWindow from "@/app/components/not-logged-window";
 import SearchBar from "@/app/components/search-bar";
 import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
@@ -99,10 +100,18 @@ export default function Page(){
 
                         <div className="flex flex-col gap-2" >
                             <div className="flex flex-row justify-between">
-                                <label>Select preview image</label>
-                                <img src="/cross.png" className="h-4"/>
+                                <label>Select images</label>
+                                <img  src="/cross.png"  className="h-4" />                            
                             </div>
-                            <button className="bg-green rounded-lg w-40">select image</button>
+                            <div className="relative inline-block">
+                                <input 
+                                    type="file" 
+                                    className="absolute inset-0 w-40 opacity-0 cursor-pointer" 
+                                    multiple 
+                                 
+                                />
+                                <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
+                            </div>
                             <SmallBlockHolder
                             type="singlePictureDelete"
                             imageSource="/Sweater.jpg"
@@ -112,10 +121,18 @@ export default function Page(){
 
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
-                                <label>Select pattern image</label>
-                                <img src="/cross.png" className="h-4"/>
+                                <label>Select images</label>
+                                <img  src="/cross.png"  className="h-4" />                            
                             </div>
-                            <button className="bg-green rounded-lg w-40">select image</button>
+                            <div className="relative inline-block">
+                                <input 
+                                    type="file" 
+                                    className="absolute inset-0 w-40 opacity-0 cursor-pointer" 
+                                    multiple 
+                                 
+                                />
+                                <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
+                            </div>
                             <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
                                 <SmallBlockHolder
                                 type="multiplePictureDelete"
@@ -155,18 +172,7 @@ export default function Page(){
         return (
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Artisan Track" />
-    
-            <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
-              <p>
-                Create account to start your <br />
-                artisan track
-              </p>
-              <Link href="/pages/signin">
-                <button className="font-bold bg-green py-2 px-4 rounded-lg">
-                  Sign in
-                </button>
-              </Link>
-            </div>
+            <NotLoggedWindow/>            
           </div>
         );
     }

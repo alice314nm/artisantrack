@@ -3,6 +3,7 @@
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
+import NotLoggedWindow from "@/app/components/not-logged-window";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -114,18 +115,7 @@ export default function Page(){
         return (
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Artisan Track" />
-    
-            <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
-              <p>
-                Create account to start your <br />
-                artisan track
-              </p>
-              <Link href="/pages/signin">
-                <button className="font-bold bg-green py-2 px-4 rounded-lg">
-                  Sign in
-                </button>
-              </Link>
-            </div>
+            <NotLoggedWindow/>
           </div>
         );
     }

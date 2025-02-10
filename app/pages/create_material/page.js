@@ -5,17 +5,20 @@ import { useUserAuth } from "@/app/_utils/auth-context";
 import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
+import NotLoggedWindow from "@/app/components/not-logged-window";
 import SearchBar from "@/app/components/search-bar";
 import SmallBlockHolder from "@/app/components/small-block-holder";
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 
 export default function Page(){
     const { user } = useUserAuth();
     const inputStyle = 'h-9 rounded-lg border p-2 w-full';
+    const [loading, setLoading] = useState(true);
+
 
     const [id, setId] = useState('');
     const [name, setName] = useState('');
@@ -34,7 +37,13 @@ export default function Page(){
     
     const [costItems, setCostItems] = useState([]); // New state to hold the cost items
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+        setLoading(false);
+        }, 500); 
 
+        return () => clearTimeout(timeout);
+    }, []);
 
     const handleNavigateToListPage = () => {
         window.location.href = '/pages/materials';
@@ -65,10 +74,10 @@ export default function Page(){
 
     const handleCreateMaterial = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
     
-        if (!user) return;
-    
-        const uploadedImages = await handleUpload() || []; // Ensure it's always an array
+        const uploadedImages = await handleUpload() || []; 
     
         const materialObj = {
             id,
@@ -78,13 +87,14 @@ export default function Page(){
             costItems: costItems || [],
             total,
             description: desc,
-            images: uploadedImages // This is now guaranteed to be an array
+            images: uploadedImages 
         };
     
         try {
             await dbAddMaterial(user.uid, materialObj);
             console.log("Material added successfully");
             window.location.href = '/pages/materials';
+            setLoading(false);
 
         } catch (error) {
             console.error("Error adding material:", error);
@@ -157,7 +167,13 @@ export default function Page(){
         return uploadedImages;
     };
     
-    
+    if (loading) {
+        return (
+          <div className="flex items-center justify-center h-screen">
+            <img src="/loading-gif.gif" className="h-10"/>      
+          </div>
+        );
+    }
 
 
     if (user) {
@@ -342,18 +358,7 @@ export default function Page(){
         return (
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Artisan Track" />
-    
-            <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
-              <p>
-                Create account to start your <br />
-                artisan track
-              </p>
-              <Link href="/pages/signin">
-                <button className="font-bold bg-green py-2 px-4 rounded-lg">
-                  Sign in
-                </button>
-              </Link>
-            </div>
+            <NotLoggedWindow/>            
           </div>
         );
     }

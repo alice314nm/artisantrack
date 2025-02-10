@@ -6,13 +6,25 @@ import SearchBar from "./components/search-bar";
 import BlockHolder from "./components/block-holder";
 import Link from "next/link";
 import FilterWindow from "./components/filter-window";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUserAuth } from "./_utils/auth-context";
+import NotLoggedWindow from "./components/not-logged-window";
 
 export default function Home() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUserAuth();
+
+  const productCategories = ["Scarf", "Top", "Vest", "Sweater"];
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 500); 
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_product";
@@ -25,6 +37,14 @@ export default function Home() {
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img src="/loading-gif.gif" className="h-10"/>      
+      </div>
+    );
+  }
 
   if (user) {
     return (
@@ -62,6 +82,7 @@ export default function Home() {
         <FilterWindow
           onClose={closeConfirmation}
           windowVisibility={confirmWindowVisibility}
+          categories={productCategories}
         />
 
         <Menu
@@ -77,18 +98,7 @@ export default function Home() {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Products" />
-
-        <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
-          <p>
-            Create account to start your <br />
-            artisan track
-          </p>
-          <Link href="/pages/signin">
-            <button className="font-bold bg-green py-2 px-4 rounded-lg">
-              Sign in
-            </button>
-          </Link>
-        </div>
+        <NotLoggedWindow/>
       </div>
     );
   }

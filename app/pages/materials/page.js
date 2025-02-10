@@ -123,10 +123,6 @@ export default function Page() {
     ...new Set(materials.flatMap((material) => material.categories)),
   ];
 
-  const colors = [
-    ...new Set(materials.flatMap((material) => material.colors)), // Unique list of colors
-  ];
-
   let filteredMaterials = [...materials];
   if (filters.Categories?.length > 0) {
     filteredMaterials = filteredMaterials.filter((material) =>
@@ -175,7 +171,11 @@ export default function Page() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <img src="/loading-gif.gif" className="h-10" />
+        <img
+          src="/loading-gif.gif"
+          className="h-10"
+          data-id="loading-spinner"
+        />
       </div>
     );
   }
@@ -186,8 +186,13 @@ export default function Page() {
         <Header title="Materials" showUserName={true} />
 
         <div className="flex flex-row justify-between mx-4">
-          <p className="font-bold">Total: {filteredMaterials.length}</p>
-          <div className="bg-green rounded-xl px-4 font-bold cursor-pointer">
+          <p className="font-bold" data-id="total-count">
+            Total: {filteredMaterials.length}
+          </p>
+          <div
+            className="bg-green rounded-xl px-4 font-bold cursor-pointer"
+            data-id="create-document-button"
+          >
             Create document
           </div>
         </div>
@@ -196,6 +201,7 @@ export default function Page() {
           onOpenFilters={toggleConfirmation}
           onSearch={setSearchTerm}
           filterOn={true}
+          data-id="search-bar"
         />
 
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
@@ -231,6 +237,7 @@ export default function Page() {
           firstTitle="Copy for client"
           secondTitle="Create material +"
           onSecondFunction={handleNavigateToCreatePage}
+          data-id="menu-button"
         />
       </div>
     );

@@ -117,8 +117,10 @@ export default function FilterWindow({
                 key={category}
                 data-id={
                   category === "Categories"
-                    ? "categories-button"
-                    : "sort-by-button"
+                    ? "categories"
+                    : category === "Sort by"
+                    ? "sort-by"
+                    : "color-filter"
                 }
                 onClick={() => setSelectedCategory(category)}
                 className={`py-4 px-2 text-left text-dark border-b border-b-darkBeige hover:bg-beige ${
@@ -158,6 +160,13 @@ export default function FilterWindow({
                           ? "!bg-darkBeige"
                           : "bg-lightBeige"
                       }`}
+                      data-id={
+                        selectedCategory === "Categories"
+                          ? "category-filter"
+                          : selectedCategory === "Colors"
+                          ? "color-filter"
+                          : "sort-by"
+                      }
                     >
                       {item}
                     </span>
@@ -188,6 +197,13 @@ export default function FilterWindow({
                           ? "!bg-darkBeige"
                           : "bg-lightBeige"
                       }`}
+                      data-id={
+                        selectedCategory === "Categories"
+                          ? "category-filter"
+                          : selectedCategory === "Colors"
+                          ? "color-filter"
+                          : "sort-by"
+                      }
                     >
                       {item}
                     </span>
@@ -200,6 +216,7 @@ export default function FilterWindow({
               <button
                 className="px-5 py-2 bg-green rounded-lg hover:bg-darkGreen"
                 onClick={handleApplyFilters}
+                data-id="apply-filters"
               >
                 Apply Filters
               </button>

@@ -1,6 +1,5 @@
 "use client";
 
-import { app, db } from "@/app/_utils/firebase";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import ConfirmationWindow from "@/app/components/confirmation-window";
 import Header from "@/app/components/header";
@@ -9,16 +8,9 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-} from "firebase/firestore";
-import { dbDeleteMaterialById } from "@/app/_services/material-service";
+import { dbDeleteMaterialById, fetchMaterials } from "@/app/_services/material-service";
 
-export default function ProductPage() {
+export default function MaterialPage() {
   const { user } = useUserAuth();
   const params = useParams();
   const id = params.materialid;
@@ -32,122 +24,33 @@ export default function ProductPage() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const fetchMaterials = async () => {
-      if (!user) return;
-      setLoading(true);
-      try {
-        const db = getFirestore(app);
-        const materialsCollection = collection(
-          db,
-          `users/${user.uid}/materials`
-        );
-
-        const materialsSnapshot = await getDocs(materialsCollection);
-        const materialsData = materialsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        console.log(materialsData)
-
-        const materialsWithCategoriesColorsAndImages = await Promise.all(
-          materialsData.map(async (material) => {
-            const categoryNames = await Promise.all(
-              material.categories.map(async (categoryId) => {
-                const categoryDocRef = doc(
-                  db,
-                  `users/${user.uid}/materialCategories/${categoryId}`
-                );
-                const categoryDoc = await getDoc(categoryDocRef);
-                return categoryDoc.exists()
-                  ? categoryDoc.data().name
-                  : "Unknown";
-              })
-            );
-
-            let colorNames = [];
-            if (Array.isArray(material.color)) {
-              colorNames = await Promise.all(
-                material.color.map(async (colorId) => {
-                  const colorDocRef = doc(
-                    db,
-                    `users/${user.uid}/colors/${colorId}`
-                  );
-                  const colorDoc = await getDoc(colorDocRef);
-                  return colorDoc.exists() ? colorDoc.data().name : "Unknown";
-                })
-              );
-            } else if (material.color) {
-              const colorDocRef = doc(
-                db,
-                `users/${user.uid}/colors/${material.color}`
-              );
-              const colorDoc = await getDoc(colorDocRef);
-              colorNames = colorDoc.exists()
-                ? [colorDoc.data().name]
-                : ["Unknown"];
-            }
-            
-            const imageUrls = material.images?.map((image) => image.url) || [];
-
-            const pricingCollection = collection(db, `users/${user.uid}/materials/${material.id}/costItems`);///${material.id}/costItems`);
-            const pricingSnapshot = await getDocs(pricingCollection);
-            if (pricingSnapshot.empty) {
-              console.log("No cost items found.", material.id);
-            }
-            const pricingDetails = await Promise.all(
-              pricingSnapshot.docs.map(async (pricingDoc) => {
-                const pricingData = pricingDoc.data();
-                return {
-                  id: pricingDoc.id,
-                  currency: pricingData.currency || "$",
-                  price: pricingData.price || 0,
-                  quantity: pricingData.quantity || 0,
-                  shopId: pricingData.shopId || "",
-                  shopName: pricingData.shopName || "",
-                };
-              })
-            );
-  
-            return {
-              ...material,
-              categories: categoryNames,
-              colors: colorNames,
-              images: imageUrls,
-              pricing: pricingDetails.length > 0 ? pricingDetails : [], // Handle empty costItems
-            };
-          })
-        );
-
-        setMaterials(materialsWithCategoriesColorsAndImages);
-        console.log(materialsWithCategoriesColorsAndImages)
-      } catch (error) {
-        console.error("Error fetching materials:", error);
-      } finally {
+    const loadMaterials = async () => {
+        if (!user) return;
+        setLoading(true);
+        const materialsData = await fetchMaterials(user.uid);
+        setMaterials(materialsData);
         setLoading(false);
-      }
     };
 
-    fetchMaterials();
+    loadMaterials();
   }, [user]);
   
   
   const filteredMaterials = [...materials];
   const materialId = filteredMaterials.filter((material) => material.id == id);
   const selectedMaterial = materialId[0];
+  console.log(selectedMaterial)
   const [mainImage, setMainImage] = useState(null);
 
   useEffect(() => {
-    if (!mainImage && selectedMaterial?.images?.length > 0) {
+    if (!mainImage && selectedMaterial && selectedMaterial.images && selectedMaterial.images.length > 0) {
       setMainImage(selectedMaterial.images[0]);
     }
-  }, [selectedMaterial, mainImage]);
+  }, [selectedMaterial]);
 
   const handleImageChange = (image) => {
     if (mainImage === image || transitioning) return;
-
     setTransitioning(true);
-
     setTimeout(() => {
       setMainImage(image);
       setTransitioning(false)
@@ -230,10 +133,12 @@ export default function ProductPage() {
 
             <div className="flex flex-col gap-2">
               <div className="relative bg-green rounded-2xl w-32">
-                <button className="py-1 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0">
-                  <p>Edit</p>
-                  <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
-                </button>
+                <Link href={`./${id}/edit`}>
+                  <button className="py-1 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0">
+                    <p>Edit</p>
+                    <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
+                  </button>
+                </Link>
               </div>
 
               <p className="text-xl">

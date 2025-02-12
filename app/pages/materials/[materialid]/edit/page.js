@@ -1,30 +1,59 @@
 'use client'
 
-import { dbAddMaterial } from "@/app/_services/material-service";
+import { dbAddMaterial, fetchMaterials, updateMaterial } from "@/app/_services/material-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
-import SearchBar from "@/app/components/search-bar";
 import SmallBlockHolder from "@/app/components/small-block-holder";
-import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
-import Link from "next/link";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 
 
 export default function Page(){
+    
     const { user } = useUserAuth();
-    const inputStyle = 'h-9 rounded-lg border p-2 w-full';
+    const params = useParams();
+    const id = params.materialid;
+
+    const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [isEditing, setIsEditing] = useState(false);
 
-    const [materialId, setMaterialId] = useState('');
+    useEffect(() => {
+    const loadMaterials = async () => {
+        if (!user) return;
+        setLoading(true);
+        const materialsData = await fetchMaterials(user.uid);
+        setMaterials(materialsData);
+        setLoading(false);
+    };
+
+    loadMaterials();
+    }, [user]);
+    
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+        setLoading(false);
+        }, 500); 
+
+        return () => clearTimeout(timeout);
+    }, []);
+    
+    const filteredMaterials = [...materials];
+    const materialId = filteredMaterials.filter((material) => material.id == id);
+    const selectedMaterial = materialId[0];
+
+    const inputStyle = 'h-9 rounded-lg border p-2 w-full';
+
+    const [userMaterialId, setUserMaterialId] = useState('')
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
-
     const [color, setColor] = useState('');
     const [shop, setShop] = useState('');
     const [price, setPrice] = useState('');
@@ -35,19 +64,26 @@ export default function Page(){
     const [images, setImages] = useState([]);
     const [imageUrls, setImageUrls] = useState([]); 
     
-    const [costItems, setCostItems] = useState([]); // New state to hold the cost items
-
+    const [costItems, setCostItems] = useState([]); 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-        setLoading(false);
-        }, 500); 
+        if (!selectedMaterial) return;
 
-        return () => clearTimeout(timeout);
-    }, []);
-
-    const handleNavigateToListPage = () => {
-        window.location.href = '/pages/materials';
-    };
+        setUserMaterialId(selectedMaterial.materialId);
+        setName(selectedMaterial.name);
+        setCategory('');
+        setCategories(selectedMaterial.categories);
+        setColor(selectedMaterial.colors);
+        setShop('');
+        setPrice('');
+        setCurrency([]);
+        setQuantity('');
+        setTotal(selectedMaterial.total);
+        setDesc(selectedMaterial.description);
+        setImages(selectedMaterial.images);
+        setImageUrls([]);
+        setCostItems(selectedMaterial.pricing);
+    }, [selectedMaterial]);
+    
 
     const handleAddCategory = () => {
         if (category.trim() && !categories.includes(category)) {
@@ -62,87 +98,40 @@ export default function Page(){
 
     const handleRemoveCost = (cost) => {
         const updatedCostItems = costItems.filter(item => item !== cost);
-
-        // Recalculate the total based on the updated costItems array
         const newTotal = updatedCostItems.reduce((acc, item) => acc + item.price, 0);
-
-        // Update the state with the new total and cost items
         setCostItems(updatedCostItems);
         setTotal(newTotal.toFixed(2));
 
     };
 
-    const handleCreateMaterial = async (e) => {
+    const handleUpdateMaterial = async (e) => {
         e.preventDefault();
         setLoading(true);
-
-    
         const uploadedImages = await handleUpload() || []; 
-    
-        const materialObj = {
-            materialId,
-            name,
-            categories,
-            color,
-            costItems: costItems || [],
-            total,
-            description: desc,
-            images: uploadedImages 
-        };
-    
         try {
-            await dbAddMaterial(user.uid, materialObj);
-            console.log("Material added successfully");
-            window.location.href = '/pages/materials';
-            setLoading(false);
-
-        } catch (error) {
-            console.error("Error adding material:", error);
-        }
-    };
-    
-    
-
-    const handleAddCostItem = () => {
-        if (shop && price && quantity && currency) {
-            const newItem = { 
-                shop, 
-                price: parseFloat(price), 
-                currency, 
-                quantity: parseInt(quantity) 
+            const updatedMaterialData = {
+                userMaterialId,
+                name,
+                categories,
+                color,
+                total,
+                description: desc,
+                images,
+                costItems
             };
-            
-            // Add the new cost item to the costItems array
-            const updatedCostItems = [...costItems, newItem];
-            setCostItems(updatedCostItems);
-    
-            // Recalculate the total
-            const newTotal = updatedCostItems.reduce((acc, item) => acc + item.price, 0);
-            setTotal(newTotal.toFixed(2));
-    
-            // Reset the form fields
-            setShop('');
-            setPrice('');
-            setCurrency('');
-            setQuantity('');
+
+            await updateMaterial(user.uid, id, updatedMaterialData);
+
+            console.log("Material updated successfully!");
+            setLoading(false);
+        } catch (error) {
+            console.error("Error updating material:", error);
+            setLoading(false);
         }
     };
-
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        setImages((prev) => [...prev, ...files]);
-    };
-
-    const removeSelectedImage = (index) => {
-        const updatedImages = [...images];
-        updatedImages.splice(index, 1);
-        setImages(updatedImages);
-    };
-
-
+    
     const handleUpload = async () => {
-        if (!images.length) return []; // Ensure it returns an empty array instead of undefined
+        if (!images.length) return [];
     
         const userId = user.uid;
         const uploadedImages = [];
@@ -166,6 +155,41 @@ export default function Page(){
     
         return uploadedImages;
     };
+
+    const handleAddCostItem = () => {
+        if (shop && price && quantity && currency) {
+            const newItem = { 
+                shop, 
+                price: parseFloat(price), 
+                currency, 
+                quantity: parseInt(quantity) 
+            };
+            
+            const updatedCostItems = [...costItems, newItem];
+            setCostItems(updatedCostItems);
+    
+            const newTotal = updatedCostItems.reduce((acc, item) => acc + item.price, 0);
+            setTotal(newTotal.toFixed(2));
+    
+            setShop('');
+            setPrice('');
+            setCurrency('');
+            setQuantity('');
+        }
+    };
+
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        setImages((prev) => [...prev, ...files]);
+    };
+
+    const removeSelectedImage = (index) => {
+        const updatedImages = [...images];
+        updatedImages.splice(index, 1);
+        setImages(updatedImages);
+    };
+
     
     if (loading) {
         return (
@@ -180,15 +204,15 @@ export default function Page(){
         return (
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Materials" showUserName={true}/>
-                <form className="mx-4 flex flex-col gap-4" onSubmit={handleCreateMaterial}> 
-                        <p className="font-bold italic text-lg">Create a material</p> 
+                <form className="mx-4 flex flex-col gap-4" onSubmit={handleUpdateMaterial}> 
+                        <p className="font-bold italic text-lg">Edit the material</p> 
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
                                 <label>Id <span className="text-red">*</span></label>
                                 
-                                <img  src={materialId === "" ? "/cross.png" : "/check.png"}  className={materialId === "" ? "h-4" : "h-6 text-green"} />                            
+                                <img  src={userMaterialId === "" ? "/cross.png" : "/check.png"}  className={userMaterialId === "" ? "h-4" : "h-6 text-green"} />                            
                             </div>
-                            <input required className={inputStyle} value={materialId} onChange={(e) => setMaterialId(e.target.value)} />
+                            <input required className={inputStyle} value={userMaterialId} onChange={(e) => setUserMaterialId(e.target.value)} />
                         </div>
 
 
@@ -330,16 +354,20 @@ export default function Page(){
                             {/* Preview Chosen Images */}
                             {images.length > 0 && (
                                 <div className="flex flex-row gap-2 overflow-x-auto">
-                                {images.map((image, index) => (
-                                    <div key={index}>
-                                        <SmallBlockHolder
-                                        type="multiplePictureDelete"
-                                        id={index+1}
-                                        imageSource={URL.createObjectURL(image)}
-                                        onButtonFunction={() => removeSelectedImage(index)}
-                                        />
-                                    </div>
-                                ))}
+                                {images.map((image, index) => {
+                                    const imageUrl = typeof image === 'string' ? image : URL.createObjectURL(image); // Use existing URL if available
+
+                                    return (
+                                        <div key={index}>
+                                            <SmallBlockHolder
+                                                type="multiplePictureDelete"
+                                                id={index + 1}
+                                                imageSource={imageUrl}
+                                                onButtonFunction={() => removeSelectedImage(index)}
+                                            />
+                                        </div>
+                                    );
+                                })}
                                 </div>
                             )}                           
                         </div>
@@ -347,8 +375,9 @@ export default function Page(){
                         <Menu
                         type="CreateMenu"
                         firstTitle="Cancel"
-                        secondTitle="Create"
-                        onFirstFunction={handleNavigateToListPage}
+                        secondTitle="Save"
+                        onFirstFunction={()=>window.location.href = `/pages/materials/${id}`}
+                                             
                         />       
                 </form>
           </div>

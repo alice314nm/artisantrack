@@ -1,4 +1,14 @@
-import { addDoc, collection, doc, getDocs, query, where, setDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { 
+    addDoc, 
+    collection, 
+    doc, 
+    getDocs, 
+    query, 
+    where, 
+    setDoc, 
+    getDoc, 
+    deleteDoc, 
+    updateDoc} from "firebase/firestore";
 import { db, storage } from "../_utils/firebase";
 import { deleteObject, ref } from "firebase/storage";
 
@@ -141,4 +151,113 @@ export async function dbDeleteMaterialById(userId, materialId) {
     }
 }
 
+export async function fetchMaterials(userId) {
+    if (!userId) return [];
 
+    const materialsCollection = collection(db, `users/${userId}/materials`);
+
+    try {
+        const materialsSnapshot = await getDocs(materialsCollection);
+        const materialsData = materialsSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+
+        const materialsWithDetails = await Promise.all(
+            materialsData.map(async (material) => {
+                // Fetch category names
+                const categoryNames = await Promise.all(
+                    material.categories.map(async (categoryId) => {
+                        const categoryDocRef = doc(db, `users/${userId}/materialCategories/${categoryId}`);
+                        const categoryDoc = await getDoc(categoryDocRef);
+                        return categoryDoc.exists() ? categoryDoc.data().name : "Unknown";
+                    })
+                );
+
+                // Fetch color names
+                let colorNames = [];
+                if (Array.isArray(material.color)) {
+                    colorNames = await Promise.all(
+                        material.color.map(async (colorId) => {
+                            const colorDocRef = doc(db, `users/${userId}/colors/${colorId}`);
+                            const colorDoc = await getDoc(colorDocRef);
+                            return colorDoc.exists() ? colorDoc.data().name : "Unknown";
+                        })
+                    );
+                } else if (material.color) {
+                    const colorDocRef = doc(db, `users/${userId}/colors/${material.color}`);
+                    const colorDoc = await getDoc(colorDocRef);
+                    colorNames = colorDoc.exists() ? [colorDoc.data().name] : ["Unknown"];
+                }
+
+                // Extract image URLs
+                const imageUrls = material.images?.map((image) => image.url) || [];
+
+                // Fetch pricing details
+                const pricingCollection = collection(db, `users/${userId}/materials/${material.id}/costItems`);
+                const pricingSnapshot = await getDocs(pricingCollection);
+
+                const pricingDetails = pricingSnapshot.docs.map((pricingDoc) => ({
+                    id: pricingDoc.id,
+                    currency: pricingDoc.data().currency || "$",
+                    price: pricingDoc.data().price || 0,
+                    quantity: pricingDoc.data().quantity || 0,
+                    shopId: pricingDoc.data().shopId || "",
+                    shopName: pricingDoc.data().shopName || "",
+                }));
+
+                return {
+                    ...material,
+                    categories: categoryNames,
+                    colors: colorNames,
+                    images: imageUrls,
+                    pricing: pricingDetails.length > 0 ? pricingDetails : [],
+                };
+            })
+        );
+
+        return materialsWithDetails;
+    } catch (error) {
+        console.error("Error fetching materials:", error);
+        return [];
+    }
+}
+
+export const updateMaterial = async (userId, materialId, updatedMaterialData) => {
+    try {
+        const materialRef = doc(db, "users", userId, "materials", materialId);
+
+        const { costItems, ...materialDataWithoutCostItems } = updatedMaterialData;
+        await updateDoc(materialRef, materialDataWithoutCostItems);
+        console.log("Material document updated successfully!");
+
+        if (costItems) {
+            const costItemsCollectionRef = collection(materialRef, "costItems");
+
+            // Get existing cost items
+            const existingDocs = await getDocs(costItemsCollectionRef);
+
+            // Delete all existing cost items
+            const deletePromises = existingDocs.docs.map(docSnap => deleteDoc(docSnap.ref));
+            await Promise.all(deletePromises);
+
+            // Add new cost items
+            const addPromises = costItems.map(async (costItem) => {
+                const newDocRef = doc(costItemsCollectionRef);
+                await addDoc(costItemsCollectionRef, {
+                    shopId: await getOrAddShop(userId, costItem.shop),
+                    shopName: costItem.shop,
+                    price: costItem.price,
+                    currency: costItem.currency,
+                    quantity: costItem.quantity
+                });
+            });
+
+            await Promise.all(addPromises);
+            console.log("CostItems subcollection updated successfully!");
+        }
+
+    } catch (error) {
+        console.error("Error updating material:", error);
+    }
+};

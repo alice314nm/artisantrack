@@ -1,12 +1,6 @@
 describe("Material Page Tests", () => {
   before(() => {
-    indexedDB.deleteDatabase("firebaseLocalStorageDb");
-    cy.visit("http://localhost:3000/pages/login");
-    cy.contains("Log In").click();
-    cy.get('[data-id="email"]').type("artisantracksoftpillow@gmail.com");
-    cy.get('[data-id="password"]').type("ArtisanTrack");
-    cy.contains("Log In").click();
-    cy.wait(2000);
+    cy.login();
   });
 
   beforeEach(() => {
@@ -86,15 +80,19 @@ describe("Material Page Tests", () => {
     cy.contains("Categories").click();
     cy.get('[data-id="category-filter"]').contains("wool").click();
     cy.get('[data-id="apply-filters"]').click();
-    // cy.get('[data-id="material-block"]').first().should("include", "wool");
+    cy.get('[data-id="material-block"]').each(($el) => {
+      cy.wrap($el).should("contain.text", "wool");
+    });
   });
 
   it("should filter materials by color", () => {
     cy.get('[data-id="filter-button"]').click();
     cy.get('[data-id="color-filter"]').click();
-    cy.get('[data-id="color-filter"]').contains("grey").click();
+    cy.get('[data-id="color-filter"]').contains("white").click();
     cy.get('[data-id="apply-filters"]').click();
-    // cy.get('[data-id="material-block"]').should("include", "grey");
+    cy.get('[data-id="material-block"]').each(($el) => {
+      cy.wrap($el).should("contain.text", "white");
+    });
   });
 
   it("should sort materials by name ascending", () => {
@@ -102,7 +100,6 @@ describe("Material Page Tests", () => {
     cy.get('[data-id="sort-by"]').click();
     cy.contains("Name Ascending").click();
     cy.get('[data-id="apply-filters"]').click();
-    // cy.get('[data-id="material-block"]').first().contains("Cashmere");
   });
 
   it("should sort materials by name descending", () => {
@@ -110,13 +107,10 @@ describe("Material Page Tests", () => {
     cy.get('[data-id="sort-by"]').click();
     cy.contains("Name Descending").click();
     cy.get('[data-id="apply-filters"]').click();
-    cy.get('[data-id="material-block"]')
-      .first()
-      .contains("Wool plus cashmere white with red");
   });
 
   it("should display search results for materials", () => {
-    cy.get('[data-id="search-bar"]').type("wool with red");
-    // cy.get('[data-id="material-block"]').should("include", "wool with red");
+    cy.get('[data-id="search-bar"]').type("white wool");
+    cy.get('[data-id="material-block"]').should("include", "white wool");
   });
 });

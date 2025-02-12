@@ -13,7 +13,9 @@ import { useState } from "react";
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({ Categories: [], "Sort by": "" });
   const { user } = useUserAuth();
+  const [loading, setLoading] = useState(true);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/pages/create_order";
@@ -26,6 +28,57 @@ export default function Page() {
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
   };
+
+  const handleApplyFilters = (selectedFilters) => {
+    setFilters(selectedFilters);
+  };
+
+  // const categories = [
+  //   ...new Set(orders.flatMap((order) => order.categories)),
+  // ];
+
+  // let filteredOrders = [...orders];
+  // if (filters.Categories?.length > 0) {
+  //   filteredOrders = filteredOrders.filter((order) =>
+  //     order.categories.some((category) =>
+  //       filters.Categories.includes(category)
+  //     )
+  //   );
+  // }
+
+  // if (filters["Sort by"]) {
+  //   switch (filters["Sort by"]) {
+  //     case "Name Ascending":
+  //       filteredOrders.sort((a, b) => a.name.localeCompare(b.name));
+  //       break;
+  //     case "Name Descending":
+  //       filteredOrders.sort((a, b) => b.name.localeCompare(a.name));
+  //       break;
+  //     case "Category":
+  //       filteredOrders.sort((a, b) =>
+  //         a.categories.join(", ").localeCompare(b.categories.join(", "))
+  //       );
+  //       break;
+  //     case "ID Ascending":
+  //       filteredOrders.sort(
+  //         (a, b) => Number(a.productId) - Number(b.productId)
+  //       );
+  //       break;
+  //     case "ID Descending":
+  //       filteredOrders.sort(
+  //         (a, b) => Number(b.productId) - Number(a.productId)
+  //       );
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // }
+
+  // if (searchTerm) {
+  //   filterOrders = filterOrders.filter((order) =>
+  //     order.name.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+  // }
 
   if (user) {
     return (
@@ -47,7 +100,7 @@ export default function Page() {
         />
 
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-           <Link href='/pages/orderid' key={123}>
+          <Link href='/pages/orderid' key={123}>
             <BlockHolder
               key={123}
               id={123}
@@ -64,6 +117,9 @@ export default function Page() {
         <FilterWindow
           onClose={closeConfirmation}
           windowVisibility={confirmWindowVisibility}
+          onApplyFilters={handleApplyFilters}
+          // categories={categories}
+          pageType={"order"}
         />
 
         <Menu
@@ -78,7 +134,7 @@ export default function Page() {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
-        <NotLoggedWindow/>        
+        <NotLoggedWindow />
       </div>
     );
   }

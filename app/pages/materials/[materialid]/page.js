@@ -31,7 +31,7 @@ export default function MaterialPage() {
         setMaterials(materialsData);
         setLoading(false);
     };
-
+    
     loadMaterials();
   }, [user]);
   
@@ -39,20 +39,20 @@ export default function MaterialPage() {
   const filteredMaterials = [...materials];
   const materialId = filteredMaterials.filter((material) => material.id == id);
   const selectedMaterial = materialId[0];
-  console.log(selectedMaterial)
   const [mainImage, setMainImage] = useState(null);
 
   useEffect(() => {
-    if (!mainImage && selectedMaterial && selectedMaterial.images && selectedMaterial.images.length > 0) {
-      setMainImage(selectedMaterial.images[0]);
+    if (selectedMaterial && selectedMaterial.images && selectedMaterial.images.length > 0) {
+      setMainImage(selectedMaterial.images[0].url);
     }
   }, [selectedMaterial]);
 
+
   const handleImageChange = (image) => {
-    if (mainImage === image || transitioning) return;
+    if (mainImage === image.url || transitioning) return;
     setTransitioning(true);
     setTimeout(() => {
-      setMainImage(image);
+      setMainImage(image.url);
       setTransitioning(false)
     }, 300); 
   };
@@ -116,20 +116,20 @@ export default function MaterialPage() {
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
-              />
+              /> 
 
               <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
                 {selectedMaterial?.images?.map((image, index) => (
                   <SmallBlockHolder
                     key={index}
                     type="plainPicture"
-                    imageSource={image}
+                    imageSource={image.url}
                     onButtonFunction={() => handleImageChange(image)}
-                    mainStatus={mainImage === image}
+                    mainStatus={mainImage === image.url}
                   />
                 ))}
               </div>
-            </div>
+            </div> 
 
             <div className="flex flex-col gap-2">
               <div className="relative bg-green rounded-2xl w-32">
@@ -151,15 +151,14 @@ export default function MaterialPage() {
 
               <div>
                 <p>Description</p>
-                <p>{materialId[0].description || "Material not found"}</p>
+                <p>{materialId[0].description || "No Description"}</p>
               </div>
 
               <p>Cost</p>
                 <ul className="list-decimal pl-4">
                   {materialId[0].pricing.map((item, index) => (
                     <li key={index}>{item.shopName} {item.price}{item.currency} {item.quantity}</li>
-                  ))}
-                  
+                  ))}                  
                 </ul>
 
                 <p>
@@ -220,20 +219,20 @@ export default function MaterialPage() {
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
-              />
+              /> 
 
               <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
                 {selectedMaterial?.images?.map((image, index) => (
                   <SmallBlockHolder
                     key={index}
                     type="plainPicture"
-                    imageSource={image}
+                    imageSource={image.url}
                     onButtonFunction={() => handleImageChange(image)}
-                    mainStatus={mainImage === image}
+                    mainStatus={mainImage === image.url}
                   />
                 ))}
               </div>
-            </div>
+            </div> 
 
             <div className="flex flex-col gap-2">
               <p className="text-xl">
@@ -242,7 +241,7 @@ export default function MaterialPage() {
 
               <p>Category: {selectedMaterial.categories.join(", ")}</p>
 
-              <p>Color: {selectedMaterial.colors}</p>
+              <p>Color: {selectedMaterial.colors[0]}</p>
 
               <div>
                 <p>Description</p>

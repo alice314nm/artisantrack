@@ -25,6 +25,7 @@ export default function Page() {
   const [materials, setMaterials] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
     setLoading(false);
@@ -32,6 +33,7 @@ export default function Page() {
 
     return () => clearTimeout(timeout);
   }, []);
+  
   useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;

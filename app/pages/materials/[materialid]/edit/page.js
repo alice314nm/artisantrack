@@ -14,7 +14,6 @@ import { useParams } from "next/navigation";
 
 
 export default function Page(){
-    
     const { user } = useUserAuth();
     const params = useParams();
     const id = params.materialid;
@@ -72,7 +71,7 @@ export default function Page(){
         setName(selectedMaterial.name);
         setCategory('');
         setCategories(selectedMaterial.categories);
-        setColor(selectedMaterial.colors);
+        setColor(selectedMaterial.colors)
         setShop('');
         setPrice('');
         setCurrency([]);
@@ -80,7 +79,7 @@ export default function Page(){
         setTotal(selectedMaterial.total);
         setDesc(selectedMaterial.description);
         setImages(selectedMaterial.images);
-        setImageUrls([]);
+        setImageUrls(selectedMaterial.images.url);
         setCostItems(selectedMaterial.pricing);
     }, [selectedMaterial]);
     
@@ -107,23 +106,24 @@ export default function Page(){
     const handleUpdateMaterial = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const uploadedImages = await handleUpload() || []; 
+        const allImages = await handleUpload() || []; 
         try {
             const updatedMaterialData = {
-                userMaterialId,
+                materialId: userMaterialId,
                 name,
                 categories,
                 color,
+                costItems: costItems || [],
                 total,
                 description: desc,
-                images,
-                costItems
+                images: allImages // Use allImages here
             };
-
+    
             await updateMaterial(user.uid, id, updatedMaterialData);
-
+    
             console.log("Material updated successfully!");
             setLoading(false);
+            window.location.href = `/pages/materials/${id}`
         } catch (error) {
             console.error("Error updating material:", error);
             setLoading(false);
@@ -131,30 +131,45 @@ export default function Page(){
     };
     
     const handleUpload = async () => {
-        if (!images.length) return [];
-    
+        if (!images.length) return []; 
         const userId = user.uid;
         const uploadedImages = [];
     
         for (const image of images) {
-            const filePath = `images/${userId}/${image.name}`;
+            console.log(image);
+    
+            if (image.url) {
+                uploadedImages.push(image); // No need to upload again, just keep it
+                continue;
+            }
+    
+            const filePath = `images/${userId}/${image.path}`;  // Use the image path for storage
             const fileRef = ref(storage, filePath);
     
             try {
                 const snapshot = await uploadBytes(fileRef, image);
                 const downloadUrl = await getDownloadURL(snapshot.ref);
-    
+                
                 uploadedImages.push({ url: downloadUrl, path: filePath });
             } catch (error) {
                 console.error("Upload failed:", error);
             }
         }
     
-        setImageUrls((prev) => [...prev, ...uploadedImages.map(img => img.url)]);
-        setImages([]); 
-    
+        setImageUrls((prev) => {
+            const updatedUrls = Array.isArray(prev) ? prev : [];
+            return [...updatedUrls, ...uploadedImages.map(img => img.url)];
+        });
+        
+        setImages([]);
+        
         return uploadedImages;
     };
+    
+    
+      
+    
+    
 
     const handleAddCostItem = () => {
         if (shop && price && quantity && currency) {
@@ -355,7 +370,7 @@ export default function Page(){
                             {images.length > 0 && (
                                 <div className="flex flex-row gap-2 overflow-x-auto">
                                 {images.map((image, index) => {
-                                    const imageUrl = typeof image === 'string' ? image : URL.createObjectURL(image); // Use existing URL if available
+                                    const imageUrl = typeof image.url === 'string' ? image.url : URL.createObjectURL(image);
 
                                     return (
                                         <div key={index}>

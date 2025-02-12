@@ -190,8 +190,11 @@ export async function fetchMaterials(userId) {
                     colorNames = colorDoc.exists() ? [colorDoc.data().name] : ["Unknown"];
                 }
 
-                // Extract image URLs
-                const imageUrls = material.images?.map((image) => image.url) || [];
+                // Extract images
+                const imageUrls = material.images?.map((image) => ({
+                    url: image.url,
+                    path: image.path,
+                })) || [];
 
                 // Fetch pricing details
                 const pricingCollection = collection(db, `users/${userId}/materials/${material.id}/costItems`);

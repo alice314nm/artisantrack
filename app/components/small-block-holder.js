@@ -15,7 +15,7 @@ import React from 'react';
     3. plainPicture: includes only picture
 */
 
-export default function SmallBlockHolder({ type, id, imageSource, onButtonFunction }) {
+export default function SmallBlockHolder({ type, id, imageSource, onButtonFunction, mainStatus }) {
     
     if(type=="singlePictureDelete"){
         return (
@@ -43,7 +43,11 @@ export default function SmallBlockHolder({ type, id, imageSource, onButtonFuncti
     else if (type=="plainPicture")
     {
         return (
-            <img src={imageSource} className="w-24 h-28 rounded-lg object-cover"/>              
+            <img 
+            src={imageSource} 
+            className={`rounded-lg object-cover transition-all duration-300 ${mainStatus ? "w-24 h-28" : "w-24 h-24"}`} 
+            onClick={onButtonFunction}
+            />  
         );
     }
     

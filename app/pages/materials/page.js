@@ -27,6 +27,14 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+    setLoading(false);
+    }, 500); 
+
+    return () => clearTimeout(timeout);
+  }, []);
+  
+  useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;
       setLoading(true);
@@ -222,7 +230,7 @@ export default function Page() {
                 category={material.categories.join(", ")}
                 total={material.total}
                 color={material.colors.join(", ")}
-                imageSource={material.mainImage[0]}
+                imageSource={material.images[0]}
                 type={"material"}
               />
             </Link>
@@ -251,16 +259,6 @@ export default function Page() {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
-        <div className="fixed w-screen h-screen flex flex-col text-center items-center justify-center gap-4">
-          <p>
-            Create account to start your <br /> artisan track
-          </p>
-          <Link href="/pages/signin">
-            <button className="font-bold bg-green py-2 px-4 rounded-lg">
-              Sign in
-            </button>
-          </Link>
-        </div>
         <NotLoggedWindow />
       </div>
     );

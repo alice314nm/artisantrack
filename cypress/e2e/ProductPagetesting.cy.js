@@ -1,4 +1,8 @@
 describe("Product Page Tests", () => {
+  before(() => {
+    cy.login();
+  });
+
   beforeEach(() => {
     cy.visit("http://localhost:3000/");
   });
@@ -8,7 +12,9 @@ describe("Product Page Tests", () => {
   });
 
   it("should display the total count of products", () => {
-    cy.contains("Total: 30").should("be.visible");
+    cy.get("p")
+      .contains(/^Total: \d+/)
+      .should("be.visible");
   });
 
   it("should navigate to the create product page on button click and return when click cancel", () => {

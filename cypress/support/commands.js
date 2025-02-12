@@ -23,3 +23,14 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add("login", () => {
+    indexedDB.deleteDatabase("firebaseLocalStorageDb");
+    cy.visit("http://localhost:3000/pages/login");
+    cy.contains("Log In").click();
+    cy.get('[data-id="email"]').type("artisantracksoftpillow@gmail.com");
+    cy.get('[data-id="password"]').type("ArtisanTrack");
+    cy.contains("Log In").click();
+    cy.wait(2000);
+});
+

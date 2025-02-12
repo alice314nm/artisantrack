@@ -222,7 +222,7 @@ export default function Page() {
                 category={material.categories.join(", ")}
                 total={material.total}
                 color={material.colors.join(", ")}
-                imageSource={material.mainImage[0]}
+                imageSource={material.images[0]}
                 type={"material"}
               />
             </Link>

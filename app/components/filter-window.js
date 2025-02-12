@@ -19,6 +19,7 @@ export default function FilterWindow({
   onClose,
   onApplyFilters,
   categories,
+  pageType,
 }) {
   const { user } = useUserAuth();
   const [selectedCategory, setSelectedCategory] = useState("Categories");
@@ -29,17 +30,29 @@ export default function FilterWindow({
   });
   const [colors, setColors] = useState([]);
 
-  const filters = {
-    Categories: categories,
-    Colors: colors,
-    "Sort by": [
-      "Category",
-      "Name Descending",
-      "Name Ascending",
-      "ID Ascending",
-      "ID Descending",
-    ],
-  };
+  const filters =
+    pageType === "material"
+      ? {
+          Categories: categories,
+          Colors: colors,
+          "Sort by": [
+            "Category",
+            "Name Descending",
+            "Name Ascending",
+            "ID Ascending",
+            "ID Descending",
+          ],
+        }
+      : {
+          Categories: categories,
+          "Sort by": [
+            "Category",
+            "Name Descending",
+            "Name Ascending",
+            "ID Ascending",
+            "ID Descending",
+          ],
+        };
 
   useEffect(() => {
     const fetchColors = async () => {

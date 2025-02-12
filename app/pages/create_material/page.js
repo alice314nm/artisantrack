@@ -180,7 +180,7 @@ export default function Page(){
         return (
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Materials" showUserName={true}/>
-                    <form className="mx-4 flex flex-col gap-4" onSubmit={handleCreateMaterial}> 
+                <form className="mx-4 flex flex-col gap-4" onSubmit={handleCreateMaterial}> 
                         <p className="font-bold italic text-lg">Create a material</p> 
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">

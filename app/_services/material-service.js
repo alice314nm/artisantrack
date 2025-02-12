@@ -1,5 +1,6 @@
-import { addDoc, collection, doc, getDocs, query, where, setDoc, getDoc } from "firebase/firestore";
-import { db } from "../_utils/firebase";
+import { addDoc, collection, doc, getDocs, query, where, setDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { db, storage } from "../_utils/firebase";
+import { deleteObject, ref } from "firebase/storage";
 
 // Helper function to get or add a category
 async function getOrAddCategory(userId, categoryName) {
@@ -100,4 +101,44 @@ export async function dbAddMaterial(userId, materialObj) {
         console.error("Error adding material:", error.message);
     }
 }
+
+export async function dbDeleteMaterialById(userId, materialId) {
+    try {     
+        const materialRef = doc(db, "users", userId, "materials", materialId);
+        
+        const materialDoc = await getDoc(materialRef);
+        if (!materialDoc.exists()) {
+            throw new Error(`Material with ID ${materialId} does not exist.`);
+        }
+
+        const materialData = materialDoc.data();
+
+        // Delete images from Firebase Storage
+        if (materialData.images && Array.isArray(materialData.images)) {
+            const deleteImagePromises = materialData.images.map(async (image) => {
+                if (image.path) {
+                    const imageRef = ref(storage, image.path);
+                    try {
+                        await deleteObject(imageRef);
+                        console.log(`Deleted image: ${image.path}`);
+                    } catch (storageError) {
+                        console.warn(`Failed to delete image: ${image.path}`, storageError);
+                    }
+                }
+            });
+            await Promise.all(deleteImagePromises);
+        }
+
+        const costItemsCollection = collection(materialRef, "costItems");
+        const costItemsSnapshot = await getDocs(costItemsCollection);
+        const deleteCostItemsPromises = costItemsSnapshot.docs.map((doc) => deleteDoc(doc.ref));
+        await Promise.all(deleteCostItemsPromises);
+
+        await deleteDoc(materialRef);
+        console.log(`Material with ID ${materialId} and its associated data were deleted.`);
+    } catch (error) {
+        console.error("Error deleting material:", error.message);
+    }
+}
+
 

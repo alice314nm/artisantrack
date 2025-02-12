@@ -51,7 +51,7 @@ export default function Home() {
             return {
               ...product,
               categories: categoryNames,
-              image: imageUrls,
+              images: imageUrls,
             };
           })
         );

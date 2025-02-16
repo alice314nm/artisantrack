@@ -86,7 +86,7 @@ export default function SlideMenu({ menuVisible }) {
               }}
               data-id="inventory-submenu"
             >
-              <Link className={`${buttonStyleLi} px-8`} href="/">
+              <Link className={`${buttonStyleLi} px-8`} href="/pages/products">
                 Products
               </Link>
               <Link className={`${buttonStyleLi} px-8`} href="/pages/materials">

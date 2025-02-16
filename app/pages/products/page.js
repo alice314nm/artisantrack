@@ -22,34 +22,36 @@ export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({ Categories: [], "Sort by": "" });
-  const [materials, setMaterials] = useState([]);
+  const [products, setProducts] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
+  const [refreshProducts, setRefreshProducts] = useState(false);
 
   useEffect(() => {
-    const fetchMaterials = async () => {
+    const fetchProducts = async () => {
       if (!user) return;
       setLoading(true);
       try {
         const db = getFirestore(app);
-        const materialsCollection = collection(
-          db,
-          `users/${user.uid}/materials`
-        );
-        const materialsSnapshot = await getDocs(materialsCollection);
-        const materialsData = materialsSnapshot.docs.map((doc) => ({
+        const productsCollection = collection
+        (db, `users/${user.uid}/products`);
+        const productsSnapshot = await getDocs(productsCollection);
+
+        const productsData = productsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        console.log(materialsData);
 
-        const materialsWithCategoriesColorsAndImages = await Promise.all(
-          materialsData.map(async (material) => {
+        console.log(productsData);
+
+        const productsWithDetails = await Promise.all(
+          productsData.map(async (product) => {
+            // Handle categories safely
             const categoryNames = await Promise.all(
-              material.categories.map(async (categoryId) => {
+              (product.categories || []).map(async (categoryId) => {
                 const categoryDocRef = doc(
                   db,
-                  `users/${user.uid}/materialCategories/${categoryId}`
+                  `users/${user.uid}/productCategories/${categoryId}`
                 );
                 const categoryDoc = await getDoc(categoryDocRef);
                 return categoryDoc.exists()
@@ -58,53 +60,34 @@ export default function Page() {
               })
             );
 
-            let colorNames = [];
-            if (Array.isArray(material.color)) {
-              colorNames = await Promise.all(
-                material.color.map(async (colorId) => {
-                  const colorDocRef = doc(
-                    db,
-                    `users/${user.uid}/colors/${colorId}`
-                  );
-                  const colorDoc = await getDoc(colorDocRef);
-                  return colorDoc.exists() ? colorDoc.data().name : "Unknown";
-                })
-              );
-            } else if (material.color) {
-              const colorDocRef = doc(
-                db,
-                `users/${user.uid}/colors/${material.color}`
-              );
-              const colorDoc = await getDoc(colorDocRef);
-              colorNames = colorDoc.exists()
-                ? [colorDoc.data().name]
-                : ["Unknown"];
-            }
-
-            const imageUrls = material.images?.map((image) => image.url) || [];
+            const imageUrls = product.images?.map((image) => image.url) || [];
 
             return {
-              ...material,
+              ...product,
               categories: categoryNames,
-              colors: colorNames,
               images: imageUrls,
             };
           })
         );
 
-        setMaterials(materialsWithCategoriesColorsAndImages);
+        setProducts(productsWithDetails);
       } catch (error) {
-        console.error("Error fetching materials:", error);
+        console.error("Error fetching products:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMaterials();
-  }, [user]);
+    fetchProducts();
+  }, [user, refreshProducts]);
+
+  const handleProductCreated = () => {
+    setRefreshProducts(true); // Trigger re-fetch
+    setTimeout(() => setRefreshProducts(false), 0); // Reset after fetch
+};
 
   const handleNavigateToCreatePage = () => {
-    window.location.href = "/pages/create_material"; 
+    window.location.href = "/pages/create_product";
   };
 
   const toggleConfirmation = () => {
@@ -120,42 +103,36 @@ export default function Page() {
   };
 
   const categories = [
-    ...new Set(materials.flatMap((material) => material.categories)),
+    ...new Set(products.flatMap((product) => product.categories)),
   ];
 
-  let filteredMaterials = [...materials];
+  let filteredProducts = [...products];
   if (filters.Categories?.length > 0) {
-    filteredMaterials = filteredMaterials.filter((material) =>
-      material.categories.some((category) =>
+    filteredProducts = filteredProducts.filter((product) =>
+      product.categories.some((category) =>
         filters.Categories.includes(category)
       )
-    );
-  }
-
-  if (filters.Colors?.length > 0) {
-    filteredMaterials = filteredMaterials.filter((material) =>
-      material.colors.some((color) => filters.Colors.includes(color))
     );
   }
 
   if (filters["Sort by"]) {
     switch (filters["Sort by"]) {
       case "Name Ascending":
-        filteredMaterials.sort((a, b) => a.name.localeCompare(b.name));
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case "Name Descending":
-        filteredMaterials.sort((a, b) => b.name.localeCompare(a.name));
+        filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
         break;
       case "Category":
-        filteredMaterials.sort((a, b) =>
+        filteredProducts.sort((a, b) =>
           a.categories.join(", ").localeCompare(b.categories.join(", "))
         );
         break;
       case "ID Ascending":
-        filteredMaterials.sort((a, b) => Number(a.materialId) - Number(b.materialId));
+        filteredProducts.sort((a, b) => Number(a.productId) - Number(b.productId));
         break;
       case "ID Descending":
-        filteredMaterials.sort((a, b) => Number(b.materialId) - Number(a.materialId));
+        filteredProducts.sort((a, b) => Number(b.productId) - Number(a.productId));
         break;
       default:
         break;
@@ -163,8 +140,8 @@ export default function Page() {
   }
 
   if (searchTerm) {
-    filteredMaterials = filteredMaterials.filter((material) =>
-      material.name.toLowerCase().includes(searchTerm.toLowerCase())
+    filteredProducts = filteredProducts.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
 
@@ -183,11 +160,11 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Materials" showUserName={true} />
+        <Header title="Products" showUserName={true} />
 
         <div className="flex flex-row justify-between mx-4">
           <p className="font-bold" data-id="total-count">
-            Total: {filteredMaterials.length}
+            Total: {filteredProducts.length}
           </p>
           <div
             className="bg-green rounded-xl px-4 font-bold cursor-pointer"
@@ -205,20 +182,20 @@ export default function Page() {
         />
 
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-          {filteredMaterials.map((material) => (
-             <Link
-              href={`/pages/materials/${material.id}`}
-              key={material.id}
-              data-id="material-block"
-             >
+          {filteredProducts.map((product) => (
+            <Link
+              href={`/pages/products/${product.id}`}
+              key={product.id}
+              data-id="product-block"
+            >
               <BlockHolder
-                id={material.materialId}
-                title={material.name}
-                category={material.categories.join(", ")}
-                total={material.total}
-                color={material.colors.join(", ")}
-                imageSource={material.images[0]}
-                type={"material"}
+                id={product.productId}
+                title={product.name}
+                category={product.categories.join(", ")}
+                total={product.averageCost}
+                description={product.description}
+                imageSource={product.images[0]}
+                type={"product"}
               />
             </Link>
           ))}
@@ -235,7 +212,7 @@ export default function Page() {
           type="TwoButtonsMenu"
           iconFirst="/link.png"
           firstTitle="Copy for client"
-          secondTitle="Create material +"
+          secondTitle="Create product +"
           onSecondFunction={handleNavigateToCreatePage}
           data-id="menu-button"
         />

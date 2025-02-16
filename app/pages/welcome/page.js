@@ -1,31 +1,36 @@
 "use client";
 
+import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function WelcomePage() {
-  const [user, setUser] = useState(true);
+  const { user } = useUserAuth();
 
-  const dashboardStyle = "text-lg border-b border-b-darkBeige flex flex-row gap-2 items-center p-5"
+  const dashboardStyle = "text-lg border border=darkBeige flex flex-row gap-2 items-center p-5"
   const LinkStyle = "bg-green px-2 font-bold rounded-lg py-1"
 
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Welcome" userName={"Olga Ivanova"} />
+        <Header title="" showUserName={true} />
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 p-5">
+          <h1 className="text-xl font-bold">Welcome, {user.displayName}!</h1>
+
           <div className={dashboardStyle}>
-            <p>Orders in progress: 123</p>
+            <p>Orders </p>
+            <p>In progress: 123</p>
+            <p>Completed: 123</p>
             <Link className={LinkStyle} href='/pages/orders'>View</Link>
           </div>
 
           <div className={dashboardStyle}>
             <div className="flex flex-col gap-2">
               <p >Inventory</p>
-              <div className="flex flex-row w-full justify-between">
+              <div className="flex flex-col w-full justify-between">
                 <p>Products: 123</p>
                 <p>Materials: 123</p>
               </div>              

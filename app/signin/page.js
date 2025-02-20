@@ -120,7 +120,7 @@ export default function SignInPage() {
             {isLoading ? "Signing Up..." : "Sign Up"}
           </button>
 
-          <Link href="/pages/login">
+          <Link href="/login">
             <p className="text-sm text-center">
               Already have account? <span className="underline cursor-pointer text-sky-500">Log in</span>
             </p>

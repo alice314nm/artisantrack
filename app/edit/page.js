@@ -10,10 +10,11 @@ import Link from "next/link";
 import { useState } from "react";
 
 
-
 export default function Page(){
     const { user } = useUserAuth();
     const inputStyle = 'h-9 rounded-lg border p-2';
+
+    const [] = useState('');
 
     const handleNavigateToListPage = () => {
         console.log('Navigating to the home page...');
@@ -112,10 +113,7 @@ export default function Page(){
                                 />
                                 <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
                             </div>
-                            <SmallBlockHolder
-                            type="singlePictureDelete"
-                            imageSource="/Sweater.jpg"
-                            />
+                            
 
                         </div>
 
@@ -134,26 +132,7 @@ export default function Page(){
                                 <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
                             </div>
                             <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
-                                <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id="1"
-                                imageSource="/Sweater.jpg"
-                                />
-                                <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id="2"
-                                imageSource="/Sweater.jpg"
-                                />
-                                <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id="3"
-                                imageSource="/Sweater.jpg"
-                                />
-                                <SmallBlockHolder                                
-                                type="multiplePictureDelete"
-                                id="4"
-                                imageSource="/Sweater.jpg"
-                                />
+                                
 
                             </div>
                         </div>

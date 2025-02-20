@@ -62,7 +62,7 @@ export default function MaterialPage() {
     try {
         await dbDeleteMaterialById(user.uid, selectedMaterial.id);
         console.log("Material deleted successfully");
-        window.location.href = '/pages/materials';
+        window.location.href = '/materials';
     } catch (error) {
         console.error("Error adding material:", error);
     }
@@ -77,9 +77,6 @@ export default function MaterialPage() {
   const changeView = () => {
     setClientView((prev) => !prev);
   };
-
-
-  const inputStyle = 'h-9 rounded-lg border p-2 w-full';
 
 
   if (loading) {
@@ -101,7 +98,7 @@ export default function MaterialPage() {
               <p className="font-bold" data-id="Your view">
                 Your view:
               </p>
-              <Link href="/pages/materials">
+              <Link href="/materials">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />
                   <p>Back</p>
@@ -204,7 +201,7 @@ export default function MaterialPage() {
               <p className="font-bold" data-id="Client view">
                 Client view:
               </p>
-              <Link href="/pages/materials">
+              <Link href="/materials">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />
                   <p>Back</p>

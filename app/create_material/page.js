@@ -46,7 +46,7 @@ export default function Page(){
     }, []);
 
     const handleNavigateToListPage = () => {
-        window.location.href = '/pages/materials';
+        window.location.href = '/materials';
     };
 
     const handleAddCategory = () => {
@@ -93,7 +93,7 @@ export default function Page(){
         try {
             await dbAddMaterial(user.uid, materialObj);
             console.log("Material added successfully");
-            window.location.href = '/pages/materials';
+            window.location.href = '/materials';
             setLoading(false);
 
         } catch (error) {

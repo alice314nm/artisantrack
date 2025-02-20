@@ -40,7 +40,7 @@ export default function OrderPage() {
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
               <p className="font-bold">Your view:</p>
-              <Link href="/pages/materials">
+              <Link href="/materials">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />
                   <p>Back</p>
@@ -185,7 +185,7 @@ export default function OrderPage() {
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
               <p className="font-bold">Client view:</p>
-              <Link href="/pages/materials">
+              <Link href="/materials">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />
                   <p>Back</p>

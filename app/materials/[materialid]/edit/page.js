@@ -29,8 +29,6 @@ export default function Page() {
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [isEditing, setIsEditing] = useState(false);
-
     useEffect(() => {
         const loadMaterials = async () => {
             if (!user) return;
@@ -152,7 +150,7 @@ export default function Page() {
 
             console.log("Material updated successfully!");
             setLoading(false);
-            window.location.href = `/pages/materials/${id}`;
+            window.location.href = `/materials/${id}`;
         } catch (error) {
             console.error("Error updating material:", error);
             setLoading(false);
@@ -414,7 +412,7 @@ export default function Page() {
                         type="CreateMenu"
                         firstTitle="Cancel"
                         secondTitle="Save"
-                        onFirstFunction={() => window.location.href = `/pages/materials/${id}`}
+                        onFirstFunction={() => window.location.href = `/materials/${id}`}
                     />
                 </form>
             </div>

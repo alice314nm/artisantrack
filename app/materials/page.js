@@ -112,7 +112,7 @@ export default function Page() {
   }, [user]);
 
   const handleNavigateToCreatePage = () => {
-    window.location.href = "/pages/create_material";
+    window.location.href = "/create_material";
   };
 
   const toggleConfirmation = () => {
@@ -219,7 +219,7 @@ export default function Page() {
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
           {filteredMaterials.map((material) => (
             <Link
-              href={`/pages/materials/${material.id}`}
+              href={`/materials/${material.id}`}
               key={material.materialId}
               data-id="material-block"
             >

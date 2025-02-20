@@ -1,5 +1,6 @@
 "use client";
 
+import { dbDeleteProductById } from "@/app/_services/product-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import ConfirmationWindow from "@/app/components/confirmation-window";
 import Header from "@/app/components/header";
@@ -15,6 +16,17 @@ export default function ProductPage() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [clientView, setClientView] = useState(false);
   const params = useParams();
+
+  const handleDeleteMaterial = async (e) => {  
+      setLoading(true);
+      try {
+          await dbDeleteProductById(user.uid, selectedMaterial.id);
+          console.log("Material deleted successfully");
+          window.location.href = '/pages/materials';
+      } catch (error) {
+          console.error("Error adding material:", error);
+      }
+    };
 
   const openConfirmation = () => {
     setConfirmWindowVisibility(true);
@@ -132,6 +144,7 @@ export default function ProductPage() {
           <ConfirmationWindow
             windowVisibility={confirmWindowVisibility}
             onClose={closeConfirmation}
+            onDelete={handleDeleteMaterial}
           />
 
           <Menu

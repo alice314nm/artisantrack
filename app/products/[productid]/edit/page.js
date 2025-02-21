@@ -1,36 +1,41 @@
 "use client";
 
-import { dbAddProduct } from "@/app/_services/product-service";
+import { dbAddProduct, fetchProductById, updateProduct } from "@/app/_services/product-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
-import { storage } from "@/app/_utils/firebase";
+import { app, storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
 import SmallBlockHolder from "@/app/components/small-block-holder";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation'; // Import the useRouter hook
+import { useParams, useRouter } from 'next/navigation'; // Import the useRouter hook
+import { getFirestore } from "firebase/firestore";
 
 
 export default function Page() {
-  const router = useRouter();
+    const router = useRouter();
+    const params = useParams();
+    const productId = params.productid;
 
-  const [isMounted, setIsMounted] = useState(false);
-  const { user } = useUserAuth();
-  const inputStyle = "h-9 rounded-lg border p-2 w-full";
-  const [loading, setLoading] = useState(true);
-  const [productId, setProductId] = useState("");
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [desc, setDesc] = useState("");
-  const [productImages, setProductImages] = useState([]);
-  const [patternImages, setPatternImages] = useState([]);
-  const [currency, setCurrency] = useState('USD');
-  const [patternImageUrls, setPatternImageUrls] = useState([]);
-  const [productImageUrls, setProductImageUrls] = useState([]);
+    const [isMounted, setIsMounted] = useState(false);
+    const { user } = useUserAuth();
+    const inputStyle = "h-9 rounded-lg border p-2 w-full";
+    const [loading, setLoading] = useState(true);
+    const [userProductId, setUserProductId] = useState("");
+    const [name, setName] = useState("");
+    const [category, setCategory] = useState("");
+    const [categories, setCategories] = useState([]);
+    const [desc, setDesc] = useState("");
+    const [productImages, setProductImages] = useState([]);
+    const [patternImages, setPatternImages] = useState([]);
+    const [currency, setCurrency] = useState('USD');
+    const [patternImageUrls, setPatternImageUrls] = useState([]);
+    const [productImageUrls, setProductImageUrls] = useState([]);
+    const [product, setProduct] = useState(null);
 
-  const [averageCost, setAverageCost] = useState("");
+
+    const [averageCost, setAverageCost] = useState("");
 
   
     useEffect(() => {
@@ -45,9 +50,38 @@ export default function Page() {
         return () => clearTimeout(timeout);
     }, []);
 
-    const handleNavigateToListPage = () => {
-        window.location.href = "/products";
-    };
+    useEffect(() => {
+        setLoading(true);
+
+        if (!user) {
+            return;
+        }
+
+        if (user && productId) {
+        fetchProductById(user.uid, productId, setProduct); 
+        }
+        setLoading(false);
+    }, [user, productId]);
+
+    useEffect(() => {
+        if (!product) return;
+        console.log(123, product)
+        setLoading(true);
+        setUserProductId(product.productId);
+        setName(product.name);
+        setCategory("");
+        setCategories(product.categories);
+        setAverageCost(product.averageCost);
+        setDesc(product.description);
+        setProductImages(product.productImages);
+        setPatternImages(product.patternImages);
+        setCurrency(product.currency);
+        setPatternImageUrls([]);
+        setProductImageUrls([]);
+        setLoading(false);
+
+
+    }, [product])
 
     const handleAddCategory = () => {
         if (category.trim() && !categories.includes(category)) {
@@ -71,6 +105,7 @@ export default function Page() {
         updatedImages.splice(index, 1);
         setPatternImages(updatedImages);
     };
+
 
     const handlePatternImageChange = (e) => {
         const file = e.target.files[0];
@@ -98,26 +133,63 @@ export default function Page() {
 
         // Upload product images (HANDLE ARRAY OF FILES)
         for (const image of productImages) {
+            console.log(image);
+
+            if (image.url) {
+                uploadedProductImages.push(image); // No need to upload again, just keep it
+                continue;
+            }
+
             const filePath = `images/${userId}/products/${image.name}`; 
             const fileRef = ref(storage, filePath);
+
+            try {
+                const snapshot = await uploadBytes(fileRef, image);
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+
+                uploadedProductImages.push({ url: downloadUrl, path: filePath });
+            } catch (error) {
+                console.error("Upload failed:", error);
+            }
             const snapshot = await uploadBytes(fileRef, image);
             const downloadUrl = await getDownloadURL(snapshot.ref);
             uploadedProductImages.push({ url: downloadUrl, path: filePath });
+            
         }
 
         // Upload pattern images (HANDLE ARRAY OF FILES AND UNIQUE NAMES)
         for (const image of patternImages) { 
+            console.log(image);
+
+            if (image.url) {
+                uploadedPatternImages.push(image); 
+                continue;
+            }
+
             const filePath = `images/${userId}/patterns/${image.name}`;
             const fileRef = ref(storage, filePath);
-            const snapshot = await uploadBytes(fileRef, image);
-            const downloadUrl = await getDownloadURL(snapshot.ref);
-            uploadedPatternImages.push({ url: downloadUrl, path: filePath });
+
+            try {
+                const snapshot = await uploadBytes(fileRef, image);
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+
+                uploadedPatternImages.push({ url: downloadUrl, path: filePath });
+            } catch (error) {
+                console.error("Upload failed:", error);
+            }
         }
 
         console.log("Uploaded Images:", uploadedPatternImages, uploadedProductImages); 
 
-        setProductImageUrls((prev) => [...prev, ...uploadedProductImages.map(img => img.url)]);
-        setPatternImageUrls((prev) => [...prev, ...uploadedPatternImages.map(img => img.url)]);
+        setProductImageUrls((prev) => {
+            const updatedUrls = Array.isArray(prev) ? prev : [];
+            return [...updatedUrls, ...uploadedProductImages.map(img => img.url)];
+        });
+
+        setPatternImageUrls((prev) => {
+            const updatedUrls = Array.isArray(prev) ? prev : [];
+            return [...updatedUrls, ...uploadedPatternImages.map(img => img.url)];
+        });
 
         setPatternImages([]);
         setProductImages([]);
@@ -126,7 +198,7 @@ export default function Page() {
 
     };
 
-    const handleCreateProduct = async (e) => {
+    const handleUpdateProduct = async (e) => {
         e.preventDefault();
         setLoading(true);
 
@@ -134,28 +206,29 @@ export default function Page() {
         const uploadedProductImages = uploadedImages?.[0] || []; 
         const uploadedPatternImages = uploadedImages?.[1] || [];
 
-        
-        const productObj = {
-            productId,
-            name,
-            averageCost,
-            currency,
-            categories,
-            description: desc,
-            productImages: uploadedProductImages,
-            patternImages: uploadedPatternImages,
-        };
-
-        console.log(productObj)
-
         try {
-            await dbAddProduct(user.uid, productObj);
-            console.log("Product added successfully");
-            window.location.href = '/products';
+            const updatedProductData = {
+                productId: userProductId,
+                name,
+                averageCost,
+                currency,
+                categories,
+                description: desc,
+                productImages: uploadedProductImages,
+                patternImages: uploadedPatternImages,
+            };
+
+            await updateProduct(user.uid, productId, updatedProductData)
+            console.log("Product updated successfully!");
             setLoading(false);
-        } catch (error) {
-            console.error("Error adding product:", error);
+            //window.location.href = `/products/${productId}`;
+        } catch (error){
+            console.error("Error updating product:", error);
+            setLoading(false);
         }
+        
+
+
     };
 
     if (loading) {
@@ -166,13 +239,14 @@ export default function Page() {
         );
     }
 
+
     if (user) {
         return (
         <div className="flex flex-col min-h-screen gap-4">
             <Header title="Create Product" showUserName={true} />
             <form
             className="mx-4 flex flex-col gap-4"
-            onSubmit={handleCreateProduct}
+            onSubmit={handleUpdateProduct}
             >
             <p className="font-bold italic text-lg">Create a Product</p>
 
@@ -180,13 +254,13 @@ export default function Page() {
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between">
                     <label>Id <span className="text-red">*</span></label>
-                    <img  src={productId === "" ? "/cross.png" : "/check.png"}  className={productId === "" ? "h-4" : "h-6 text-green"} />                            
+                    <img  src={userProductId === "" ? "/cross.png" : "/check.png"}  className={userProductId === "" ? "h-4" : "h-6 text-green"} />                            
                 </div>
                 <input
                 className={inputStyle}
                 required
-                value={productId}
-                onChange={(e) => setProductId(e.target.value)}
+                value={userProductId}
+                onChange={(e) => setUserProductId(e.target.value)}
                 />
             </div>
 
@@ -233,11 +307,8 @@ export default function Page() {
             {/* Category*/}
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between">
-                <label>Category</label>
-                <img
-                    src={categories.length === 0 ? "/cross.png" : "/check.png"}
-                    className={categories.length === 0 ? "h-4" : "h-6 text-green"}
-                />
+                    <label>Category</label>
+                    <img src={categories.length === 0 ? "/cross.png" : "/check.png"} className={categories.length === 0 ? "h-4" : "h-6 text-green"} />
                 </div>
                 <div className="flex flex-row gap-2">
                 <input
@@ -313,16 +384,20 @@ export default function Page() {
                 {/* Preview Product Images */}
                 {productImages.length > 0 && (
                     <div className="flex flex-row gap-2 overflow-x-auto">
-                    {productImages.map((image, index) => (
-                        <div key={index}>
-                            <SmallBlockHolder
-                            type="multiplePictureDelete"
-                            id={index+1}
-                            imageSource={URL.createObjectURL(image)}
-                            onButtonFunction={() => removeProductImage(index)}
-                            />
-                        </div>
-                    ))}
+                    {productImages.map((image, index) => {
+                        const imageUrl = typeof image.url === 'string' ? image.url : URL.createObjectURL(image);
+
+                        return (
+                            <div key={index}>
+                                <SmallBlockHolder
+                                    type="multiplePictureDelete"
+                                    id={index + 1}
+                                    imageSource={imageUrl}
+                                    onButtonFunction={() => removeProductImage(index)}
+                                />
+                            </div>
+                        );
+                    })}   
                     </div>
                 )}    
             </div>
@@ -346,16 +421,20 @@ export default function Page() {
                 {/* Preview Pattern Image */}
                 {patternImages.length > 0 && (
                     <div className="flex flex-row gap-2 overflow-x-auto">
-                        {patternImages.map((patternImage, index) => (
-                            <div key={index}>
-                            <SmallBlockHolder
-                                type="multiplePictureDelete"
-                                id={index + 1}
-                                imageSource={URL.createObjectURL(patternImage)}
-                                onButtonFunction={() => removePatternImage(index)}
-                            />
-                            </div>
-                        ))}
+                        {patternImages.map((image, index) => {
+                            const imageUrl = typeof image.url === 'string' ? image.url : URL.createObjectURL(image);
+
+                            return (
+                                <div key={index}>
+                                    <SmallBlockHolder
+                                        type="multiplePictureDelete"
+                                        id={index + 1}
+                                        imageSource={imageUrl}
+                                        onButtonFunction={() => removePatternImage(index)}
+                                    />
+                                </div>
+                            );
+                        })}                        
                     </div>
                 )}
             </div>
@@ -365,8 +444,8 @@ export default function Page() {
                 type="CreateMenu"
                 firstTitle="Cancel"
                 secondTitle="Create"
-                onFirstFunction={handleNavigateToListPage}
-            />
+                onFirstFunction={() => window.location.href = `/products/${productId}`}
+                />
             </form>
         </div>
         );

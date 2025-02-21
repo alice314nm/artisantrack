@@ -4,38 +4,43 @@ import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import Link from "next/link";
-import { useState } from "react";
+import NotLoggedWindow from "./components/not-logged-window";
 
 export default function WelcomePage() {
   const { user } = useUserAuth();
 
-  const dashboardStyle = "text-lg border border=darkBeige flex flex-row gap-2 items-center p-5"
+  const dashboardStyle = "text-lg border-b border-darkBeige flex flex-col gap-2 items-start justify-between px-5 pb-5"
   const LinkStyle = "bg-green px-2 font-bold rounded-lg py-1"
 
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="" showUserName={true} />
+        <Header title="Artisan Track"/>
 
-        <div className="flex flex-col gap-2 p-5">
-          <h1 className="text-xl font-bold">Welcome, {user.displayName}!</h1>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-xl font-bold p-5">Welcome back, {user.displayName}!</h1>
 
           <div className={dashboardStyle}>
             <p>Orders </p>
-            <p>In progress: 123</p>
-            <p>Completed: 123</p>
-            <Link className={LinkStyle} href='/pages/orders'>View</Link>
+            <div>
+              <p>In progress: 123</p>
+              <p>Completed: 123</p>
+            </div>            
+            <Link className={LinkStyle} href='/orders'>View</Link>
           </div>
 
           <div className={dashboardStyle}>
             <div className="flex flex-col gap-2">
               <p >Inventory</p>
-              <div className="flex flex-col w-full justify-between">
+              <div className="flex flex-row w-full justify-between">
                 <p>Products: 123</p>
                 <p>Materials: 123</p>
               </div>              
             </div>            
-            <Link className={LinkStyle} href='/pages/orders'>View</Link>
+            <div>
+              <Link className={LinkStyle} href='/materials'>View</Link>
+              <Link className={LinkStyle} href='/products'>View</Link>
+            </div> 
           </div>
 
           <div className={dashboardStyle}>
@@ -56,18 +61,7 @@ export default function WelcomePage() {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
-
-        <div className="fixed w-screen h-screen flex flex-col text-center items-centeer justify-center gap-4">
-          <p>
-            Create account to start your <br />
-            artisan track
-          </p>
-          <Link href="/pages/signin">
-            <button className="font-bold bg-green py-2 px-4 rounded-lg">
-              Sign in
-            </button>
-          </Link>
-        </div>
+        <NotLoggedWindow />
       </div>
     );
   }

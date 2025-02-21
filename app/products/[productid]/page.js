@@ -1,5 +1,6 @@
 "use client";
 
+import { dbDeleteProductById, fetchProductById, fetchProducts } from "@/app/_services/product-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import ConfirmationWindow from "@/app/components/confirmation-window";
 import Header from "@/app/components/header";
@@ -7,44 +8,42 @@ import Menu from "@/app/components/menu";
 import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import { dbDeleteMaterialById, fetchMaterials } from "@/app/_services/material-service";
+import { useEffect, useState } from "react";
 
-export default function MaterialPage() {
+export default function ProductPage() {
   const { user } = useUserAuth();
-  const params = useParams();
-  const id = params.materialid;
 
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [clientView, setClientView] = useState(false);
-  const [materials, setMaterials] = useState([]);
+  const params = useParams();
+  const productId = params.productid;
+  const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
 
-  useEffect(() => {
-    const loadMaterials = async () => {
-        if (!user) return;
-        setLoading(true);
-        const materialsData = await fetchMaterials(user.uid);
-        setMaterials(materialsData);
-        setLoading(false);
-    };
-    
-    loadMaterials();
-  }, [user]);
-  
-  
-  const filteredMaterials = [...materials];
-  const materialId = filteredMaterials.filter((material) => material.id == id);
-  const selectedMaterial = materialId[0];
   const [mainImage, setMainImage] = useState(null);
 
-  useEffect(() => {
-    if (selectedMaterial && selectedMaterial.images && selectedMaterial.images.length > 0) {
-      setMainImage(selectedMaterial.images[0].url);
-    }
-  }, [selectedMaterial]);
 
+  useEffect(() => {
+    setLoading(true);
+
+    if (!user) {
+        return;
+    }
+
+    if (user && productId) {
+      fetchProductById(user.uid, productId, setProduct); 
+    }
+    setLoading(false);
+  }, [user, productId]);
+
+  useEffect(() => {
+    
+    if (product && product.productImages && product.productImages.length > 0) {
+      setMainImage(product.productImages[0].url);
+      console.log(product)
+    }
+  }, [product]);
 
   const handleImageChange = (image) => {
     if (mainImage === image.url || transitioning) return;
@@ -55,28 +54,28 @@ export default function MaterialPage() {
     }, 300); 
   };
 
-  const handleDeleteMaterial = async (e) => {  
-    setLoading(true);
-    try {
-        await dbDeleteMaterialById(user.uid, selectedMaterial.id);
-        console.log("Material deleted successfully");
-        window.location.href = '/materials';
-    } catch (error) {
-        console.error("Error adding material:", error);
-    }
-  };
-    
-
+  const handleDeleteProduct = async (e) => {  
+      setLoading(true);
+      try {
+          await dbDeleteProductById(user.uid, product.id);
+          console.log("product deleted successfully");
+          window.location.href = '/products';
+      } catch (error) {
+          console.error("Error adding material:", error);
+      }
+    };
+      
+  
   const openCloseConfirmation = () => {
     setConfirmWindowVisibility((prev) => !prev);
     console.log(confirmWindowVisibility)
   };
+  
 
   const changeView = () => {
     setClientView((prev) => !prev);
   };
-
-
+  
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -89,14 +88,14 @@ export default function MaterialPage() {
     if (!clientView) {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Materials" showUserName={true} />
+          <Header title="Products" showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
               <p className="font-bold" data-id="Your view">
                 Your view:
               </p>
-              <Link href="/materials">
+              <Link href="/products">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />
                   <p>Back</p>
@@ -107,14 +106,23 @@ export default function MaterialPage() {
             <div className="flex flex-col gap-2">
               <img
                 src={mainImage}
-                alt="Material Image"
+                alt="Product Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
               /> 
 
-              <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
-                {selectedMaterial?.images?.map((image, index) => (
+                <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
+                  {product?.productImages?.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                {product?.patternImages?.map((image, index) => (
                   <SmallBlockHolder
                     key={index}
                     type="plainPicture"
@@ -124,11 +132,11 @@ export default function MaterialPage() {
                   />
                 ))}
               </div>
-            </div> 
+            </div>
 
             <div className="flex flex-col gap-2">
               <div className="relative bg-green rounded-2xl w-32">
-                <Link href={`./${id}/edit`}>
+                <Link href={`./${productId}/edit`}>
                   <button className="py-1 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0">
                     <p>Edit</p>
                     <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
@@ -137,30 +145,18 @@ export default function MaterialPage() {
               </div>
 
               <p className="text-xl">
-                {materialId[0].name} | {materialId[0].materialId}
+                {product.name} | {product.productId}
               </p>
 
-              <p>Categories: {materialId[0].categories.join(", ") ||"No set categories"}</p>
-
-              <p>Color: {materialId[0].colors || "No set Colors"}</p>
+              <p>Categories: {product.categories ||"No set categories"}</p>
 
               <div>
                 <p>Description</p>
-                <p>{materialId[0].description || "No Description"}</p>
+                <p>{product.description || "No Description"}</p>
               </div>
 
-              <p>Cost</p>
-              {materialId[0]?.pricing?.length > 0 ? (
-                materialId[0].pricing.map((item, index) => (
-                  <li key={index}>
-                    {item.shopName} {item.price}
-                  </li>
-                ))
-              ) :(<p className="right">No set shops</p>)}
-              
-              <p>
-                Total cost: {materialId[0].total || "No set total"}{materialId[0].currency}
-              </p>
+              <p>Average Total: {product.averageCost || "Cost is not set"}{product.currency}</p>
+
               <button
                 className="hover:arrow bg-red text-white rounded-xl w-32"
                 onClick={openCloseConfirmation}
@@ -175,7 +171,8 @@ export default function MaterialPage() {
           <ConfirmationWindow
             windowVisibility={confirmWindowVisibility}
             onClose={openCloseConfirmation}
-            onDelete={handleDeleteMaterial}
+            onDelete={handleDeleteProduct}
+            
           />
 
           <Menu
@@ -189,19 +186,19 @@ export default function MaterialPage() {
         </div>
       );
     }
-    
+
     // View for unlogged users
     else {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Materials" showUserName={true} />
+          <Header title="Products" showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
               <p className="font-bold" data-id="Client view">
                 Client view:
               </p>
-              <Link href="/materials">
+              <Link href="/">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />
                   <p>Back</p>
@@ -212,14 +209,23 @@ export default function MaterialPage() {
             <div className="flex flex-col gap-2">
               <img
                 src={mainImage}
-                alt="Material Image"
+                alt="Product Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
               /> 
 
-              <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
-                {selectedMaterial?.images?.map((image, index) => (
+                <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
+                  {product?.productImages?.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                {product?.patternImages?.map((image, index) => (
                   <SmallBlockHolder
                     key={index}
                     type="plainPicture"
@@ -229,23 +235,26 @@ export default function MaterialPage() {
                   />
                 ))}
               </div>
-            </div> 
+            </div>
 
             <div className="flex flex-col gap-2">
-              <p className="text-xl">
-                {selectedMaterial.name} | {selectedMaterial.materialId}
-              </p>
+              <div className="relative bg-green rounded-2xl w-32">
+                <button className="py-1 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0">
+                  <p>Edit</p>
+                  <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
+                </button>
+              </div>
 
-              <p>Category: {selectedMaterial.categories.join(", ")}</p>
+              <p className="text-xl">{product.name} | {product.productId}</p>
 
-              <p>Color: {selectedMaterial.colors[0]}</p>
+              <p>Categories: {product.categories ||"No set categories"}</p>
 
               <div>
                 <p>Description</p>
-                <p>{selectedMaterial.description || "Material not found"}</p>
-              </div>
+                <p>{product.description || "No Description"} </p>
+              </div>              
             </div>
-          </div>          
+          </div>
 
           <Menu
             type="TwoButtonsMenu"
@@ -258,36 +267,42 @@ export default function MaterialPage() {
         </div>
       );
     }
-  } 
-  else {
+  } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
 
         <div className="mx-4 flex flex-col gap-4 pb-24">
           <div className="flex flex-col gap-2">
-            <img src="/wool.png" alt="Sweater" className="rounded-xl" />
+            <img src="/Sweater.jpg" alt="Sweater" className="rounded-xl" />
 
             <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
-              <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-              <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-              <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
+              <SmallBlockHolder
+                type="plainPicture"
+                imageSource="/Sweater.jpg"
+              />
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <p className="text-xl">testNameMaterial | testId</p>
-
-            <p>Category: testCategory1, testCategory2</p>
-
-            <div>
-              <p>Description</p>
-              <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-              </p>
-            </div>
+            <p className="text-xl">
+              testNameProduct
+              {/* {filteredProducts.length > 0
+              ? filteredProducts[0].title
+              : "Product not found"} */}
+            </p>
+            <p>
+              Category: testCategory1, testCategory2
+              {/* {filteredProducts.length > 0
+              ? filteredProducts[0].category
+              : "Product not found"} */}
+            </p>
+            <p>
+              Average Total: 123$
+              {/* {filteredProducts.length > 0
+              ? filteredProducts[0].total
+              : "Product not found"}$ */}
+            </p>
           </div>
         </div>
       </div>

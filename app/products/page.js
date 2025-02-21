@@ -43,16 +43,28 @@ export default function Home() {
 
         const productsWithCategoriesAndImages = await Promise.all(
           productsData.map(async (product) => {
-            const categoryNames = product.categories?.length
-              ? product.categories
-              : ["Unknown"];
+            const categoryNames = await Promise.all(
+              product.categories.map(async (categoryId) => {
+                const categoryDocRef = doc(
+                  db,
+                  `users/${user.uid}/productCategories/${categoryId}`
+                );
+                const categoryDoc = await getDoc(categoryDocRef);
+                return categoryDoc.exists()
+                  ? categoryDoc.data().name
+                  : "Unknown";
+              })
+            );
 
-            const imageUrls = product.images?.map((image) => image.url) || [];
+            const productImageUrls = product.productImages?.map((image) => image.url) || [];
+            const patternImageUrls = product.patternImages?.map((image) => image.url) || [];
+
 
             return {
               ...product,
               categories: categoryNames,
-              images: imageUrls,
+              productImages: productImageUrls,
+              patternImage: patternImageUrls,
             };
           })
         );
@@ -167,25 +179,30 @@ export default function Home() {
           data-id="search-bar"
         />
 
-        <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-          {filteredProducts.map((product) => (
-            <Link
-              href={`/productid`}
-              key={product.id}
-              data-id="product-block"
-            >
-              <BlockHolder
-                key={product.productId}
-                id={product.productId}
-                title={product.name}
-                category={product.categories.join(", ")}
-                avgTotal={product.averageCost}
-                imageSource={product.images[0]}
-                type={"product"}
-              />
-            </Link>
-          ))}
-        </div>
+        {filteredProducts.length === 0 ? (
+          <p className="flex flex-col items-center w-full py-40">No products yet</p>
+        ) : (
+          <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
+            {filteredProducts.map((product) => (
+              <Link
+              href={`/products/${product.id}`}
+                key={product.id}
+                data-id="product-block"
+              >
+                <BlockHolder
+                  key={product.productId}
+                  id={product.productId}
+                  title={product.name}
+                  currency={product.currency}
+                  category={product.categories.join(", ")}
+                  total={product.averageCost}
+                  imageSource={product.productImages[0]}
+                  type={"product"}
+                />
+              </Link>
+            ))}
+          </div>
+        )}        
 
         <FilterWindow
           onClose={closeConfirmation}

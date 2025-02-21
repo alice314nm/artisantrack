@@ -64,7 +64,7 @@ export default function Page() {
     const [color, setColor] = useState('');
     const [shop, setShop] = useState('');
     const [price, setPrice] = useState('');
-    const [currency, setCurrency] = useState([]);
+    const [currency, setCurrency] = useState('USD');
     const [quantity, setQuantity] = useState('');
     const [total, setTotal] = useState('');
     const [desc, setDesc] = useState('');
@@ -73,6 +73,8 @@ export default function Page() {
 
     const [costItems, setCostItems] = useState([]);
     useEffect(() => {
+        setLoading(true);
+
         if (!selectedMaterial) return;
 
         setUserMaterialId(selectedMaterial.materialId);
@@ -85,13 +87,15 @@ export default function Page() {
         );
         setShop('');
         setPrice('');
-        setCurrency([]);
-        setQuantity('');
+        setCurrency(selectedMaterial.currency);
+        setQuantity(selectedMaterial.quantity);
         setTotal(selectedMaterial.total);
         setDesc(selectedMaterial.description);
         setImages(selectedMaterial.images);
         setImageUrls(selectedMaterial.images.url);
         setCostItems(selectedMaterial.pricing);
+        setLoading(false);
+
     }, [selectedMaterial]);
 
 
@@ -108,10 +112,7 @@ export default function Page() {
 
     const handleRemoveCost = (cost) => {
         const updatedCostItems = costItems.filter(item => item !== cost);
-        const newTotal = updatedCostItems.reduce((acc, item) => acc + item.price, 0);
         setCostItems(updatedCostItems);
-        setTotal(newTotal.toFixed(2));
-
     };
 
     const handleUpdateMaterial = async (e) => {
@@ -125,9 +126,11 @@ export default function Page() {
                 materialId: userMaterialId,
                 name,
                 categories,
-                color: color,
+                color,
                 costItems: costItems || [],
                 total,
+                currency,
+                quantity,
                 description: desc,
                 images: allImages
             };
@@ -171,7 +174,7 @@ export default function Page() {
                 continue;
             }
 
-            const filePath = `images/${userId}/${image.path}`;  // Use the image path for storage
+            const filePath = `images/${userId}/materials/${image.path}`;
             const fileRef = ref(storage, filePath);
 
             try {
@@ -198,21 +201,14 @@ export default function Page() {
         if (shop && price && quantity && currency) {
             const newItem = {
                 shop,
-                price: parseFloat(price),
-                currency,
-                quantity: parseInt(quantity)
+                price,
             };
 
             const updatedCostItems = [...costItems, newItem];
             setCostItems(updatedCostItems);
 
-            const newTotal = updatedCostItems.reduce((acc, item) => acc + item.price, 0);
-            setTotal(newTotal.toFixed(2));
-
             setShop('');
             setPrice('');
-            setCurrency('');
-            setQuantity('');
         }
     };
 
@@ -310,12 +306,12 @@ export default function Page() {
                         </ul>
                     </div>
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-2">
                         <div className="flex flex-row justify-between">
                             <p>Cost</p>
-                            <img src={total === "" ? "/cross.png" : "/check.png"} className={total === "" ? "h-4" : "h-6 text-green"} />
+                            <img src={costItems.length === 0 ? "/cross.png" : "/check.png"} className={costItems.length === 0 ? "h-4" : "h-6 text-green"} />
                         </div>
-
+                        
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row items-center">
                                 <label className="w-16 text-right">Shop:</label>
@@ -324,26 +320,18 @@ export default function Page() {
                             <div className="flex flex-row items-center">
                                 <label className="w-16 text-right">Price:</label>
                                 <input className={`${inputStyle} flex-1 ml-2`} value={price} onChange={(e) => setPrice(e.target.value)} />
-                            </div>
-                            <div className="flex flex-row items-center">
-                                <label className="w-16 text-right">Currency:</label>
-                                <input className={`${inputStyle} flex-1 ml-2`} value={currency} onChange={(e) => setCurrency(e.target.value)} />
-                            </div>
-                            <div className="flex flex-row items-center">
-                                <label className="w-16 text-right">Quantity:</label>
-                                <input className={`${inputStyle} flex-1 ml-2`} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                            </div>
-                            <div className="flex justify-end">
-                                <button type="button" onClick={handleAddCostItem} className="bg-green py-1 w-24 rounded-lg">Add</button>
-                            </div>
+                            </div>                                
                         </div>
-
+                        <div className="flex justify-end">
+                            <button type="button" onClick={handleAddCostItem} className="bg-green py-1 w-24 rounded-lg">Add</button>
+                        </div>
+                    
                         {/* Display added items in the list */}
                         <ul className="flex flex-col gap-2 mt-2 list-decimal pl-4">
                             {costItems.map((item, index) => (
                                 <li key={index}>
                                     <div className="flex flex-row items-center justify-between gap-2">
-                                        <p>{item.shop}, {item.price.toFixed(2)}{item.currency}, {item.quantity}</p>
+                                        <p>{item.shopName}, {item.price}</p>
                                         <button type="button" onClick={() => handleRemoveCost(item)} className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center">
                                             <p className="text-xs">x</p>
                                         </button>
@@ -351,17 +339,43 @@ export default function Page() {
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </div> 
 
-                    <div className="flex flex-row items-center gap-2">
-                        <label>Total:</label>
-                        <input className={inputStyle} value={total} onChange={(e) => setTotal(e.target.value)} />
-
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-row justify-between">
+                            <label>Quantity</label>
+                            <img src={categories.length === 0 ? "/cross.png" : "/check.png"} className={categories.length === 0 ? "h-4" : "h-6 text-green"} />
+                        </div>
+                        <input className={inputStyle} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
                     </div>
 
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row justify-between">
-                            <p>Description:</p>
+                            <label>Total</label>
+                            <img src={total === "" ? "/cross.png" : "/check.png"} className={total === "" ? "h-4" : "h-6 text-green"} />
+                        </div>
+                        <div className="flex flex-row gap-2">
+                            <input 
+                            className={inputStyle} 
+                            value={total} 
+                            onChange={(e) => setTotal(e.target.value)} 
+                            />
+                            <select
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
+                            className="rounded-lg border border-grey-200"
+                            >
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="CAD">CAD (C$)</option>
+                                <option value="RUB">RUB (₽)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-row justify-between">
+                            <p>Description</p>
                             <img src={desc === "" ? "/cross.png" : "/check.png"} className={desc === "" ? "h-4" : "h-6 text-green"} />
                         </div>
                         <textarea className="rounded-lg border p-2" value={desc} onChange={(e) => setDesc(e.target.value)} />

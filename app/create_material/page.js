@@ -28,14 +28,14 @@ export default function Page(){
     const [color, setColor] = useState('');
     const [shop, setShop] = useState('');
     const [price, setPrice] = useState('');
-    const [currency, setCurrency] = useState([]);
+    const [currency, setCurrency] = useState('USD');
     const [quantity, setQuantity] = useState('');
     const [total, setTotal] = useState('');
     const [desc, setDesc] = useState('');
     const [images, setImages] = useState([]);
     const [imageUrls, setImageUrls] = useState([]); 
     
-    const [costItems, setCostItems] = useState([]); // New state to hold the cost items
+    const [costItems, setCostItems] = useState([]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -46,7 +46,7 @@ export default function Page(){
     }, []);
 
     const handleNavigateToListPage = () => {
-        window.location.href = '/pages/materials';
+        window.location.href = '/materials';
     };
 
     const handleAddCategory = () => {
@@ -62,21 +62,14 @@ export default function Page(){
 
     const handleRemoveCost = (cost) => {
         const updatedCostItems = costItems.filter(item => item !== cost);
-
-        // Recalculate the total based on the updated costItems array
-        const newTotal = updatedCostItems.reduce((acc, item) => acc + item.price, 0);
-
-        // Update the state with the new total and cost items
         setCostItems(updatedCostItems);
-        setTotal(newTotal.toFixed(2));
-
     };
+
 
     const handleCreateMaterial = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-    
         const uploadedImages = await handleUpload() || []; 
     
         const materialObj = {
@@ -86,6 +79,8 @@ export default function Page(){
             color,
             costItems: costItems || [],
             total,
+            quantity,
+            currency,
             description: desc,
             images: uploadedImages 
         };
@@ -93,7 +88,7 @@ export default function Page(){
         try {
             await dbAddMaterial(user.uid, materialObj);
             console.log("Material added successfully");
-            window.location.href = '/pages/materials';
+            window.location.href = '/materials';
             setLoading(false);
 
         } catch (error) {
@@ -102,29 +97,19 @@ export default function Page(){
     };
     
     
-
     const handleAddCostItem = () => {
-        if (shop && price && quantity && currency) {
+        if (shop && price) {
             const newItem = { 
                 shop, 
-                price: parseFloat(price), 
-                currency, 
-                quantity: parseInt(quantity) 
+                price, 
             };
             
             // Add the new cost item to the costItems array
             const updatedCostItems = [...costItems, newItem];
             setCostItems(updatedCostItems);
     
-            // Recalculate the total
-            const newTotal = updatedCostItems.reduce((acc, item) => acc + item.price, 0);
-            setTotal(newTotal.toFixed(2));
-    
-            // Reset the form fields
             setShop('');
             setPrice('');
-            setCurrency('');
-            setQuantity('');
         }
     };
 
@@ -140,7 +125,6 @@ export default function Page(){
         setImages(updatedImages);
     };
 
-
     const handleUpload = async () => {
         if (!images.length) return []; // Ensure it returns an empty array instead of undefined
     
@@ -148,7 +132,7 @@ export default function Page(){
         const uploadedImages = [];
     
         for (const image of images) {
-            const filePath = `images/${userId}/${image.name}`;
+            const filePath = `images/${userId}/materials/${image.name}`;
             const fileRef = ref(storage, filePath);
     
             try {
@@ -175,7 +159,6 @@ export default function Page(){
         );
     }
 
-
     if (user) {
         return (
             <div className="flex flex-col min-h-screen gap-4">
@@ -184,8 +167,7 @@ export default function Page(){
                         <p className="font-bold italic text-lg">Create a material</p> 
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
-                                <label>Id <span className="text-red">*</span></label>
-                                
+                                <label>Id <span className="text-red">*</span></label> 
                                 <img  src={materialId === "" ? "/cross.png" : "/check.png"}  className={materialId === "" ? "h-4" : "h-6 text-green"} />                            
                             </div>
                             <input required className={inputStyle} value={materialId} onChange={(e) => setMaterialId(e.target.value)} />
@@ -207,7 +189,6 @@ export default function Page(){
                                 <img  src={color === "" ? "/cross.png" : "/check.png"}  className={color === "" ? "h-4" : "h-6 text-green"} />                            
                             </div>
                             <input className={inputStyle} value={color} onChange={(e) => setColor(e.target.value)} />
-
                         </div>
 
                         <div className="flex flex-col gap-2">
@@ -225,7 +206,7 @@ export default function Page(){
                                 <button 
                                     type="button" 
                                     onClick={handleAddCategory} 
-                                    className="bg-green px-4 py-1 rounded-lg"
+                                    className="bg-green py-1 w-32 rounded-lg"
                                 >
                                     Add
                                 </button>
@@ -250,10 +231,10 @@ export default function Page(){
                             </ul>
                         </div>
                         
-                        <div className="flex flex-col">
+                        <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
                                 <p>Cost</p>
-                                <img  src={total === "" ? "/cross.png" : "/check.png"}  className={total === "" ? "h-4" : "h-6 text-green"} />                            
+                                <img src={costItems.length === 0 ? "/cross.png" : "/check.png"} className={costItems.length === 0 ? "h-4" : "h-6 text-green"} />
                             </div>
                             
                             <div className="flex flex-col gap-2">
@@ -264,54 +245,69 @@ export default function Page(){
                                 <div className="flex flex-row items-center">
                                     <label className="w-16 text-right">Price:</label>
                                     <input className={`${inputStyle} flex-1 ml-2`} value={price} onChange={(e) => setPrice(e.target.value)} />
-                                </div>
-                                <div className="flex flex-row items-center">
-                                    <label className="w-16 text-right">Currency:</label>
-                                    <input className={`${inputStyle} flex-1 ml-2`} value={currency} onChange={(e) => setCurrency(e.target.value)} />
-                                </div>
-                                <div className="flex flex-row items-center">
-                                    <label className="w-16 text-right">Quantity:</label>
-                                    <input className={`${inputStyle} flex-1 ml-2`} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                                </div>
-                                <div className="flex justify-end">
-                                    <button type="button" onClick={handleAddCostItem} className="bg-green py-1 w-24 rounded-lg">Add</button>
-                                </div>
-                        </div>
+                                </div>                                
+                            </div>
+                            <div className="flex justify-end">
+                                <button type="button" onClick={handleAddCostItem} className="bg-green py-1 w-24 rounded-lg">Add</button>
+                            </div>
                         
-                        {/* Display added items in the list */}
-                        <ul className="flex flex-col gap-2 mt-2 list-decimal pl-4">
-                            {costItems.map((item, index) => (
-                                <li key={index}>
-                                    <div className="flex flex-row items-center justify-between gap-2">
-                                        <p>{item.shop}, {item.price.toFixed(2)}{item.currency}, {item.quantity}</p>
-                                        <button type="button" onClick={() => handleRemoveCost(item)} className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center">
-                                            <p className="text-xs">x</p>
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                        
-                        <div className="flex flex-row items-center gap-2">
-                            <label>Total:</label>
-                            <input className={inputStyle} value={total} onChange={(e) => setTotal(e.target.value)} />
+                            {/* Display added items in the list */}
+                            <ul className="flex flex-col gap-2 mt-2 list-decimal pl-4">
+                                {costItems.map((item, index) => (
+                                    <li key={index}>
+                                        <div className="flex flex-row items-center justify-between gap-2">
+                                            <p>{item.shop}, {item.price}</p>
+                                            <button type="button" onClick={() => handleRemoveCost(item)} className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center">
+                                                <p className="text-xs">x</p>
+                                            </button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>               
 
+                        <div className="flex flex-col gap-2">
+                            <div className="flex flex-row justify-between">
+                                <label>Quantity</label>
+                                <img src={categories.length === 0 ? "/cross.png" : "/check.png"} className={categories.length === 0 ? "h-4" : "h-6 text-green"} />
+                            </div>
+                            <input className={inputStyle} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
                         </div>
 
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
-                                <p>Description:</p>
+                                <label>Total</label>
+                                <img  src={total === "" ? "/cross.png" : "/check.png"}  className={total === "" ? "h-4" : "h-6 text-green"} />                            
+                            </div>
+                            <div className="flex flex-row gap-2">
+                                <input 
+                                className={inputStyle} 
+                                value={total} 
+                                onChange={(e) => setTotal(e.target.value)} 
+                                />
+                                <select
+                                value={currency}
+                                onChange={(e) => setCurrency(e.target.value)}
+                                className="rounded-lg border border-grey-200"
+                                >
+                                    <option value="USD">USD ($)</option>
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="CAD">CAD (C$)</option>
+                                    <option value="RUB">RUB (₽)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <div className="flex flex-row justify-between">
+                                <p>Description</p>
                                 <img  src={desc === "" ? "/cross.png" : "/check.png"}  className={desc === "" ? "h-4" : "h-6 text-green"} />                            
                             </div>
                             <textarea className="rounded-lg border p-2" value={desc} onChange={(e) => setDesc(e.target.value)} />
-
                         </div>
 
-                        
-
+                        {/* Image Selection */}
                         <div className="flex flex-col gap-2">
-                            {/* Image Selection */}
                             <div className="flex flex-row justify-between">
                                 <label>Select images</label>
                                 <img  src={images.length===0 ? "/cross.png" : "/check.png"}  className={images.length===0 ? "h-4" : "h-6 text-green"} />                            
@@ -326,7 +322,6 @@ export default function Page(){
                                 <p className="text-center bg-green rounded-lg w-40 py-1 ">select Image</p>
                             </div>
 
-                           
                             {/* Preview Chosen Images */}
                             {images.length > 0 && (
                                 <div className="flex flex-row gap-2 overflow-x-auto">

@@ -46,15 +46,15 @@ export default function SlideMenu({ menuVisible }) {
             src="/logout.png"
             className="w-5"/>
           </a>
-          <Link className={buttonStyleLi} href="/pages/profile">
+          <Link className={buttonStyleLi} href="/profile">
             <p>Profile</p>
           </Link>
 
-          <Link className={buttonStyleLi} href="/pages/documents">
+          <Link className={buttonStyleLi} href="/documents">
             <p>Documents</p>
           </Link>
 
-          <Link className={buttonStyleLi} href="/pages/finances">
+          <Link className={buttonStyleLi} href="/finances">
             <p>Finance</p>
           </Link>
           <li>
@@ -86,15 +86,15 @@ export default function SlideMenu({ menuVisible }) {
               }}
               data-id="inventory-submenu"
             >
-              <Link className={`${buttonStyleLi} px-8`} href="/">
+              <Link className={`${buttonStyleLi} px-8`} href="/products">
                 Products
               </Link>
-              <Link className={`${buttonStyleLi} px-8`} href="/pages/materials">
+              <Link className={`${buttonStyleLi} px-8`} href="/materials">
                 Materials
               </Link>
             </div>
           </li>
-          <Link className={buttonStyleLi} href="/pages/orders">
+          <Link className={buttonStyleLi} href="/orders">
             <p>Orders</p>
           </Link>
         </ul>

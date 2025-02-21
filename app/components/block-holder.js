@@ -17,20 +17,20 @@ import React from 'react';
     - material
 */
 
-export default function BlockHolder({id, title, category, deadline, quantity, color, total, imageSource, type}) {
+export default function BlockHolder({id, title, category, deadline, quantity, currency, color, total, imageSource, type}) {
     if (type=='product') {
         return (
-            <div className="flex flex-col gap-2 w-full h-full sm:w-[40%] md:w-[80%] lg:w-[100%]">
+            <div className="flex flex-col gap-2 w-full h-full ">
                 <div>
                     <img 
                     src={imageSource}
-                    className="h-48 sm:h-44 md:h-52 lg:h-64 rounded-lg object-cover"/>
+                    className="h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 rounded-lg object-cover"/>
                 </div>
 
                 <div>
-                    <p className="font-bold">#{id} | {title}</p>
-                    <p>Category: {category}</p>
-                    <p>Average Total: ${total}</p>
+                    <p className="font-bold truncate max-w-[180px]">#{id} | {title}</p>
+                    <p className="truncate max-w-[180px]">Category: {category}</p>
+                    <p className="truncate max-w-[180px]">Average Total: {total}{currency}</p>
                 </div>
             </div>
         );
@@ -41,14 +41,14 @@ export default function BlockHolder({id, title, category, deadline, quantity, co
                 <div>
                     <img 
                     src={imageSource}
-                    className="h-48 sm:h-44 md:h-52 lg:h-64 rounded-lg object-cover"/>
+                    className="h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 rounded-lg object-cover"/>
                 </div>
 
                 <div>
                     <p className="font-bold">#{id} | {title}</p>
                     <p>Deadline</p>
                     <p>{deadline}</p>
-                    <p>Total: ${total}</p>
+                    <p>Total: {total}{currency}</p>
                 </div>
             </div>
         );
@@ -60,8 +60,8 @@ export default function BlockHolder({id, title, category, deadline, quantity, co
             <div className="flex flex-col gap-2 w-full h-full ">
                 <div>
                     <img 
-                        src={imageSource}
-                        className="h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 rounded-lg object-cover"/>
+                    src={imageSource}
+                    className="h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 rounded-lg object-cover"/>
                 </div>
 
                 <div>
@@ -69,7 +69,7 @@ export default function BlockHolder({id, title, category, deadline, quantity, co
                     <p className="truncate max-w-[180px]">Available quantity: {quantity}</p>
                     <p className="truncate max-w-[180px]">Category: {category}</p>
                     <p className="truncate max-w-[180px]">Color: {color}</p>
-                    <p className="truncate max-w-[180px]">Total cost: {total}$</p>
+                    <p className="truncate max-w-[180px]">Total cost: {total}{currency}</p>
                 </div>
             </div>
 

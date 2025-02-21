@@ -112,7 +112,7 @@ export default function Page() {
   }, [user]);
 
   const handleNavigateToCreatePage = () => {
-    window.location.href = "/pages/create_material";
+    window.location.href = "/create_material";
   };
 
   const toggleConfirmation = () => {
@@ -216,10 +216,13 @@ export default function Page() {
           data-id="search-bar"
         />
 
-        <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
+        {filteredMaterials.length===0 ? (
+          <p className="flex flex-col items-center w-full py-40">No materials yet</p>
+        ) : (
+          <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
           {filteredMaterials.map((material) => (
             <Link
-              href={`/pages/materials/${material.id}`}
+              href={`/materials/${material.id}`}
               key={material.materialId}
               data-id="material-block"
             >
@@ -227,8 +230,10 @@ export default function Page() {
                 key={material.materialId}
                 id={material.materialId}
                 title={material.name}
+                quantity={material.quantity}
                 category={material.categories.join(", ")}
                 total={material.total}
+                currency={material.currency}
                 color={material.colors.join(", ")}
                 imageSource={material.images[0]}
                 type={"material"}
@@ -236,6 +241,8 @@ export default function Page() {
             </Link>
           ))}
         </div>
+        )}
+        
 
         <FilterWindow
           onClose={closeConfirmation}

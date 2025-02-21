@@ -17,7 +17,7 @@ export default function Page() {
   const { user } = useUserAuth();
 
   const handleNavigateToCreatePage = () => {
-    window.location.href = "/pages/create_document";
+    window.location.href = "/create_document";
   };
 
   const toggleConfirmation = () => {

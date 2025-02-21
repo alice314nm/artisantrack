@@ -18,7 +18,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
 
   const handleNavigateToCreatePage = () => {
-    window.location.href = "/pages/create_order";
+    window.location.href = "/create_order";
   };
 
   const toggleConfirmation = () => {
@@ -100,7 +100,7 @@ export default function Page() {
         />
 
         <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-          <Link href='/pages/orderid' key={123}>
+          <Link href='/orderid' key={123}>
             <BlockHolder
               key={123}
               id={123}

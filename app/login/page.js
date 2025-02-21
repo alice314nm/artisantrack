@@ -145,7 +145,7 @@ export default function LoginPage() {
               </p>
               <p>
                 No account yet?{" "}
-                <Link href="/pages/signin">
+                <Link href="/signin">
                   <span className="text-sky-500 underline cursor-pointer">
                     Sign Up
                   </span>

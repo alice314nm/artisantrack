@@ -89,6 +89,8 @@ export async function dbAddMaterial(userId, materialObj) {
             categories: categoryIds,
             color: colorId,
             total: materialObj.total,
+            currency: materialObj.currency,
+            quantity: materialObj.quantity,
             description: materialObj.description,
             images: materialObj.images 
         });
@@ -101,8 +103,6 @@ export async function dbAddMaterial(userId, materialObj) {
                 shopId: costShopId,
                 shopName: costItem.shop,
                 price: costItem.price,
-                currency: costItem.currency,
-                quantity: costItem.quantity
             });
         }
 
@@ -170,7 +170,7 @@ export async function fetchMaterials(userId) {
                     material.categories.map(async (categoryId) => {
                         const categoryDocRef = doc(db, `users/${userId}/materialCategories/${categoryId}`);
                         const categoryDoc = await getDoc(categoryDocRef);
-                        return categoryDoc.exists() ? categoryDoc.data().name : "Unknown";
+                        return categoryDoc.exists() ? categoryDoc.data().name : "No set categories";
                     })
                 );
 
@@ -181,13 +181,13 @@ export async function fetchMaterials(userId) {
                         material.color.map(async (colorId) => {
                             const colorDocRef = doc(db, `users/${userId}/colors/${colorId}`);
                             const colorDoc = await getDoc(colorDocRef);
-                            return colorDoc.exists() ? colorDoc.data().name : "Unknown";
+                            return colorDoc.exists() ? colorDoc.data().name : "No set colors";
                         })
                     );
                 } else if (material.color) {
                     const colorDocRef = doc(db, `users/${userId}/colors/${material.color}`);
                     const colorDoc = await getDoc(colorDocRef);
-                    colorNames = colorDoc.exists() ? [colorDoc.data().name] : ["Unknown"];
+                    colorNames = colorDoc.exists() ? [colorDoc.data().name] : ["No set colors"];
                 }
 
                 // Extract images
@@ -202,9 +202,7 @@ export async function fetchMaterials(userId) {
 
                 const pricingDetails = pricingSnapshot.docs.map((pricingDoc) => ({
                     id: pricingDoc.id,
-                    currency: pricingDoc.data().currency || "$",
                     price: pricingDoc.data().price || 0,
-                    quantity: pricingDoc.data().quantity || 0,
                     shopId: pricingDoc.data().shopId || "",
                     shopName: pricingDoc.data().shopName || "",
                 }));
@@ -251,8 +249,6 @@ export const updateMaterial = async (userId, materialId, updatedMaterialData) =>
                     shopId: await getOrAddShop(userId, costItem.shop),
                     shopName: costItem.shop,
                     price: costItem.price,
-                    currency: costItem.currency,
-                    quantity: costItem.quantity
                 });
             });
 

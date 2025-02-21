@@ -13,8 +13,7 @@ export default function Page(){
     const inputStyle = 'h-9 rounded-lg border p-2';
 
     const handleNavigateToListPage = () => {
-        console.log('Navigating to the home page...');
-        window.location.href = '/pages/documents';
+        window.location.href = '/documents';
     };
 
     if (user) {

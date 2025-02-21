@@ -13,12 +13,12 @@ export default function NotLoggedWindow() {
         </p>
 
         <div className="flex flex-col gap-3 mt-4 w-full">
-          <Link href="/pages/login">
+          <Link href="/login">
             <button className="font-bold bg-green py-2 px-4 rounded-lg w-full">
               Log In
             </button>
           </Link>
-          <Link href="/pages/signin">
+          <Link href="/signin">
             <button className="font-bold border-2 border-green py-2 px-4 rounded-lg w-full">
               Create Account
             </button>

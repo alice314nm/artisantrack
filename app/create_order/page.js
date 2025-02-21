@@ -17,7 +17,7 @@ export default function Page(){
 
     const handleNavigateToListPage = () => {
         console.log('Navigating to the home page...');
-        window.location.href = '/pages/orders';
+        window.location.href = '/orders';
     };
 
     if (user) {

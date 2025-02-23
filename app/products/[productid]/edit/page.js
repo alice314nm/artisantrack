@@ -1,6 +1,6 @@
 "use client";
 
-import { dbAddProduct, fetchProductById, updateProduct } from "@/app/_services/product-service";
+import { fetchProductById, fetchProductCategories, fetchProductIds, updateProduct } from "@/app/_services/product-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import { app, storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
@@ -10,7 +10,6 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from 'next/navigation'; // Import the useRouter hook
-import { getFirestore } from "firebase/firestore";
 
 
 export default function Page() {
@@ -33,9 +32,11 @@ export default function Page() {
     const [patternImageUrls, setPatternImageUrls] = useState([]);
     const [productImageUrls, setProductImageUrls] = useState([]);
     const [product, setProduct] = useState(null);
-
-
     const [averageCost, setAverageCost] = useState("");
+
+    const [productIds, setProductIds] = useState([]);
+    const [existingCategories, setExistingCategories] = useState([])
+    const [errorMessage, setErrorMessage] = useState('')
 
   
     useEffect(() => {
@@ -79,9 +80,17 @@ export default function Page() {
         setPatternImageUrls([]);
         setProductImageUrls([]);
         setLoading(false);
-
-
     }, [product])
+
+    useEffect(()=>{
+        if (!user) {return};
+        
+        if (user) {
+            fetchProductIds(user.uid, setProductIds); 
+            fetchProductCategories(user.uid, setExistingCategories)
+            setProductIds((productIds) => productIds.filter(id => id !== userProductId));
+        }
+    }, [user])
 
     const handleAddCategory = () => {
         if (category.trim() && !categories.includes(category)) {
@@ -202,6 +211,28 @@ export default function Page() {
         e.preventDefault();
         setLoading(true);
 
+        setErrorMessage("");
+            
+        if (!userProductId || !name) {
+            setErrorMessage("Id and Name are required.");
+            setLoading(false);
+            return;
+        }
+
+        if (userProductId.length>12) {
+            setErrorMessage("Id should be less than 12 characters.");
+            setLoading(false);
+            return;
+        }
+
+        const filteredProductIds = productIds.filter(id => id !== product.productId);
+        
+        if (filteredProductIds.includes(userProductId)) {
+            setErrorMessage(`Product with '${userProductId}' Id already exists.`);
+            setLoading(false);
+            return;
+        }
+
         const uploadedImages = await handleUpload() || [];
         const uploadedProductImages = uploadedImages?.[0] || []; 
         const uploadedPatternImages = uploadedImages?.[1] || [];
@@ -210,8 +241,8 @@ export default function Page() {
             const updatedProductData = {
                 productId: userProductId,
                 name,
-                averageCost,
-                currency,
+                averageCost: averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
+                currency: averageCost.trim() === "" ? "" : currency,    
                 categories,
                 description: desc,
                 productImages: uploadedProductImages,
@@ -221,14 +252,11 @@ export default function Page() {
             await updateProduct(user.uid, productId, updatedProductData)
             console.log("Product updated successfully!");
             setLoading(false);
-            //window.location.href = `/products/${productId}`;
+            window.location.href = `/products/${productId}`;
         } catch (error){
             console.error("Error updating product:", error);
             setLoading(false);
         }
-        
-
-
     };
 
     if (loading) {
@@ -248,7 +276,9 @@ export default function Page() {
             className="mx-4 flex flex-col gap-4"
             onSubmit={handleUpdateProduct}
             >
-            <p className="font-bold italic text-lg">Create a Product</p>
+            <p className="font-bold italic text-lg">Edit the product</p>
+
+            {errorMessage.length===0?(null):(<p className="text-red">{errorMessage}</p>)}
 
             {/* Product ID */}
             <div className="flex flex-col gap-2">
@@ -278,32 +308,6 @@ export default function Page() {
                 />
             </div>
 
-            {/* Average Cost */}
-            <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-between">
-                    <label>Average Cost</label>
-                    <img  src={averageCost === "" ? "/cross.png" : "/check.png"}  className={averageCost === "" ? "h-4" : "h-6 text-green"} />                            
-                </div>
-                <div className="flex flex-row gap-2">
-                    <input 
-                    data-id="product-average-cost"
-                    className={inputStyle}
-                    value={averageCost}
-                    onChange={(e) => setAverageCost(e.target.value)}
-                    />
-                    <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="rounded-lg border border-grey-200"
-                    >
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="CAD">CAD (C$)</option>
-                        <option value="RUB">RUB (₽)</option>
-                    </select>
-                </div>
-            </div>
-
             {/* Category*/}
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between">
@@ -327,8 +331,9 @@ export default function Page() {
                 </button>
                 </div>
                 <datalist id="categories">
-                <option value="Sweater" />
-                <option value="Upper Clothes" />
+                    {existingCategories?.map((category, index)=>(
+                        <option key={index} value={category} />
+                    ))}
                 </datalist>
 
                 {/* Category List */}
@@ -350,6 +355,40 @@ export default function Page() {
                 </ul>
             </div>
 
+            {/* Average Cost */}
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-row justify-between">
+                    <label>Average Cost</label>
+                    <img  src={averageCost === "" ? "/cross.png" : "/check.png"}  className={averageCost === "" ? "h-4" : "h-6 text-green"} />                            
+                </div>
+                <div className="flex flex-row gap-2">
+                <input 
+                    data-id="product-average-cost"
+                    className={inputStyle}
+                    type="number"
+                    value={averageCost}
+                    placeholder="0.00"
+                    onChange={(e) => {
+                        setAverageCost(e.target.value); // Allow empty value
+                    }}
+                    onBlur={() => {
+                        if (averageCost === "") {
+                            setAverageCost("");
+                        }
+                    }}
+                    />
+                    <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="rounded-lg border border-grey-200"
+                    >
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="CAD">CAD (C$)</option>
+                        <option value="RUB">RUB (₽)</option>
+                    </select>
+                </div>
+            </div>
 
             {/* Description */}
             <div className="flex flex-col gap-2">

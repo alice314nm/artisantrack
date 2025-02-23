@@ -1,6 +1,6 @@
 'use client'
 
-import { dbAddMaterial } from "@/app/_services/material-service";
+import { dbAddMaterial, fetchMaterialCategories, fetchMaterialsIds } from "@/app/_services/material-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
@@ -19,7 +19,6 @@ export default function Page(){
     const inputStyle = 'h-9 rounded-lg border p-2 w-full';
     const [loading, setLoading] = useState(true);
 
-
     const [materialId, setMaterialId] = useState('');
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
@@ -37,6 +36,11 @@ export default function Page(){
     
     const [costItems, setCostItems] = useState([]);
 
+    const [errorMessage, setErrorMessage] = useState("");
+    const [materialIds, setMaterialIds] = useState([]);
+    const [existingMaterialCategories, setExistingMaterialCategories] = useState([]);
+
+
     useEffect(() => {
         const timeout = setTimeout(() => {
         setLoading(false);
@@ -44,6 +48,16 @@ export default function Page(){
 
         return () => clearTimeout(timeout);
     }, []);
+
+    useEffect(()=>{
+        if (!user) {return;}
+        
+        if (user) {
+            fetchMaterialsIds(user.uid, setMaterialIds); 
+            fetchMaterialCategories(user.uid, setExistingMaterialCategories)
+        }
+
+    }, [user])
 
     const handleNavigateToListPage = () => {
         window.location.href = '/materials';
@@ -70,6 +84,26 @@ export default function Page(){
         e.preventDefault();
         setLoading(true);
 
+        setErrorMessage("");
+
+        if (!materialId || !name) {
+            setErrorMessage("Id and Name are required.");
+            setLoading(false);
+            return;
+        }
+
+        if (materialId.length>12) {
+            setErrorMessage("Id should be less than 12 characters.");
+            setLoading(false);
+            return;
+        }
+    
+        if (materialIds.includes(materialId)) {
+            setErrorMessage(`Product with '${materialId}' Id already exists.`);
+            setLoading(false);
+            return;
+        }
+        
         const uploadedImages = await handleUpload() || []; 
     
         const materialObj = {
@@ -78,9 +112,9 @@ export default function Page(){
             categories,
             color,
             costItems: costItems || [],
-            total,
+            total: total.trim() === "" ? "" : parseFloat(total).toFixed(2),
+            currency: total.trim() === "" ? "" : currency,
             quantity,
-            currency,
             description: desc,
             images: uploadedImages 
         };
@@ -104,7 +138,6 @@ export default function Page(){
                 price, 
             };
             
-            // Add the new cost item to the costItems array
             const updatedCostItems = [...costItems, newItem];
             setCostItems(updatedCostItems);
     
@@ -164,13 +197,16 @@ export default function Page(){
             <div className="flex flex-col min-h-screen gap-4">
             <Header title="Materials" showUserName={true}/>
                 <form className="mx-4 flex flex-col gap-4" onSubmit={handleCreateMaterial}> 
-                        <p className="font-bold italic text-lg">Create a material</p> 
+                        <p className="font-bold italic text-lg">Create a material</p>
+
+                        {errorMessage.length===0?(null):(<p className="text-red">{errorMessage}</p>)}
+
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
                                 <label>Id <span className="text-red">*</span></label> 
                                 <img  src={materialId === "" ? "/cross.png" : "/check.png"}  className={materialId === "" ? "h-4" : "h-6 text-green"} />                            
                             </div>
-                            <input required className={inputStyle} value={materialId} onChange={(e) => setMaterialId(e.target.value)} />
+                            <input className={inputStyle} value={materialId} onChange={(e) => setMaterialId(e.target.value)} />
                         </div>
 
 
@@ -179,7 +215,7 @@ export default function Page(){
                                 <label>Name <span className="text-red">*</span></label>
                                 <img  src={name === "" ? "/cross.png" : "/check.png"}  className={name === "" ? "h-4" : "h-6 text-green"} />                            
                             </div>
-                            <input required className={inputStyle} value={name} onChange={(e) => setName(e.target.value)} />
+                            <input className={inputStyle} value={name} onChange={(e) => setName(e.target.value)} />
 
                         </div>
 
@@ -211,9 +247,10 @@ export default function Page(){
                                     Add
                                 </button>
                             </div>
-                            <datalist id="categories">                                
-                                <option value="Sweater"/>
-                                <option value="Upper Clothes"/>
+                            <datalist id="categories">
+                                {existingMaterialCategories?.map((category, index)=>(
+                                    <option key={index} value={category} />
+                                ))}
                             </datalist>
 
                             {/* Category List */}
@@ -269,9 +306,12 @@ export default function Page(){
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row justify-between">
                                 <label>Quantity</label>
-                                <img src={categories.length === 0 ? "/cross.png" : "/check.png"} className={categories.length === 0 ? "h-4" : "h-6 text-green"} />
+                                <img src={quantity === "" ? "/cross.png" : "/check.png"} className={quantity === "" ? "h-4" : "h-6 text-green"} />
                             </div>
-                            <input className={inputStyle} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                            <input 
+                            className={inputStyle} 
+                            value={quantity}
+                            onChange={(e) => setQuantity(e.target.value)} />
                         </div>
 
                         <div className="flex flex-col gap-2">
@@ -282,9 +322,17 @@ export default function Page(){
                             <div className="flex flex-row gap-2">
                                 <input 
                                 className={inputStyle} 
-                                value={total} 
-                                onChange={(e) => setTotal(e.target.value)} 
-                                />
+                                value={total}
+                                type="number" 
+                                placeholder="0"
+                                onChange={(e) => {
+                                    setTotal(e.target.value); // Allow empty value
+                                }}
+                                onBlur={() => {
+                                    if (total === "") {
+                                        setTotal("");
+                                    }
+                                }}                                />
                                 <select
                                 value={currency}
                                 onChange={(e) => setCurrency(e.target.value)}

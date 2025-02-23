@@ -260,3 +260,31 @@ export const updateMaterial = async (userId, materialId, updatedMaterialData) =>
         console.error("Error updating material:", error);
     }
 };
+
+export async function fetchMaterialsIds(userId, materialsIdsSetter){
+    try{
+        const materialsRef = collection(db, 'users', userId, 'materials')
+        const querySnapshot = await getDocs(materialsRef);
+
+        const materialIds = querySnapshot.docs.map(material => material.data().materialId);
+
+        materialsIdsSetter(materialIds);
+        return materialIds;
+    } catch(error){
+        console.error("Error while fetching materials ids: ", error.message)
+    }
+}
+
+export async function fetchMaterialCategories(userId, materialCategoriesSetter){
+    try{
+        const materialCategoriesRef = collection(db, 'users', userId, 'materialCategories');
+        const querySnapshot = await getDocs(materialCategoriesRef);
+
+        const materialCategories = querySnapshot.docs.map(categories => categories.data().name);
+
+        materialCategoriesSetter(materialCategories);
+        return materialCategories;
+    } catch(error){
+        console.error("Error while fetching material categories: ", error.message)
+    }
+}

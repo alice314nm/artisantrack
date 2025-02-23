@@ -230,12 +230,12 @@ export default function Page() {
                 key={material.materialId}
                 id={material.materialId}
                 title={material.name}
-                quantity={material.quantity}
-                category={material.categories.join(", ")}
-                total={material.total}
+                quantity={material.quantity || "—"}
+                category={material.categories.join(", ") || "—"}
+                total={material.total || "—"}
                 currency={material.currency}
-                color={material.colors.join(", ")}
-                imageSource={material.images[0]}
+                color={material.colors.join(", ") || "—"}
+                imageSource={material.images[0] || "/noImage.png"}
                 type={"material"}
               />
             </Link>

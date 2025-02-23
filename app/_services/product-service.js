@@ -60,8 +60,6 @@ export async function dbAddProduct(userId, productObj) {
     }
 }
 
-
-
 export async function fetchProductById(userId, productId, productSetter) {
     if (!userId || !productId) return;
 
@@ -101,8 +99,6 @@ export async function fetchProductById(userId, productId, productSetter) {
         console.error("Error fetching product:", error);
     }
 }
-
-
 
 export async function dbDeleteProductById(userId, productId) {
     try {     
@@ -164,3 +160,33 @@ export const updateProduct = async (userId, productId, updatedProductData) => {
         console.error("Error updating material:", error);
     }
 };
+
+export async function fetchProductIds(userId, productIdsSetter) {
+    try {
+        const productsRef = collection(db, "users", userId, "products"); 
+        const querySnapshot = await getDocs(productsRef);
+
+        const productIds = querySnapshot.docs.map(product => product.data().productId);
+
+        productIdsSetter(productIds);
+        return productIds;
+
+    } catch (error) {
+        console.error("Error while fetching all product IDs:", error.message);
+    }
+}
+
+export async function fetchProductCategories(userId, categoriesSetter){
+    try {
+        const productCategoriesRef = collection(db, "users", userId, "productCategories"); 
+        const querySnapshot = await getDocs(productCategoriesRef);
+
+        const productCategories = querySnapshot.docs.map(categories => categories.data().name);
+
+        categoriesSetter(productCategories);
+        return productCategories;
+
+    } catch (error) {
+        console.error("Error while fetching all product categories:", error.message);
+    }
+}

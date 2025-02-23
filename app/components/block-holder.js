@@ -30,7 +30,7 @@ export default function BlockHolder({id, title, category, deadline, quantity, cu
                 <div>
                     <p className="font-bold truncate max-w-[180px]">#{id} | {title}</p>
                     <p className="truncate max-w-[180px]">Category: {category}</p>
-                    <p className="truncate max-w-[180px]">Average Total: {total}{currency}</p>
+                    <p className="truncate max-w-[180px]">Avg.Total: {total}{currency}</p>
                 </div>
             </div>
         );
@@ -66,7 +66,7 @@ export default function BlockHolder({id, title, category, deadline, quantity, cu
 
                 <div>
                     <p className="font-bold truncate max-w-[180px]">#{id} | {title}</p>                    
-                    <p className="truncate max-w-[180px]">Available quantity: {quantity}</p>
+                    <p className="truncate max-w-[180px]">Quantity: {quantity}</p>
                     <p className="truncate max-w-[180px]">Category: {category}</p>
                     <p className="truncate max-w-[180px]">Color: {color}</p>
                     <p className="truncate max-w-[180px]">Total cost: {total}{currency}</p>

@@ -194,9 +194,9 @@ export default function Home() {
                   id={product.productId}
                   title={product.name}
                   currency={product.currency}
-                  category={product.categories.join(", ")}
-                  total={product.averageCost}
-                  imageSource={product.productImages[0]}
+                  category={product.categories.join(", ") || "—"}
+                  total={product.averageCost || "—"}
+                  imageSource={product.productImages[0] || "/noImage.png"}
                   type={"product"}
                 />
               </Link>

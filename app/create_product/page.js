@@ -103,8 +103,8 @@ export default function Page() {
   };
 
   const handleUpload = async () => {
-    if (!patternImages.length) return [];
-    if (!productImages.length) return [];
+    // if (!patternImages.length) return [];
+    // if (!productImages.length) return [];
     if (!patternImages.length && !productImages.length) return [];
 
     const uploadedProductImages = [];

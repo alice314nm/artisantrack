@@ -69,7 +69,8 @@ export default function MaterialPage() {
 
   const openCloseConfirmation = () => {
     setConfirmWindowVisibility((prev) => !prev);
-    console.log(confirmWindowVisibility)
+    console.log(selectedMaterial.colors)
+
   };
 
   const changeView = () => {
@@ -106,24 +107,26 @@ export default function MaterialPage() {
 
             <div className="flex flex-col gap-2">
               <img
-                src={mainImage}
+                src={mainImage || "/noImage.png"}
                 alt="Material Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
               /> 
 
-              <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
-                {selectedMaterial?.images?.map((image, index) => (
-                  <SmallBlockHolder
-                    key={index}
-                    type="plainPicture"
-                    imageSource={image.url}
-                    onButtonFunction={() => handleImageChange(image)}
-                    mainStatus={mainImage === image.url}
-                  />
-                ))}
-              </div>
+              {(selectedMaterial?.images?.length > 0) && (
+                <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
+                  {selectedMaterial.images.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                </div>
+              )}
             </div> 
 
             <div className="flex flex-col gap-2">
@@ -137,29 +140,37 @@ export default function MaterialPage() {
               </div>
 
               <p className="text-xl">
-                {materialId[0].name} | {materialId[0].materialId}
+                #{selectedMaterial.materialId} | {selectedMaterial.name} 
               </p>
 
-              <p>Categories: {materialId[0].categories.join(", ") ||"No set categories"}</p>
+              <p>Categories: {selectedMaterial.categories.join(", ") ||"No set categories"}</p>
 
-              <p>Color: {materialId[0].colors || "No set Colors"}</p>
+              <p>Color: {Array.isArray(selectedMaterial.colors) && selectedMaterial.colors[0].length > 0 
+                  ? selectedMaterial.colors.join(", ") 
+                  : "No set colors"}
+              </p>
 
               <div>
                 <p>Description</p>
-                <p>{materialId[0].description || "No Description"}</p>
+                <p>{selectedMaterial.description || "No Description"}</p>
               </div>
 
-              <p>Cost</p>
-              {materialId[0]?.pricing?.length > 0 ? (
-                materialId[0].pricing.map((item, index) => (
-                  <li key={index}>
-                    {item.shopName} {item.price}
-                  </li>
+              {selectedMaterial?.pricing?.length > 0 ? (
+                selectedMaterial.pricing.map((item, index) => (
+                  <div key={index}>
+                    <p>Cost</p>
+                    <li>{item.shopName} {item.price}</li>
+                  </div>
                 ))
-              ) :(<p className="right">No set shops</p>)}
+              ) :(
+                  <div>
+                    <p>Cost</p>
+                    <p className="right">No set shops</p>
+                  </div>
+                  )}
               
               <p>
-                Total cost: {materialId[0].total || "No set total"}{materialId[0].currency}
+                Total cost: {selectedMaterial.total || "No set total"}{selectedMaterial.currency}
               </p>
               <button
                 className="hover:arrow bg-red text-white rounded-xl w-32"
@@ -211,38 +222,43 @@ export default function MaterialPage() {
 
             <div className="flex flex-col gap-2">
               <img
-                src={mainImage}
+                src={mainImage || "/noImage.png"}
                 alt="Material Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
               /> 
 
-              <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
-                {selectedMaterial?.images?.map((image, index) => (
-                  <SmallBlockHolder
-                    key={index}
-                    type="plainPicture"
-                    imageSource={image.url}
-                    onButtonFunction={() => handleImageChange(image)}
-                    mainStatus={mainImage === image.url}
-                  />
-                ))}
-              </div>
+              {(selectedMaterial?.images?.length > 0 ) && (
+                <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
+                  {selectedMaterial?.images?.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                </div>
+              )}
             </div> 
 
             <div className="flex flex-col gap-2">
               <p className="text-xl">
-                {selectedMaterial.name} | {selectedMaterial.materialId}
+                #{selectedMaterial.materialId} | {selectedMaterial.name} 
               </p>
 
-              <p>Category: {selectedMaterial.categories.join(", ")}</p>
+              <p>Categories: {selectedMaterial.categories.join(", ") ||"No set categories"}</p>
 
-              <p>Color: {selectedMaterial.colors[0]}</p>
+              <p>Color: {Array.isArray(selectedMaterial.colors) && selectedMaterial.colors[0].length > 0 
+                  ? selectedMaterial.colors.join(", ") 
+                  : "No set colors"}
+              </p>
 
               <div>
                 <p>Description</p>
-                <p>{selectedMaterial.description || "Material not found"}</p>
+                <p>{selectedMaterial.description || "No Description"}</p>
               </div>
             </div>
           </div>          

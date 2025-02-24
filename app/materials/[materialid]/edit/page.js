@@ -1,6 +1,6 @@
 'use client'
 
-import { dbAddMaterial, fetchMaterials, updateMaterial } from "@/app/_services/material-service";
+import { dbAddMaterial, fetchMaterialCategories, fetchMaterials, fetchMaterialsIds, updateMaterial } from "@/app/_services/material-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
@@ -72,6 +72,13 @@ export default function Page() {
     const [imageUrls, setImageUrls] = useState([]);
 
     const [costItems, setCostItems] = useState([]);
+
+    const [errorMessage, setErrorMessage] = useState("");
+    const [materialIds, setMaterialIds] = useState([]);
+    const [existingMaterialCategories, setExistingMaterialCategories] = useState([]);
+
+
+
     useEffect(() => {
         setLoading(true);
 
@@ -98,6 +105,15 @@ export default function Page() {
 
     }, [selectedMaterial]);
 
+    useEffect(()=>{
+        if (!user) {return;}
+        
+        if (user) {
+            fetchMaterialsIds(user.uid, setMaterialIds); 
+            fetchMaterialCategories(user.uid, setExistingMaterialCategories)
+        }
+
+    }, [user])
 
     const handleAddCategory = () => {
         if (category.trim() && !categories.includes(category)) {
@@ -121,6 +137,28 @@ export default function Page() {
         const allImages = await handleUpload() || [];
         const db = getFirestore(app);
 
+        setErrorMessage("");
+            
+        if (!userMaterialId || !name) {
+            setErrorMessage("Id and Name are required.");
+            setLoading(false);
+            return;
+        }
+
+        if (userMaterialId.length>12) {
+            setErrorMessage("Id should be less than 12 characters.");
+            setLoading(false);
+            return;
+        }
+
+        const filteredMaterialIds = materialIds.filter(id => id !== selectedMaterial.materialId);
+        
+        if (filteredMaterialIds.includes(userMaterialId)) {
+            setErrorMessage(`Product with '${userMaterialId}' Id already exists.`);
+            setLoading(false);
+            return;
+        }
+
         try {
             const updatedMaterialData = {
                 materialId: userMaterialId,
@@ -128,8 +166,8 @@ export default function Page() {
                 categories,
                 color,
                 costItems: costItems || [],
-                total,
-                currency,
+                total: total.trim() === "" ? "" : parseFloat(total).toFixed(2),
+                currency: total.trim() === "" ? "" : currency,
                 quantity,
                 description: desc,
                 images: allImages
@@ -238,10 +276,12 @@ export default function Page() {
                 <Header title="Materials" showUserName={true} />
                 <form className="mx-4 flex flex-col gap-4" onSubmit={handleUpdateMaterial}>
                     <p className="font-bold italic text-lg">Edit the material</p>
+                    
+                    {errorMessage.length===0?(null):(<p className="text-red">{errorMessage}</p>)}
+
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row justify-between">
                             <label>Id <span className="text-red">*</span></label>
-
                             <img src={userMaterialId === "" ? "/cross.png" : "/check.png"} className={userMaterialId === "" ? "h-4" : "h-6 text-green"} />
                         </div>
                         <input required className={inputStyle} value={userMaterialId} onChange={(e) => setUserMaterialId(e.target.value)} />
@@ -287,8 +327,9 @@ export default function Page() {
                             </button>
                         </div>
                         <datalist id="categories">
-                            <option value="Sweater" />
-                            <option value="Upper Clothes" />
+                            {existingMaterialCategories?.map((category, index)=>(
+                                <option key={index} value={category} />
+                            ))}
                         </datalist>
 
                         {/* Category List */}
@@ -344,22 +385,33 @@ export default function Page() {
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row justify-between">
                             <label>Quantity</label>
-                            <img src={categories.length === 0 ? "/cross.png" : "/check.png"} className={categories.length === 0 ? "h-4" : "h-6 text-green"} />
+                            <img src={quantity === "" ? "/cross.png" : "/check.png"} className={quantity === "" ? "h-4" : "h-6 text-green"} />
                         </div>
-                        <input className={inputStyle} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                        <input 
+                        className={inputStyle} 
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)} />
                     </div>
 
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row justify-between">
                             <label>Total</label>
-                            <img src={total === "" ? "/cross.png" : "/check.png"} className={total === "" ? "h-4" : "h-6 text-green"} />
+                            <img  src={total === "" ? "/cross.png" : "/check.png"}  className={total === "" ? "h-4" : "h-6 text-green"} />                            
                         </div>
                         <div className="flex flex-row gap-2">
                             <input 
                             className={inputStyle} 
-                            value={total} 
-                            onChange={(e) => setTotal(e.target.value)} 
-                            />
+                            value={total}
+                            type="number" 
+                            placeholder="0"
+                            onChange={(e) => {
+                                setTotal(e.target.value); // Allow empty value
+                            }}
+                            onBlur={() => {
+                                if (total === "") {
+                                    setTotal("");
+                                }
+                            }}                                />
                             <select
                             value={currency}
                             onChange={(e) => setCurrency(e.target.value)}

@@ -1,6 +1,6 @@
 "use client";
 
-import { dbAddProduct } from "@/app/_services/product-service";
+import { dbAddProduct, fetchProductCategories, fetchProductIds } from "@/app/_services/product-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
@@ -13,25 +13,28 @@ import { useRouter } from 'next/navigation'; // Import the useRouter hook
 
 
 export default function Page() {
-  const router = useRouter();
+    const router = useRouter();
 
-  const [isMounted, setIsMounted] = useState(false);
-  const { user } = useUserAuth();
-  const inputStyle = "h-9 rounded-lg border p-2 w-full";
-  const [loading, setLoading] = useState(true);
-  const [productId, setProductId] = useState("");
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [desc, setDesc] = useState("");
-  const [productImages, setProductImages] = useState([]);
-  const [patternImages, setPatternImages] = useState([]);
-  const [currency, setCurrency] = useState('USD');
-  const [patternImageUrls, setPatternImageUrls] = useState([]);
-  const [productImageUrls, setProductImageUrls] = useState([]);
+    const [isMounted, setIsMounted] = useState(false);
+    const { user } = useUserAuth();
+    const inputStyle = "h-9 rounded-lg border p-2 w-full";
+    const [loading, setLoading] = useState(true);
+    const [productId, setProductId] = useState("");
+    const [name, setName] = useState("");
+    const [category, setCategory] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [desc, setDesc] = useState("");
+    const [productImages, setProductImages] = useState([]);
+    const [patternImages, setPatternImages] = useState([]);
+    const [currency, setCurrency] = useState('USD');
+    const [patternImageUrls, setPatternImageUrls] = useState([]);
+    const [productImageUrls, setProductImageUrls] = useState([]);
+    const [averageCost, setAverageCost] = useState("");
 
-  const [averageCost, setAverageCost] = useState("");
-
+    const [productIds, setProductIds] = useState([]);
+    const [existingCategories, setExistingCategories] = useState([])
+    const [errorMessage, setErrorMessage] = useState('')
+    
   
     useEffect(() => {
         setIsMounted(true);  
@@ -45,6 +48,15 @@ export default function Page() {
         return () => clearTimeout(timeout);
     }, []);
 
+    useEffect(()=>{
+        if (!user) {return};
+
+        if (user) {
+              fetchProductIds(user.uid, setProductIds); 
+              fetchProductCategories(user.uid, setExistingCategories)
+            }
+    }, [user])
+    
     const handleNavigateToListPage = () => {
         window.location.href = "/products";
     };
@@ -130,23 +142,40 @@ export default function Page() {
         e.preventDefault();
         setLoading(true);
 
+        setErrorMessage("");
+
+        if (!productId || !name) {
+            setErrorMessage("Id and Name are required.");
+            setLoading(false);
+            return;
+        }
+
+        if (productId.length>12) {
+            setErrorMessage("Id should be less than 12 characters.");
+            setLoading(false);
+            return;
+        }
+    
+        if (productIds.includes(productId)) {
+            setErrorMessage(`Product with '${productId}' Id already exists.`);
+            setLoading(false);
+            return;
+        }
+
         const uploadedImages = await handleUpload() || [];
         const uploadedProductImages = uploadedImages?.[0] || []; 
-        const uploadedPatternImages = uploadedImages?.[1] || [];
-
+        const uploadedPatternImages = uploadedImages?.[1] || [];        
         
         const productObj = {
             productId,
             name,
-            averageCost,
-            currency,
+            averageCost: averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
+            currency: averageCost.trim() === "" ? "" : currency,   
             categories,
             description: desc,
             productImages: uploadedProductImages,
             patternImages: uploadedPatternImages,
         };
-
-        console.log(productObj)
 
         try {
             await dbAddProduct(user.uid, productObj);
@@ -165,7 +194,6 @@ export default function Page() {
         </div>
         );
     }
-
     if (user) {
         return (
         <div className="flex flex-col min-h-screen gap-4">
@@ -175,6 +203,8 @@ export default function Page() {
             onSubmit={handleCreateProduct}
             >
             <p className="font-bold italic text-lg">Create a Product</p>
+            
+            {errorMessage.length===0?(null):(<p className="text-red">{errorMessage}</p>)}
 
             {/* Product ID */}
             <div className="flex flex-col gap-2">
@@ -184,7 +214,6 @@ export default function Page() {
                 </div>
                 <input
                 className={inputStyle}
-                required
                 value={productId}
                 onChange={(e) => setProductId(e.target.value)}
                 />
@@ -193,41 +222,14 @@ export default function Page() {
             {/* Product Name */}
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between">
-                        <label>Name <span className="text-red">*</span></label>
+                    <label>Name <span className="text-red">*</span></label>
                     <img  src={name === "" ? "/cross.png" : "/check.png"}  className={name === "" ? "h-4" : "h-6 text-green"} />                            
                 </div>
                 <input
                 className={inputStyle}
-                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 />
-            </div>
-
-            {/* Average Cost */}
-            <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-between">
-                    <label>Average Cost</label>
-                    <img  src={averageCost === "" ? "/cross.png" : "/check.png"}  className={averageCost === "" ? "h-4" : "h-6 text-green"} />                            
-                </div>
-                <div className="flex flex-row gap-2">
-                    <input 
-                    data-id="product-average-cost"
-                    className={inputStyle}
-                    value={averageCost}
-                    onChange={(e) => setAverageCost(e.target.value)}
-                    />
-                    <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="rounded-lg border border-grey-200"
-                    >
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="CAD">CAD (C$)</option>
-                        <option value="RUB">RUB (₽)</option>
-                    </select>
-                </div>
             </div>
 
             {/* Category*/}
@@ -256,8 +258,9 @@ export default function Page() {
                 </button>
                 </div>
                 <datalist id="categories">
-                <option value="Sweater" />
-                <option value="Upper Clothes" />
+                    {existingCategories?.map((category, index)=>(
+                        <option key={index} value={category} />
+                    ))}
                 </datalist>
 
                 {/* Category List */}
@@ -279,7 +282,42 @@ export default function Page() {
                 </ul>
             </div>
 
+            {/* Average Cost */}
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-row justify-between">
+                    <label>Average Cost</label>
+                    <img  src={averageCost === "" ? "/cross.png" : "/check.png"}  className={averageCost === "" ? "h-4" : "h-6 text-green"} />                            
+                </div>
+                <div className="flex flex-row gap-2">
+                    <input 
+                    data-id="product-average-cost"
+                    className={inputStyle}
+                    type="number"
+                    value={averageCost}
+                    placeholder="0.00"
+                    onChange={(e) => {
+                        setAverageCost(e.target.value); // Allow empty value
+                    }}
+                    onBlur={() => {
+                        if (averageCost === "") {
+                            setAverageCost("");
+                        }
+                    }}
+                    />
+                    <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="rounded-lg border border-grey-200"
+                    >
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="CAD">CAD (C$)</option>
+                        <option value="RUB">RUB (₽)</option>
+                    </select>
+                </div>
+            </div>
 
+            
             {/* Description */}
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between">

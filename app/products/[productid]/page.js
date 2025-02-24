@@ -20,7 +20,6 @@ export default function ProductPage() {
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
-
   const [mainImage, setMainImage] = useState(null);
 
 
@@ -74,6 +73,7 @@ export default function ProductPage() {
 
   const changeView = () => {
     setClientView((prev) => !prev);
+    console.log()
   };
   
   if (loading) {
@@ -105,13 +105,14 @@ export default function ProductPage() {
 
             <div className="flex flex-col gap-2">
               <img
-                src={mainImage}
+                src={mainImage || "/noImage.png"}
                 alt="Product Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
               /> 
 
+              {(product?.productImages?.length > 0 || product?.patternImages?.length > 0) && (
                 <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
                   {product?.productImages?.map((image, index) => (
                     <SmallBlockHolder
@@ -122,16 +123,17 @@ export default function ProductPage() {
                       mainStatus={mainImage === image.url}
                     />
                   ))}
-                {product?.patternImages?.map((image, index) => (
-                  <SmallBlockHolder
-                    key={index}
-                    type="plainPicture"
-                    imageSource={image.url}
-                    onButtonFunction={() => handleImageChange(image)}
-                    mainStatus={mainImage === image.url}
-                  />
-                ))}
-              </div>
+                  {product?.patternImages?.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -145,11 +147,14 @@ export default function ProductPage() {
               </div>
 
               <p className="text-xl">
-                {product.name} | {product.productId}
+                #{product.productId} | {product.name} 
               </p>
 
-              <p>Categories: {product.categories ||"No set categories"}</p>
-
+              <p>Categories: 
+                {Array.isArray(product?.categories) && product.categories.length > 0 
+                  ? product.categories.join(", ") 
+                  : "No set categories"}
+              </p>
               <div>
                 <p>Description</p>
                 <p>{product.description || "No Description"}</p>
@@ -208,13 +213,14 @@ export default function ProductPage() {
 
             <div className="flex flex-col gap-2">
               <img
-                src={mainImage}
+                src={mainImage || "/noImage.png"}
                 alt="Product Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
                   transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
                 }`}
               /> 
 
+              {(product?.productImages?.length > 0 || product?.patternImages?.length > 0) && (
                 <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
                   {product?.productImages?.map((image, index) => (
                     <SmallBlockHolder
@@ -225,16 +231,17 @@ export default function ProductPage() {
                       mainStatus={mainImage === image.url}
                     />
                   ))}
-                {product?.patternImages?.map((image, index) => (
-                  <SmallBlockHolder
-                    key={index}
-                    type="plainPicture"
-                    imageSource={image.url}
-                    onButtonFunction={() => handleImageChange(image)}
-                    mainStatus={mainImage === image.url}
-                  />
-                ))}
-              </div>
+                  {product?.patternImages?.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -245,10 +252,14 @@ export default function ProductPage() {
                 </button>
               </div>
 
-              <p className="text-xl">{product.name} | {product.productId}</p>
+              <p className="text-xl">#{product.productId} | {product.name}</p>
 
-              <p>Categories: {product.categories ||"No set categories"}</p>
-
+              <p>Categories: 
+                {Array.isArray(product?.categories) && product.categories.length > 0 
+                  ? product.categories.join(", ") 
+                  : "No set categories"}
+              </p>
+              
               <div>
                 <p>Description</p>
                 <p>{product.description || "No Description"} </p>

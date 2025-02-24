@@ -107,7 +107,7 @@ export default function Page() {
               title={"testTitle"}
               category={"testCategory"}
               total={123}
-              imageSource={"/wool.png"}
+              imageSource={"/noImage.png"}
               type={"order"}
             />
           </Link>

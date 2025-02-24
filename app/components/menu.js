@@ -37,6 +37,7 @@ export default function Menu({
   type,
   onFirstFunction,
   onSecondFunction,
+  onThirdFunction,
   iconFirst,
   iconSecond,
   firstTitle,
@@ -51,9 +52,9 @@ export default function Menu({
   return (
     <div>
       {/* 
-                TwoButtonsMenu
-                Includes: Slide menu, copy function, add item function/View 
-             */}
+        TwoButtonsMenu
+        Includes: Slide menu, copy function, add item function/View 
+      */}
       {type === "TwoButtonsMenu" && (
         <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
           {/* Slide Menu */}
@@ -89,9 +90,9 @@ export default function Menu({
       )}
 
       {/* 
-                Create Menu
-                Includes: cancel function, confirm function 
-             */}
+        Create Menu
+        Includes: cancel function, confirm function 
+      */}
       {type === "CreateMenu" && (
         <div className="flex h-20 flex-row font-bold py-2 gap-2 items-center justify-center">
           <button
@@ -113,9 +114,9 @@ export default function Menu({
       )}
 
       {/* 
-                Only Slide Menu
-                Includes: Slide Menu
-             */}
+        Only Slide Menu
+        Includes: Slide Menu
+      */}
       {type === "OnlySlideMenu" && (
         <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
           {/* Slide Menu */}
@@ -131,9 +132,9 @@ export default function Menu({
       )}
 
       {/* 
-                One Button Menu
-                Includes: Slide Menu, function for one button
-             */}
+        One Button Menu
+        Includes: Slide Menu, function for one button
+      */}
       {type === "OneButtonMenu" && (
         <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
           {/* Slide Menu */}
@@ -151,6 +152,23 @@ export default function Menu({
             >
               <p>{firstTitle}</p>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 
+        Select Menu
+        Includes: 
+      */}
+      {type==="SelectMenu" && (
+        <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
+          <div className="flex flex-row h-14 bg-beige font-bold px-4 py-3 gap-2 items-center justify-between">
+            <button onClick={onFirstFunction} className="flex flex-row gap-2 w-[28%] justify-center items-center">
+              <img src="/arrow-left.png" className="w-5"/>
+              <p className="underline">Go back</p>
+            </button>
+            <button onClick={onSecondFunction} className="bg-red rounded-xl py-1 text-white w-[33%]">Reset</button>
+            <button onClick={onThirdFunction} className="bg-green rounded-xl py-1 w-[33%]">Confirm</button>
           </div>
         </div>
       )}

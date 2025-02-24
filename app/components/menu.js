@@ -119,11 +119,15 @@ export default function Menu({
       {type === "OnlySlideMenu" && (
         <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
           {/* Slide Menu */}
-          <SlideMenu menuVisible={isMenuVisible} />
+          <SlideMenu menuVisible={isMenuVisible} x />
 
           {/* Bottom Menu */}
           <div className="flex flex-row h-20 bg-beige font-bold px-4 py-3 gap-2 items-center justify-start">
-            <button className="rounded-xl flex-shrink-0" onClick={toggleMenu}>
+            <button
+              data-id="menu-button"
+              className="rounded-xl flex-shrink-0"
+              onClick={toggleMenu}
+            >
               <img src="/MenuBurger.png" className="w-10 h-13" alt="Menu" />
             </button>
           </div>

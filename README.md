@@ -33,6 +33,11 @@ The application will act as a **centralized hub** where artisans can:
 - Securely upload, store, and organize **receipts, invoices, and other financial documents**  
 - Centralize all paperwork for **easy access and improved business organization**  
 
+### 🤖 **AI Chat Bot**
+- Material & Product Recommendations
+- Pricing & Profitability Insights
+- Financial & Tax Guidance
+
 ## 🛠️ **Tech Stack**  
 
 | **Technology**  | **Purpose**  |  

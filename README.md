@@ -42,9 +42,24 @@ The application will act as a **centralized hub** where artisans can:
 | **NextAuth.js**  | Secure authentication with multiple provider support  |  
 | **Chart.js & SheetJS**  | Data visualization tools for financial insights  |  
 
-## 🚀 **Future Enhancements**  
-- Integration with **payment gateways**  
-- Automated **tax calculations**  
-- Mobile app version for **on-the-go access**  
+## 🚀 **How to Run the Project**  
+
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/your-repo-url.git
+   cd your-repo-name
+   ```
+
+2. **Install dependencies**  
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server**  
+   ```bash
+   npm run dev
+   ```
+
+4. **Access the app** at http://localhost:3000
 
 ---

@@ -108,7 +108,7 @@ export default function FilterWindow({
       }`}
       data-id="filter-window"
     >
-      <div className="w-[380px] fixed bg-beige border border-darkBeige shadow-lg">
+      <div className="w-[380px] fixed bg-beige border border-darkBeige rounded shadow-lg">
         {/* Header */}
         <div className="flex justify-between items-center bg-darkBeige px-4 py-2">
           <p className="text-lg font-bold">Filters</p>
@@ -116,7 +116,7 @@ export default function FilterWindow({
           <button
             data-id="close-button"
             onClick={onClose}
-            className="text-dark font-bold text-lg"
+            className="text-brown-600 font-bold text-lg"
           >
             X
           </button>

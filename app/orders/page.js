@@ -25,6 +25,7 @@ export default function Page() {
   const [orders, setOrders] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -39,15 +40,74 @@ export default function Page() {
           ...doc.data(),
         }));
         console.log(ordersData);
+
+        for (let order of ordersData) {
+          if (order.orderImages && order.orderImages.length > 0) {
+            const productImages = await Promise.all(
+              order.orderImages.map(async (productId) => {
+                const productRef = doc(
+                  db,
+                  `users/${user.uid}/products/${productId}`
+                );
+                const productSnapshot = await getDoc(productRef);
+                const productData = productSnapshot.data();
+
+                order.orderId = productData?.productId;
+                return productData?.productImages?.[0]?.url || "Unknown";
+              })
+            );
+            order.imageUrl = productImages[0];
+          } else {
+            order.imageUrl = "Unknown";
+          }
+
+          if (order.customerId) {
+            const customerRef = doc(
+              db,
+              `users/${user.uid}/customers/${order.customerId}`
+            );
+            const customerSnapshot = await getDoc(customerRef);
+            const customerData = customerSnapshot.data();
+            order.customerId = customerData?.nameCustomer || "Unknown";
+            console.log(order.customerId);
+          } else {
+            order.customerId = "Unknown";
+          }
+        }
+
+        setOrders(ordersData);
       } catch (error) {
         console.error("Error fetching orders: ", error);
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchOrders();
-  }
-    , [user]);
+  }, [user]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (!user) return;
+      try {
+        const db = getFirestore(app);
+        const categoriesCollection = collection(
+          db,
+          `users/${user.uid}/productCategories`
+        );
+        const categoriesSnapshot = await getDocs(categoriesCollection);
+        const categoriesData = categoriesSnapshot.docs.map(
+          (doc) => doc.data().name
+        );
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching categories: ", error);
+      }
+    };
+
+    if (user) {
+      fetchCategories();
+    }
+  }, [user]);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/create_order";
@@ -65,16 +125,14 @@ export default function Page() {
     setFilters(selectedFilters);
   };
 
-  const categories = [
-    ...new Set(orders.flatMap((order) => order.categories)),
-  ];
-
   let filteredOrders = [...orders];
   if (filters.Categories?.length > 0) {
-    filteredOrders = filteredOrders.filter((order) =>
-      order.categories.some((category) =>
-        filters.Categories.includes(category)
-      )
+    filteredOrders = filteredOrders.filter(
+      (order) =>
+        Array.isArray(order.categories) &&
+        order.categories.some((category) =>
+          filters.Categories.includes(category)
+        )
     );
   }
 
@@ -106,9 +164,38 @@ export default function Page() {
     }
   }
 
+  const formatDeadline = (timestamp) => {
+    const deadlineDate = new Date(timestamp * 1000);
+    const today = new Date();
+
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const formattedDate = `${
+      monthNames[deadlineDate.getMonth()]
+    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+    const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
+    const daysLeft = diffTime > 0 ? `(${diffTime} days)` : "(Due today)";
+
+    return `${formattedDate} ${daysLeft}`;
+  };
+
   if (searchTerm) {
-    filteredOrders = filteredOrders.filter((order) =>
-      order.name.toLowerCase().includes(searchTerm.toLowerCase())
+    filteredOrders = filteredOrders.filter(
+      (order) =>
+        order.name &&
+        order.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
 
@@ -146,7 +233,9 @@ export default function Page() {
         />
 
         {filteredOrders.length === 0 ? (
-          <p className="flex flex-col items-center w-full py-40">No orders yet</p>
+          <p className="flex flex-col items-center w-full py-40">
+            No orders yet
+          </p>
         ) : (
           <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
             {filteredOrders.map((order) => (
@@ -156,11 +245,17 @@ export default function Page() {
                 data-id="order-block"
               >
                 <BlockHolder
-                  id={order.id}
+                  id={order.orderId}
                   title={order.nameOrder}
-                  category={order.categories.join(", ")}
-                  total={order.total}
-                  imageSource={"no-image"}
+                  imageSource={order.imageUrl || "Unknown"}
+                  deadline={
+                    order.deadline?.seconds
+                      ? formatDeadline(order.deadline.seconds)
+                      : "No deadline"
+                  }
+                  currency={order.currency}
+                  total={order.totalCost}
+                  customerId={order.customerId}
                   type={"order"}
                 />
               </Link>

@@ -240,7 +240,7 @@ export default function Page() {
           <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
             {filteredOrders.map((order) => (
               <Link
-                href={`/order/${order.id}`}
+                href={`/orders/orderid/${order.id}`}
                 key={order.id}
                 data-id="order-block"
               >

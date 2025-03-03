@@ -5,6 +5,8 @@ name,
 id,
 quantity,
 selected,
+cost,
+currency,
 index,
 onClick,
 onQuantityChange,
@@ -21,6 +23,7 @@ selectedQuantity
 
                 <div className="flex flex-col gap-1">
                     <p className="truncate max-w-[180px]">#{id} | {name}</p>
+                    <p className="truncate max-w-[180px]">Average cost: {`${cost}${currency}`}</p>
                     <button type="button" onClick={onClick} className={selected ? "rounded-full bg-darkGreen text-white w-full" : "rounded-full bg-green w-full"}>{selected ? "selected" : "select"}</button>
                 </div>
             </div>
@@ -37,6 +40,7 @@ selectedQuantity
 
                 <div className="flex flex-col gap-1">
                     <p className="truncate max-w-[180px]">#{id} | {name}</p>
+                    <p>Total cost: {cost}{currency}</p>
                     <p>Quantity: {quantity}</p>
                     <div className="flex flex-row gap-1">
                         <button
@@ -51,10 +55,9 @@ selectedQuantity
                             type="number"
                             placeholder="0"
                             min="0"
-                            max={quantity === "—" ? "999" : quantity}
                             className="h-8 rounded-lg border p-2 w-[40%]"
-                            value={selectedQuantity || ""}
-                            onChange={(e) => onQuantityChange(id, e.target.value)}
+                            value={selectedQuantity === 0 ? "" : selectedQuantity} 
+                            onChange={(e) => onQuantityChange(id, e.target.value ? Number(e.target.value) : 0)}
                         />
                         )}
                     </div>                    

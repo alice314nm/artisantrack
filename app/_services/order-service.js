@@ -9,7 +9,20 @@ import {
     getDoc, 
     deleteDoc, 
     updateDoc} from "firebase/firestore";
-import { db, storage } from "../_utils/firebase";
+import { db } from "../_utils/firebase";
+
+async function getOrAddCustomer(userId, customerName) {
+    const customerCollection = collection(db, "users", userId, "customers");
+    const q = query(customerCollection, where("name", "==", customerName));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        const newCustomerRef = await addDoc(customerCollection, { name: customerName });
+        return newCustomerRef.id;
+    } else {
+        return querySnapshot.docs[0].id;
+    }
+}
 
 export async function dbAddOrder(userId, orderObj) {
     try {
@@ -20,24 +33,28 @@ export async function dbAddOrder(userId, orderObj) {
             throw new Error(`User with ID ${userId} does not exist.`);
         }
 
-        const ordersCollection = collection(db, `users/${userId}/orders`);// Direct:const ordersCollection = collection(db, "orders");
+        const ordersCollection = collection(db, `users/${userId}/orders`);
 
-        // Create new order
+        const customerId = await getOrAddCustomer(userId, orderObj.customerName);
+
         const newOrderRef = await addDoc(ordersCollection, {
-            orderName: orderObj.orderName,
+            nameOrder: orderObj.nameOrder, 
             startDate: orderObj.startDate,
             deadline: orderObj.deadline,
-            daysUntilDeadline: orderObj.daysUntilDeadline, 
-            customerName: orderObj.customerName,
+            daysUntilDeadline: orderObj.daysUntilDeadline,
+            customerId: customerId,
             description: orderObj.description,
-            selectedProduct: orderObj.selectedProduct,
-            selectedMaterials: orderObj.selectedMaterials,
-            materialCost: orderObj.materialCost, 
-            productCost: orderObj.productCost, 
+            productId: orderObj.productId,
+            materialIds: orderObj.materialIds, 
+            materialsCost: orderObj.materialsCost, 
+            productCost: orderObj.productCost,
             workCost: orderObj.workCost,
-            totalCost: orderObj.totalCost, 
+            totalCost: orderObj.totalCost,
+            completed: orderObj.completed, 
+            paid: orderObj.paid, 
+            currency: orderObj.currency,
         });
-
+        
         console.log("Order created successfully with ID:", newOrderRef.id);
         return newOrderRef.id;
     } catch (error) {

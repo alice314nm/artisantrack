@@ -71,8 +71,12 @@ export default function Page(){
         const productCostValue = parseFloat(productCost) || 0;
         const materialCostValue = parseFloat(materialCost) || 0;
         
-        setTotal(workCostValue + productCostValue + materialCostValue);
-      }, [workCost, productCost, materialCost]);
+        const totalValue = workCostValue + productCostValue + materialCostValue;
+        
+        // Format the total value to 2 decimal places
+        setTotal(totalValue.toFixed(2));
+    }, [workCost, productCost, materialCost]);
+    
 
 
     useEffect(() => {
@@ -242,21 +246,22 @@ export default function Page(){
         console.log("Days Until Deadline:", daysUntilDeadline);
 
         const orderObj = {
-            nameOrder: orderName?.trim() || "Order name is not set",
-            customerName: customerName?.trim() || "Customer is not set",
-            description: desc?.trim() || "Description is not set",
+            nameOrder: orderName?.trim() || "",
+            customerName: customerName?.trim() || "",
+            description: desc?.trim() || "",
             productId: selectedProduct?.id || null,
             materialIds: Array.isArray(selectedMaterials) ? selectedMaterials.map(mat => mat.id) : [],
             materialsCost: isNaN(parseFloat(materialCost)) ? "0.00" : parseFloat(materialCost).toFixed(2),
             productCost: isNaN(parseFloat(productCost)) ? "0.00" : parseFloat(productCost).toFixed(2),
             workCost: isNaN(parsedWorkCost) ? "0.00" : parsedWorkCost.toFixed(2),
-            totalCost: isNaN(total) ? "0.00" : total.toFixed(2),
+            totalCost: isNaN(total) || total === null || total === undefined ? 0.00 : total,
             startDate: startDate || null,
             deadline: deadline || null,
             daysUntilDeadline: daysUntilDeadline || 0,
             completed: false,
             paid: false,
             currency: selectedProduct?.currency || "",
+            orderImages: [selectedProduct?.id || null],
         };        
     
   

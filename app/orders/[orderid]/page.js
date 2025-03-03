@@ -8,7 +8,7 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { app } from "@/app/_utils/firebase";
+import { app, db } from "@/app/_utils/firebase";
 import {
   getFirestore,
   collection,
@@ -16,6 +16,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
+import { dbDeleteOrderById } from "@/app/_services/order-service";
 
 export default function OrderPageID() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -32,7 +33,6 @@ export default function OrderPageID() {
       if (!user) return;
       setLoading(true);
       try {
-        const db = getFirestore(app);
         const ordersCollection = collection(db, `users/${user.uid}/orders`);
         const ordersSnapshot = await getDocs(ordersCollection);
         const ordersData = ordersSnapshot.docs.map((doc) => ({
@@ -88,11 +88,32 @@ export default function OrderPageID() {
   const singleOrder = [...orders];
   const orderId = singleOrder.filter((order) => order.id == id);
   const selectedOrder = orderId[0];
+  const [clientName, setClientName] = useState(null) 
   const [mainImage, setMainImage] = useState(null);
 
   const toggleConfirmation = () => {
     setConfirmWindowVisibility((prev) => !prev);
   };
+  
+  // useEffect(()=>{
+ 
+  //   const fetchCustomerName = async () =>{
+  //     try {
+  //     const customerRef = doc(
+  //       db,
+  //       `users/${user.uid}/customers/${order.customerId}`
+  //     );
+  //     const customerSnapshot = await getDoc(customerRef);
+  //     const customerData = customerSnapshot.data();
+  //     setCustomerName(customerData?.nameCustomer || "Name is not set");
+  //   }catch (error) {
+  
+  //     console.error(error)
+  //   }
+  // }
+
+  // fetchCustomerName();
+  // },[selectedOrder])
 
   const openConfirmation = () => {
     setConfirmWindowVisibility(true);
@@ -148,6 +169,18 @@ export default function OrderPageID() {
     return `${formattedDate}`;
   };
 
+    const handleDeleteOrder = async (e) => {  
+      setLoading(true);
+      try {
+          await dbDeleteOrderById(user.uid, id);
+          console.log("Order deleted successfully");
+          window.location.href = '/orders';
+      } catch (error) {
+          console.error("Error adding material:", error);
+      }
+    };
+      
+
   //   if (searchTerm) {
   //     filteredOrders = filteredOrders.filter(
   //       (order) =>
@@ -184,21 +217,6 @@ export default function OrderPageID() {
                 </button>
               </Link>
             </div>
-
-            {/* <div className="flex flex-col gap-2">
-              <img
-                src={selectedOrder.imageUrl}
-                alt="Product Image for Order"
-                className="rounded-xl"
-              />
-
-              <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-              </div>
-            </div> */}
 
             <div className="flex flex-col gap-2">
               <img
@@ -254,7 +272,7 @@ export default function OrderPageID() {
 
               <div>
                 <p>Client ID:</p>
-                <p>{selectedOrder.customerId}</p>
+                <p>{selectedOrder.clientId}</p>
               </div>
 
               <div>
@@ -304,6 +322,7 @@ export default function OrderPageID() {
           <ConfirmationWindow
             windowVisibility={confirmWindowVisibility}
             onClose={closeConfirmation}
+            onDelete={handleDeleteOrder}
           />
 
           <Menu

@@ -2,7 +2,7 @@ export default function SelectedHolder({type, imageSrc, name, id, index, quantit
     if (type==="product") {
         return(
             <div className="flex flex-row items-center w-full">
-                <img className="object-cover relative w-20 h-24 rounded-lg" src={imageSrc} />
+                <img className="object-contain relative w-20 h-24 rounded-lg" src={imageSrc} />
                 <p className="mx-4">#{id} | {name}</p>
                 <button 
                     type="button" 

@@ -5,12 +5,34 @@ import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import Link from "next/link";
 import NotLoggedWindow from "./components/not-logged-window";
+import { useEffect, useState } from "react";
 
 export default function WelcomePage() {
   const { user } = useUserAuth();
+  const [loading, setLoading] = useState(true);
 
   const dashboardStyle = "text-lg border-b border-darkBeige flex flex-col gap-2 items-start justify-between px-5 pb-5"
   const LinkStyle = "bg-green px-2 font-bold rounded-lg py-1"
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+    setLoading(false);
+    }, 500); 
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img
+          src="/loading-gif.gif"
+          className="h-10"
+          data-id="loading-spinner"
+        />
+      </div>
+    );
+  }
 
   if (user) {
     return (

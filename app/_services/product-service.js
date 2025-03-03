@@ -167,12 +167,34 @@ export async function fetchProductIds(userId, productIdsSetter) {
         const querySnapshot = await getDocs(productsRef);
 
         const productIds = querySnapshot.docs.map(product => product.data().productId);
-
+        
         productIdsSetter(productIds);
         return productIds;
 
     } catch (error) {
         console.error("Error while fetching all product IDs:", error.message);
+    }
+}
+
+export async function fetchProductsForOrder(userId, productsSetter) {
+    try {
+        const productsRef = collection(db, "users", userId, "products"); 
+        const querySnapshot = await getDocs(productsRef);
+
+        const products = querySnapshot.docs.map(product => ({
+            id: product.id,
+            productId: product.data().productId, 
+            name: product.data().name,
+            productImages: product.data().productImages || [], 
+            averageCost:product.data().averageCost,
+            currency: product.data().currency,
+        }));
+
+        productsSetter(products);
+        return products;
+
+    } catch (error) {
+        console.error("Error while fetching all products:", error.message);
     }
 }
 

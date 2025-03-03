@@ -8,7 +8,7 @@ describe("Product Page Tests", () => {
     cy.get('[data-id="menu-button"]').click({ force: true });
     cy.get('[data-id="slide-inventory"]').click();
     cy.get('[data-id="slide-products"]').click();
-    cy.wait(2000);
+    cy.wait(5000);
   });
 
   it("should display the header with the correct title", () => {

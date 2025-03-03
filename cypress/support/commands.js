@@ -28,6 +28,7 @@ Cypress.Commands.add("login", () => {
   indexedDB.deleteDatabase("firebaseLocalStorageDb");
   cy.visit("http://localhost:3000/");
   cy.contains("Log In").click();
+  cy.wait(5000);
   cy.get('[data-id="email"]').type("artisantracksoftpillow@gmail.com");
   cy.get('[data-id="password"]').type("ArtisanTrack");
   cy.contains("Log In").click();

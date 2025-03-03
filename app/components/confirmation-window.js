@@ -9,7 +9,11 @@ import React from "react";
   -- onDelete - function to delete
 */
 
-export default function ConfirmationWindow({ windowVisibility, onClose, onDelete }) {
+export default function ConfirmationWindow({
+  windowVisibility,
+  onClose,
+  onDelete,
+}) {
   return (
     <div
       className={`fixed flex h-screen w-screen items-center justify-center bg-opacity-20 bg-black z-10 ${
@@ -32,10 +36,15 @@ export default function ConfirmationWindow({ windowVisibility, onClose, onDelete
             className="flex-1 text-center text-red border-r border-darkBeige"
             onClick={onDelete}
             type="button"
+            data-id="confirm-delete-button"
           >
             <p>Delete</p>
           </button>
-          <button className="flex-1 text-center" onClick={onClose} type="button">
+          <button
+            className="flex-1 text-center"
+            onClick={onClose}
+            type="button"
+          >
             <p className="p-2">Cancel</p>
           </button>
         </div>

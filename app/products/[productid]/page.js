@@ -1,6 +1,10 @@
 "use client";
 
-import { dbDeleteProductById, fetchProductById, fetchProducts } from "@/app/_services/product-service";
+import {
+  dbDeleteProductById,
+  fetchProductById,
+  fetchProducts,
+} from "@/app/_services/product-service";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import ConfirmationWindow from "@/app/components/confirmation-window";
 import Header from "@/app/components/header";
@@ -22,25 +26,23 @@ export default function ProductPage() {
   const [transitioning, setTransitioning] = useState(false);
   const [mainImage, setMainImage] = useState(null);
 
-
   useEffect(() => {
     setLoading(true);
 
     if (!user) {
-        return;
+      return;
     }
 
     if (user && productId) {
-      fetchProductById(user.uid, productId, setProduct); 
+      fetchProductById(user.uid, productId, setProduct);
     }
     setLoading(false);
   }, [user, productId]);
 
   useEffect(() => {
-    
     if (product && product.productImages && product.productImages.length > 0) {
       setMainImage(product.productImages[0].url);
-      console.log(product)
+      console.log(product);
     }
   }, [product]);
 
@@ -49,33 +51,31 @@ export default function ProductPage() {
     setTransitioning(true);
     setTimeout(() => {
       setMainImage(image.url);
-      setTransitioning(false)
-    }, 300); 
+      setTransitioning(false);
+    }, 300);
   };
 
-  const handleDeleteProduct = async (e) => {  
-      setLoading(true);
-      try {
-          await dbDeleteProductById(user.uid, product.id);
-          console.log("product deleted successfully");
-          window.location.href = '/products';
-      } catch (error) {
-          console.error("Error adding material:", error);
-      }
-    };
-      
-  
+  const handleDeleteProduct = async (e) => {
+    setLoading(true);
+    try {
+      await dbDeleteProductById(user.uid, product.id);
+      console.log("product deleted successfully");
+      window.location.href = "/products";
+    } catch (error) {
+      console.error("Error adding material:", error);
+    }
+  };
+
   const openCloseConfirmation = () => {
     setConfirmWindowVisibility((prev) => !prev);
-    console.log(confirmWindowVisibility)
+    console.log(confirmWindowVisibility);
   };
-  
 
   const changeView = () => {
     setClientView((prev) => !prev);
-    console.log()
+    console.log();
   };
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -108,11 +108,14 @@ export default function ProductPage() {
                 src={mainImage || "/noImage.png"}
                 alt="Product Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
-                  transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
+                  transitioning
+                    ? "opacity-0 translate-y-1"
+                    : "opacity-100 translate-y-0"
                 }`}
-              /> 
+              />
 
-              {(product?.productImages?.length > 0 || product?.patternImages?.length > 0) && (
+              {(product?.productImages?.length > 0 ||
+                product?.patternImages?.length > 0) && (
                 <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
                   {product?.productImages?.map((image, index) => (
                     <SmallBlockHolder
@@ -147,12 +150,14 @@ export default function ProductPage() {
               </div>
 
               <p className="text-xl">
-                #{product.productId} | {product.name} 
+                #{product.productId} | {product.name}
               </p>
 
-              <p>Categories: 
-                {Array.isArray(product?.categories) && product.categories.length > 0 
-                  ? product.categories.join(", ") 
+              <p>
+                Categories:
+                {Array.isArray(product?.categories) &&
+                product.categories.length > 0
+                  ? product.categories.join(", ")
                   : "No set categories"}
               </p>
               <div>
@@ -160,7 +165,10 @@ export default function ProductPage() {
                 <p>{product.description || "No Description"}</p>
               </div>
 
-              <p>Average Total: {product.averageCost || "Cost is not set"}{product.currency}</p>
+              <p>
+                Average Total: {product.averageCost || "Cost is not set"}
+                {product.currency}
+              </p>
 
               <button
                 className="hover:arrow bg-red text-white rounded-xl w-32"
@@ -177,7 +185,6 @@ export default function ProductPage() {
             windowVisibility={confirmWindowVisibility}
             onClose={openCloseConfirmation}
             onDelete={handleDeleteProduct}
-            
           />
 
           <Menu
@@ -216,11 +223,14 @@ export default function ProductPage() {
                 src={mainImage || "/noImage.png"}
                 alt="Product Image"
                 className={`rounded-xl object-cover h-96 transition-all duration-300 ${
-                  transitioning ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
+                  transitioning
+                    ? "opacity-0 translate-y-1"
+                    : "opacity-100 translate-y-0"
                 }`}
-              /> 
+              />
 
-              {(product?.productImages?.length > 0 || product?.patternImages?.length > 0) && (
+              {(product?.productImages?.length > 0 ||
+                product?.patternImages?.length > 0) && (
                 <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
                   {product?.productImages?.map((image, index) => (
                     <SmallBlockHolder
@@ -231,7 +241,7 @@ export default function ProductPage() {
                       mainStatus={mainImage === image.url}
                     />
                   ))}
-                  {product?.patternImages?.map((image, index) => (
+                  {/* {product?.patternImages?.map((image, index) => (
                     <SmallBlockHolder
                       key={index}
                       type="plainPicture"
@@ -239,7 +249,7 @@ export default function ProductPage() {
                       onButtonFunction={() => handleImageChange(image)}
                       mainStatus={mainImage === image.url}
                     />
-                  ))}
+                  ))} */}
                 </div>
               )}
             </div>
@@ -252,18 +262,22 @@ export default function ProductPage() {
                 </button>
               </div>
 
-              <p className="text-xl">#{product.productId} | {product.name}</p>
+              <p className="text-xl">
+                #{product.productId} | {product.name}
+              </p>
 
-              <p>Categories: 
-                {Array.isArray(product?.categories) && product.categories.length > 0 
-                  ? product.categories.join(", ") 
+              <p>
+                Categories:
+                {Array.isArray(product?.categories) &&
+                product.categories.length > 0
+                  ? product.categories.join(", ")
                   : "No set categories"}
               </p>
-              
+
               <div>
                 <p>Description</p>
                 <p>{product.description || "No Description"} </p>
-              </div>              
+              </div>
             </div>
           </div>
 

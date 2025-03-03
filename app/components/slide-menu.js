@@ -17,7 +17,6 @@ export default function SlideMenu({ menuVisible }) {
   const [inventoryVisible, setInventoryVisible] = useState(false);
 
   const { firebaseSignOut } = useUserAuth();
-  
 
   const toggleInventory = () => {
     setInventoryVisible((prev) => !prev);
@@ -27,14 +26,16 @@ export default function SlideMenu({ menuVisible }) {
     <div className="z-10 fixed w-full bottom-0 right-0 flex flex-col justify-end">
       {/* Slide Menu */}
       <div
-        className={`transition-all duration-300 overflow-hidden w-[200px] h-screen bg-beige font-bold bottom-20 ${menuVisible
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-0 hidden"
-          } fixed z-10`}
+        className={`transition-all duration-300 overflow-hidden w-[200px] h-screen bg-beige font-bold bottom-20 ${
+          menuVisible
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-0 hidden"
+        } fixed z-10`}
         data-id="slide-menu"
       >
         <ul className="h-screen flex flex-col justify-end">
-        <a onClick={firebaseSignOut}
+          <a
+            onClick={firebaseSignOut}
             className="flex gap-2 justify-end py-2 px-4 text-right border-b border-green w-full bg-beige hover:bg-darkBeige"
             style={{
               position: "sticky",
@@ -42,9 +43,7 @@ export default function SlideMenu({ menuVisible }) {
             }}
           >
             <p>Log out</p>
-            <img 
-            src="/logout.png"
-            className="w-5"/>
+            <img src="/logout.png" className="w-5" />
           </a>
           <Link className={buttonStyleLi} href="/profile">
             <p>Profile</p>
@@ -62,7 +61,7 @@ export default function SlideMenu({ menuVisible }) {
               className={`flex flex-row gap-1 items-center cursor-pointer ${buttonStyleLi}`}
               onClick={toggleInventory}
             >
-              <p>Inventory</p>
+              <p data-id="slide-inventory">Inventory</p>
               <img
                 src="/angle-small-down.png"
                 className={`w-5 ${inventoryVisible ? "hidden" : ""}`}
@@ -77,19 +76,28 @@ export default function SlideMenu({ menuVisible }) {
 
             {/* Submenu */}
             <div
-              className={`transition-all duration-300 overflow-hidden flex flex-col ${inventoryVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-4"
-                }`}
+              className={`transition-all duration-300 overflow-hidden flex flex-col ${
+                inventoryVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-4"
+              }`}
               style={{
                 maxHeight: inventoryVisible ? "200px" : "0px",
               }}
               data-id="inventory-submenu"
             >
-              <Link className={`${buttonStyleLi} px-8`} href="/products">
+              <Link
+                data-id="slide-products"
+                className={`${buttonStyleLi} px-8`}
+                href="/products"
+              >
                 Products
               </Link>
-              <Link className={`${buttonStyleLi} px-8`} href="/materials">
+              <Link
+                data-id="slide-materials"
+                className={`${buttonStyleLi} px-8`}
+                href="/materials"
+              >
                 Materials
               </Link>
             </div>

@@ -26,7 +26,6 @@ async function getOrAddCategory(userId, categoryName) {
     }
 }
 
-
 // Helper function to get or add a shop
 async function getOrAddShop(userId, shopName) {
     const shopsCollection = collection(db, "users", userId, "shops");
@@ -224,7 +223,7 @@ export async function fetchMaterials(userId) {
     }
 }
 
-export const updateMaterial = async (userId, materialId, updatedMaterialData) => {
+export async function updateMaterial(userId, materialId, updatedMaterialData) {
     try {
         const materialRef = doc(db, "users", userId, "materials", materialId);
 
@@ -286,5 +285,38 @@ export async function fetchMaterialCategories(userId, materialCategoriesSetter){
         return materialCategories;
     } catch(error){
         console.error("Error while fetching material categories: ", error.message)
+    }
+}
+
+export async function fetchMaterialsForOrder(userId, materialsSetter) {
+    try {
+        const materialsRef = collection(db, "users", userId, "materials"); 
+        const querySnapshot = await getDocs(materialsRef);
+
+        const materials = querySnapshot.docs.map(material => ({
+            id: material.id,
+            materialId: material.data().materialId, 
+            name: material.data().name,
+            quantity: material.data().quantity,
+            images: material.data().images || [],
+            total: material.data().total,
+            currency: material.data().currency,
+        }));
+
+        materialsSetter(materials);
+        return materials;
+
+    } catch (error) {
+        console.error("Error while fetching all materials:", error.message);
+    }
+}
+
+export async function updateMaterialQuantity(userId, materialId, updatedMaterialData) {
+    try {
+        const materialRef = doc(db, "users", userId, "materials", materialId);
+        await updateDoc(materialRef, updatedMaterialData);       
+
+    } catch (error) {
+        console.error("Error while updating the quantity of the product:", error)
     }
 }

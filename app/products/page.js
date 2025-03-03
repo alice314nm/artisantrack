@@ -28,6 +28,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+    setLoading(false);
+    }, 500); 
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       if (!user) return;
       setLoading(true);

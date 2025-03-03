@@ -62,14 +62,14 @@ export default function BlockHolder({
         </div>
 
         <div>
-          <p className="font-bold">
+          <p className="font-bold truncate max-w-[180px]">
             #{id} | {title}
           </p>
           <p className="text-[#8E4725] font-semibold underline italic">
             Deadline
           </p>
-          <p>{deadline}</p>
-          <p>
+          <p className="truncate max-w-[180px]">{deadline}</p>
+          <p className="truncate max-w-[180px]">
             Total: {total}
             {currency}
           </p>

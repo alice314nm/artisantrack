@@ -53,6 +53,7 @@ export async function dbAddOrder(userId, orderObj) {
             completed: orderObj.completed, 
             paid: orderObj.paid, 
             currency: orderObj.currency,
+            orderImages: orderObj.orderImages,
         });
         
         console.log("Order created successfully with ID:", newOrderRef.id);
@@ -60,5 +61,21 @@ export async function dbAddOrder(userId, orderObj) {
     } catch (error) {
         console.error("Error creating order:", error.message);
         throw error;
+    }
+}
+
+export async function dbDeleteOrderById(userId, orderId) {
+    try {     
+        const productRef = doc(db, "users", userId, "orders", orderId);
+        
+        const productDoc = await getDoc(productRef);
+        if (!productDoc.exists()) {
+            throw new Error(`Product with ID ${productId} does not exist.`);
+        }
+
+        await deleteDoc(productRef);
+        console.log(`Product with ID ${productId} and its associated data were deleted.`);
+    } catch (error) {
+        console.error("Error deleting product:", error.message);
     }
 }

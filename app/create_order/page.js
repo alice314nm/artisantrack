@@ -198,15 +198,11 @@ export default function Page(){
         selectedMaterials.forEach((material) => {
             const selectedQuantity = parseFloat(materialQuantities[material.materialId] || 0);
             const costPerUnit = parseFloat(material.costPerUnit || 0);
-    
-            console.log(`Material: ${material.name}, Quantity: ${selectedQuantity}, Cost Per Unit: ${costPerUnit}`);
-    
+        
             if (!isNaN(selectedQuantity) && !isNaN(costPerUnit) && selectedQuantity > 0) {
                 totalCost += selectedQuantity * costPerUnit;
             }
         });
-    
-        console.log("Total Calculated Cost:", totalCost);
     
         setMaterialCost(Number(totalCost.toFixed(2))); 
     };
@@ -249,6 +245,10 @@ export default function Page(){
             description: desc?.trim() || "",
             productId: selectedProduct?.id || null,
             materialIds: Array.isArray(selectedMaterials) ? selectedMaterials.map(mat => mat.id) : [],
+            quantities: selectedMaterials.map(material => ({
+                id: material.materialId, 
+                quantity: materialQuantities[material.materialId]
+            })),
             materialsCost: isNaN(parseFloat(materialCost)) ? "0.00" : parseFloat(materialCost).toFixed(2),
             productCost: isNaN(parseFloat(productCost)) ? "0.00" : parseFloat(productCost).toFixed(2),
             workCost: isNaN(parsedWorkCost) ? "0.00" : parsedWorkCost.toFixed(2),

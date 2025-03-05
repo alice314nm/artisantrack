@@ -1,4 +1,4 @@
-export default function MateriaOrderDisplay(imageSrc, name, id, index, quantity){
+export default function MaterialOrderDisplay({imageSrc, name, id, index, quantity}){
     return(
         <div className="flex flex-row w-full items-center gap-2 justify-between">
             <div className="flex flex-row gap-2 items-center">
@@ -10,8 +10,7 @@ export default function MateriaOrderDisplay(imageSrc, name, id, index, quantity)
                 
                 <div>
                     <p>#{id} | {name}</p>
-                    <p>quantity:</p>
-                    <p>{quantity}</p>
+                    <p>quantity: {quantity}</p>
                 </div>
             </div>           
         </div>

@@ -18,6 +18,7 @@ import {
 } from "firebase/firestore";
 import { dbDeleteOrderById, dbGetOrderById } from "@/app/_services/order-service";
 import MateriaOrderDisplay from "@/app/components/material-order-display";
+import MaterialOrderDisplay from "@/app/components/material-order-display";
 
 export default function OrderPageID() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -250,19 +251,18 @@ export default function OrderPageID() {
                 <div>
                   <p className={commonClasses.sectionTitle}>Materials:</p>
 
-                  <ul className="list-decimal px-6">
                   {selectedOrder?.materialsForOrderData?.map((material, index) => (
-                      <div key={material.id}>
-                        <MateriaOrderDisplay
-                        id={index+1}
-                        name={material.materialName}
-                        quantity={material.quantity}
-                        imageSrc={material.materialImage}
-                        />
-                      </div>
+                      <MaterialOrderDisplay
+                      key={index}
+                      index={index+1}
+                      id={material.materialId}
+                      name={material.materialName}
+                      quantity={selectedOrder.quantities[index].quantity}
+                      imageSrc={material.materialImage.url || "/noImage.png"}
+                      />
                   ))}
-                  </ul> 
-                  <p>Material cost: ${selectedOrder.materialsCostPerUnit}</p>
+                  
+                  <p className={commonClasses.sectionText}>Material cost: ${selectedOrder.materialsCost}</p>
                 </div>
 
                 <div className="flex flex-col gap-2">

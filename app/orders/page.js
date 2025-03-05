@@ -27,10 +27,7 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
-
-  const [orderImageUrl, setOrderImageUrl] = useState("");
-  const [isDataFetched, setIsDataFetched] = useState(false);
-
+  const [filteredOrders, setFilteredOrders] = useState([]);
 
   // Initial loading timeout
   useEffect(() => {
@@ -40,7 +37,6 @@ export default function Page() {
 
     return () => clearTimeout(timeout);
   }, []);
-
 
   // Fetch orders
   useEffect(() => {
@@ -94,7 +90,6 @@ export default function Page() {
         console.error("Error fetching orders: ", error);
       } finally {
         setLoading(false);
-        setIsDataFetched(true);
       }
     };
     fetchOrders();
@@ -244,7 +239,7 @@ export default function Page() {
           total={filteredOrders.length}
         />
 
-        {isDataFetched && filteredOrders.length === 0 ? (
+        {filteredOrders.length === 0 ? (
           <p className="flex flex-col items-center w-full py-40">
             No orders found
           </p>
@@ -277,6 +272,7 @@ export default function Page() {
                 </Link>
               ))}
             </div>
+          </div>
         )}
 
         <FilterWindow

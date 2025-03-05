@@ -51,57 +51,7 @@ export default function Page() {
           ...doc.data(),
         }));
         console.log(materialsData);
-
-        const materialsWithCategoriesColorsAndImages = await Promise.all(
-          materialsData.map(async (material) => {
-            const categoryNames = await Promise.all(
-              material.categories.map(async (categoryId) => {
-                const categoryDocRef = doc(
-                  db,
-                  `users/${user.uid}/materialCategories/${categoryId}`
-                );
-                const categoryDoc = await getDoc(categoryDocRef);
-                return categoryDoc.exists()
-                  ? categoryDoc.data().name
-                  : "Unknown";
-              })
-            );
-
-            let colorNames = [];
-            if (Array.isArray(material.color)) {
-              colorNames = await Promise.all(
-                material.color.map(async (colorId) => {
-                  const colorDocRef = doc(
-                    db,
-                    `users/${user.uid}/colors/${colorId}`
-                  );
-                  const colorDoc = await getDoc(colorDocRef);
-                  return colorDoc.exists() ? colorDoc.data().name : "Unknown";
-                })
-              );
-            } else if (material.color) {
-              const colorDocRef = doc(
-                db,
-                `users/${user.uid}/colors/${material.color}`
-              );
-              const colorDoc = await getDoc(colorDocRef);
-              colorNames = colorDoc.exists()
-                ? [colorDoc.data().name]
-                : ["Unknown"];
-            }
-
-            const imageUrls = material.images?.map((image) => image.url) || [];
-
-            return {
-              ...material,
-              categories: categoryNames,
-              colors: colorNames,
-              images: imageUrls,
-            };
-          })
-        );
-
-        setMaterials(materialsWithCategoriesColorsAndImages);
+        setMaterials(materialsData);
       } catch (error) {
         console.error("Error fetching materials:", error);
       } finally {
@@ -231,8 +181,8 @@ export default function Page() {
                   category={material.categories.join(", ") || "—"}
                   total={material.total || "—"}
                   currency={material.currency}
-                  color={material.colors.join(", ") || "—"}
-                  imageSource={material.images[0] || "/noImage.png"}
+                  color={material.color || "—"}
+                  imageSource={material.images[0].url || "/noImage.png"}
                   type={"material"}
                 />
               </Link>

@@ -16,7 +16,8 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import { dbDeleteOrderById } from "@/app/_services/order-service";
+import { dbDeleteOrderById, dbGetOrderById } from "@/app/_services/order-service";
+import MateriaOrderDisplay from "@/app/components/material-order-display";
 
 export default function OrderPageID() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -27,93 +28,43 @@ export default function OrderPageID() {
   const [transitioning, setTransitioning] = useState(false);
   const params = useParams();
   const id = params.orderid;
+  const [selectedOrder, setSelectedOrder] = useState({});
+  const [mainImage, setMainImage] = useState(null);
+
+  const commonClasses = {
+    container: "flex flex-col min-h-screen gap-4 bg-lightBeige",
+    headerButton:
+      "font-bold bg-green rounded-md px-4 py-2 flex gap-2 flex-row justify-center items-center hover:bg-darkGreen transition-colors duration-300",
+    mainImage: "rounded-md object-cover w-full transition-all duration-300",
+    thumbnailContainer:
+      "flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin",
+    productDetails: "flex flex-col gap-4",
+    sectionTitle: "text-lg font-semibold ",
+    sectionText: "",
+    editButton:
+      "py-2 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
+    deleteButton:
+      "bg-red text-white rounded-md w-32 py-2 hover:bg-darkRed transition-colors duration-300",
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      if (!user) return;
       setLoading(true);
-      try {
-        const ordersCollection = collection(db, `users/${user.uid}/orders`);
-        const ordersSnapshot = await getDocs(ordersCollection);
-        const ordersData = ordersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        console.log(ordersData);
-
-        for (let order of ordersData) {
-          if (order.orderImages && order.orderImages.length > 0) {
-            const productImages = await Promise.all(
-              order.orderImages.map(async (productId) => {
-                const productRef = doc(
-                  db,
-                  `users/${user.uid}/products/${productId}`
-                );
-                const productSnapshot = await getDoc(productRef);
-                const productData = productSnapshot.data();
-
-                order.orderId = productData?.productId;
-                return productData?.productImages?.[0]?.url || "Unknown";
-              })
-            );
-            order.imageUrl = productImages[0];
-          } else {
-            order.imageUrl = "Unknown";
-          }
-
-          if (order.customerId) {
-            const customerRef = doc(
-              db,
-              `users/${user.uid}/customers/${order.customerId}`
-            );
-            const customerSnapshot = await getDoc(customerRef);
-            const customerData = customerSnapshot.data();
-            order.customerId = customerData?.nameCustomer || "Unknown";
-            console.log(order.customerId);
-          } else {
-            order.customerId = "Unknown";
-          }
-        }
-
-        setOrders(ordersData);
-      } catch (error) {
-        console.error("Error fetching orders: ", error);
-      } finally {
-        setLoading(false);
+  
+      if (!user) {
+        return;
       }
-    };
-    fetchOrders();
-  }, [user]);
+  
+      if (user && id) {
+        dbGetOrderById(user.uid, id, setSelectedOrder);
+      }
+      setLoading(false);
+    }, [user, id]);
 
-  const singleOrder = [...orders];
-  const orderId = singleOrder.filter((order) => order.id == id);
-  const selectedOrder = orderId[0];
-  const [clientName, setClientName] = useState(null) 
-  const [mainImage, setMainImage] = useState(null);
 
   const toggleConfirmation = () => {
     setConfirmWindowVisibility((prev) => !prev);
   };
   
-  // useEffect(()=>{
- 
-  //   const fetchCustomerName = async () =>{
-  //     try {
-  //     const customerRef = doc(
-  //       db,
-  //       `users/${user.uid}/customers/${order.customerId}`
-  //     );
-  //     const customerSnapshot = await getDoc(customerRef);
-  //     const customerData = customerSnapshot.data();
-  //     setCustomerName(customerData?.nameCustomer || "Name is not set");
-  //   }catch (error) {
-  
-  //     console.error(error)
-  //   }
-  // }
-
-  // fetchCustomerName();
-  // },[selectedOrder])
 
   const openConfirmation = () => {
     setConfirmWindowVisibility(true);
@@ -127,20 +78,13 @@ export default function OrderPageID() {
     setClientView((prev) => !prev);
   };
 
-  //   const handleApplyFilters = (selectedFilters) => {
-  //     setFilters(selectedFilters);
-  //   };
-
-  //   let filteredOrders = [...orders];
-  //   if (filters.Categories?.length > 0) {
-  //     filteredOrders = filteredOrders.filter(
-  //       (order) =>
-  //         Array.isArray(order.categories) &&
-  //         order.categories.some((category) =>
-  //           filters.Categories.includes(category)
-  //         )
-  //     );
-  //   }
+  useEffect(() => {
+    if (selectedOrder?.productForOrderData?.productImages?.length) {
+      setMainImage(selectedOrder.productForOrderData.productImages[0].url);
+      console.log(selectedOrder);
+    }
+  }, [selectedOrder]);
+  
 
   const formatDeadline = (timestamp) => {
     const deadlineDate = new Date(timestamp * 1000);
@@ -180,14 +124,14 @@ export default function OrderPageID() {
       }
     };
       
-
-  //   if (searchTerm) {
-  //     filteredOrders = filteredOrders.filter(
-  //       (order) =>
-  //         order.name &&
-  //         order.name.toLowerCase().includes(searchTerm.toLowerCase())
-  //     );
-  //   }
+    const handleImageChange = (image) => {
+      if (mainImage === image.url || transitioning) return;
+      setTransitioning(true);
+      setTimeout(() => {
+        setMainImage(image.url);
+        setTransitioning(false)
+      }, 300); 
+    };
 
   if (loading) {
     return (
@@ -208,114 +152,143 @@ export default function OrderPageID() {
           <Header title="Order" showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
-            <div className="flex flex-row justify-between">
-              <p className="font-bold">Your view:</p>
-              <Link href="/orders">
-                <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
-                  <img src="/arrow-left.png" width={20} />
-                  <p>Back</p>
-                </button>
-              </Link>
-            </div>
+            <div className="flex flex-row justify-between items-center">
+                <p className="font-bold text-xl text-blackBeige" data-id="Your view">
+                  Your View
+                </p>
+                <Link href="/orders">
+                  <button className={commonClasses.headerButton}>
+                    <img src="/arrow-left.png" width={20} alt="Back" />
+                    <p>Back</p>
+                  </button>
+                </Link>
+              </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex flex-col gap-4 md:w-1/2">
               <img
-                src={selectedOrder.imageUrl || "/noImage.png"}
-                alt="Order Image"
-                className={`rounded-xl object-cover h-96 transition-all duration-300 ${
-                  transitioning
-                    ? "opacity-0 translate-y-1"
-                    : "opacity-100 translate-y-0"
-                }`}
-              />
+                  src={mainImage || "/noImage.png"}
+                  alt="Product Image"
+                  className={`${commonClasses.mainImage} ${
+                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+                  }`}
+                />
 
-              {selectedOrder?.images?.length > 0 && (
-                <div className="flex flex-row gap-2 overflow-x-auto items-center h-28 whitespace-nowrap scrollbar scrollbar-thin">
-                  {selectedOrder.orderImages.map((image, index) => (
-                    <SmallBlockHolder
-                      key={index}
-                      type="plainPicture"
-                      imageSource={image.url}
-                      onButtonFunction={() => handleImageChange(image)}
-                      mainStatus={mainImage === imageUrl}
-                    />
-                  ))}
+                {selectedOrder?.productForOrderData?.productImages?.length > 0 && (
+                  <div className={commonClasses.thumbnailContainer}>
+                    {selectedOrder.productForOrderData.productImages.map((image, index) => (
+                      <SmallBlockHolder
+                        key={index}
+                        type="plainPicture"
+                        imageSource={image.url}
+                        onButtonFunction={() => handleImageChange(image)}
+                        mainStatus={mainImage === image.url}
+                      />
+                    ))}
+                    {selectedOrder.productForOrderData.patternImages.map((image, index) => (
+                      <SmallBlockHolder
+                        key={index}
+                        type="plainPicture"
+                        imageSource={image.url}
+                        onButtonFunction={() => handleImageChange(image)}
+                        mainStatus={mainImage === image.url}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-row gap-2">
+                  <button className=" relative bg-green rounded-md w-[70%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
+                    <p>Create receipt</p>
+                    <img src="/receipt.png" alt="Pencil" className="w-5" />
+                  </button>
+                  <button className="relative bg-green rounded-md w-[28%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
+                    <p>Edit</p>
+                    <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
+                  </button>
                 </div>
-              )}
-            </div>
 
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-row gap-2">
-                <button className=" relative bg-green rounded-2xl w-[70%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
-                  <p>Create receipt</p>
-                  <img src="/receipt.png" alt="Pencil" className="w-5" />
-                </button>
-                <button className="relative bg-green rounded-2xl w-[28%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
-                  <p>Edit</p>
-                  <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
-                </button>
-              </div>
+                <p className="text-2xl font-bold text-blackBeige">
+                  {selectedOrder.nameOrder} <br/>Deadline:{" "}
+                  {selectedOrder.deadline?.seconds
+                    ? formatDeadline(selectedOrder.deadline.seconds)
+                    : "No deadline"}
+                </p>
 
-              <p className="text-xl">
-                {selectedOrder.nameOrder} | Deadline:{" "}
-                {selectedOrder.deadline?.seconds
-                  ? formatDeadline(selectedOrder.deadline.seconds)
-                  : "No deadline"}
-              </p>
+                <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Description:</p>
+                  <p className={commonClasses.sectionText}>
+                    {selectedOrder.description || "No set description."}
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Client:</p>
+                  <p className={commonClasses.sectionText}>
+                    {selectedOrder.customerName || "No set client."}
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Client:</p>
+                  <p className={commonClasses.sectionText}>
+                    {selectedOrder.customerName || "No set description."}
+                  </p>
+                </div>
 
-              <p>Category: testCategory, testCategory2</p>
+                {/* <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Materials:</p>
+                  <p className={commonClasses.sectionText}>
+                    {Array.isArray(selectedOrder?.categories) && selectedMaterial.categories.length > 0
+                      ? selectedMaterial.categories.join(", ")
+                      : "No set categories"}
+                  </p>
+                </div> */}
 
-              <div>
-                <p>Pattern Description</p>
-                <p>{selectedOrder.description}</p>
-              </div>
+                <div>
+                  <p className={commonClasses.sectionTitle}>Materials:</p>
 
-              <div>
-                <p>Client ID:</p>
-                <p>{selectedOrder.clientId}</p>
-              </div>
-
-              <div>
-                <p>Description</p>
-                <p>{selectedOrder.description}</p>
-              </div>
-
-              <div>
-                <p>Materials</p>
-
-                <ul className="list-decimal px-6">
-                  {/*<li>wool id123456 - 100g</li>*/}
-                  {selectedOrder.materialIds.map((material, index) => (
-                    <li key={index}>{material}</li>
+                  <ul className="list-decimal px-6">
+                  {selectedOrder?.materialsForOrderData?.map((material, index) => (
+                      <div key={material.id}>
+                        <MateriaOrderDisplay
+                        id={index+1}
+                        name={material.materialName}
+                        quantity={material.quantity}
+                        imageSrc={material.materialImage}
+                        />
+                      </div>
                   ))}
-                </ul>
-                <br></br>
-                <p>Material cost: ${selectedOrder.materialsCost}</p>
-              </div>
+                  </ul> 
+                  <p>Material cost: ${selectedOrder.materialsCostPerUnit}</p>
+                </div>
 
-              <p>
-                Total cost: ${selectedOrder.totalCost} {selectedOrder.currency}
-              </p>
+                <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Total:</p>
+                  <p className={commonClasses.sectionText}>
+                    {selectedOrder.totalCost || "No set total."}
+                  </p>
+                </div>
 
-              <p>Total with tax {user.tax}: 134.4$</p>
-
-              <p>Prepayment: 70$</p>
-
-              <div className="flex flex-row float-right gap-1 justify-between font-bold">
-                <button
-                  className="hover:arrow bg-red w-[17%] h text-white rounded-xl"
-                  onClick={openConfirmation}
-                >
-                  Delete
-                </button>
-                <button className="bg-yellow px-3 py-1 rounded-xl">
-                  Set as paid
-                </button>
-                <button className="bg-yellow px-1 py-1 rounded-xl  w-[50%]">
-                  Set as completed
-                </button>
+                <div className="flex flex-row float-right gap-1 justify-between font-bold">
+                  <button
+                    className="hover:arrow text-sm bg-red w-[17%] h text-white rounded-md"
+                    onClick={openConfirmation}
+                  >
+                    Delete
+                  </button>
+                  <button className="bg-yellow text-sm px-3 py-1 rounded-md">
+                    Set as paid
+                  </button>
+                  <button className="bg-yellow text-sm px-1 py-1 rounded-md  w-[50%]">
+                    Set as completed
+                  </button>
+                </div>
               </div>
             </div>
+ 
           </div>
 
           {/* Confirmation Window */}

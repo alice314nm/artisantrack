@@ -9,18 +9,41 @@ import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
 import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Page() {  
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUserAuth();
+  const [loading, setLoading] = useState(true);
+
 
   const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60"
+
+
+  useEffect(() => {
+      const timeout = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+  
+      return () => clearTimeout(timeout);
+    }, []);
+
 
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img
+          src="/loading-gif.gif"
+          className="h-10"
+          data-id="loading-spinner"
+        />
+      </div>
+    );
+  }
 
   if (user) {
     return (
@@ -45,14 +68,13 @@ export default function Page() {
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>This month (january):</p>
           <p>Income: 1234$ Expenses: 123$</p>
-          <button className={buttonStyle}>Monthly Financial Report</button>
+          <Link href="finances/monthly" className={buttonStyle}>Monthly Financial Report</Link>
         </div>
 
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>This year (2025):</p>
           <p>Income: 1234$ Expenses: 123$</p>
-          <button className={buttonStyle}>Yearly Financial Report</button>
-        </div>
+          <Link href="finances/yearly" className={buttonStyle}>Yearly Financial Report</Link>        </div>
 
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>Other reports:</p>

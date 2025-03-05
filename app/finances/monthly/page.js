@@ -15,6 +15,12 @@ export default function WelcomePage() {
   const [income, setIncome] = useState(70); 
   const [expenses, setExpenses] = useState(30); 
 
+  // Store the current month and year
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  
+  // Format the month as "Month YYYY"
+  const monthYear = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoading(false);
@@ -22,6 +28,11 @@ export default function WelcomePage() {
 
     return () => clearTimeout(timeout);
   }, []);
+
+  //Function where to set/change variables for popular entities, incomes, expense when the chosen month is changing
+  useEffect(()=>{
+
+  }, [currentMonth])
 
   const handleStateOrders = () => {
     setStateShow("orders");
@@ -33,6 +44,15 @@ export default function WelcomePage() {
 
   const handleStateMaterials = () => {
     setStateShow("materials");
+  };
+
+  // Handle previous and next month
+  const goToPreviousMonth = () => {
+    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)));
+  };
+
+  const goToNextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)));
   };
 
   if (loading) {
@@ -52,11 +72,11 @@ export default function WelcomePage() {
           {/* toggle */}
           <div className="border-b border-b-darkBeige">
             <div className="flex flex-row items-center pb-4 justify-between px-4">
-              <button onClick={(e) => console.log("previous")}>
+              <button onClick={goToPreviousMonth}>
                 <img className="h-5" src="/arrowLeft.png" />
               </button>
-              <p className="text-xl font-semibold">Month</p>
-              <button onClick={(e) => console.log("next")}>
+              <p className="text-xl font-semibold">{monthYear}</p>
+              <button onClick={goToNextMonth}>
                 <img className="h-5" src="/arrowRight.png" />
               </button>
             </div>

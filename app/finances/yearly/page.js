@@ -16,6 +16,16 @@ export default function WelcomePage() {
   const [expenses, setExpenses] = useState(30); 
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
+    
+  const [popularProduct, setPopularProduct] = useState({});
+  const [popularMaterial, setPopularMaterial] = useState({});
+  const [regularClient, setRegularClient] = useState("");
+
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [materials, setMaterials] = useState([]);
+  
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoading(false);
@@ -235,7 +245,8 @@ export default function WelcomePage() {
         iconFirst={"/arrow-left.png"}
         onFirstFunction={() => window.location.href = `/finances`}
         secondTitle={"Download"}
-        iconSecond={"/download.png"} />
+        iconSecond={"/download.png"}
+        onSecondFunction={()=>console.log(0)} />
       </div>
     );
   } else {

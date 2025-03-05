@@ -16,6 +16,16 @@ export default function WelcomePage() {
   const [expenses, setExpenses] = useState(30); 
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
+    
+  const [popularProduct, setPopularProduct] = useState({});
+  const [popularMaterial, setPopularMaterial] = useState({});
+  const [regularClient, setRegularClient] = useState("");
+
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [materials, setMaterials] = useState([]);
+  
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoading(false);

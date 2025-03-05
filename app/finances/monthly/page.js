@@ -15,10 +15,16 @@ export default function WelcomePage() {
   const [income, setIncome] = useState(70); 
   const [expenses, setExpenses] = useState(30); 
 
-  // Store the current month and year
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
-  // Format the month as "Month YYYY"
+  const [popularProduct, setPopularProduct] = useState({});
+  const [popularMaterial, setPopularMaterial] = useState({});
+  const [regularClient, setRegularClient] = useState("");
+
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [materials, setMaterials] = useState([]);
+  
   const monthYear = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   useEffect(() => {

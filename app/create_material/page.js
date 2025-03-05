@@ -10,15 +10,12 @@ import { storage } from "@/app/_utils/firebase";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
-import SearchBar from "@/app/components/search-bar";
 import SmallBlockHolder from "@/app/components/small-block-holder";
 import {
   getDownloadURL,
   ref,
   uploadBytes,
-  uploadBytesResumable,
 } from "firebase/storage";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -33,15 +30,13 @@ export default function Page() {
 
   const [color, setColor] = useState("");
   const [shop, setShop] = useState("");
-  const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("USD");
-  const [quantity, setQuantity] = useState("");
-  const [total, setTotal] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [total, setTotal] = useState(0);
   const [desc, setDesc] = useState("");
+  const [cost, setCost] = useState(0);
   const [images, setImages] = useState([]);
   const [imageUrls, setImageUrls] = useState([]);
-
-  const [costItems, setCostItems] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [materialIds, setMaterialIds] = useState([]);
@@ -83,9 +78,58 @@ export default function Page() {
     setCategories(categories.filter((c) => c !== cat));
   };
 
-  const handleRemoveCost = (cost) => {
-    const updatedCostItems = costItems.filter((item) => item !== cost);
-    setCostItems(updatedCostItems);
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImages((prev) => [...prev, ...files]);
+  };
+
+  const removeSelectedImage = (index) => {
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+    setImages(updatedImages);
+  };
+
+  useEffect(() => {
+    const calculateCostPerUnit = () => {
+      const totalValue = parseFloat(total);
+      const quantityValue = parseInt(quantity);
+  
+      if (isNaN(totalValue) || isNaN(quantityValue) || quantityValue <= 0) {
+        setCost(0.00);
+      } else {
+        const costPerUnit = (totalValue / quantityValue).toFixed(2);
+        setCost(costPerUnit);
+      }
+    };
+  
+    calculateCostPerUnit();
+  }, [total, quantity]);
+  
+
+  const handleUpload = async () => {
+    if (!images.length) return []; // Ensure it returns an empty array instead of undefined
+
+    const userId = user.uid;
+    const uploadedImages = [];
+
+    for (const image of images) {
+      const filePath = `images/${userId}/materials/${image.name}`;
+      const fileRef = ref(storage, filePath);
+
+      try {
+        const snapshot = await uploadBytes(fileRef, image);
+        const downloadUrl = await getDownloadURL(snapshot.ref);
+
+        uploadedImages.push({ url: downloadUrl, path: filePath });
+      } catch (error) {
+        console.error("Upload failed:", error);
+      }
+    }
+
+    setImageUrls((prev) => [...prev, ...uploadedImages.map((img) => img.url)]);
+    setImages([]);
+
+    return uploadedImages;
   };
 
   const handleCreateMaterial = async (e) => {
@@ -115,78 +159,27 @@ export default function Page() {
     const uploadedImages = (await handleUpload()) || [];
 
     const materialObj = {
-      materialId,
-      name,
-      categories,
-      color,
-      costItems: costItems || [],
-      total: total.trim() === "" ? "" : parseFloat(total).toFixed(2),
-      currency: total.trim() === "" ? "" : currency,
-      quantity,
-      description: desc,
-      images: uploadedImages,
+      materialId: materialId || "",
+      name: name || "",
+      description: desc || "",
+      color: color || "",
+      categories: categories || [],
+      images: uploadedImages || [],
+      shop: shop || "",
+      quantity: quantity || 0.00,
+      total: total.trim() === "" ? 0.00 : parseFloat(total).toFixed(2),
+      currency: total.trim() === "" ? "USD" : currency,
+      costPerUnit: cost || 0.00,
     };
-
+    
     try {
       await dbAddMaterial(user.uid, materialObj);
-      console.log("Material added successfully");
+      console.log(materialObj)
       window.location.href = "/materials";
       setLoading(false);
     } catch (error) {
       console.error("Error adding material:", error);
     }
-  };
-
-  const handleAddCostItem = () => {
-    if (shop && price) {
-      const newItem = {
-        shop,
-        price,
-      };
-
-      const updatedCostItems = [...costItems, newItem];
-      setCostItems(updatedCostItems);
-
-      setShop("");
-      setPrice("");
-    }
-  };
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
-  };
-
-  const removeSelectedImage = (index) => {
-    const updatedImages = [...images];
-    updatedImages.splice(index, 1);
-    setImages(updatedImages);
-  };
-
-  const handleUpload = async () => {
-    if (!images.length) return []; // Ensure it returns an empty array instead of undefined
-
-    const userId = user.uid;
-    const uploadedImages = [];
-
-    for (const image of images) {
-      const filePath = `images/${userId}/materials/${image.name}`;
-      const fileRef = ref(storage, filePath);
-
-      try {
-        const snapshot = await uploadBytes(fileRef, image);
-        const downloadUrl = await getDownloadURL(snapshot.ref);
-
-        uploadedImages.push({ url: downloadUrl, path: filePath });
-      } catch (error) {
-        console.error("Upload failed:", error);
-      }
-    }
-
-    setImageUrls((prev) => [...prev, ...uploadedImages.map((img) => img.url)]);
-    setImages([]);
-
-    return uploadedImages;
   };
 
   if (loading) {
@@ -209,6 +202,9 @@ export default function Page() {
             <p className="text-red">{errorMessage}</p>
           )}
 
+          <p className="text-lg font-semibold underline">Main</p>
+
+          {/* Product Id */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
               <label>
@@ -223,10 +219,12 @@ export default function Page() {
               data-id="material-id"
               className={inputStyle}
               value={materialId}
+              placeholder="Enter id (2-64 characters)"
               onChange={(e) => setMaterialId(e.target.value)}
             />
           </div>
 
+          {/* Product Name */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <label>
@@ -241,10 +239,33 @@ export default function Page() {
               data-id="material-name"
               className={inputStyle}
               value={name}
+              placeholder="Enter name (2-64 characters)"
+
               onChange={(e) => setName(e.target.value)}
             />
           </div>
 
+          {/* Product Description */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between">
+              <p>Description</p>
+              <img
+                src={desc === "" ? "/cross.png" : "/check.png"}
+                className={desc === "" ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <textarea
+              data-id="material-description"
+              className="rounded-lg border p-2"
+              value={desc}
+              placeholder="Enter description"
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </div>
+
+          <p className="text-lg underline font-semibold">Details</p>
+
+          {/* Product Color */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <label>Color</label>
@@ -257,13 +278,15 @@ export default function Page() {
               data-id="material-color"
               className={inputStyle}
               value={color}
+              placeholder="Enter a color"
               onChange={(e) => setColor(e.target.value)}
             />
           </div>
 
+          {/* Products Categories */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Category</label>
+              <label>Categories</label>
               <img
                 src={categories.length === 0 ? "/cross.png" : "/check.png"}
                 className={categories.length === 0 ? "h-4" : "h-6 text-green"}
@@ -275,6 +298,7 @@ export default function Page() {
                 list="categories"
                 className={inputStyle}
                 value={category}
+                placeholder="Add a category for a material "
                 onChange={(e) => setCategory(e.target.value)}
               />
               <button
@@ -309,136 +333,6 @@ export default function Page() {
                 </li>
               ))}
             </ul>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <p>Cost</p>
-              <img
-                src={costItems.length === 0 ? "/cross.png" : "/check.png"}
-                className={costItems.length === 0 ? "h-4" : "h-6 text-green"}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-row items-center">
-                <label className="w-16 text-right">Shop:</label>
-                <input
-                  data-id="material-shop"
-                  className={`${inputStyle} flex-1 ml-2`}
-                  value={shop}
-                  onChange={(e) => setShop(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-row items-center">
-                <label className="w-16 text-right">Price:</label>
-                <input
-                  data-id="material-price"
-                  className={`${inputStyle} flex-1 ml-2`}
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleAddCostItem}
-                className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
-                data-id="material-add-cost"
-              >
-                Add
-              </button>
-            </div>
-
-            {/* Display added items in the list */}
-            <ul className="flex flex-col gap-2 mt-2 list-decimal pl-8">
-              {costItems.map((item, index) => (
-                <li key={index}>
-                  <div className="flex flex-row items-center justify-between gap-2">
-                    <p>
-                      {item.shop}, {item.price}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveCost(item)}
-                      className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center"
-                    >
-                      <p className="text-xs">x</p>
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Quantity</label>
-              <img
-                src={quantity === "" ? "/cross.png" : "/check.png"}
-                className={quantity === "" ? "h-4" : "h-6 text-green"}
-              />
-            </div>
-            <input
-              data-id="material-quantity"
-              className={inputStyle}
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Total</label>
-              <img
-                src={total === "" ? "/cross.png" : "/check.png"}
-                className={total === "" ? "h-4" : "h-6 text-green"}
-              />
-            </div>
-            <div className="flex flex-row gap-2">
-              <input
-                className={inputStyle}
-                value={total}
-                type="number"
-                placeholder="0"
-                onChange={(e) => {
-                  setTotal(e.target.value); // Allow empty value
-                }}
-                onBlur={() => {
-                  if (total === "") {
-                    setTotal("");
-                  }
-                }}
-              />
-              <select
-                data-id="currency-select"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
-              >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="RUB">RUB (₽)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <p>Description</p>
-              <img
-                src={desc === "" ? "/cross.png" : "/check.png"}
-                className={desc === "" ? "h-4" : "h-6 text-green"}
-              />
-            </div>
-            <textarea
-              data-id="material-description"
-              className="rounded-lg border p-2"
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-            />
           </div>
 
           {/* Image Selection */}
@@ -477,6 +371,98 @@ export default function Page() {
                 ))}
               </div>
             )}
+          </div>
+            
+          <p className="text-lg underline font-semibold">Price</p>
+  
+          {/* Products Shops */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between">
+              <p>Shop</p>
+              <img
+                src={shop === "" ? "/cross.png" : "/check.png"}
+                className={shop === "" ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <input
+              data-id="material-shop"
+              className={`${inputStyle}`}
+              value={shop}
+              placeholder="Enter a shop"
+              onChange={(e) => setShop(e.target.value)}
+            />              
+          </div>
+
+          {/* Product Quantity */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between">
+              <label>Quantity</label>
+              <img
+                src={(quantity === 0 || quantity==="") ? "/cross.png" : "/check.png"}
+                className={(quantity === 0 || quantity==="") ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <input
+              data-id="material-quantity"
+              className={inputStyle}
+              value={quantity===0 ? "" : quantity}
+              placeholder="0.00"
+              type="numbers"
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+          </div>
+          
+          {/* Product Total  */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between">
+              <label>Total</label>
+              <img
+                src={(total === 0 || total === "") ? "/cross.png" : "/check.png"}
+                className={(total === 0 || total === "") ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <div className="flex flex-row gap-2">
+              <input
+                className={inputStyle}
+                value={total===0 ? "" : total}
+                type="number"
+                placeholder="0.00"
+                onChange={(e) => {
+                  setTotal(e.target.value); // Allow empty value
+                }}
+              />
+              <select
+                data-id="currency-select"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
+              >
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="CAD">CAD (C$)</option>
+                <option value="RUB">RUB (₽)</option>
+              </select>
+            </div>
+          </div>
+            
+          {/* Product Cost per Unit */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between">
+              <label>Cost per unit</label>
+              <img
+                src={cost === 0 ? "/cross.png" : "/check.png"}
+                className={cost === 0 ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <input
+              readOnly
+              disabled
+              data-id="material-quantity"
+              className={inputStyle}
+              placeholder="0.00"
+              value={cost===0 ? "" : cost}
+              onChange={(e) => setCost(e.target.value)}
+            />
           </div>
 
           <Menu

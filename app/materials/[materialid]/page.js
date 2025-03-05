@@ -8,7 +8,7 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { dbDeleteMaterialById, fetchMaterials } from "@/app/_services/material-service";
+import { dbDeleteMaterialById, fetchMaterialById, fetchMaterials } from "@/app/_services/material-service";
 
 export default function MaterialPage() {
   const { user } = useUserAuth();
@@ -17,9 +17,10 @@ export default function MaterialPage() {
 
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [clientView, setClientView] = useState(false);
-  const [materials, setMaterials] = useState([]);
+  const [selectedMaterial, setSelectedMaterial] = useState([]);
   const [loading, setLoading] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
+  const [mainImage, setMainImage] = useState(null);
 
   const commonClasses = {
     container: "flex flex-col min-h-screen gap-4 bg-lightBeige",
@@ -39,26 +40,22 @@ export default function MaterialPage() {
 
 
   useEffect(() => {
-    const loadMaterials = async () => {
-        if (!user) return;
-        setLoading(true);
-        const materialsData = await fetchMaterials(user.uid);
-        setMaterials(materialsData);
-        setLoading(false);
-    };
     
-    loadMaterials();
+    if (!user) return;
+
+    if(user) {
+      setLoading(true);
+      fetchMaterialById(user.uid, id, setSelectedMaterial);
+      setLoading(false);
+    }
+
   }, [user]);
   
   
-  const filteredMaterials = [...materials];
-  const materialId = filteredMaterials.filter((material) => material.id == id);
-  const selectedMaterial = materialId[0];
-  const [mainImage, setMainImage] = useState(null);
-
   useEffect(() => {
     if (selectedMaterial && selectedMaterial.images && selectedMaterial.images.length > 0) {
       setMainImage(selectedMaterial.images[0].url);
+      console.log(selectedMaterial)
     }
   }, [selectedMaterial]);
 
@@ -178,9 +175,7 @@ export default function MaterialPage() {
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Color:</p>
                   <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedMaterial?.colors) && selectedMaterial.colors.length > 0
-                      ? selectedMaterial.colors.join(", ")
-                      : "No set categories"}
+                    {selectedMaterial.color || "No set colors"}
                   </p>
                 </div>
 
@@ -191,26 +186,35 @@ export default function MaterialPage() {
                   </p>
                 </div>               
 
-                {selectedMaterial?.pricing?.length > 0 ? (
-                  selectedMaterial.pricing.map((item, index) => (
-                    <div key={index}>
-                      <p className={commonClasses.sectionTitle}>Cost:</p>
-                      <li>{item.shopName} {item.price}</li>
-                    </div>
-                  ))
-                ) :(
-                    <div>
-                      <p>Cost</p>
-                      <p className="right">No set shops</p>
-                    </div>
-                    )}
+                <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Shop:</p>
+                  <p className={commonClasses.sectionText}>
+                    {selectedMaterial.shop || "No Description"}
+                  </p>
+                </div>  
+                
+                <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Quantity:</p>
+                  <p className={commonClasses.sectionText}>
+                    {selectedMaterial.quantity || "No set quantity"}
+                  </p>
+                </div>   
+
+                <div className="flex flex-col gap-2">
+                  <p className={commonClasses.sectionTitle}>Cost per Unity:</p>
+                  <p className={commonClasses.sectionText}>
+                    {selectedMaterial.costPerUnit || "No set cost per unit."} {selectedMaterial.currency}
+                  </p>
+                </div>  
 
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Total:</p>
                   <p className={commonClasses.sectionText}>
                     {selectedMaterial.total || "Cost is not set"} {selectedMaterial.currency}
                   </p>
-                </div>                
+                </div>   
+
+                              
                 <button
                   className={commonClasses.deleteButton}
                   onClick={openCloseConfirmation}
@@ -305,9 +309,7 @@ export default function MaterialPage() {
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Color:</p>
                   <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedMaterial?.colors) && selectedMaterial.colors.length > 0
-                      ? selectedMaterial.colors.join(", ")
-                      : "No set categories"}
+                    {selectedMaterial.color || "No set colors"}
                   </p>
                 </div>
 
@@ -316,11 +318,7 @@ export default function MaterialPage() {
                   <p className={commonClasses.sectionText}>
                     {selectedMaterial.description || "No Description"}
                   </p>
-                </div>               
-
-                
-
-                
+                </div>                 
               </div>
             </div>
           </div>          
@@ -387,9 +385,7 @@ export default function MaterialPage() {
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Color:</p>
                   <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedMaterial?.colors) && selectedMaterial.colors.length > 0
-                      ? selectedMaterial.colors.join(", ")
-                      : "No set categories"}
+                    {selectedMaterial.color || "No set colors"}
                   </p>
                 </div>
 
@@ -398,7 +394,7 @@ export default function MaterialPage() {
                   <p className={commonClasses.sectionText}>
                     {selectedMaterial.description || "No Description"}
                   </p>
-                </div>       
+                </div>        
               </div>
             </div>
           </div> 

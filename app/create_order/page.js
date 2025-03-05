@@ -39,7 +39,6 @@ export default function Page(){
     const [customerName, setCustomerName] = useState("");
     const [desc, setDesc] = useState("");
     const [selectedProduct, setSelectedProduct] = useState("");
-    const [selectedMaterial, setSelectedMaterial] = useState("");
     const [selectedMaterials, setSelectedMaterials] = useState([])
 
     const [materialQuantities, setMaterialQuantities] = useState({});
@@ -47,7 +46,6 @@ export default function Page(){
     const [productCost, setProductCost] = useState(0);
     const [materialCost, setMaterialCost] = useState(0);
     const [workCost, setWorkCost] = useState(0);
-    const [totalCost, setTotalCost] = useState(0);
     const [currency, setCurrency] = useState("USD");
     const [total, setTotal] = useState(0)
 
@@ -144,7 +142,6 @@ export default function Page(){
 
     const handleGoBackFromMaterials = () => {
         setState('form');
-        setSelectedMaterials([]);
     } 
 
 
@@ -182,37 +179,38 @@ export default function Page(){
         delete updatedQuantities[material.materialId];
 
         setMaterialQuantities(updatedQuantities);
-        setMaterialCost(0);
         calculateMaterialsCost();
     };
 
-
+    useEffect(() => {
+        calculateMaterialsCost();
+    }, [selectedMaterials, materialQuantities]);
+    
     const calculateMaterialsCost = () => {
-        if (selectedMaterials.length === 0) {
-          setMaterialCost(0);
-          return;
+        if (!selectedMaterials || selectedMaterials.length === 0) {
+            console.warn("No materials selected.");
+            setMaterialCost(0);
+            return;
         }
-        
-        const totalCost = selectedMaterials.reduce((total, material) => {
+    
+        let totalCost = 0;
+    
+        selectedMaterials.forEach((material) => {
             const selectedQuantity = parseFloat(materialQuantities[material.materialId] || 0);
-            const totalQuantity = parseFloat(material.quantity || 0);
-            const totalMaterialCost = parseFloat(material.total || 0);
-            console.log(selectedQuantity, totalQuantity, totalMaterialCost)
-            let materialCost = 0;
-            
-            if (!totalQuantity || isNaN(totalQuantity) || totalQuantity === 0 || 
-                !totalMaterialCost || isNaN(totalMaterialCost)) {
-                return total;
-            } else {
-                const unitCost = totalMaterialCost / totalQuantity;
-                materialCost = selectedQuantity * unitCost;
+            const costPerUnit = parseFloat(material.costPerUnit || 0);
+    
+            console.log(`Material: ${material.name}, Quantity: ${selectedQuantity}, Cost Per Unit: ${costPerUnit}`);
+    
+            if (!isNaN(selectedQuantity) && !isNaN(costPerUnit) && selectedQuantity > 0) {
+                totalCost += selectedQuantity * costPerUnit;
             }
-            
-            return total + materialCost;
-        }, 0);
-        
-        setMaterialCost(totalCost);
+        });
+    
+        console.log("Total Calculated Cost:", totalCost);
+    
+        setMaterialCost(Number(totalCost.toFixed(2))); 
     };
+    
 
 
     const handleResetSelectedMaterial = () => {
@@ -304,7 +302,7 @@ export default function Page(){
                 {/* Name of the order */}
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row justify-between">
-                    <label>Name of the order <span className="text-red">*</span></label>
+                    <label>Title of the order <span className="text-red">*</span></label>
                     <img
                         src={orderName === "" ? "/cross.png" : "/check.png"}
                         className={orderName === "" ? "h-4" : "h-6 text-green"}
@@ -314,6 +312,7 @@ export default function Page(){
                     className={inputStyle} 
                     name="orderName" 
                     value={orderName} 
+                    placeholder="Enter title for the order"
                     onChange={(e) => setOrderName(e.target.value)}   
                     ></input>
                 </div>
@@ -387,6 +386,7 @@ export default function Page(){
                     className={inputStyle} 
                     name="customerName" 
                     value={customerName} 
+                    placeholder="Enter customer's name"
                     onChange={(e) => setCustomerName(e.target.value)}   
                     ></input>            
                 </div>
@@ -403,6 +403,7 @@ export default function Page(){
                     <textarea 
                     className="rounded-lg border p-2" 
                     name="description" 
+                    placeholder="Enter details about the order"
                     value={desc} 
                     onChange={(e) => setDesc(e.target.value)}   
                     ></textarea>
@@ -450,7 +451,7 @@ export default function Page(){
                     <input 
                     className={inputStyle} 
                     type="text"
-                    value={productCost === 0 ? "" : `${productCost}${selectedProduct.currency?  selectedProduct.currency : ''}`} 
+                    value={productCost === 0 ? "" : `${productCost} ${selectedProduct.currency?  selectedProduct.currency : ''}`} 
                     name="productCost"
                     placeholder="0.00"                    
                     readOnly                            
@@ -499,7 +500,7 @@ export default function Page(){
                 {/* Material cost */}
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row justify-between">
-                        <label>Material cost</label>
+                        <label>Materials cost</label>
                     </div>
                     <input 
                     className={inputStyle} 
@@ -507,7 +508,7 @@ export default function Page(){
                     value={materialCost === 0 ? "" : materialCost} 
                     name="materialCost"
                     placeholder="0.00"
-                    onChange={(e) => setMaterialCost(e.target.value)}   
+                    readOnly
                     />   
                 </div>       
                 

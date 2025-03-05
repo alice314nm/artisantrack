@@ -26,7 +26,16 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
+  const [orderImageUrl, setOrderImageUrl] = useState("");
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+    setLoading(false);
+    }, 500); 
+
+    return () => clearTimeout(timeout);
+  }, []);
+  
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user) return;
@@ -238,16 +247,16 @@ export default function Page() {
           </p>
         ) : (
           <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-            {filteredOrders.map((order) => (
+            {filteredOrders.map((order, index) => (
               <Link
-                href={`/order/${order.id}`}
+                href={`/orders/${order.id}`}
                 key={order.id}
                 data-id="order-block"
               >
                 <BlockHolder
-                  id={order.orderId}
+                  id={index+1}
                   title={order.nameOrder}
-                  imageSource={order.imageUrl || "Unknown"}
+                  imageSource={order.imageUrl  || "/noImage.png"}
                   deadline={
                     order.deadline?.seconds
                       ? formatDeadline(order.deadline.seconds)

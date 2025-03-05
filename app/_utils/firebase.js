@@ -25,4 +25,4 @@ const storage = getStorage(app);
 
 
 // Export the necessary modules
-export { app, auth, db, storage };
+export { app, auth, db, storage, firebaseConfig };

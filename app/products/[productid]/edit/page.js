@@ -19,7 +19,7 @@ export default function Page() {
 
     const [isMounted, setIsMounted] = useState(false);
     const { user } = useUserAuth();
-    const inputStyle = "h-9 rounded-lg border p-2 w-full";
+    const inputStyle = "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
     const [loading, setLoading] = useState(true);
     const [userProductId, setUserProductId] = useState("");
     const [name, setName] = useState("");
@@ -43,6 +43,7 @@ export default function Page() {
         setIsMounted(true);  
     }, []);
 
+
     useEffect(() => {
         const timeout = setTimeout(() => {
         setLoading(false);
@@ -50,6 +51,7 @@ export default function Page() {
 
         return () => clearTimeout(timeout);
     }, []);
+
 
     useEffect(() => {
         setLoading(true);
@@ -63,6 +65,7 @@ export default function Page() {
         }
         setLoading(false);
     }, [user, productId]);
+
 
     useEffect(() => {
         if (!product) return;
@@ -82,6 +85,7 @@ export default function Page() {
         setLoading(false);
     }, [product])
 
+
     useEffect(()=>{
         if (!user) {return};
         
@@ -92,6 +96,7 @@ export default function Page() {
         }
     }, [user])
 
+
     const handleAddCategory = () => {
         if (category.trim() && !categories.includes(category)) {
             setCategories([...categories, category]);
@@ -99,9 +104,11 @@ export default function Page() {
         }
     };
 
+
     const handleRemoveCategory = (cat) => {
         setCategories(categories.filter((c) => c !== cat));
     };
+
  
     const removeProductImage = (index) => {
         const updatedImages = [...productImages];
@@ -123,12 +130,14 @@ export default function Page() {
         }
     };
 
+
     const handleProductImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setProductImages((prev) => [...prev, file]);
         }
     };
+
 
     const handleUpload = async () => {
         if (!patternImages.length) return [];
@@ -207,6 +216,7 @@ export default function Page() {
 
     };
 
+
     const handleUpdateProduct = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -259,6 +269,7 @@ export default function Page() {
         }
     };
 
+
     if (loading) {
         return (
         <div className="flex items-center justify-center h-screen">
@@ -271,12 +282,11 @@ export default function Page() {
     if (user) {
         return (
         <div className="flex flex-col min-h-screen gap-4">
-            <Header title="Create Product" showUserName={true} />
+            <Header title="Edit the Product" />
             <form
             className="mx-4 flex flex-col gap-4"
             onSubmit={handleUpdateProduct}
             >
-            <p className="font-bold italic text-lg">Edit the product</p>
 
             {errorMessage.length===0?(null):(<p className="text-red">{errorMessage}</p>)}
 
@@ -325,8 +335,8 @@ export default function Page() {
                 <button
                     type="button"
                     onClick={handleAddCategory}
-                    className="bg-green px-4 py-1 rounded-lg"
-                >
+                    className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
+                    >
                     Add
                 </button>
                 </div>
@@ -337,7 +347,7 @@ export default function Page() {
                 </datalist>
 
                 {/* Category List */}
-                <ul className="flex flex-col gap-2 list-decimal pl-4">
+                <ul className="flex flex-col gap-2 list-decimal pl-8">
                 {categories.map((cat, index) => (
                     <li key={index}>
                     <div className="flex flex-row items-center justify-between gap-2">
@@ -417,8 +427,10 @@ export default function Page() {
                     multiple
                     onChange={handleProductImageChange}
                 />
-                <p className="text-center bg-green rounded-lg w-40 py-1">Select Image</p>
-                </div>
+                <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
+                    select images
+                </p>            
+            </div>
 
                 {/* Preview Product Images */}
                 {productImages.length > 0 && (
@@ -454,8 +466,10 @@ export default function Page() {
                         className="absolute inset-0 w-40 opacity-0 cursor-pointer"
                         onChange={handlePatternImageChange}
                     />
-                    <p className="text-center bg-green rounded-lg w-40 py-1">Select Image</p>
-                </div>
+                <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
+                    select images
+                </p> 
+            </div>
 
                 {/* Preview Pattern Image */}
                 {patternImages.length > 0 && (

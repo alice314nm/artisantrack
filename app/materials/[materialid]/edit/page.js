@@ -55,7 +55,7 @@ export default function Page() {
     const materialId = filteredMaterials.filter((material) => material.id == id);
     const selectedMaterial = materialId[0];
 
-    const inputStyle = 'h-9 rounded-lg border p-2 w-full';
+    const inputStyle = "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
 
     const [userMaterialId, setUserMaterialId] = useState('')
     const [name, setName] = useState('');
@@ -273,10 +273,9 @@ export default function Page() {
     if (user) {
         return (
             <div className="flex flex-col min-h-screen gap-4">
-                <Header title="Materials" showUserName={true} />
-                <form className="mx-4 flex flex-col gap-4" onSubmit={handleUpdateMaterial}>
-                    <p className="font-bold italic text-lg">Edit the material</p>
-                    
+                <Header title="Edit the Material"/>
+
+                <form className="mx-4 flex flex-col gap-4" onSubmit={handleUpdateMaterial}>                    
                     {errorMessage.length===0?(null):(<p className="text-red">{errorMessage}</p>)}
 
                     <div className="flex flex-col gap-2">
@@ -321,8 +320,8 @@ export default function Page() {
                             <button
                                 type="button"
                                 onClick={handleAddCategory}
-                                className="bg-green px-4 py-1 rounded-lg"
-                            >
+                                className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
+                                >
                                 Add
                             </button>
                         </div>
@@ -333,7 +332,7 @@ export default function Page() {
                         </datalist>
 
                         {/* Category List */}
-                        <ul className="flex flex-col gap-2 list-decimal pl-4">
+                        <ul className="flex flex-col gap-2 list-decimal pl-8">
                             {categories.map((cat, index) => (
                                 <li key={index}>
                                     <div className="flex flex-row items-center justify-between gap-2">
@@ -364,11 +363,16 @@ export default function Page() {
                             </div>                                
                         </div>
                         <div className="flex justify-end">
-                            <button type="button" onClick={handleAddCostItem} className="bg-green py-1 w-24 rounded-lg">Add</button>
+                            <button 
+                            type="button" 
+                            onClick={handleAddCostItem} 
+                            className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300">
+                            Add
+                            </button>
                         </div>
                     
                         {/* Display added items in the list */}
-                        <ul className="flex flex-col gap-2 mt-2 list-decimal pl-4">
+                        <ul className="flex flex-col gap-2 mt-2 list-decimal pl-8">
                             {costItems.map((item, index) => (
                                 <li key={index}>
                                     <div className="flex flex-row items-center justify-between gap-2">
@@ -415,7 +419,7 @@ export default function Page() {
                             <select
                             value={currency}
                             onChange={(e) => setCurrency(e.target.value)}
-                            className="rounded-lg border border-grey-200"
+                            className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                             >
                                 <option value="USD">USD ($)</option>
                                 <option value="EUR">EUR (€)</option>

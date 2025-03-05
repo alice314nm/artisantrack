@@ -1,37 +1,7 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
+import { useState } from "react";
 import SlideMenu from "./slide-menu";
-
-/*  
-    props
-    - type: one of the 4 types (described below)
-    
-    - onFirstFunction - function for left button
-    - onSecondFunction - function for right button
-
-    - iconFirst - image for the left button
-    - iconSecond - image for the right button
-
-    - firstTitle - title for the left button
-    - secondTitle - title for the right button
-
-
-    -------------------------------
-    Menu Types:
-
-    -TwoButtonsMenu
-    -Includes: Slide menu, copy function, add item function/View 
-
-    - Create Menu
-    - Includes: cancel function, confirm function
-
-    - Only Slide Menu
-    - Includes: Slide Menu
-
-    - One Button Menu
-    - Includes: Slide Menu, function for one button
-*/
 
 export default function Menu({
   type,
@@ -45,59 +15,57 @@ export default function Menu({
 }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
+  const containerClasses = "z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end h-[auto] text-sm";
+  const buttonMenuClasses = "rounded-md flex-shrink-0 text-sm";
+  const menuBurgerClasses = "w-10 h-10 text-sm";
+  const greenButtonClasses = "py-2 bg-green rounded-md items-center justify-center flex flex-row gap-1 text-sm"; // Reduced py-3 to py-2
+  const redButtonClasses = "py-3 bg-red rounded-md text-white text-sm"; // Reduced py-4 to py-3
+  const bottomMenuClasses = "flex flex-row h-16 bg-beige font-bold px-4 py-2 gap-2 items-center text-sm"; // Adjusted h-20 to h-16
+
   const toggleMenu = () => {
     setIsMenuVisible((prev) => !prev);
   };
 
   return (
     <div>
-      {/* 
-        TwoButtonsMenu
-        Includes: Slide menu, copy function, add item function/View 
-      */}
+      {/* TwoButtonsMenu */}
       {type === "TwoButtonsMenu" && (
-        <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
-          {/* Slide Menu */}
+        <div className={containerClasses}>
           <SlideMenu menuVisible={isMenuVisible} />
-
-          {/* Bottom Menu */}
-          <div className="flex flex-row h-20 bg-beige font-bold px-4 py-3 gap-2 items-center justify-center">
+          <div className={`${bottomMenuClasses} justify-center`}>
             <button
               data-id="menu-button"
-              className="rounded-xl flex-shrink-0"
+              className={buttonMenuClasses}
               onClick={toggleMenu}
             >
-              <img src="/MenuBurger.png" className="w-10 h-13" alt="Menu" />
+              <img src="/MenuBurger.png" className={menuBurgerClasses} alt="Menu" />
             </button>
 
             <button
-              className="py-3 bg-green rounded-xl w-[50%] items-center justify-center flex flex-row gap-1"
+              className={`${greenButtonClasses} w-[50%]`}
               onClick={onFirstFunction}
             >
               <p>{firstTitle}</p>
-              {iconFirst && <img src={iconFirst} width={18} />}
+              {iconFirst && <img src={iconFirst} width={15} />}
             </button>
 
             <button
-              className="py-3 bg-green rounded-xl w-[50%] items-center justify-center flex flex-row gap-1"
+              className={`${greenButtonClasses} w-[50%]`}
               onClick={onSecondFunction}
             >
               <p>{secondTitle}</p>
-              {iconSecond && <img src={iconSecond} width={18} />}
+              {iconSecond && <img src={iconSecond} width={15} />}
             </button>
           </div>
         </div>
       )}
 
-      {/* 
-        Create Menu
-        Includes: cancel function, confirm function 
-      */}
+      {/* Create Menu */}
       {type === "CreateMenu" && (
-        <div className="flex h-20 flex-row font-bold py-2 gap-2 items-center justify-center">
+        <div className="flex h-16 flex-row font-bold py-2 gap-2 items-center justify-center"> {/* Reduced h-20 to h-16 */}
           <button
             type="button"
-            className="py-4 bg-red rounded-xl text-white w-[50%]"
+            className={`${redButtonClasses} w-[30%]`}
             onClick={onFirstFunction}
           >
             <p>{firstTitle}</p>
@@ -105,7 +73,7 @@ export default function Menu({
 
           <button
             data-id="create-button"
-            className="py-4 bg-green rounded-xl w-[50%]"
+            className={`py-3 bg-green rounded-md w-[70%]`} 
             onClick={onSecondFunction}
           >
             <p>{secondTitle}</p>
@@ -113,45 +81,33 @@ export default function Menu({
         </div>
       )}
 
-      {/* 
-        Only Slide Menu
-        Includes: Slide Menu
-      */}
+      {/* Only Slide Menu */}
       {type === "OnlySlideMenu" && (
-        <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
-          {/* Slide Menu */}
+        <div className={containerClasses}>
           <SlideMenu menuVisible={isMenuVisible} x />
-
-          {/* Bottom Menu */}
-          <div className="flex flex-row h-20 bg-beige font-bold px-4 py-3 gap-2 items-center justify-start">
+          <div className={`${bottomMenuClasses} justify-start`}>
             <button
               data-id="menu-button"
-              className="rounded-xl flex-shrink-0"
+              className={buttonMenuClasses}
               onClick={toggleMenu}
             >
-              <img src="/MenuBurger.png" className="w-10 h-13" alt="Menu" />
+              <img src="/MenuBurger.png" className={menuBurgerClasses} alt="Menu" />
             </button>
           </div>
         </div>
       )}
 
-      {/* 
-        One Button Menu
-        Includes: Slide Menu, function for one button
-      */}
+      {/* One Button Menu */}
       {type === "OneButtonMenu" && (
-        <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
-          {/* Slide Menu */}
+        <div className={containerClasses}>
           <SlideMenu menuVisible={isMenuVisible} />
-
-          {/* Bottom Menu */}
-          <div className="flex flex-row h-20 bg-beige font-bold px-4 py-3 gap-2 items-center justify-center">
-            <button className="rounded-xl flex-shrink-0" onClick={toggleMenu}>
-              <img src="/MenuBurger.png" className="w-10 h-13" />
+          <div className={`${bottomMenuClasses} justify-center`}>
+            <button className={buttonMenuClasses} onClick={toggleMenu}>
+              <img src="/MenuBurger.png" className={menuBurgerClasses} />
             </button>
 
             <button
-              className="py-3 bg-green rounded-xl w-[100%]"
+              className="py-2 bg-green rounded-md w-[100%]" // Reduced py-3 to py-2
               onClick={onFirstFunction}
             >
               <p>{firstTitle}</p>
@@ -160,19 +116,29 @@ export default function Menu({
         </div>
       )}
 
-      {/* 
-        Select Menu
-        Includes: 
-      */}
-      {type==="SelectMenu" && (
-        <div className="z-0 fixed w-full bottom-0 right-0 flex flex-col justify-end">
-          <div className="flex flex-row h-14 bg-beige font-bold px-4 py-3 gap-2 items-center justify-between">
-            <button onClick={onFirstFunction} className="flex flex-row gap-2 w-[28%] justify-center items-center">
+      {/* Select Menu */}
+      {type === "SelectMenu" && (
+        <div className={containerClasses}>
+          <div className="flex flex-row h-12 bg-beige font-bold px-4 py-2 gap-2 items-center justify-between"> {/* Reduced h-14 to h-12 */}
+            <button 
+              onClick={onFirstFunction} 
+              className="flex flex-row gap-2 w-[28%] justify-center items-center"
+            >
               <img src="/arrow-left.png" className="w-5"/>
               <p className="underline">Go back</p>
             </button>
-            <button onClick={onSecondFunction} className="bg-red rounded-xl py-1 text-white w-[33%]">Reset</button>
-            <button onClick={onThirdFunction} className="bg-green rounded-xl py-1 w-[33%]">Confirm</button>
+            <button 
+              onClick={onSecondFunction} 
+              className="bg-red rounded-md py-1 text-white w-[33%]"
+            >
+              Reset
+            </button>
+            <button 
+              onClick={onThirdFunction} 
+              className="bg-green rounded-md py-1 w-[33%]"
+            >
+              Confirm
+            </button>
           </div>
         </div>
       )}

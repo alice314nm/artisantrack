@@ -1,5 +1,6 @@
 "use client";
 
+
 import {
   getFirestore,
   collection,
@@ -17,6 +18,7 @@ import Header from "../components/header";
 import NotLoggedWindow from "../components/not-logged-window";
 import { useUserAuth } from "../_utils/auth-context";
 import { app } from "../_utils/firebase";
+import FilterTotal from "../components/filter-total";
 
 export default function Home() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -25,16 +27,16 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
-  const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    setLoading(false);
+    }, 500); 
 
     return () => clearTimeout(timeout);
   }, []);
 
+  
   useEffect(() => {
     const fetchProducts = async () => {
       if (!user) return;
@@ -64,10 +66,9 @@ export default function Home() {
               })
             );
 
-            const productImageUrls =
-              product.productImages?.map((image) => image.url) || [];
-            const patternImageUrls =
-              product.patternImages?.map((image) => image.url) || [];
+            const productImageUrls = product.productImages?.map((image) => image.url) || [];
+            const patternImageUrls = product.patternImages?.map((image) => image.url) || [];
+
 
             return {
               ...product,
@@ -83,7 +84,6 @@ export default function Home() {
         console.error("Error fetching fetchProducts:", error);
       } finally {
         setLoading(false);
-        setIsDataFetched(true);
       }
     };
 
@@ -168,53 +168,51 @@ export default function Home() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Products" showUserName={true} />
-
-        <div className="flex flex-row justify-between mx-4">
-          <p className="font-bold" data-id="total-count">
-            Total: {filteredProducts.length}
-          </p>
-          <div
-            className="bg-green rounded-xl px-4 font-bold cursor-pointer"
-            data-id="create-document-button"
-          >
-            Create document
-          </div>
-        </div>
+        <Header title="Products"/>
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
           onSearch={setSearchTerm}
-          filterOn={true}
           data-id="search-bar"
         />
+        
+        <FilterTotal
+        onOpenFilters={toggleConfirmation}
+        total={filteredProducts.length}
+        />
 
-        {isDataFetched && filteredProducts.length === 0 ? (
-          <p className="flex flex-col items-center w-full py-40">
-            No products yet
-          </p>
+        {filteredProducts.length === 0 ? (
+          <p className="flex flex-col items-center w-full py-40">No products yet</p>
         ) : (
-          <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-            {filteredProducts.map((product) => (
-              <Link
-                href={`/products/${product.id}`}
-                key={product.id}
-                data-id="product-block"
-              >
-                <BlockHolder
-                  key={product.productId}
-                  id={product.productId}
-                  title={product.name}
-                  currency={product.currency}
-                  category={product.categories.join(", ") || "—"}
-                  total={product.averageCost || "—"}
-                  imageSource={product.productImages[0] || "/noImage.png"}
-                  type={"product"}
-                />
-              </Link>
-            ))}
+          <div className="w-full px-4 pb-20">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+              gap-4 sm:gap-6 lg:gap-8 
+              auto-rows-[1fr] 
+              justify-center items-stretch">
+              {filteredProducts.map((product) => (
+                <Link
+                  href={`/products/${product.id}`}
+                  key={product.id}
+                  data-id="product-block"
+                  className="transition-all duration-300 
+                    rounded-lg 
+                    overflow-hidden"
+                >
+                  <BlockHolder
+                    key={product.productId}
+                    id={product.productId}
+                    title={product.name}
+                    currency={product.currency}
+                    category={product.categories.join(", ") || "—"}
+                    total={product.averageCost || "—"}
+                    imageSource={product.productImages[0] || "/noImage.png"}
+                    type={"product"}
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        )}
+        )}        
 
         <FilterWindow
           onClose={closeConfirmation}

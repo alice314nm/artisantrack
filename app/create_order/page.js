@@ -27,7 +27,7 @@ export default function Page(){
     const [products, setProducts] = useState([]);
     const [materials, setMaterials] = useState([]);
 
-    const inputStyle = 'h-9 rounded-lg border p-2 w-full';
+    const inputStyle = "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
     const [errorMessage, setErrorMessage] = useState("");
 
     const [state, setState] = useState('form')
@@ -290,14 +290,13 @@ export default function Page(){
    if (user) {
     return (
         <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Create Orders" showUserName={true}/>
+        <Header title="Create an Order"/>
         
         {state === "form" && (
             <form 
             className="mx-4 flex flex-col gap-4" 
             onSubmit={handleCreateOrder}
             > 
-                <p className="font-bold italic text-lg">Create an order</p>
                 {errorMessage && errorMessage.length > 0 && (
                     <p className="text-red">{errorMessage}</p>
                 )}
@@ -331,9 +330,9 @@ export default function Page(){
 
                     <div className="flex gap-4">
                         {/* Start Date */}
-                        <div className="flex flex-col gap-2 w-3/4">
+                        <div className="flex flex-col gap-1 w-3/4">
                             <div className="flex flex-row justify-between">
-                                <label>Start Date</label>
+                                <label className="text-xs">Start Date</label>
                             </div>
                             <DatePicker
                                 selected={startDate ? new Date(startDate) : null}
@@ -345,9 +344,9 @@ export default function Page(){
                         </div>
 
                         {/* Deadline */}
-                        <div className="flex flex-col gap-2 w-3/4">
+                        <div className="flex flex-col gap-1 w-3/4">
                             <div className="flex flex-row justify-between">
-                                <label>Deadline</label>
+                                <label className="text-xs">Deadline</label>
                             </div>
                             <DatePicker
                                 selected={deadline ? new Date(deadline) : null}
@@ -360,9 +359,9 @@ export default function Page(){
                             
 
                             {/* Days Counter */}
-                            <div className="flex flex-col gap-2 w-1/4">
+                            <div className="flex flex-col gap-1 w-1/4">
                                 <div className="flex flex-row justify-between">
-                                    <label>Days</label>
+                                    <label className="text-xs">Days</label>
                                 </div>
                                 <input
                                     className={`${inputStyle} w-full`}
@@ -415,7 +414,7 @@ export default function Page(){
                     <button 
                         type="button" 
                         onClick={handleSelectProductForm} 
-                        className="bg-green rounded-lg w-40"
+                        className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                     >
                         select product
                     </button>
@@ -464,8 +463,8 @@ export default function Page(){
                     <button 
                         type="button" 
                         onClick={handleSelectMaterialForm} 
-                        className="bg-green rounded-lg w-40"
-                    >
+                        className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
+                        >
                         select material
                     </button>
                     <img 
@@ -553,7 +552,7 @@ export default function Page(){
                     <select
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="rounded-lg border border-grey-200"
+                        className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                         data-id="currency-select"
                     >
                         <option value="USD">USD ($)</option>

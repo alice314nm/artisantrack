@@ -3,6 +3,8 @@
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
+import NotLoggedWindow from "@/app/components/not-logged-window";
+import PieChart from "@/app/components/pie-chart";
 
 import { useEffect, useState } from "react";
 
@@ -10,6 +12,8 @@ export default function WelcomePage() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [stateShow, setStateShow] = useState('orders')
+  const [income, setIncome] = useState(70); 
+  const [expenses, setExpenses] = useState(30); 
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -77,22 +81,24 @@ export default function WelcomePage() {
             {/* Main */}
             <div className="px-4 pb-22 gap-4 flex flex-col">
                 {/* diagram */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
                     {/* Finance text */}
-                    <div className='flex flex-row gap-2 text-xl'>
-                        <p>Income:</p>
-                        <p>Expenses:</p>
+                    <div className="flex flex-row gap-2 text-xl">
+                    <p>Income:</p>
+                    <p>Expenses:</p>
                     </div>
-                    {/* place fo diagram */}
-                    <div className="flex justify-center">
-                        <div className="w-72 h-72 bg-green">
-                        
-                        </div>
+                    {/* place for diagram */}
+                    <div className="flex justify-center px-4">
+                    <PieChart income={income} expenses={expenses} />
                     </div>
-
-                    <div>
-                        <p>Popular product this month: <span className="underline">Name</span></p> {/*Make a "Name" a link to the popular product*/}
-                        <p>Regular client: Alex Smith</p>
+    
+                    <div className="pt-2">
+                    <p>
+                        Popular product this month:{" "}
+                        <span className="underline">Name</span>
+                    </p>
+                    {/* Make a "Name" a link to the popular product */}
+                    <p>Regular client: Alex Smith</p>
                     </div>
                 </div>
 

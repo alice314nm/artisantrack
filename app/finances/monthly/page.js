@@ -68,7 +68,7 @@ export default function WelcomePage() {
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Monthly Report" />
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pb-20">
           {/* toggle */}
           <div className="border-b border-b-darkBeige">
             <div className="flex flex-row items-center pb-4 justify-between px-4">
@@ -99,7 +99,11 @@ export default function WelcomePage() {
               <div className="pt-2">
                 <p>
                   Popular product this month:{" "}
-                  <span className="underline">Name</span>
+                  <span className="underline">#id | Name</span>
+                </p>
+                <p>
+                  Popular material this month:{" "}
+                  <span className="underline">#id | Name</span>
                 </p>
                 {/* Make a "Name" a link to the popular product */}
                 <p>Regular client: Alex Smith</p>

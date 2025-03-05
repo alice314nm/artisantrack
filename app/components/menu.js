@@ -107,10 +107,11 @@ export default function Menu({
             </button>
 
             <button
-              className="py-2 bg-green rounded-md w-[100%]" // Reduced py-3 to py-2
+              className={`${greenButtonClasses} w-[100%]`}
               onClick={onFirstFunction}
             >
               <p>{firstTitle}</p>
+              {iconFirst && <img src={iconFirst} width={15} />}
             </button>
           </div>
         </div>

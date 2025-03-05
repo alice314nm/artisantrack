@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
   const { user } = useUserAuth();
-  const inputStyle = "h-9 rounded-lg border p-2 w-full";
+  const inputStyle = "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
   const [loading, setLoading] = useState(true);
 
   const [materialId, setMaterialId] = useState("");
@@ -200,19 +200,17 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Materials" showUserName={true} />
+        <Header title="Create a material" />
         <form
-          className="mx-4 flex flex-col gap-4"
+          className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4"
           onSubmit={handleCreateMaterial}
         >
-          <p className="font-bold italic text-lg">Create a material</p>
-
           {errorMessage.length === 0 ? null : (
             <p className="text-red">{errorMessage}</p>
           )}
 
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row justify-between items-center">
               <label>
                 Id <span className="text-red">*</span>
               </label>
@@ -282,7 +280,7 @@ export default function Page() {
               <button
                 type="button"
                 onClick={handleAddCategory}
-                className="bg-green py-1 w-32 rounded-lg"
+                className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
                 data-id="material-add-category"
               >
                 Add
@@ -295,7 +293,7 @@ export default function Page() {
             </datalist>
 
             {/* Category List */}
-            <ul className="flex flex-col gap-2 list-decimal pl-4">
+            <ul className="flex flex-col gap-2 list-decimal pl-8">
               {categories.map((cat, index) => (
                 <li key={index}>
                   <div className="flex flex-row items-center justify-between gap-2">
@@ -346,7 +344,7 @@ export default function Page() {
               <button
                 type="button"
                 onClick={handleAddCostItem}
-                className="bg-green py-1 w-24 rounded-lg"
+                className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
                 data-id="material-add-cost"
               >
                 Add
@@ -354,7 +352,7 @@ export default function Page() {
             </div>
 
             {/* Display added items in the list */}
-            <ul className="flex flex-col gap-2 mt-2 list-decimal pl-4">
+            <ul className="flex flex-col gap-2 mt-2 list-decimal pl-8">
               {costItems.map((item, index) => (
                 <li key={index}>
                   <div className="flex flex-row items-center justify-between gap-2">
@@ -417,7 +415,7 @@ export default function Page() {
                 data-id="currency-select"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="rounded-lg border border-grey-200"
+                className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               >
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
@@ -459,8 +457,8 @@ export default function Page() {
                 multiple
                 onChange={handleFileChange}
               />
-              <p className="text-center bg-green rounded-lg w-40 py-1 ">
-                select Image
+              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
+                select images
               </p>
             </div>
 

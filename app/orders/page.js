@@ -17,6 +17,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
+import FilterTotal from "../components/filter-total";
 
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -26,16 +27,18 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
-  const [orderImageUrl, setOrderImageUrl] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
 
+  // Initial loading timeout
   useEffect(() => {
     const timeout = setTimeout(() => {
-    setLoading(false);
-    }, 500); 
+      setLoading(false);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, []);
-  
+
+  // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user) return;
@@ -48,7 +51,6 @@ export default function Page() {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log(ordersData);
 
         for (let order of ordersData) {
           if (order.orderImages && order.orderImages.length > 0) {
@@ -60,7 +62,6 @@ export default function Page() {
                 );
                 const productSnapshot = await getDoc(productRef);
                 const productData = productSnapshot.data();
-
                 order.orderId = productData?.productId;
                 return productData?.productImages?.[0]?.url || "Unknown";
               })
@@ -78,13 +79,13 @@ export default function Page() {
             const customerSnapshot = await getDoc(customerRef);
             const customerData = customerSnapshot.data();
             order.customerId = customerData?.nameCustomer || "Unknown";
-            console.log(order.customerId);
           } else {
             order.customerId = "Unknown";
           }
         }
 
         setOrders(ordersData);
+        setFilteredOrders(ordersData); // Initialize filteredOrders with all orders
       } catch (error) {
         console.error("Error fetching orders: ", error);
       } finally {
@@ -94,6 +95,7 @@ export default function Page() {
     fetchOrders();
   }, [user]);
 
+  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       if (!user) return;
@@ -118,6 +120,60 @@ export default function Page() {
     }
   }, [user]);
 
+  // Apply filters and sorting
+  useEffect(() => {
+    if (loading) return; // Skip if still loading
+
+    let result = [...orders];
+
+    // Apply category filter
+    if (filters.Categories?.length > 0) {
+      result = result.filter(
+        (order) =>
+          Array.isArray(order.categories) &&
+          order.categories.some((category) =>
+            filters.Categories.includes(category)
+          )
+      );
+    }
+
+    // Apply sorting
+    if (filters["Sort by"]) {
+      switch (filters["Sort by"]) {
+        case "Name Ascending":
+          result.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case "Name Descending":
+          result.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case "Category":
+          result.sort((a, b) =>
+            a.categories.join(", ").localeCompare(b.categories.join(", "))
+          );
+          break;
+        case "ID Ascending":
+          result.sort((a, b) => Number(a.productId) - Number(b.productId));
+          break;
+        case "ID Descending":
+          result.sort((a, b) => Number(b.productId) - Number(a.productId));
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Apply search term filter
+    if (searchTerm) {
+      result = result.filter(
+        (order) =>
+          order.name &&
+          order.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredOrders(result);
+  }, [orders, filters, searchTerm, loading]);
+
   const handleNavigateToCreatePage = () => {
     window.location.href = "/create_order";
   };
@@ -134,79 +190,26 @@ export default function Page() {
     setFilters(selectedFilters);
   };
 
-  let filteredOrders = [...orders];
-  if (filters.Categories?.length > 0) {
-    filteredOrders = filteredOrders.filter(
-      (order) =>
-        Array.isArray(order.categories) &&
-        order.categories.some((category) =>
-          filters.Categories.includes(category)
-        )
-    );
-  }
-
-  if (filters["Sort by"]) {
-    switch (filters["Sort by"]) {
-      case "Name Ascending":
-        filteredOrders.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "Name Descending":
-        filteredOrders.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "Category":
-        filteredOrders.sort((a, b) =>
-          a.categories.join(", ").localeCompare(b.categories.join(", "))
-        );
-        break;
-      case "ID Ascending":
-        filteredOrders.sort(
-          (a, b) => Number(a.productId) - Number(b.productId)
-        );
-        break;
-      case "ID Descending":
-        filteredOrders.sort(
-          (a, b) => Number(b.productId) - Number(a.productId)
-        );
-        break;
-      default:
-        break;
-    }
-  }
-
   const formatDeadline = (timestamp) => {
     const deadlineDate = new Date(timestamp * 1000);
     const today = new Date();
 
     const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
+
     const formattedDate = `${
       monthNames[deadlineDate.getMonth()]
     } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
-    const daysLeft = diffTime > 0 ? `(${diffTime} days)` : "(Due today)";
 
-    return `${formattedDate} ${daysLeft}`;
+    const daysLeft = diffTime > 0 ? diffTime : 0;
+    const daysStatus = diffTime > 0 ? `${diffTime} days` : "Due today";
+
+    return [formattedDate, daysLeft, daysStatus];
   };
-
-  if (searchTerm) {
-    filteredOrders = filteredOrders.filter(
-      (order) =>
-        order.name &&
-        order.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
 
   if (loading) {
     return (
@@ -223,52 +226,52 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Orders" showUserName={true} />
-
-        <div className="flex flex-row justify-between mx-4">
-          <p className="font-bold" data-id="total-count">
-            Total: {filteredOrders.length}
-          </p>
-
-          <div className="bg-green rounded-xl px-4 font-bold cursor-pointer">
-            Create document
-          </div>
-        </div>
+        <Header title="Orders" />
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
           onSearch={(term) => setSearchTerm(term)}
-          filterOn={true}
+          data-id="search-bar"
+        />
+
+        <FilterTotal
+          onOpenFilters={toggleConfirmation}
+          total={filteredOrders.length}
         />
 
         {filteredOrders.length === 0 ? (
           <p className="flex flex-col items-center w-full py-40">
-            No orders yet
+            No orders found
           </p>
         ) : (
-          <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-            {filteredOrders.map((order, index) => (
-              <Link
-                href={`/orders/${order.id}`}
-                key={order.id}
-                data-id="order-block"
-              >
-                <BlockHolder
-                  id={index+1}
-                  title={order.nameOrder}
-                  imageSource={order.imageUrl  || "/noImage.png"}
-                  deadline={
-                    order.deadline?.seconds
-                      ? formatDeadline(order.deadline.seconds)
-                      : "No deadline"
-                  }
-                  currency={order.currency}
-                  total={order.totalCost}
-                  customerId={order.customerId}
-                  type={"order"}
-                />
-              </Link>
-            ))}
+          <div className="w-full px-4 pb-20">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+              gap-4 sm:gap-6 lg:gap-8 
+              auto-rows-[1fr] 
+              justify-center items-stretch">
+              {filteredOrders.map((order, index) => (
+                <Link
+                  href={`/orders/${order.id}`}
+                  key={order.id}
+                  data-id="order-block"
+                >
+                  <BlockHolder
+                    id={index + 1}
+                    title={order.nameOrder}
+                    imageSource={order.imageUrl || "/noImage.png"}
+                    deadline={
+                      order.deadline?.seconds
+                        ? formatDeadline(order.deadline.seconds)
+                        : ["No deadline", 0, "No deadline"]
+                    }
+                    currency={order.currency}
+                    total={order.totalCost}
+                    customerId={order.customerId}
+                    type={"order"}
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 

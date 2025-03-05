@@ -17,3 +17,4 @@ export default function MateriaOrderDisplay(imageSrc, name, id, index, quantity)
         </div>
     );    
 }
+

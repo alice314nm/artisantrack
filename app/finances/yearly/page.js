@@ -218,6 +218,7 @@ export default function WelcomePage() {
         type="TwoButtonsMenu"
         firstTitle={"Go back"}
         iconFirst={"/arrow-left.png"}
+        onFirstFunction={() => window.location.href = `/finances`}
         secondTitle={"Download"}
         iconSecond={"/download.png"} />
       </div>

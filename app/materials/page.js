@@ -17,6 +17,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
+import FilterTotal from "../components/filter-total";
 
 export default function Page() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -25,16 +26,15 @@ export default function Page() {
   const [materials, setMaterials] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
-  const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    setLoading(false);
+    }, 500); 
 
     return () => clearTimeout(timeout);
   }, []);
-
+  
   useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;
@@ -51,62 +51,11 @@ export default function Page() {
           ...doc.data(),
         }));
         console.log(materialsData);
-
-        const materialsWithCategoriesColorsAndImages = await Promise.all(
-          materialsData.map(async (material) => {
-            const categoryNames = await Promise.all(
-              material.categories.map(async (categoryId) => {
-                const categoryDocRef = doc(
-                  db,
-                  `users/${user.uid}/materialCategories/${categoryId}`
-                );
-                const categoryDoc = await getDoc(categoryDocRef);
-                return categoryDoc.exists()
-                  ? categoryDoc.data().name
-                  : "Unknown";
-              })
-            );
-
-            let colorNames = [];
-            if (Array.isArray(material.color)) {
-              colorNames = await Promise.all(
-                material.color.map(async (colorId) => {
-                  const colorDocRef = doc(
-                    db,
-                    `users/${user.uid}/colors/${colorId}`
-                  );
-                  const colorDoc = await getDoc(colorDocRef);
-                  return colorDoc.exists() ? colorDoc.data().name : "Unknown";
-                })
-              );
-            } else if (material.color) {
-              const colorDocRef = doc(
-                db,
-                `users/${user.uid}/colors/${material.color}`
-              );
-              const colorDoc = await getDoc(colorDocRef);
-              colorNames = colorDoc.exists()
-                ? [colorDoc.data().name]
-                : ["Unknown"];
-            }
-
-            const imageUrls = material.images?.map((image) => image.url) || [];
-
-            return {
-              ...material,
-              categories: categoryNames,
-              colors: colorNames,
-              images: imageUrls,
-            };
-          })
-        );
-
-        setMaterials(materialsWithCategoriesColorsAndImages);
+        setMaterials(materialsData);
       } catch (error) {
         console.error("Error fetching materials:", error);
       } finally {
         setLoading(false);
-        setIsDataFetched(true);
       }
     };
 
@@ -197,34 +146,28 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Materials" showUserName={true} />
-
-        <div className="flex flex-row justify-between mx-4">
-          <p className="font-bold" data-id="total-count">
-            Total: {filteredMaterials.length}
-          </p>
-          <div
-            className="bg-green rounded-xl px-4 font-bold cursor-pointer"
-            data-id="create-document-button"
-          >
-            Create document
-          </div>
-        </div>
+        <Header title="Materials" />
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
           onSearch={setSearchTerm}
-          filterOn={true}
           data-id="search-bar"
         />
+                
+        <FilterTotal
+        onOpenFilters={toggleConfirmation}
+        total={filteredMaterials.length}
+        />
 
-        {isDataFetched && filteredMaterials.length === 0 ? (
-          <p className="flex flex-col items-center w-full py-40">
-            No materials yet
-          </p>
+        {filteredMaterials.length===0 ? (
+          <p className="flex flex-col items-center w-full py-40">No materials yet</p>
         ) : (
-          <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-            {filteredMaterials.map((material) => (
+          <div className="w-full px-4 pb-20">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+              gap-4 sm:gap-6 lg:gap-8 
+              auto-rows-[1fr] 
+              justify-center items-stretch">          
+              {filteredMaterials.map((material) => (
               <Link
                 href={`/materials/${material.id}`}
                 key={material.materialId}
@@ -238,14 +181,16 @@ export default function Page() {
                   category={material.categories.join(", ") || "—"}
                   total={material.total || "—"}
                   currency={material.currency}
-                  color={material.colors.join(", ") || "—"}
-                  imageSource={material.images[0] || "/noImage.png"}
+                  color={material.color || "—"}
+                  imageSource={material.images[0].url || "/noImage.png"}
                   type={"material"}
                 />
               </Link>
             ))}
           </div>
+        </div>
         )}
+        
 
         <FilterWindow
           onClose={closeConfirmation}

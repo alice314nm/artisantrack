@@ -20,19 +20,13 @@ export default function Header({title, showUserName}) {
 
     return (
         <header className="bg-beige font-bold flex flex-row p-4 items-center justify-between">
-            <div className="gap-2 flex flex-row items-center justify-between">
+            <div className="gap-4 flex flex-row items-center justify-between">
                 <img
                     src="/LogoArtisanTrack.png"
-                    className="w-12 h-12 bg-gray-200"
+                    className="w-12 h-12 border"
                 />
-                <Link href="/"><p className="italic text-xl">{title}</p></Link>
+                <Link href="/"><p className="italic text-2xl">{title}</p></Link>
             </div>
-            {showUserName && user && (
-                <div className="text-right">
-                    <p>Artisan:</p>
-                    <p>{user.displayName}</p>
-                </div>
-            )}
         </header>
     );
 }

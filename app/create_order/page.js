@@ -27,7 +27,7 @@ export default function Page(){
     const [products, setProducts] = useState([]);
     const [materials, setMaterials] = useState([]);
 
-    const inputStyle = 'h-9 rounded-lg border p-2 w-full';
+    const inputStyle = "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
     const [errorMessage, setErrorMessage] = useState("");
 
     const [state, setState] = useState('form')
@@ -39,7 +39,6 @@ export default function Page(){
     const [customerName, setCustomerName] = useState("");
     const [desc, setDesc] = useState("");
     const [selectedProduct, setSelectedProduct] = useState("");
-    const [selectedMaterial, setSelectedMaterial] = useState("");
     const [selectedMaterials, setSelectedMaterials] = useState([])
 
     const [materialQuantities, setMaterialQuantities] = useState({});
@@ -47,7 +46,6 @@ export default function Page(){
     const [productCost, setProductCost] = useState(0);
     const [materialCost, setMaterialCost] = useState(0);
     const [workCost, setWorkCost] = useState(0);
-    const [totalCost, setTotalCost] = useState(0);
     const [currency, setCurrency] = useState("USD");
     const [total, setTotal] = useState(0)
 
@@ -144,7 +142,6 @@ export default function Page(){
 
     const handleGoBackFromMaterials = () => {
         setState('form');
-        setSelectedMaterials([]);
     } 
 
 
@@ -182,37 +179,34 @@ export default function Page(){
         delete updatedQuantities[material.materialId];
 
         setMaterialQuantities(updatedQuantities);
-        setMaterialCost(0);
         calculateMaterialsCost();
     };
 
-
+    useEffect(() => {
+        calculateMaterialsCost();
+    }, [selectedMaterials, materialQuantities]);
+    
     const calculateMaterialsCost = () => {
-        if (selectedMaterials.length === 0) {
-          setMaterialCost(0);
-          return;
+        if (!selectedMaterials || selectedMaterials.length === 0) {
+            console.warn("No materials selected.");
+            setMaterialCost(0);
+            return;
         }
-        
-        const totalCost = selectedMaterials.reduce((total, material) => {
+    
+        let totalCost = 0;
+    
+        selectedMaterials.forEach((material) => {
             const selectedQuantity = parseFloat(materialQuantities[material.materialId] || 0);
-            const totalQuantity = parseFloat(material.quantity || 0);
-            const totalMaterialCost = parseFloat(material.total || 0);
-            console.log(selectedQuantity, totalQuantity, totalMaterialCost)
-            let materialCost = 0;
-            
-            if (!totalQuantity || isNaN(totalQuantity) || totalQuantity === 0 || 
-                !totalMaterialCost || isNaN(totalMaterialCost)) {
-                return total;
-            } else {
-                const unitCost = totalMaterialCost / totalQuantity;
-                materialCost = selectedQuantity * unitCost;
-            }
-            
-            return total + materialCost;
-        }, 0);
+            const costPerUnit = parseFloat(material.costPerUnit || 0);
         
-        setMaterialCost(totalCost);
+            if (!isNaN(selectedQuantity) && !isNaN(costPerUnit) && selectedQuantity > 0) {
+                totalCost += selectedQuantity * costPerUnit;
+            }
+        });
+    
+        setMaterialCost(Number(totalCost.toFixed(2))); 
     };
+    
 
 
     const handleResetSelectedMaterial = () => {
@@ -251,6 +245,10 @@ export default function Page(){
             description: desc?.trim() || "",
             productId: selectedProduct?.id || null,
             materialIds: Array.isArray(selectedMaterials) ? selectedMaterials.map(mat => mat.id) : [],
+            quantities: selectedMaterials.map(material => ({
+                id: material.materialId, 
+                quantity: materialQuantities[material.materialId]
+            })),
             materialsCost: isNaN(parseFloat(materialCost)) ? "0.00" : parseFloat(materialCost).toFixed(2),
             productCost: isNaN(parseFloat(productCost)) ? "0.00" : parseFloat(productCost).toFixed(2),
             workCost: isNaN(parsedWorkCost) ? "0.00" : parsedWorkCost.toFixed(2),
@@ -290,14 +288,13 @@ export default function Page(){
    if (user) {
     return (
         <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Create Orders" showUserName={true}/>
+        <Header title="Create an Order"/>
         
         {state === "form" && (
             <form 
             className="mx-4 flex flex-col gap-4" 
             onSubmit={handleCreateOrder}
             > 
-                <p className="font-bold italic text-lg">Create an order</p>
                 {errorMessage && errorMessage.length > 0 && (
                     <p className="text-red">{errorMessage}</p>
                 )}
@@ -305,7 +302,7 @@ export default function Page(){
                 {/* Name of the order */}
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row justify-between">
-                    <label>Name of the order <span className="text-red">*</span></label>
+                    <label>Title of the order <span className="text-red">*</span></label>
                     <img
                         src={orderName === "" ? "/cross.png" : "/check.png"}
                         className={orderName === "" ? "h-4" : "h-6 text-green"}
@@ -315,6 +312,7 @@ export default function Page(){
                     className={inputStyle} 
                     name="orderName" 
                     value={orderName} 
+                    placeholder="Enter title for the order"
                     onChange={(e) => setOrderName(e.target.value)}   
                     ></input>
                 </div>
@@ -331,9 +329,9 @@ export default function Page(){
 
                     <div className="flex gap-4">
                         {/* Start Date */}
-                        <div className="flex flex-col gap-2 w-3/4">
+                        <div className="flex flex-col gap-1 w-3/4">
                             <div className="flex flex-row justify-between">
-                                <label>Start Date</label>
+                                <label className="text-xs">Start Date</label>
                             </div>
                             <DatePicker
                                 selected={startDate ? new Date(startDate) : null}
@@ -345,9 +343,9 @@ export default function Page(){
                         </div>
 
                         {/* Deadline */}
-                        <div className="flex flex-col gap-2 w-3/4">
+                        <div className="flex flex-col gap-1 w-3/4">
                             <div className="flex flex-row justify-between">
-                                <label>Deadline</label>
+                                <label className="text-xs">Deadline</label>
                             </div>
                             <DatePicker
                                 selected={deadline ? new Date(deadline) : null}
@@ -360,9 +358,9 @@ export default function Page(){
                             
 
                             {/* Days Counter */}
-                            <div className="flex flex-col gap-2 w-1/4">
+                            <div className="flex flex-col gap-1 w-1/4">
                                 <div className="flex flex-row justify-between">
-                                    <label>Days</label>
+                                    <label className="text-xs">Days</label>
                                 </div>
                                 <input
                                     className={`${inputStyle} w-full`}
@@ -388,6 +386,7 @@ export default function Page(){
                     className={inputStyle} 
                     name="customerName" 
                     value={customerName} 
+                    placeholder="Enter customer's name"
                     onChange={(e) => setCustomerName(e.target.value)}   
                     ></input>            
                 </div>
@@ -404,6 +403,7 @@ export default function Page(){
                     <textarea 
                     className="rounded-lg border p-2" 
                     name="description" 
+                    placeholder="Enter details about the order"
                     value={desc} 
                     onChange={(e) => setDesc(e.target.value)}   
                     ></textarea>
@@ -415,7 +415,7 @@ export default function Page(){
                     <button 
                         type="button" 
                         onClick={handleSelectProductForm} 
-                        className="bg-green rounded-lg w-40"
+                        className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                     >
                         select product
                     </button>
@@ -451,7 +451,7 @@ export default function Page(){
                     <input 
                     className={inputStyle} 
                     type="text"
-                    value={productCost === 0 ? "" : `${productCost}${selectedProduct.currency?  selectedProduct.currency : ''}`} 
+                    value={productCost === 0 ? "" : `${productCost} ${selectedProduct.currency?  selectedProduct.currency : ''}`} 
                     name="productCost"
                     placeholder="0.00"                    
                     readOnly                            
@@ -464,8 +464,8 @@ export default function Page(){
                     <button 
                         type="button" 
                         onClick={handleSelectMaterialForm} 
-                        className="bg-green rounded-lg w-40"
-                    >
+                        className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
+                        >
                         select material
                     </button>
                     <img 
@@ -500,7 +500,7 @@ export default function Page(){
                 {/* Material cost */}
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row justify-between">
-                        <label>Material cost</label>
+                        <label>Materials cost</label>
                     </div>
                     <input 
                     className={inputStyle} 
@@ -508,7 +508,7 @@ export default function Page(){
                     value={materialCost === 0 ? "" : materialCost} 
                     name="materialCost"
                     placeholder="0.00"
-                    onChange={(e) => setMaterialCost(e.target.value)}   
+                    readOnly
                     />   
                 </div>       
                 
@@ -553,7 +553,7 @@ export default function Page(){
                     <select
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="rounded-lg border border-grey-200"
+                        className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                         data-id="currency-select"
                     >
                         <option value="USD">USD ($)</option>

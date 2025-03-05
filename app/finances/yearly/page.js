@@ -151,12 +151,12 @@ export default function WelcomePage() {
         </div>
 
         <Menu 
-          type="TwoButtonsMenu"
-          firstTitle={"Go back"}
-          iconFirst={"/arrow-left.png"}
-          secondTitle={"Download"}
-          iconSecond={"/download.png"} 
-        />
+        type="TwoButtonsMenu"
+        firstTitle={"Go back"}
+        iconFirst={"/arrow-left.png"}
+        onFirstFunction={() => window.location.href = `/finances`}
+        secondTitle={"Download"}
+        iconSecond={"/download.png"} />
       </div>
     );
   } else {

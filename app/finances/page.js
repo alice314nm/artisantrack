@@ -17,7 +17,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
 
 
-  const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60"
+  const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60 text-center"
 
 
   useEffect(() => {

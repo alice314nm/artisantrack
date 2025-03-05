@@ -141,24 +141,96 @@ export default function WelcomePage() {
               </div>
 
               {stateShow === "orders" && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 auto-rows-[1fr] justify-center items-stretch">
-                  {/* {filteredOrders.map((order, index) => ( */}
-                  {/* Add your order rendering logic here */}
+                <div className="w-full px-4 pb-20">
+                  {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                    gap-4 sm:gap-6 lg:gap-8 
+                    auto-rows-[1fr] 
+                    justify-center items-stretch">
+                    {filteredOrders.map((order, index) => (
+                      <Link
+                        href={`/orders/${order.id}`}
+                        key={order.id}
+                        data-id="order-block"
+                      >
+                        <BlockHolder
+                          id={index + 1}
+                          title={order.nameOrder}
+                          imageSource={order.imageUrl || "/noImage.png"}
+                          deadline={
+                            order.deadline?.seconds
+                              ? formatDeadline(order.deadline.seconds)
+                              : ["No deadline", 0, "No deadline"]
+                          }
+                          currency={order.currency}
+                          total={order.totalCost}
+                          customerId={order.customerId}
+                          type={"order"}
+                        />
+                      </Link>
+                    ))}
+                  </div> */}
                 </div>
               )}
 
               {stateShow === "products" && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 auto-rows-[1fr] justify-center items-stretch">
-                  {/* {filteredProducts.map((product) => ( */}
-                  {/* Add your product rendering logic here */}
-                </div>
+                <div className="w-full px-4 pb-20">
+                {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                  gap-4 sm:gap-6 lg:gap-8 
+                  auto-rows-[1fr] 
+                  justify-center items-stretch">
+                  {filteredProducts.map((product) => (
+                    <Link
+                      href={`/products/${product.id}`}
+                      key={product.id}
+                      data-id="product-block"
+                      className="transition-all duration-300 
+                        rounded-lg 
+                        overflow-hidden"
+                    >
+                      <BlockHolder
+                        key={product.productId}
+                        id={product.productId}
+                        title={product.name}
+                        currency={product.currency}
+                        category={product.categories.join(", ") || "—"}
+                        total={product.averageCost || "—"}
+                        imageSource={product.productImages[0] || "/noImage.png"}
+                        type={"product"}
+                      />
+                    </Link>
+                  ))}
+                </div> */}
+              </div>
               )}
 
               {stateShow === "materials" && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 auto-rows-[1fr] justify-center items-stretch">
-                  {/* {filteredMaterials.map((material) => ( */}
-                  {/* Add your material rendering logic here */}
-                </div>
+                <div className="w-full px-4 pb-20">
+                  {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                    gap-4 sm:gap-6 lg:gap-8 
+                    auto-rows-[1fr] 
+                    justify-center items-stretch">          
+                    {filteredMaterials.map((material) => (
+                    <Link
+                      href={`/materials/${material.id}`}
+                      key={material.materialId}
+                      data-id="material-block"
+                    >
+                      <BlockHolder
+                        key={material.materialId}
+                        id={material.materialId}
+                        title={material.name}
+                        quantity={material.quantity || "—"}
+                        category={material.categories.join(", ") || "—"}
+                        total={material.total || "—"}
+                        currency={material.currency}
+                        color={material.color || "—"}
+                        imageSource={material.images[0].url || "/noImage.png"}
+                        type={"material"}
+                      />
+                    </Link>
+                  ))}
+                </div> */}
+              </div>
               )}
             </div>
           </div>

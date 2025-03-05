@@ -25,15 +25,16 @@ export default function Page() {
   const [materials, setMaterials] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
+  const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-    setLoading(false);
-    }, 500); 
+      setLoading(false);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, []);
-  
+
   useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;
@@ -105,6 +106,7 @@ export default function Page() {
         console.error("Error fetching materials:", error);
       } finally {
         setLoading(false);
+        setIsDataFetched(true);
       }
     };
 
@@ -216,33 +218,34 @@ export default function Page() {
           data-id="search-bar"
         />
 
-        {filteredMaterials.length===0 ? (
-          <p className="flex flex-col items-center w-full py-40">No materials yet</p>
+        {isDataFetched && filteredMaterials.length === 0 ? (
+          <p className="flex flex-col items-center w-full py-40">
+            No materials yet
+          </p>
         ) : (
           <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-          {filteredMaterials.map((material) => (
-            <Link
-              href={`/materials/${material.id}`}
-              key={material.materialId}
-              data-id="material-block"
-            >
-              <BlockHolder
+            {filteredMaterials.map((material) => (
+              <Link
+                href={`/materials/${material.id}`}
                 key={material.materialId}
-                id={material.materialId}
-                title={material.name}
-                quantity={material.quantity || "—"}
-                category={material.categories.join(", ") || "—"}
-                total={material.total || "—"}
-                currency={material.currency}
-                color={material.colors.join(", ") || "—"}
-                imageSource={material.images[0] || "/noImage.png"}
-                type={"material"}
-              />
-            </Link>
-          ))}
-        </div>
+                data-id="material-block"
+              >
+                <BlockHolder
+                  key={material.materialId}
+                  id={material.materialId}
+                  title={material.name}
+                  quantity={material.quantity || "—"}
+                  category={material.categories.join(", ") || "—"}
+                  total={material.total || "—"}
+                  currency={material.currency}
+                  color={material.colors.join(", ") || "—"}
+                  imageSource={material.images[0] || "/noImage.png"}
+                  type={"material"}
+                />
+              </Link>
+            ))}
+          </div>
         )}
-        
 
         <FilterWindow
           onClose={closeConfirmation}

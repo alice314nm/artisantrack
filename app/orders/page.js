@@ -27,15 +27,16 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [orderImageUrl, setOrderImageUrl] = useState("");
+  const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-    setLoading(false);
-    }, 500); 
+      setLoading(false);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, []);
-  
+
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user) return;
@@ -89,6 +90,7 @@ export default function Page() {
         console.error("Error fetching orders: ", error);
       } finally {
         setLoading(false);
+        setIsDataFetched(true);
       }
     };
     fetchOrders();
@@ -241,7 +243,7 @@ export default function Page() {
           filterOn={true}
         />
 
-        {filteredOrders.length === 0 ? (
+        {isDataFetched && filteredOrders.length === 0 ? (
           <p className="flex flex-col items-center w-full py-40">
             No orders yet
           </p>
@@ -254,9 +256,9 @@ export default function Page() {
                 data-id="order-block"
               >
                 <BlockHolder
-                  id={index+1}
+                  id={index + 1}
                   title={order.nameOrder}
-                  imageSource={order.imageUrl  || "/noImage.png"}
+                  imageSource={order.imageUrl || "/noImage.png"}
                   deadline={
                     order.deadline?.seconds
                       ? formatDeadline(order.deadline.seconds)

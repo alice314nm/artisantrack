@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   getFirestore,
   collection,
@@ -26,11 +25,12 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
+  const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-    setLoading(false);
-    }, 500); 
+      setLoading(false);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, []);
@@ -64,9 +64,10 @@ export default function Home() {
               })
             );
 
-            const productImageUrls = product.productImages?.map((image) => image.url) || [];
-            const patternImageUrls = product.patternImages?.map((image) => image.url) || [];
-
+            const productImageUrls =
+              product.productImages?.map((image) => image.url) || [];
+            const patternImageUrls =
+              product.patternImages?.map((image) => image.url) || [];
 
             return {
               ...product,
@@ -82,6 +83,7 @@ export default function Home() {
         console.error("Error fetching fetchProducts:", error);
       } finally {
         setLoading(false);
+        setIsDataFetched(true);
       }
     };
 
@@ -187,13 +189,15 @@ export default function Home() {
           data-id="search-bar"
         />
 
-        {filteredProducts.length === 0 ? (
-          <p className="flex flex-col items-center w-full py-40">No products yet</p>
+        {isDataFetched && filteredProducts.length === 0 ? (
+          <p className="flex flex-col items-center w-full py-40">
+            No products yet
+          </p>
         ) : (
           <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
             {filteredProducts.map((product) => (
               <Link
-              href={`/products/${product.id}`}
+                href={`/products/${product.id}`}
                 key={product.id}
                 data-id="product-block"
               >
@@ -210,7 +214,7 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        )}        
+        )}
 
         <FilterWindow
           onClose={closeConfirmation}

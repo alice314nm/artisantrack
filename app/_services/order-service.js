@@ -48,6 +48,7 @@ export async function dbAddOrder(userId, orderObj) {
             description: orderObj.description,
             productId: orderObj.productId,
             materialIds: orderObj.materialIds, 
+            quantities: orderObj.quantities,
             materialsCost: orderObj.materialsCost, 
             productCost: orderObj.productCost,
             workCost: orderObj.workCost,

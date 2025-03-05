@@ -243,7 +243,7 @@ export default function WelcomePage() {
           onFirstFunction={() => window.location.href = `/finances`}
           secondTitle={"Download"}
           iconSecond={"/download.png"}
-        />
+          onSecondFunction={()=>console.log(0)} />
       </div>
     );
   } else {

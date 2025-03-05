@@ -235,7 +235,8 @@ export default function WelcomePage() {
         iconFirst={"/arrow-left.png"}
         onFirstFunction={() => window.location.href = `/finances`}
         secondTitle={"Download"}
-        iconSecond={"/download.png"} />
+        iconSecond={"/download.png"}
+        onSecondFunction={()=>console.log(0)} />
       </div>
     );
   } else {

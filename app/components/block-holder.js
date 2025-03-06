@@ -35,7 +35,7 @@ export default function BlockHolder({
   const cardBaseClasses = "flex flex-col gap-2 w-full h-full transition-transform duration-300 ease-in-out";
 
   const textBaseClasses = "truncate max-w-[180px] text-darkerBeige";
-  const headerTextClasses = "truncate max-w-[180px] font-semibold text-lg text-gray-800";
+  const headerTextClasses = "truncate max-w-[180px] font-semibold text-lg";
   const costClasses = "truncate max-w-[180px] italic"
   const deadlineClasses = "truncate max-w-[180px] font-semibold text-sm leading-tight";
 
@@ -69,6 +69,7 @@ export default function BlockHolder({
             <p className={`${textBaseClasses} text-xs`}>order id: #{id}</p>
             <p className={`${headerTextClasses}`}>{title}</p>
           </div>          
+          <p className={textBaseClasses}>Client: {client}</p>
           <p className={deadlineClasses}><span className="text-red">Deadline: {deadline[0]}</span></p>
           <p className={deadlineClasses}>{deadline[2]}</p>
           <p className={costClasses}>

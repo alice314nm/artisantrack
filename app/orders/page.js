@@ -266,7 +266,7 @@ export default function Page() {
                     }
                     currency={order.currency}
                     total={order.totalCost}
-                    customerId={order.customerId}
+                    client={order.customerName}
                     type={"order"}
                   />
                 </Link>

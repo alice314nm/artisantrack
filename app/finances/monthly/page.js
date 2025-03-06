@@ -1,10 +1,19 @@
-'use client'
+"use client";
 
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { app } from "../../_utils/firebase";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
 import PieChart from "@/app/components/pie-chart";
+import Link from "next/link";
+import BlockHolder from "@/app/components/block-holder";
+import {
+  fetchOrders,
+  fetchProducts,
+  fetchMaterials,
+} from "@/app/_services/monthlyFetch";
 
 import { useEffect, useState } from "react";
 
@@ -12,11 +21,11 @@ export default function WelcomePage() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [stateShow, setStateShow] = useState("orders");
-  const [income, setIncome] = useState(70); 
-  const [expenses, setExpenses] = useState(30); 
+  const [income, setIncome] = useState(0);
+  const [expenses, setExpenses] = useState(0);
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  
+
   const [popularProduct, setPopularProduct] = useState({});
   const [popularMaterial, setPopularMaterial] = useState({});
   const [regularClient, setRegularClient] = useState("");
@@ -24,8 +33,11 @@ export default function WelcomePage() {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [materials, setMaterials] = useState([]);
-  
-  const monthYear = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  const monthYear = currentMonth.toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -36,9 +48,85 @@ export default function WelcomePage() {
   }, []);
 
   //Function where to set/change variables for popular entities, incomes, expense when the chosen month is changing
-  useEffect(()=>{
+  useEffect(() => {}, [currentMonth]);
 
-  }, [currentMonth])
+  // Fetch orders, products, materials
+  useEffect(() => {
+    if (!user) return;
+
+    const loadOrders = async () => {
+      const fetchedOrders = await fetchOrders(user, currentMonth);
+      setOrders(fetchedOrders);
+    };
+    loadOrders();
+  }, [user, currentMonth]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const loadProducts = async () => {
+      const fetchedProducts = await fetchProducts(user, currentMonth);
+      setProducts(fetchedProducts);
+    };
+    loadProducts();
+  }, [user, currentMonth]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const loadMaterials = async () => {
+      const fetchedMaterials = await fetchMaterials(user, currentMonth);
+      setMaterials(fetchedMaterials);
+    };
+    loadMaterials();
+  }, [user, currentMonth]);
+
+  // Fetch Income and Expenses
+  useEffect(() => {
+    const fetchIncomeAndExpenses = async () => {
+      if (!user) return;
+      setLoading(true);
+      try {
+        const db = getFirestore(app);
+        const ordersCollection = collection(db, `users/${user.uid}/orders`);
+        const ordersSnapshot = await getDocs(ordersCollection);
+        const ordersData = ordersSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        console.log(ordersData);
+
+        const currentMonthValue = currentMonth.getMonth();
+        const monthlyOrders = ordersData.filter((order) => {
+          if (!order.startDate || !order.startDate.seconds) return false;
+          const orderDate = new Date(order.startDate.seconds * 1000);
+          return orderDate.getMonth() === currentMonthValue;
+        });
+
+        const monthlyIncome = monthlyOrders.reduce(
+          (sum, order) =>
+            sum +
+            (parseFloat(order.productCost) || 0) +
+            (parseFloat(order.workCost) || 0),
+          0
+        );
+
+        const monthlyExpenses = monthlyOrders.reduce(
+          (sum, order) => sum + (parseFloat(order.materialsCost) || 0),
+          0
+        );
+
+        setIncome(monthlyIncome);
+        setExpenses(monthlyExpenses);
+      } catch (error) {
+        console.error("Error fetching:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchIncomeAndExpenses();
+  }, [user, currentMonth]);
 
   const handleStateOrders = () => {
     setStateShow("orders");
@@ -54,17 +142,56 @@ export default function WelcomePage() {
 
   // Handle previous and next month
   const goToPreviousMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)));
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+    );
   };
 
   const goToNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)));
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+    );
+  };
+
+  const formatDeadline = (timestamp) => {
+    const deadlineDate = new Date(timestamp * 1000);
+    const today = new Date();
+
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const formattedDate = `${
+      monthNames[deadlineDate.getMonth()]
+    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+
+    const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
+
+    const daysLeft = diffTime > 0 ? diffTime : 0;
+    const daysStatus = diffTime > 0 ? `${diffTime} days` : "Due today";
+
+    return [formattedDate, daysLeft, daysStatus];
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <img src="/loading-gif.gif" className="h-10" data-id="loading-spinner" />
+        <img
+          src="/loading-gif.gif"
+          className="h-10"
+          data-id="loading-spinner"
+        />
       </div>
     );
   }
@@ -94,8 +221,8 @@ export default function WelcomePage() {
             <div className="flex flex-col gap-2">
               {/* Finance text */}
               <div className="flex flex-row gap-2 text-xl">
-                <p>Income:</p>
-                <p>Expenses:</p>
+                <p>Income: {income}$</p>
+                <p>Expenses: {expenses}$</p>
               </div>
               {/* place for diagram */}
               <div className="flex justify-center px-4">
@@ -122,7 +249,9 @@ export default function WelcomePage() {
               <div className="flex flex-row gap-2 justify-between items-center">
                 <button
                   className={`w-[33%] py-1 rounded-md ${
-                    stateShow === "orders" ? "bg-transparent border-2 border-green" : "bg-green"
+                    stateShow === "orders"
+                      ? "bg-transparent border-2 border-green"
+                      : "bg-green"
                   }`}
                   onClick={handleStateOrders}
                 >
@@ -130,7 +259,9 @@ export default function WelcomePage() {
                 </button>
                 <button
                   className={`w-[33%] py-1 rounded-md ${
-                    stateShow === "products" ? "bg-transparent border-2 border-green" : "bg-green"
+                    stateShow === "products"
+                      ? "bg-transparent border-2 border-green"
+                      : "bg-green"
                   }`}
                   onClick={handleStateProducts}
                 >
@@ -138,7 +269,9 @@ export default function WelcomePage() {
                 </button>
                 <button
                   className={`w-[33%] py-1 rounded-md ${
-                    stateShow === "materials" ? "bg-transparent border-2 border-red text-blackBeige" : "bg-red text-white"
+                    stateShow === "materials"
+                      ? "bg-transparent border-2 border-red text-blackBeige"
+                      : "bg-red text-white"
                   }`}
                   onClick={handleStateMaterials}
                 >
@@ -148,11 +281,13 @@ export default function WelcomePage() {
 
               {stateShow === "orders" && (
                 <div className="w-full px-4 pb-20">
-                  {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                  <div
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
                     gap-4 sm:gap-6 lg:gap-8 
                     auto-rows-[1fr] 
-                    justify-center items-stretch">
-                    {filteredOrders.map((order, index) => (
+                    justify-center items-stretch"
+                  >
+                    {orders.map((order, index) => (
                       <Link
                         href={`/orders/${order.id}`}
                         key={order.id}
@@ -174,69 +309,75 @@ export default function WelcomePage() {
                         />
                       </Link>
                     ))}
-                  </div> */}
+                  </div>
                 </div>
               )}
 
               {stateShow === "products" && (
                 <div className="w-full px-4 pb-20">
-                {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                  <div
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
                   gap-4 sm:gap-6 lg:gap-8 
                   auto-rows-[1fr] 
-                  justify-center items-stretch">
-                  {filteredProducts.map((product) => (
-                    <Link
-                      href={`/products/${product.id}`}
-                      key={product.id}
-                      data-id="product-block"
-                      className="transition-all duration-300 
+                  justify-center items-stretch"
+                  >
+                    {products.map((product) => (
+                      <Link
+                        href={`/products/${product.id}`}
+                        key={product.id}
+                        data-id="product-block"
+                        className="transition-all duration-300 
                         rounded-lg 
                         overflow-hidden"
-                    >
-                      <BlockHolder
-                        key={product.productId}
-                        id={product.productId}
-                        title={product.name}
-                        currency={product.currency}
-                        category={product.categories.join(", ") || "—"}
-                        total={product.averageCost || "—"}
-                        imageSource={product.productImages[0] || "/noImage.png"}
-                        type={"product"}
-                      />
-                    </Link>
-                  ))}
-                </div> */}
-              </div>
+                      >
+                        <BlockHolder
+                          key={product.productId}
+                          id={product.productId}
+                          title={product.name}
+                          currency={product.currency}
+                          category={product.categories?.join(", ") || "—"}
+                          total={product.averageCost || "—"}
+                          imageSource={
+                            product.productImages?.[0]?.url || "/noImage.png"
+                          }
+                          type={"product"}
+                        />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               )}
 
               {stateShow === "materials" && (
                 <div className="w-full px-4 pb-20">
-                  {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                  <div
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
                     gap-4 sm:gap-6 lg:gap-8 
                     auto-rows-[1fr] 
-                    justify-center items-stretch">          
-                    {filteredMaterials.map((material) => (
-                    <Link
-                      href={`/materials/${material.id}`}
-                      key={material.materialId}
-                      data-id="material-block"
-                    >
-                      <BlockHolder
+                    justify-center items-stretch"
+                  >
+                    {materials.map((material) => (
+                      <Link
+                        href={`/materials/${material.id}`}
                         key={material.materialId}
-                        id={material.materialId}
-                        title={material.name}
-                        quantity={material.quantity || "—"}
-                        category={material.categories.join(", ") || "—"}
-                        total={material.total || "—"}
-                        currency={material.currency}
-                        color={material.color || "—"}
-                        imageSource={material.images[0].url || "/noImage.png"}
-                        type={"material"}
-                      />
-                    </Link>
-                  ))}
-                </div> */}
-              </div>
+                        data-id="material-block"
+                      >
+                        <BlockHolder
+                          key={material.materialId}
+                          id={material.materialId}
+                          title={material.name}
+                          quantity={material.quantity || "—"}
+                          category={material.categories.join(", ") || "—"}
+                          total={material.total || "—"}
+                          currency={material.currency}
+                          color={material.color || "—"}
+                          imageSource={material.images[0].url || "/noImage.png"}
+                          type={"material"}
+                        />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -246,10 +387,11 @@ export default function WelcomePage() {
           type="TwoButtonsMenu"
           firstTitle={"Go back"}
           iconFirst={"/arrow-left.png"}
-          onFirstFunction={() => window.location.href = `/finances`}
+          onFirstFunction={() => (window.location.href = `/finances`)}
           secondTitle={"Download"}
           iconSecond={"/download.png"}
-          onSecondFunction={()=>console.log(0)} />
+          onSecondFunction={() => console.log(0)}
+        />
       </div>
     );
   } else {

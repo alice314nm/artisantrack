@@ -46,12 +46,15 @@ async function getOrAddColor(userId, colorName) {
     const q = query(colorsCollection, where("name", "==", colorName));
     const querySnapshot = await getDocs(q);
 
+    if (!colorName.trim()) {
+        return null;
+    }
+
     if (querySnapshot.empty) {
-        // Color doesn't exist, so add a new document
         const newColorRef = await addDoc(colorsCollection, { name: colorName });
-        return newColorRef.id;  // Return the new color document ID
+        return newColorRef.id;
     } else {
-        return querySnapshot.docs[0].id;  // Color exists, return the existing color document ID
+        return querySnapshot.docs[0].id;
     }
 }
 
@@ -163,34 +166,14 @@ export async function updateMaterial(userId, materialId, updatedMaterialData) {
     try {
         const materialRef = doc(db, "users", userId, "materials", materialId);
 
-        const { costItems, ...materialDataWithoutCostItems } = updatedMaterialData;
-        await updateDoc(materialRef, materialDataWithoutCostItems);
+        const categoryIds = await Promise.all(
+            updatedMaterialData.categories.map(category => getOrAddCategory(userId, category))
+        );
+        const shopId = await getOrAddShop(userId, updatedMaterialData.shop)
+        const colorId = await getOrAddColor(userId, updatedMaterialData.color);
+
+        await updateDoc(materialRef, updatedMaterialData);
         console.log("Material document updated successfully!");
-
-        if (costItems) {
-            const costItemsCollectionRef = collection(materialRef, "costItems");
-
-            // Get existing cost items
-            const existingDocs = await getDocs(costItemsCollectionRef);
-
-            // Delete all existing cost items
-            const deletePromises = existingDocs.docs.map(docSnap => deleteDoc(docSnap.ref));
-            await Promise.all(deletePromises);
-
-            // Add new cost items
-            const addPromises = costItems.map(async (costItem) => {
-                const newDocRef = doc(costItemsCollectionRef);
-                await addDoc(costItemsCollectionRef, {
-                    shopId: await getOrAddShop(userId, costItem.shop),
-                    shopName: costItem.shop,
-                    price: costItem.price,
-                });
-            });
-
-            await Promise.all(addPromises);
-            console.log("CostItems subcollection updated successfully!");
-        }
-
     } catch (error) {
         console.error("Error updating material:", error);
     }

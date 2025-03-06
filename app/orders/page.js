@@ -63,6 +63,7 @@ export default function Page() {
                 const productSnapshot = await getDoc(productRef);
                 const productData = productSnapshot.data();
                 order.orderId = productData?.productId;
+                order.categories = productData?.categories || ["Unknown"];
                 return productData?.productImages?.[0]?.url || "Unknown";
               })
             );
@@ -199,9 +200,8 @@ export default function Page() {
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
 
-    const formattedDate = `${
-      monthNames[deadlineDate.getMonth()]
-    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+    const formattedDate = `${monthNames[deadlineDate.getMonth()]
+      } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
 
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
 

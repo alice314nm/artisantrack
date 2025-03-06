@@ -144,7 +144,7 @@ export default function Page() {
       return;
     }
 
-    if (materialId.length > 12) {
+    if (materialId.length > 16) {
       setErrorMessage("Id should be less than 12 characters.");
       setLoading(false);
       return;
@@ -167,8 +167,8 @@ export default function Page() {
       images: uploadedImages || [],
       shop: shop || "",
       quantity: quantity || 0.00,
-      total: total.trim() === "" ? 0.00 : parseFloat(total).toFixed(2),
-      currency: total.trim() === "" ? "USD" : currency,
+      total: total || 0.00,
+      currency: total === 0 ? "" : (typeof total === 'string' ? total.trim() : total) === "" ? "" : currency,
       costPerUnit: cost || 0.00,
     };
     
@@ -202,7 +202,7 @@ export default function Page() {
             <p className="text-red">{errorMessage}</p>
           )}
 
-          <p className="text-lg font-semibold underline">Main</p>
+          <p className="text-lg font-semibold underline">General</p>
 
           {/* Product Id */}
           <div className="flex flex-col gap-2">
@@ -219,7 +219,7 @@ export default function Page() {
               data-id="material-id"
               className={inputStyle}
               value={materialId}
-              placeholder="Enter id (2-64 characters)"
+              placeholder="Enter id (2-16 characters)"
               onChange={(e) => setMaterialId(e.target.value)}
             />
           </div>

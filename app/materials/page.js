@@ -182,7 +182,7 @@ export default function Page() {
                   total={material.total || "—"}
                   currency={material.currency}
                   color={material.color || "—"}
-                  imageSource={material.images[0].url || "/noImage.png"}
+                  imageSource={material.images[0]?.url || "/noImage.png"}
                   type={"material"}
                 />
               </Link>

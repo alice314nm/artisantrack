@@ -21,6 +21,7 @@ export default function BlockHolder({
   id,
   title,
   category,
+  client,
   deadline,
   quantity,
   currency,

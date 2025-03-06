@@ -4,16 +4,6 @@ import { app } from "@/app/_utils/firebase";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import "@/app/globals.css";
 
-/*
-  FilterWindow - component for selecting filters and sort options.
-
-  props:
-  - windowVisibility - state for visibility on the page
-  - onClose - function to close the window
-  - onApplyFilters - function to apply the selected filters
-  - categories - list of categories to display (depends on the page)
-*/
-
 export default function FilterWindow({
   windowVisibility,
   onClose,
@@ -22,29 +12,28 @@ export default function FilterWindow({
   pageType,
 }) {
   const { user } = useUserAuth();
-  const [selectedCategory, setSelectedCategory] = useState("Categories");
   const [selectedFilters, setSelectedFilters] = useState({
     Categories: [],
     Colors: [],
-    "Sort by": "",
+    "Sort by": "Category", // Default opened
   });
   const [colors, setColors] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState("Categories"); // Default opened
 
   const filters =
     pageType === "material"
       ? {
+          "Sort by": [
+            "Category",
+            "Name Descending",
+            "Name Ascending",
+            "ID Ascending",
+            "ID Descending",
+          ],
           Categories: categories,
           Colors: colors,
-          "Sort by": [
-            "Category",
-            "Name Descending",
-            "Name Ascending",
-            "ID Ascending",
-            "ID Descending",
-          ],
         }
       : {
-          Categories: categories,
           "Sort by": [
             "Category",
             "Name Descending",
@@ -52,6 +41,7 @@ export default function FilterWindow({
             "ID Ascending",
             "ID Descending",
           ],
+          Categories: categories,
         };
 
   useEffect(() => {
@@ -89,7 +79,7 @@ export default function FilterWindow({
     } else if (category === "Sort by") {
       setSelectedFilters((prev) => ({
         ...prev,
-        "Sort by": prev["Sort by"] === filter ? "" : filter,
+        "Sort by": filter,
       }));
     }
   };
@@ -101,139 +91,116 @@ export default function FilterWindow({
     onClose();
   };
 
+  const toggleDropdown = (category) => {
+    setOpenDropdown(openDropdown === category ? "" : category);
+  };
+
+  // Reusable dropdown rendering
+  const renderDropdown = (category) => {
+    return (
+      <div 
+        className="mb-4 transition-all duration-300 ease-in-out"
+        key={category}
+      >
+        <div 
+          className="flex justify-between items-center cursor-pointer border-b border-darkBeige pb-2"
+          onClick={() => toggleDropdown(category)}
+        >
+          <h3 className="text-lg font-semibold">{category}</h3>
+          <img 
+            src={openDropdown === category ? "/angle-small-up.png" : "/angle-small-down.png"} 
+            className="w-6 h-6 transition-transform duration-300"
+            alt="Toggle dropdown"
+          />
+        </div>
+
+        <div 
+          className={`
+            overflow-hidden transition-all duration-300 ease-in-out
+            ${openDropdown === category 
+              ? "max-h-96 opacity-100 mt-3" 
+              : "max-h-0 opacity-0 mt-0"
+            }
+          `}
+        >
+          <div className="flex flex-wrap gap-2">
+            {filters[category]?.map((item, index) => (
+              <span
+                key={`${category}-${item}-${index}`}
+                onClick={() => handleFilterClick(item, category)}
+                className={`
+                  px-4 py-2 rounded-full border border-darkBeige cursor-pointer 
+                  transition-all duration-200 ease-in-out
+                  hover:bg-darkBeige hover:scale-105
+                  ${
+                    (category === "Categories" && selectedFilters.Categories.includes(item)) ||
+                    (category === "Colors" && selectedFilters.Colors.includes(item)) ||
+                    (category === "Sort by" && selectedFilters["Sort by"] === item)
+                      ? "!bg-darkBeige text-white"
+                      : "bg-lightBeige"
+                  }
+                `}
+                data-id={
+                  category === "Categories"
+                    ? "category-filter"
+                    : category === "Colors"
+                    ? "color-filter"
+                    : "sort-by"
+                }
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Early return if not visible
+  if (!windowVisibility) return null;
+
   return (
-    <div
-      className={`fixed flex h-screen w-screen items-center justify-center bg-opacity-20 bg-black z-10 ${
-        windowVisibility ? "" : "hidden"
-      }`}
+    <div 
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-20"
       data-id="filter-window"
     >
-      <div className="w-[380px] fixed bg-beige border border-darkBeige rounded shadow-lg">
+      <div className="w-[420px] bg-beige border border-darkBeige rounded-lg shadow-2xl overflow-hidden animate-fade-in">
         {/* Header */}
-        <div className="flex justify-between items-center bg-darkBeige px-4 py-2">
-          <p className="text-lg font-bold">Filters</p>
-          {/* Close Button */}
+        <div className="flex justify-between items-center bg-darkBeige px-4 py-3">
+          <h2 className="text-xl font-bold">Filters</h2>
           <button
             data-id="close-button"
             onClick={onClose}
-            className="text-brown-600 font-bold text-lg"
+            className="text-lg font-bold hover:text-red-600 transition-colors"
           >
-            X
+            ✕
           </button>
         </div>
 
-        <div className="flex">
-          {/* Sidebar */}
-          <div className="flex flex-col bg-lightBeige w-32 border-r border-darkBeige">
-            {Object.keys(filters).map((category) => (
-              <button
-                key={category}
-                data-id={
-                  category === "Categories"
-                    ? "categories"
-                    : category === "Sort by"
-                    ? "sort-by"
-                    : "color-filter"
-                }
-                onClick={() => setSelectedCategory(category)}
-                className={`py-4 px-2 text-left text-dark border-b border-b-darkBeige hover:bg-beige ${
-                  selectedCategory === category ? "bg-beige" : ""
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
+        {/* Content */}
+        <div className="p-4 bg-beige max-h-[60vh] overflow-y-auto">
+          {/* Dynamically render dropdowns in new order */}
+          {Object.keys(filters).map((category) => (
+            renderDropdown(category)
+          ))}
 
-          {/* Content */}
-          <div className="flex-1 p-4 bg-beige overflow-x-scroll scrollbar">
-            {/* Filter Chips Container */}
-            <div className="flex flex-col gap-2 mb-4 whitespace-nowrap">
-              {/* First Row of Filter Chips */}
-              <div className="flex gap-2">
-                {filters[selectedCategory]
-                  ?.slice(0, Math.ceil(filters[selectedCategory].length / 2))
-                  .map((item, index) => (
-                    <span
-                      key={`${selectedCategory}-${item}-${index}`}
-                      onClick={() => handleFilterClick(item, selectedCategory)}
-                      className={`px-4 py-2 rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
-                        selectedCategory === "Categories" &&
-                        selectedFilters.Categories.includes(item)
-                          ? "!bg-darkBeige"
-                          : "bg-lightBeige"
-                      } ${
-                        selectedCategory === "Colors" &&
-                        selectedFilters.Colors.includes(item)
-                          ? "!bg-darkBeige"
-                          : "bg-lightBeige"
-                      } ${
-                        selectedCategory === "Sort by" &&
-                        selectedFilters["Sort by"] === item
-                          ? "!bg-darkBeige"
-                          : "bg-lightBeige"
-                      }`}
-                      data-id={
-                        selectedCategory === "Categories"
-                          ? "category-filter"
-                          : selectedCategory === "Colors"
-                          ? "color-filter"
-                          : "sort-by"
-                      }
-                    >
-                      {item}
-                    </span>
-                  ))}
-              </div>
-
-              {/* Second Row of Filter Chips */}
-              <div className="flex gap-2">
-                {filters[selectedCategory]
-                  ?.slice(Math.ceil(filters[selectedCategory].length / 2))
-                  .map((item, index) => (
-                    <span
-                      key={`${selectedCategory}-${item}-${index}`}
-                      onClick={() => handleFilterClick(item, selectedCategory)}
-                      className={`px-4 py-2 rounded-full border border-darkBeige cursor-pointer hover:bg-darkBeige ${
-                        selectedCategory === "Categories" &&
-                        selectedFilters.Categories.includes(item)
-                          ? "!bg-darkBeige"
-                          : "bg-lightBeige"
-                      } ${
-                        selectedCategory === "Colors" &&
-                        selectedFilters.Colors.includes(item)
-                          ? "!bg-darkBeige"
-                          : "bg-lightBeige"
-                      } ${
-                        selectedCategory === "Sort by" &&
-                        selectedFilters["Sort by"] === item
-                          ? "!bg-darkBeige"
-                          : "bg-lightBeige"
-                      }`}
-                      data-id={
-                        selectedCategory === "Categories"
-                          ? "category-filter"
-                          : selectedCategory === "Colors"
-                          ? "color-filter"
-                          : "sort-by"
-                      }
-                    >
-                      {item}
-                    </span>
-                  ))}
-              </div>
-            </div>
-
-            {/* Apply Filters Button */}
-            <div className="sticky bottom-0 left-0 mt-16 flex justify-end">
-              <button
-                className="px-5 py-2 bg-green rounded-lg hover:bg-darkGreen"
-                onClick={handleApplyFilters}
-                data-id="apply-filters"
-              >
-                Apply Filters
-              </button>
-            </div>
+          {/* Apply Filters Button */}
+          <div className="mt-8 flex justify-end">
+            <button
+              className="
+                px-6 py-2 bg-green rounded-md 
+                hover:bg-darkGreen 
+                transition-all duration-200 
+                ease-in-out 
+                transform hover:scale-105
+                font-semibold
+              "
+              onClick={handleApplyFilters}
+              data-id="apply-filters"
+            >
+              Apply Filters
+            </button>
           </div>
         </div>
       </div>

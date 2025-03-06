@@ -21,6 +21,7 @@ export default function BlockHolder({
   id,
   title,
   category,
+  client,
   deadline,
   quantity,
   currency,
@@ -29,73 +30,69 @@ export default function BlockHolder({
   imageSource,
   type,
 }) {
-  if (type == "product") {
+  const commonImageClasses = "rounded-md h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 object-cover";
+  
+  const cardBaseClasses = "flex flex-col gap-2 w-full h-full transition-transform duration-300 ease-in-out";
+
+  const textBaseClasses = "truncate max-w-[180px] text-darkerBeige";
+  const headerTextClasses = "truncate max-w-[180px] font-semibold text-lg text-gray-800";
+  const costClasses = "truncate max-w-[180px] italic"
+  const deadlineClasses = "truncate max-w-[180px] font-semibold text-sm leading-tight";
+
+
+  if (type === "product") {
     return (
-      <div className="flex flex-col gap-2 w-full h-full ">
-        <div>
-          <img
-            src={imageSource}
-            className="h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 rounded-lg object-cover"
-          />
+      <div className={cardBaseClasses}>
+        <div className="relative">
+          <img src={imageSource} className={commonImageClasses} />
         </div>
 
-        <div>
-          <p className="font-bold truncate max-w-[180px]">
-            #{id} | {title}
-          </p>
-          <p className="truncate max-w-[180px]">Category: {category}</p>
-          <p className="truncate max-w-[180px]">
-            Avg.Total: {total}
-            {currency}
+        <div className="flex flex-col">
+          <div>
+            <p className={`${textBaseClasses} text-xs`}>product id: #{id}</p>
+            <p className={`${headerTextClasses}`}>{title}</p>
+          </div>
+          <p className={textBaseClasses}>category: {category}</p>
+          <p className={costClasses}>{total} {currency}</p>
+        </div>
+      </div>
+    );
+  } else if (type === "order") {
+    return (
+      <div className={cardBaseClasses}>
+        <div className="relative">
+          <img src={imageSource} className={commonImageClasses} />
+        </div>
+
+        <div className="flex flex-col">
+          <div>
+            <p className={`${textBaseClasses} text-xs`}>order id: #{id}</p>
+            <p className={`${headerTextClasses}`}>{title}</p>
+          </div>          
+          <p className={deadlineClasses}><span className="text-red">Deadline: {deadline[0]}</span></p>
+          <p className={deadlineClasses}>{deadline[2]}</p>
+          <p className={costClasses}>
+            Total: {total} {currency}
           </p>
         </div>
       </div>
     );
-  } else if (type == "order") {
+  } else if (type === "material") {
     return (
-      <div className="flex flex-col gap-2 w-full h-full sm:w-[40%] md:w-[80%] lg:w-[100%]">
-        <div>
-          <img
-            src={imageSource}
-            className="h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 rounded-lg object-cover"
-          />
+      <div className={cardBaseClasses}>
+        <div className="relative">
+          <img src={imageSource} className={commonImageClasses} />
         </div>
 
-        <div>
-          <p className="font-bold">
-            #{id} | {title}
-          </p>
-          <p className="text-[#8E4725] font-semibold underline italic">
-            Deadline
-          </p>
-          <p>{deadline}</p>
-          <p>
-            Total: {total}
-            {currency}
-          </p>
-        </div>
-      </div>
-    );
-  } else if (type == "material") {
-    return (
-      <div className="flex flex-col gap-2 w-full h-full ">
-        <div>
-          <img
-            src={imageSource}
-            className="h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 rounded-lg object-cover"
-          />
-        </div>
-
-        <div>
-          <p className="font-bold truncate max-w-[180px]">
-            #{id} | {title}
-          </p>
-          <p className="truncate max-w-[180px]">Quantity: {quantity}</p>
-          <p className="truncate max-w-[180px]">Category: {category}</p>
-          <p className="truncate max-w-[180px]">Color: {color}</p>
-          <p className="truncate max-w-[180px]">
-            Total cost: {total}
-            {currency}
+        <div className="flex flex-col">
+          <div>
+            <p className={`${textBaseClasses} text-xs`}>material id: #{id}</p>
+            <p className={`${headerTextClasses}`}>{title}</p>
+          </div>          <p className={textBaseClasses}>Quantity: {quantity}</p>
+          <p className={textBaseClasses}>Category: {category}</p>
+          <p className={textBaseClasses}>Color: {color}</p>
+          <p className={costClasses}>
+            {total} {currency}
           </p>
         </div>
       </div>

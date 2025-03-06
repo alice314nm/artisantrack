@@ -95,6 +95,8 @@ export async function fetchProductById(userId, productId, productSetter) {
         };
 
         productSetter(finalProduct);
+
+        return(finalProduct);
     } catch (error) {
         console.error("Error fetching product:", error);
     }

@@ -209,22 +209,20 @@ export default function Page() {
   }
   if (user) {
     return (
-      <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Create Product" showUserName={true} />
+      <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
+        <Header title="Create a Product" />
         <form
-          className="mx-4 flex flex-col gap-4"
+          className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4"
           onSubmit={handleCreateProduct}
-        >
-          <p className="font-bold italic text-lg">Create a Product</p>
-
+        >  
           {errorMessage.length === 0 ? null : (
             <p className="text-red">{errorMessage}</p>
           )}
-
+  
           {/* Product ID */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">
                 Id <span className="text-red">*</span>
               </label>
               <img
@@ -234,16 +232,16 @@ export default function Page() {
             </div>
             <input
               data-id="product-id"
-              className={inputStyle}
+              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={productId}
               onChange={(e) => setProductId(e.target.value)}
             />
           </div>
-
+  
           {/* Product Name */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">
                 Name <span className="text-red">*</span>
               </label>
               <img
@@ -253,16 +251,16 @@ export default function Page() {
             </div>
             <input
               data-id="product-name"
-              className={inputStyle}
+              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-
+  
           {/* Category */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Category</label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Category</label>
               <img
                 src={categories.length === 0 ? "/cross.png" : "/check.png"}
                 className={categories.length === 0 ? "h-4" : "h-6 text-green"}
@@ -271,7 +269,7 @@ export default function Page() {
             <div className="flex flex-row gap-2">
               <input
                 list="categories"
-                className={inputStyle}
+                className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 data-id="product-category"
@@ -279,7 +277,7 @@ export default function Page() {
               <button
                 type="button"
                 onClick={handleAddCategory}
-                className="bg-green px-4 py-1 rounded-lg"
+                className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
                 data-id="add-category-button"
               >
                 Add
@@ -290,17 +288,17 @@ export default function Page() {
                 <option key={index} value={category} />
               ))}
             </datalist>
-
+  
             {/* Category List */}
-            <ul className="flex flex-col gap-2 list-decimal pl-4">
+            <ul className="flex flex-col gap-2 list-decimal pl-8">
               {categories.map((cat, index) => (
                 <li key={index}>
                   <div className="flex flex-row items-center justify-between gap-2">
-                    <p>{cat}</p>
+                    <p className="text-blackBeige">{cat}</p>
                     <button
                       type="button"
                       onClick={() => handleRemoveCategory(cat)}
-                      className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center"
+                      className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-6 h-6 flex justify-center items-center hover:bg-darkBeige transition-colors duration-300"
                       data-id={`remove-category-button-${index}`}
                     >
                       <p className="text-xs">x</p>
@@ -310,11 +308,11 @@ export default function Page() {
               ))}
             </ul>
           </div>
-
+  
           {/* Average Cost */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Average Cost</label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Cost</label>
               <img
                 src={averageCost === "" ? "/cross.png" : "/check.png"}
                 className={averageCost === "" ? "h-4" : "h-6 text-green"}
@@ -323,13 +321,11 @@ export default function Page() {
             <div className="flex flex-row gap-2">
               <input
                 data-id="product-average-cost"
-                className={inputStyle}
+                className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 type="number"
                 value={averageCost}
                 placeholder="0.00"
-                onChange={(e) => {
-                  setAverageCost(e.target.value); // Allow empty value
-                }}
+                onChange={(e) => setAverageCost(e.target.value)}
                 onBlur={() => {
                   if (averageCost === "") {
                     setAverageCost("");
@@ -339,7 +335,7 @@ export default function Page() {
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="rounded-lg border border-grey-200"
+                className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 data-id="currency-select"
               >
                 <option value="USD">USD ($)</option>
@@ -349,11 +345,11 @@ export default function Page() {
               </select>
             </div>
           </div>
-
+  
           {/* Description */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Description</label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Description</label>
               <img
                 src={desc === "" ? "/cross.png" : "/check.png"}
                 className={desc === "" ? "h-4" : "h-6 text-green"}
@@ -361,16 +357,16 @@ export default function Page() {
             </div>
             <textarea
               data-id="product-description"
-              className="rounded-lg border p-2"
+              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
             />
           </div>
-
+  
           {/* Product Image Selection */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Product Images</label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Product Images</label>
               <img
                 src={productImages.length === 0 ? "/cross.png" : "/check.png"}
                 className={
@@ -381,16 +377,16 @@ export default function Page() {
             <div className="relative inline-block">
               <input
                 type="file"
-                className="absolute inset-0 w-40 opacity-0 cursor-pointer"
+                className="absolute inset-0 w-full opacity-0 cursor-pointer"
                 multiple
                 onChange={handleProductImageChange}
                 data-id="product-image-input"
               />
-              <p className="text-center bg-green rounded-lg w-40 py-1">
-                Select Image
+              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
+              select image
               </p>
             </div>
-
+  
             {/* Preview Product Images */}
             {productImages.length > 0 && (
               <div className="flex flex-row gap-2 overflow-x-auto">
@@ -408,11 +404,11 @@ export default function Page() {
               </div>
             )}
           </div>
-
+  
           {/* Pattern Image Selection */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Pattern Images</label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Pattern Images</label>
               <img
                 src={patternImages.length === 0 ? "/cross.png" : "/check.png"}
                 className={
@@ -420,19 +416,19 @@ export default function Page() {
                 }
               />
             </div>
-
+  
             <div className="relative inline-block">
               <input
                 type="file"
-                className="absolute inset-0 w-40 opacity-0 cursor-pointer"
+                className="absolute inset-0 w-full opacity-0 cursor-pointer"
                 onChange={handlePatternImageChange}
                 data-id="pattern-image-input"
               />
-              <p className="text-center bg-green rounded-lg w-40 py-1">
-                Select Image
+              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
+                select image
               </p>
             </div>
-
+  
             {/* Preview Pattern Image */}
             {patternImages.length > 0 && (
               <div className="flex flex-row gap-2 overflow-x-auto">
@@ -450,15 +446,14 @@ export default function Page() {
               </div>
             )}
           </div>
-
           {/* Submit */}
-          <Menu
-            type="CreateMenu"
-            firstTitle="Cancel"
-            secondTitle="Create"
-            onFirstFunction={handleNavigateToListPage}
-            data-id="create-menu"
-          />
+            <Menu
+              type="CreateMenu"
+              firstTitle="Cancel"
+              secondTitle="Create"
+              onFirstFunction={handleNavigateToListPage}
+              data-id="create-menu"
+            />
         </form>
       </div>
     );

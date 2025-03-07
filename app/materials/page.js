@@ -29,12 +29,12 @@ export default function Page() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-    setLoading(false);
-    }, 500); 
+      setLoading(false);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, []);
-  
+
   useEffect(() => {
     const fetchMaterials = async () => {
       if (!user) return;
@@ -93,7 +93,7 @@ export default function Page() {
 
   if (filters.Colors?.length > 0) {
     filteredMaterials = filteredMaterials.filter((material) =>
-      material.colors.some((color) => filters.Colors.includes(color))
+      filters.Colors.includes(material.color)
     );
   }
 
@@ -153,44 +153,47 @@ export default function Page() {
           onSearch={setSearchTerm}
           data-id="search-bar"
         />
-                
+
         <FilterTotal
-        onOpenFilters={toggleConfirmation}
-        total={filteredMaterials.length}
+          onOpenFilters={toggleConfirmation}
+          total={filteredMaterials.length}
         />
 
-        {filteredMaterials.length===0 ? (
-          <p className="flex flex-col items-center w-full py-40">No materials yet</p>
+        {filteredMaterials.length === 0 ? (
+          <p className="flex flex-col items-center w-full py-40">
+            No materials yet
+          </p>
         ) : (
           <div className="w-full px-4 pb-20">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
               gap-4 sm:gap-6 lg:gap-8 
               auto-rows-[1fr] 
-              justify-center items-stretch">          
+              justify-center items-stretch"
+            >
               {filteredMaterials.map((material) => (
-              <Link
-                href={`/materials/${material.id}`}
-                key={material.materialId}
-                data-id="material-block"
-              >
-                <BlockHolder
+                <Link
+                  href={`/materials/${material.id}`}
                   key={material.materialId}
-                  id={material.materialId}
-                  title={material.name}
-                  quantity={material.quantity || "—"}
-                  category={material.categories.join(", ") || "—"}
-                  total={material.total || "—"}
-                  currency={material.currency}
-                  color={material.color || "—"}
-                  imageSource={material.images[0]?.url || "/noImage.png"}
-                  type={"material"}
-                />
-              </Link>
-            ))}
+                  data-id="material-block"
+                >
+                  <BlockHolder
+                    key={material.materialId}
+                    id={material.materialId}
+                    title={material.name}
+                    quantity={material.quantity || "—"}
+                    category={material.categories.join(", ") || "—"}
+                    total={material.total || "—"}
+                    currency={material.currency}
+                    color={material.color || "—"}
+                    imageSource={material.images[0]?.url || "/noImage.png"}
+                    type={"material"}
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
         )}
-        
 
         <FilterWindow
           onClose={closeConfirmation}

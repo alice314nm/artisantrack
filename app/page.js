@@ -12,7 +12,7 @@ export default function WelcomePage() {
   const [loading, setLoading] = useState(true);
 
   const tileStyle =
-    "border-b border-b-darkBeige px-4 pb-4 rounded-xl flex flex-col gap-4 items-start justify-between transition-all duration-300";
+    "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-between transition-all duration-300";
   const titleStyle = "text-lg font-bold";
   const infoStyle = "text text-blackBeige";
   const LinkStyle =

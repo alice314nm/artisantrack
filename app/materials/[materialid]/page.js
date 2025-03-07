@@ -37,16 +37,19 @@ export default function MaterialPage() {
     deleteButton:
       "bg-red text-white rounded-md w-32 py-2 hover:bg-darkRed transition-colors duration-300",
   };
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+    setLoading(false);
+    }, 2000); 
 
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
-    
     if (!user) return;
 
     if(user) {
-      setLoading(true);
       fetchMaterialById(user.uid, id, setSelectedMaterial);
-      setLoading(false);
     }
 
   }, [user]);

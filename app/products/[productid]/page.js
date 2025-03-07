@@ -42,18 +42,18 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
   const [mainImage, setMainImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   
   useEffect(() => {
     const timeout = setTimeout(() => {
     setLoading(false);
-    }, 500); 
+    }, 2000); 
 
     return () => clearTimeout(timeout);
   }, []);
   
   useEffect(() => {
-    setLoading(true);
-
     if (!user) {
       return;
     }
@@ -61,7 +61,6 @@ export default function ProductPage() {
     if (user && productId) {
       fetchProductById(user.uid, productId, setProduct);
     }
-    setLoading(false);
   }, [user, productId]);
 
   useEffect(() => {
@@ -133,14 +132,14 @@ export default function ProductPage() {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Images Section (Left Side on Non-Mobile) */}
               <div className="flex flex-col gap-4 md:w-1/2">
-                <img
-                  src={mainImage || "/noImage.png"}
-                  alt="Product Image"
-                  className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
-                  }`}
-                />
-    
+                  <img
+                    src={mainImage || "/noImage.png"}
+                    alt="Product Image"
+                    className={`${commonClasses.mainImage} ${
+                      transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+                    }`}
+                  />
+                    
                 {(product?.productImages?.length > 0 ||
                   product?.patternImages?.length > 0) && (
                   <div className={commonClasses.thumbnailContainer}>

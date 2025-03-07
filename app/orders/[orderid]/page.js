@@ -16,7 +16,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import { dbDeleteOrderById, dbGetOrderById } from "@/app/_services/order-service";
+import { dbDeleteOrderById, dbGetOrderById, toggleOrderCompleted, toggleOrderPaid } from "@/app/_services/order-service";
 import MateriaOrderDisplay from "@/app/components/material-order-display";
 import MaterialOrderDisplay from "@/app/components/material-order-display";
 
@@ -31,6 +31,9 @@ export default function OrderPageID() {
   const id = params.orderid;
   const [selectedOrder, setSelectedOrder] = useState({});
   const [mainImage, setMainImage] = useState(null);
+
+  const [paid, setPaid] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
   const commonClasses = {
     container: "flex flex-col min-h-screen gap-4 bg-lightBeige",
@@ -49,8 +52,14 @@ export default function OrderPageID() {
   };
 
   useEffect(() => {
-      setLoading(true);
-  
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
       if (!user) {
         return;
       }
@@ -58,18 +67,8 @@ export default function OrderPageID() {
       if (user && id) {
         dbGetOrderById(user.uid, id, setSelectedOrder);
       }
-      setLoading(false);
-    }, [user, id]);
+  }, [user, id]);
 
-
-  const toggleConfirmation = () => {
-    setConfirmWindowVisibility((prev) => !prev);
-  };
-  
-
-  const openConfirmation = () => {
-    setConfirmWindowVisibility(true);
-  };
 
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
@@ -80,11 +79,31 @@ export default function OrderPageID() {
   };
 
   useEffect(() => {
+    setPaid(selectedOrder.paid)
+    setCompleted(selectedOrder.completed)
+
     if (selectedOrder?.productForOrderData?.productImages?.length) {
       setMainImage(selectedOrder.productForOrderData.productImages[0].url);
-      console.log(selectedOrder);
     }
   }, [selectedOrder]);
+
+  const togglePaid = async () => {
+    try {
+      const newPaidStatus = await toggleOrderPaid(user.uid, id, paid);
+      setPaid(newPaidStatus);
+    } catch (error) {
+      console.error("Failed to toggle paid status:", error);
+    }
+  };
+
+  const toggleCompleted = async () => {
+    try {
+      const newCompletedStatus = await toggleOrderCompleted(user.uid, id, completed);
+      setCompleted(newCompletedStatus);
+    } catch (error) {
+      console.error("Failed to toggle completed status:", error);
+    }
+  };
   
 
   const formatDeadline = (timestamp) => {
@@ -205,7 +224,10 @@ export default function OrderPageID() {
                     <p>Create receipt</p>
                     <img src="/receipt.png" alt="Pencil" className="w-5" />
                   </button>
-                  <button className="relative bg-green rounded-md w-[28%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
+                  <button 
+                  className="relative bg-green rounded-md w-[28%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0"
+                  onClick={() => window.location.href = `/orders/${id}/edit`}
+                  >
                     <p>Edit</p>
                     <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
                   </button>
@@ -248,7 +270,7 @@ export default function OrderPageID() {
                   </p>
                 </div> */}
 
-                <div>
+                <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Materials:</p>
 
                   {selectedOrder?.materialsForOrderData?.map((material, index) => (
@@ -274,16 +296,22 @@ export default function OrderPageID() {
 
                 <div className="flex flex-row float-right gap-1 justify-between font-bold">
                   <button
-                    className="hover:arrow text-sm bg-red w-[17%] h text-white rounded-md"
-                    onClick={openConfirmation}
+                    className="hover:arrow text-sm bg-red w-[25%] h text-white rounded-md"
+                    onClick={() => console.log("Delete action triggered")}
                   >
                     Delete
                   </button>
-                  <button className="bg-yellow text-sm px-3 py-1 rounded-md">
-                    Set as paid
+                  <button
+                    className={`${paid ? "bg-darkYellow text-white" : "bg-yellow"} text-sm py-1 rounded-md w-[60%]`}
+                    onClick={togglePaid}
+                  >
+                    {paid ? "Set as unpaid" : "Set as Paid"}
                   </button>
-                  <button className="bg-yellow text-sm px-1 py-1 rounded-md  w-[50%]">
-                    Set as completed
+                  <button
+                    className={`${completed ? "bg-darkYellow text-white" : "bg-yellow"} text-sm py-1 rounded-md w-[60%]`}
+                    onClick={toggleCompleted}
+                  >
+                    {completed ? "Set as Incomplete" : "Set as Completed"}
                   </button>
                 </div>
               </div>

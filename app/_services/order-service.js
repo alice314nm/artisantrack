@@ -10,8 +10,6 @@ import {
     deleteDoc, 
     updateDoc} from "firebase/firestore";
 import { db } from "../_utils/firebase";
-import { fetchProductsForOrder } from "./product-service";
-import { fetchMaterialsForOrder } from "./material-service";
 
 async function getOrAddCustomer(userId, customerName) {
     const customerCollection = collection(db, "users", userId, "customers");
@@ -67,6 +65,7 @@ export async function dbAddOrder(userId, orderObj) {
     }
 }
 
+
 export async function dbDeleteOrderById(userId, orderId) {
     try {     
         const productRef = doc(db, "users", userId, "orders", orderId);
@@ -82,7 +81,6 @@ export async function dbDeleteOrderById(userId, orderId) {
         console.error("Error deleting product:", error.message);
     }
 }
-
 
 
 export async function dbGetOrderById(userId, orderId, orderSetter) {
@@ -156,4 +154,27 @@ export async function dbGetOrderById(userId, orderId, orderSetter) {
         return null;
     }
 }
+
+export const toggleOrderPaid = async (userId, orderId, currentPaid) => {
+    try {
+      const orderRef = doc(db, `users/${userId}/orders/${orderId}`);
+      await updateDoc(orderRef, { paid: !currentPaid });
+      return !currentPaid; // Return the new state
+    } catch (error) {
+      console.error("Error updating paid status:", error);
+      throw error;
+    }
+  };
+  
+
+export const toggleOrderCompleted = async (userId, orderId, currentCompleted) => {
+    try {
+      const orderRef = doc(db, `users/${userId}/orders/${orderId}`);
+      await updateDoc(orderRef, { completed: !currentCompleted });
+      return !currentCompleted;
+    } catch (error) {
+      console.error("Error updating completed status:", error);
+      throw error;
+    }
+  };
 

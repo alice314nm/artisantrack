@@ -82,6 +82,7 @@ export default function FilterWindow({
         const clientsCollection = collection(db, `users/${user.uid}/customers`);
         const clientsSnapshot = await getDocs(clientsCollection);
         const clientsData = clientsSnapshot.docs.map((doc) => doc.data().name);
+        setClients(clientsData);
       } catch (error) {
         console.error("Error fetching clients: ", error);
       }

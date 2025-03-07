@@ -512,7 +512,7 @@ export default function Page() {
                 <Menu
                 type="CreateMenu"
                 firstTitle="Cancel"
-                secondTitle="Update"
+                secondTitle="Save"
                 onFirstFunction={() => window.location.href = `/materials/${id}`}
                 />
             </form>

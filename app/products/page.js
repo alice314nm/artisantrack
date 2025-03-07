@@ -31,7 +31,7 @@ export default function Home() {
   useEffect(() => {
     const timeout = setTimeout(() => {
     setLoading(false);
-    }, 500); 
+    }, 2000); 
 
     return () => clearTimeout(timeout);
   }, []);
@@ -53,26 +53,12 @@ export default function Home() {
 
         const productsWithCategoriesAndImages = await Promise.all(
           productsData.map(async (product) => {
-            const categoryNames = await Promise.all(
-              product.categories.map(async (categoryId) => {
-                const categoryDocRef = doc(
-                  db,
-                  `users/${user.uid}/productCategories/${categoryId}`
-                );
-                const categoryDoc = await getDoc(categoryDocRef);
-                return categoryDoc.exists()
-                  ? categoryDoc.data().name
-                  : "Unknown";
-              })
-            );
-
+            
             const productImageUrls = product.productImages?.map((image) => image.url) || [];
             const patternImageUrls = product.patternImages?.map((image) => image.url) || [];
 
-
             return {
               ...product,
-              categories: categoryNames,
               productImages: productImageUrls,
               patternImage: patternImageUrls,
             };

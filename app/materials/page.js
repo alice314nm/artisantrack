@@ -30,7 +30,7 @@ export default function Page() {
   useEffect(() => {
     const timeout = setTimeout(() => {
     setLoading(false);
-    }, 500); 
+    }, 2000); 
 
     return () => clearTimeout(timeout);
   }, []);

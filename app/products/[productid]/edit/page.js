@@ -69,7 +69,6 @@ export default function Page() {
 
     useEffect(() => {
         if (!product) return;
-        console.log(123, product)
         setLoading(true);
         setUserProductId(product.productId);
         setName(product.name);
@@ -140,81 +139,65 @@ export default function Page() {
 
 
     const handleUpload = async () => {
-        if (!patternImages.length) return [];
-        if (!productImages.length) return [];
-        if (!patternImages.length && !productImages.length) return [];
-
         const uploadedProductImages = [];
         const uploadedPatternImages = [];
-
+    
         const userId = user.uid;
-
+    
         // Upload product images (HANDLE ARRAY OF FILES)
         for (const image of productImages) {
-            console.log(image);
-
             if (image.url) {
                 uploadedProductImages.push(image); // No need to upload again, just keep it
                 continue;
             }
-
+    
             const filePath = `images/${userId}/products/${image.name}`; 
             const fileRef = ref(storage, filePath);
-
+    
             try {
                 const snapshot = await uploadBytes(fileRef, image);
                 const downloadUrl = await getDownloadURL(snapshot.ref);
-
                 uploadedProductImages.push({ url: downloadUrl, path: filePath });
             } catch (error) {
                 console.error("Upload failed:", error);
             }
-            const snapshot = await uploadBytes(fileRef, image);
-            const downloadUrl = await getDownloadURL(snapshot.ref);
-            uploadedProductImages.push({ url: downloadUrl, path: filePath });
-            
         }
-
+    
         // Upload pattern images (HANDLE ARRAY OF FILES AND UNIQUE NAMES)
-        for (const image of patternImages) { 
-            console.log(image);
-
+        for (const image of patternImages) {     
             if (image.url) {
                 uploadedPatternImages.push(image); 
                 continue;
             }
-
+    
             const filePath = `images/${userId}/patterns/${image.name}`;
             const fileRef = ref(storage, filePath);
-
+    
             try {
                 const snapshot = await uploadBytes(fileRef, image);
                 const downloadUrl = await getDownloadURL(snapshot.ref);
-
                 uploadedPatternImages.push({ url: downloadUrl, path: filePath });
             } catch (error) {
                 console.error("Upload failed:", error);
             }
         }
-
-        console.log("Uploaded Images:", uploadedPatternImages, uploadedProductImages); 
-
+        
         setProductImageUrls((prev) => {
             const updatedUrls = Array.isArray(prev) ? prev : [];
             return [...updatedUrls, ...uploadedProductImages.map(img => img.url)];
         });
-
+    
         setPatternImageUrls((prev) => {
             const updatedUrls = Array.isArray(prev) ? prev : [];
             return [...updatedUrls, ...uploadedPatternImages.map(img => img.url)];
         });
-
+    
         setPatternImages([]);
         setProductImages([]);
-
+    
         return [uploadedProductImages, uploadedPatternImages];
-
     };
+    
 
 
     const handleUpdateProduct = async (e) => {
@@ -249,18 +232,17 @@ export default function Page() {
 
         try {
             const updatedProductData = {
-                productId: userProductId,
-                name,
+                productId: userProductId || "",
+                name: name || "",
                 averageCost: averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
-                currency: averageCost.trim() === "" ? "" : currency,    
-                categories,
-                description: desc,
-                productImages: uploadedProductImages,
-                patternImages: uploadedPatternImages,
+                currency: averageCost.trim() === "" ? "" : currency,
+                categories: categories || [],
+                description: desc || "",
+                productImages: uploadedProductImages || [],
+                patternImages: uploadedPatternImages || [],
             };
 
             await updateProduct(user.uid, productId, updatedProductData)
-            console.log("Product updated successfully!");
             setLoading(false);
             window.location.href = `/products/${productId}`;
         } catch (error){
@@ -290,6 +272,8 @@ export default function Page() {
 
             {errorMessage.length===0?(null):(<p className="text-red">{errorMessage}</p>)}
 
+            <p className="text-lg font-semibold underline">General</p>
+
             {/* Product ID */}
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between">
@@ -317,6 +301,23 @@ export default function Page() {
                 onChange={(e) => setName(e.target.value)}
                 />
             </div>
+
+            {/* Description */}
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-row justify-between">
+                    <label>Description</label>
+                    <img  src={desc === "" ? "/cross.png" : "/check.png"}  className={desc === "" ? "h-4" : "h-6 text-green"} />                            
+                </div>
+                
+                <textarea
+                className="rounded-lg border p-2"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                />
+            </div>
+
+            <p className="text-lg font-semibold underline">Details</p>
+
 
             {/* Category*/}
             <div className="flex flex-col gap-2">
@@ -363,55 +364,6 @@ export default function Page() {
                     </li>
                 ))}
                 </ul>
-            </div>
-
-            {/* Average Cost */}
-            <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-between">
-                    <label>Average Cost</label>
-                    <img  src={averageCost === "" ? "/cross.png" : "/check.png"}  className={averageCost === "" ? "h-4" : "h-6 text-green"} />                            
-                </div>
-                <div className="flex flex-row gap-2">
-                <input 
-                    data-id="product-average-cost"
-                    className={inputStyle}
-                    type="number"
-                    value={averageCost}
-                    placeholder="0.00"
-                    onChange={(e) => {
-                        setAverageCost(e.target.value); // Allow empty value
-                    }}
-                    onBlur={() => {
-                        if (averageCost === "") {
-                            setAverageCost("");
-                        }
-                    }}
-                    />
-                    <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="rounded-lg border border-grey-200"
-                    >
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="CAD">CAD (C$)</option>
-                        <option value="RUB">RUB (₽)</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Description */}
-            <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-between">
-                    <label>Description</label>
-                    <img  src={desc === "" ? "/cross.png" : "/check.png"}  className={desc === "" ? "h-4" : "h-6 text-green"} />                            
-                </div>
-                
-                <textarea
-                className="rounded-lg border p-2"
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                />
             </div>
 
             {/* Product Image Selection */}
@@ -491,12 +443,50 @@ export default function Page() {
                     </div>
                 )}
             </div>
+
+            <p className="text-lg font-semibold underline">Price</p>
+
+            {/* Average Cost */}
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-row justify-between">
+                    <label>Average Cost</label>
+                    <img  src={averageCost === "" ? "/cross.png" : "/check.png"}  className={averageCost === "" ? "h-4" : "h-6 text-green"} />                            
+                </div>
+                <div className="flex flex-row gap-2">
+                <input 
+                    data-id="product-average-cost"
+                    className={inputStyle}
+                    type="number"
+                    value={averageCost}
+                    placeholder="0.00"
+                    onChange={(e) => {
+                        setAverageCost(e.target.value); // Allow empty value
+                    }}
+                    onBlur={() => {
+                        if (averageCost === "") {
+                            setAverageCost("");
+                        }
+                    }}
+                    />
+                    <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="rounded-lg border border-grey-200"
+                    >
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="CAD">CAD (C$)</option>
+                        <option value="RUB">RUB (₽)</option>
+                    </select>
+                </div>
+            </div>
+
             
             {/* Submit */}
             <Menu
                 type="CreateMenu"
                 firstTitle="Cancel"
-                secondTitle="Create"
+                secondTitle="Save"
                 onFirstFunction={() => window.location.href = `/products/${productId}`}
                 />
             </form>

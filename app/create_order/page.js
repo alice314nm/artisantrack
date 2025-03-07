@@ -1,8 +1,5 @@
 'use client'
-
-import { firebaseConfig } from '../_utils/firebase';
-import { initializeApp } from "firebase/app"
-import { getAuth } from "firebase/auth";  
+  
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import NotLoggedWindow from "@/app/components/not-logged-window";
@@ -188,7 +185,6 @@ export default function Page(){
     
     const calculateMaterialsCost = () => {
         if (!selectedMaterials || selectedMaterials.length === 0) {
-            console.warn("No materials selected.");
             setMaterialCost(0);
             return;
         }
@@ -298,6 +294,9 @@ export default function Page(){
                 {errorMessage && errorMessage.length > 0 && (
                     <p className="text-red">{errorMessage}</p>
                 )}
+
+                <p className="text-lg font-semibold underline">General</p>
+
                 
                 {/* Name of the order */}
                 <div className="flex flex-col gap-2">
@@ -408,9 +407,18 @@ export default function Page(){
                     onChange={(e) => setDesc(e.target.value)}   
                     ></textarea>
                 </div>
+
+                <p className="text-lg font-semibold underline">Product & Materials</p>
                 
                 {/* Product Selection */}
                 <div className="flex flex-col gap-2">
+                    <div className="flex flex-row justify-between">
+                        <label>Product</label>
+                    <img 
+                        src={selectedProduct ? "/check.png" : "/cross.png"} 
+                        className={selectedProduct ? "h-6 text-green" : "h-4"}
+                    />
+                    </div>
                     <div className="flex flex-row justify-between">
                     <button 
                         type="button" 
@@ -419,10 +427,7 @@ export default function Page(){
                     >
                         select product
                     </button>
-                    <img 
-                        src={selectedProduct ? "/check.png" : "/cross.png"} 
-                        className={selectedProduct ? "h-6 text-green" : "h-4"}
-                    />
+                    
                     </div>                       
                 </div>
         
@@ -446,7 +451,7 @@ export default function Page(){
                 {/* Product cost */}
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row justify-between">
-                        <label>Product cost</label>                    
+                        <label>Cost for selected product</label>                    
                     </div>
                     <input 
                     className={inputStyle} 
@@ -461,6 +466,13 @@ export default function Page(){
                 {/* Material Selection */}
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row justify-between">
+                        <label>Materials</label>
+                    <img 
+                        src={selectedMaterials && selectedMaterials.length > 0 ? "/check.png" : "/cross.png"} 
+                        className={selectedMaterials && selectedMaterials.length > 0 ? "h-6 text-green" : "h-4"}
+                    />
+                    </div>
+                    <div className="flex flex-row justify-between">
                     <button 
                         type="button" 
                         onClick={handleSelectMaterialForm} 
@@ -468,10 +480,6 @@ export default function Page(){
                         >
                         select material
                     </button>
-                    <img 
-                        src={selectedMaterials && selectedMaterials.length > 0 ? "/check.png" : "/cross.png"} 
-                        className={selectedMaterials && selectedMaterials.length > 0 ? "h-6 text-green" : "h-4"}
-                    />
                     </div>                         
                 </div>
         
@@ -537,18 +545,19 @@ export default function Page(){
                     <div className="flex flex-row justify-between">
                     <p>Total cost <span className="text-red">*</span></p>
                     <img
-                        src={total === 0 ? "/cross.png" : "/check.png"}
-                        className={total === 0 ? "h-4" : "h-6 text-green"}
+                        src={(total === 0 || total === "" || total=="0.00") ? "/cross.png" : "/check.png"}
+                        className={(total === 0 || total === "" || total=="0.00") ? "h-4" : "h-6 text-green"}
                     />
                     </div>
                     <div className="flex flex-row gap-2">
-                    <input 
-                        data-id="product-average-cost"
+                    <input
                         className={inputStyle}
+                        value={(total===0 || total=="0.00") ? "" : total}
                         type="number"
-                        value={total ===0 ? "" : total}
                         placeholder="0.00"
-                        onChange={(e) => setTotal(e.target.value)}
+                        onChange={(e) => {
+                        setTotal(e.target.value);
+                        }}
                     />
                     <select
                         value={currency}

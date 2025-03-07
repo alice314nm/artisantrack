@@ -103,9 +103,6 @@ export default function Page() {
   };
 
   const handleUpload = async () => {
-    // if (!patternImages.length) return [];
-    // if (!productImages.length) return [];
-
     const uploadedProductImages = [];
     const uploadedPatternImages = [];
 
@@ -179,16 +176,16 @@ export default function Page() {
     const uploadedPatternImages = uploadedImages?.[1] || [];
 
     const productObj = {
-      productId,
-      name,
-      averageCost:
-        averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
+      productId: productId || "",
+      name: name || "",
+      averageCost: averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
       currency: averageCost.trim() === "" ? "" : currency,
-      categories,
-      description: desc,
-      productImages: uploadedProductImages,
-      patternImages: uploadedPatternImages,
+      categories: categories || [],
+      description: desc || "",
+      productImages: uploadedProductImages || [],
+      patternImages: uploadedPatternImages || [],
     };
+   
 
     try {
       await dbAddProduct(user.uid, productObj);
@@ -219,6 +216,8 @@ export default function Page() {
             <p className="text-red">{errorMessage}</p>
           )}
   
+          <p className="text-lg font-semibold underline">General</p>
+
           {/* Product ID */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -256,7 +255,27 @@ export default function Page() {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
+
+           {/* Description */}
+           <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Description</label>
+              <img
+                src={desc === "" ? "/cross.png" : "/check.png"}
+                className={desc === "" ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <textarea
+              data-id="product-description"
+              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </div>
   
+          <p className="text-lg font-semibold underline">Details</p>
+
+
           {/* Category */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -308,61 +327,7 @@ export default function Page() {
               ))}
             </ul>
           </div>
-  
-          {/* Average Cost */}
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Cost</label>
-              <img
-                src={averageCost === "" ? "/cross.png" : "/check.png"}
-                className={averageCost === "" ? "h-4" : "h-6 text-green"}
-              />
-            </div>
-            <div className="flex flex-row gap-2">
-              <input
-                data-id="product-average-cost"
-                className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
-                type="number"
-                value={averageCost}
-                placeholder="0.00"
-                onChange={(e) => setAverageCost(e.target.value)}
-                onBlur={() => {
-                  if (averageCost === "") {
-                    setAverageCost("");
-                  }
-                }}
-              />
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
-                data-id="currency-select"
-              >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="RUB">RUB (₽)</option>
-              </select>
-            </div>
-          </div>
-  
-          {/* Description */}
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Description</label>
-              <img
-                src={desc === "" ? "/cross.png" : "/check.png"}
-                className={desc === "" ? "h-4" : "h-6 text-green"}
-              />
-            </div>
-            <textarea
-              data-id="product-description"
-              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-            />
-          </div>
-  
+
           {/* Product Image Selection */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -446,6 +411,48 @@ export default function Page() {
               </div>
             )}
           </div>
+  
+          <p className="text-lg font-semibold underline">Price</p>
+
+
+          {/* Average Cost */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Cost</label>
+              <img
+                src={averageCost === "" ? "/cross.png" : "/check.png"}
+                className={averageCost === "" ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <div className="flex flex-row gap-2">
+              <input
+                data-id="product-average-cost"
+                className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
+                type="number"
+                value={averageCost}
+                placeholder="0.00"
+                onChange={(e) => setAverageCost(e.target.value)}
+                onBlur={() => {
+                  if (averageCost === "") {
+                    setAverageCost("");
+                  }
+                }}
+              />
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
+                data-id="currency-select"
+              >
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="CAD">CAD (C$)</option>
+                <option value="RUB">RUB (₽)</option>
+              </select>
+            </div>
+          </div>
+    
+
           {/* Submit */}
             <Menu
               type="CreateMenu"

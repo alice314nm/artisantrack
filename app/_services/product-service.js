@@ -44,7 +44,7 @@ export async function dbAddProduct(userId, productObj) {
         const newProductRef = await addDoc(productsCollection, {
             productId: productObj.productId,
             name: productObj.name,
-            categories: categoryIds,
+            categories: productObj.categories,
             currency: productObj.currency,
             averageCost: productObj.averageCost,
             description: productObj.description,
@@ -73,30 +73,15 @@ export async function fetchProductById(userId, productId, productSetter) {
             return;
         }
 
-        let productData = { id: productDoc.id, ...productDoc.data() };
-
-        // Ensure categories is an array
-        const categoryNames = await Promise.all(
-            (productData.categories ?? []).map(async (categoryId) => {
-                const categoryDocRef = doc(db, `users/${userId}/productCategories/${categoryId}`);
-                const categoryDoc = await getDoc(categoryDocRef);
-                return categoryDoc.exists() ? categoryDoc.data().name : null;
-            })
-        );
-
-        const productImages = productData.productImages || [];
-        const patternImages = productData.patternImages || [];
-
-        const finalProduct = {
-            ...productData,
-            categories: categoryNames,
-            productImages: productImages,
-            patternImages: patternImages,
+        let productData = 
+        { 
+            id: productDoc.id, 
+            ...productDoc.data() 
         };
 
-        productSetter(finalProduct);
+        productSetter(productData);
 
-        return(finalProduct);
+        return(productData);
     } catch (error) {
         console.error("Error fetching product:", error);
     }
@@ -155,8 +140,12 @@ export const updateProduct = async (userId, productId, updatedProductData) => {
     try {
         const productRef = doc(db, "users", userId, "products", productId);
 
+        const categoryIds = await Promise.all(
+            updatedProductData.categories.map(category => getOrAddCategory(userId, category))
+        );
+
         await updateDoc(productRef, updatedProductData);
-        console.log("Material document updated successfully!");
+        console.log("Product document updated successfully!");
 
     } catch (error) {
         console.error("Error updating material:", error);

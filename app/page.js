@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
-import { app } from "./_utils/firebase";
+import { getUserData } from "@/app/_services/user-data";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
@@ -19,12 +11,7 @@ import { useEffect, useState } from "react";
 export default function WelcomePage() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
-  const [inProgress, setInProgress] = useState(0);
-  const [completed, setCompleted] = useState(0);
-  const [totalMaterials, setTotalMaterials] = useState(0);
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [monthlyIncome, setMonthlyIncome] = useState(0);
-  const [monthlyExpenses, setMonthlyExpenses] = useState(0);
+  const [userData, setUserData] = useState(null);
 
   const tileStyle =
     "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-between transition-all duration-300";
@@ -42,93 +29,12 @@ export default function WelcomePage() {
   }, []);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      if (!user) return;
+    if (user) {
       setLoading(true);
-      try {
-        const db = getFirestore(app);
-        const ordersCollection = collection(db, `users/${user.uid}/orders`);
-        const ordersSnapshot = await getDocs(ordersCollection);
-        const ordersData = ordersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        console.log(ordersData);
-
-        const now = new Date();
-        const currentMonth = now.getMonth();
-
-        const monthlyOrders = ordersData.filter((order) => {
-          if (!order.startDate || !order.startDate.seconds) return false;
-          const orderDate = new Date(order.startDate.seconds * 1000);
-          return orderDate.getMonth() === currentMonth;
-        });
-
-        const inProgressCount = ordersData.filter(
-          (order) => !order.completed
-        ).length;
-        const completedCount = ordersData.filter(
-          (order) => order.completed
-        ).length;
-
-        const monthlyIncome = monthlyOrders.reduce(
-          (sum, order) =>
-            sum +
-            (parseFloat(order.productCost) || 0) +
-            (parseFloat(order.workCost) || 0),
-          0
-        );
-
-        const monthlyExpenses = monthlyOrders.reduce(
-          (sum, order) => sum + (parseFloat(order.materialsCost) || 0),
-          0
-        );
-
-        setMonthlyIncome(monthlyIncome);
-        setMonthlyExpenses(monthlyExpenses);
-        setInProgress(inProgressCount);
-        setCompleted(completedCount);
-      } catch (error) {
-        console.error("Error fetching:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchMaterials = async () => {
-      if (!user) return;
-      try {
-        const db = getFirestore(app);
-        const materialsCollection = collection(
-          db,
-          `users/${user.uid}/materials`
-        );
-        const materialsSnapshot = await getDocs(materialsCollection);
-        setTotalMaterials(materialsSnapshot.size);
-      } catch (error) {
-        console.error("Error fetching materials:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchProducts = async () => {
-      if (!user) return;
-      try {
-        const db = getFirestore(app);
-        const productsCollection = collection(db, `users/${user.uid}/products`);
-        const productsSnapshot = await getDocs(productsCollection);
-        setTotalProducts(productsSnapshot.size);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-    fetchMaterials();
-    fetchOrders();
+      getUserData(user, setUserData).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
   }, [user]);
 
   if (loading) {
@@ -158,8 +64,18 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Orders</p>
               <div className="space-y-2">
-                <p className={infoStyle}>In Progress: {inProgress}</p>
-                <p className={infoStyle}>Completed: {completed}</p>
+                <p className={infoStyle}>
+                  In Progress:{" "}
+                  {userData
+                    ? Math.max(0, userData.inProgressOrders)
+                    : "Loading..."}
+                </p>
+                <p className={infoStyle}>
+                  Completed:{" "}
+                  {userData
+                    ? Math.max(0, userData.completedOrders)
+                    : "Loading..."}
+                </p>
               </div>
               <Link className={LinkStyle} href="/orders">
                 View Orders
@@ -169,7 +85,12 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Materials</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Total Materials: {totalMaterials}</p>
+                <p className={infoStyle}>
+                  Total Materials:{" "}
+                  {userData
+                    ? Math.max(0, userData.materialCount)
+                    : "Loading..."}{" "}
+                </p>
               </div>
               <Link className={LinkStyle} href="/materials">
                 View Materials
@@ -179,7 +100,10 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Products</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Total Products: {totalProducts}</p>
+                <p className={infoStyle}>
+                  Total Products:{" "}
+                  {userData ? Math.max(0, userData.productCount) : "Loading..."}
+                </p>
               </div>
               <Link className={LinkStyle} href="/products">
                 View Products
@@ -189,8 +113,18 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Finance</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Revenue: ${monthlyIncome}</p>
-                <p className={infoStyle}>Expenses: ${monthlyExpenses}</p>
+                <p className={infoStyle}>
+                  Revenue: $
+                  {userData?.monthlyIncome
+                    ? userData.monthlyIncome.toFixed(2)
+                    : "Loading..."}
+                </p>
+                <p className={infoStyle}>
+                  Expenses: $
+                  {userData?.monthlyExpenses
+                    ? userData?.monthlyExpenses?.toFixed(2)
+                    : "Loading..."}
+                </p>
               </div>
               <Link className={LinkStyle} href="/finances">
                 View Finances

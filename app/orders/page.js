@@ -51,6 +51,7 @@ export default function Page() {
           id: doc.id,
           ...doc.data(),
         }));
+        console.log("Orders: ", ordersData);
 
         for (let order of ordersData) {
           if (order.orderImages && order.orderImages.length > 0) {
@@ -60,27 +61,17 @@ export default function Page() {
                   db,
                   `users/${user.uid}/products/${productId}`
                 );
+
                 const productSnapshot = await getDoc(productRef);
                 const productData = productSnapshot.data();
                 order.orderId = productData?.productId;
+                order.categories = productData?.categories || ["Unknown"];
                 return productData?.productImages?.[0]?.url || "Unknown";
               })
             );
             order.imageUrl = productImages[0];
           } else {
             order.imageUrl = "Unknown";
-          }
-
-          if (order.customerId) {
-            const customerRef = doc(
-              db,
-              `users/${user.uid}/customers/${order.customerId}`
-            );
-            const customerSnapshot = await getDoc(customerRef);
-            const customerData = customerSnapshot.data();
-            order.customerId = customerData?.nameCustomer || "Unknown";
-          } else {
-            order.customerId = "Unknown";
           }
         }
 
@@ -128,12 +119,19 @@ export default function Page() {
 
     // Apply category filter
     if (filters.Categories?.length > 0) {
-      result = result.filter(
-        (order) =>
-          Array.isArray(order.categories) &&
-          order.categories.some((category) =>
-            filters.Categories.includes(category)
-          )
+      result = result.filter((order) => {
+        const categoriesArray = Array.isArray(order.categories)
+          ? order.categories
+          : [order.categories];
+        return categoriesArray.some((category) =>
+          filters.Categories.includes(category)
+        );
+      });
+    }
+
+    if (filters.Clients?.length > 0) {
+      result = result.filter((order) =>
+        filters.Clients.includes(order.customerName)
       );
     }
 
@@ -141,21 +139,33 @@ export default function Page() {
     if (filters["Sort by"]) {
       switch (filters["Sort by"]) {
         case "Name Ascending":
-          result.sort((a, b) => a.name.localeCompare(b.name));
+          result.sort((a, b) =>
+            (a.nameOrder || "").localeCompare(b.nameOrder || "")
+          );
           break;
         case "Name Descending":
-          result.sort((a, b) => b.name.localeCompare(a.name));
+          result.sort((a, b) =>
+            (b.nameOrder || "").localeCompare(a.nameOrder || "")
+          );
           break;
         case "Category":
           result.sort((a, b) =>
             a.categories.join(", ").localeCompare(b.categories.join(", "))
           );
           break;
-        case "ID Ascending":
-          result.sort((a, b) => Number(a.productId) - Number(b.productId));
+        case "Earliest Deadline":
+          result.sort((a, b) => {
+            const deadlineA = a.deadline?.seconds || Infinity;
+            const deadlineB = b.deadline?.seconds || Infinity;
+            return deadlineA - deadlineB;
+          });
           break;
-        case "ID Descending":
-          result.sort((a, b) => Number(b.productId) - Number(a.productId));
+        case "Latest Deadline":
+          result.sort((a, b) => {
+            const deadlineA = a.deadline?.seconds || 0;
+            const deadlineB = b.deadline?.seconds || 0;
+            return deadlineB - deadlineA;
+          });
           break;
         default:
           break;
@@ -166,8 +176,8 @@ export default function Page() {
     if (searchTerm) {
       result = result.filter(
         (order) =>
-          order.name &&
-          order.name.toLowerCase().includes(searchTerm.toLowerCase())
+          order.nameOrder &&
+          order.nameOrder.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -195,8 +205,18 @@ export default function Page() {
     const today = new Date();
 
     const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
     const formattedDate = `${
@@ -245,10 +265,12 @@ export default function Page() {
           </p>
         ) : (
           <div className="w-full px-4 pb-20">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
               gap-4 sm:gap-6 lg:gap-8 
               auto-rows-[1fr] 
-              justify-center items-stretch">
+              justify-center items-stretch"
+            >
               {filteredOrders.map((order, index) => (
                 <Link
                   href={`/orders/${order.id}`}
@@ -266,7 +288,7 @@ export default function Page() {
                     }
                     currency={order.currency}
                     total={order.totalCost}
-                    customerId={order.customerId}
+                    customerId={order.customerName}
                     type={"order"}
                   />
                 </Link>

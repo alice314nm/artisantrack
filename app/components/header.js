@@ -19,7 +19,7 @@ export default function Header({title, showUserName}) {
     }, [user]);
 
     return (
-        <header className="bg-beige font-bold flex flex-row p-4 items-center justify-between">
+        <header className="bg-beige font-bold flex flex-row p-2 px-4 items-center justify-between">
             <div className="gap-4 flex flex-row items-center justify-between">
                 <img
                     src="/LogoArtisanTrack.png"

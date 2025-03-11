@@ -21,7 +21,8 @@ export default function Page() {
     }
   }, [user]);
 
-  const sectionStyle = "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
+  const sectionStyle =
+    "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
   const contentStyle = "";
 
   const handleSave = () => {
@@ -51,14 +52,19 @@ export default function Page() {
                 className="border border-gray-400 rounded p-1"
               />
             ) : (
-              <p className="text-xl font-semibold">Artisan: {user.displayName}</p>
+              <p className="text-xl font-semibold">
+                Artisan: {user.displayName}
+              </p>
             )}
             <button
               className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-200"
               onClick={isEditing ? handleSave : () => setIsEditing(true)}
             >
               <p className="font-semibold">{isEditing ? "Save" : "Edit"}</p>
-              <img src={isEditing ? "/Save.png" : "/Pencil.png"} className="w-5" />
+              <img
+                src={isEditing ? "/Save.png" : "/Pencil.png"}
+                className="w-5"
+              />
             </button>
           </div>
 
@@ -87,15 +93,27 @@ export default function Page() {
           {/* Inventory Section */}
           <div className={sectionStyle}>
             <p>Inventory:</p>
-            <p className={contentStyle}>Total products: {userData ? Math.max(0, userData.productCount - 1) : "Loading..."}</p>
-            <p className={contentStyle}>Total materials: {userData ? Math.max(0, userData.materialCount - 1) : "Loading..."}</p>
+            <p className={contentStyle}>
+              Total products:{" "}
+              {userData ? Math.max(0, userData.productCount) : "Loading..."}
+            </p>
+            <p className={contentStyle}>
+              Total materials:{" "}
+              {userData ? Math.max(0, userData.materialCount) : "Loading..."}
+            </p>
           </div>
 
           {/* Orders Section */}
           <div className={sectionStyle}>
             <p>Orders:</p>
-            <p className={contentStyle}>In progress: {userData ? Math.max(0, userData.orderCount - 1) : "Loading..."}</p>
-            <p className={contentStyle}>Completed: 0</p>
+            <p className={contentStyle}>
+              In progress:{" "}
+              {userData ? Math.max(0, userData.inProgressOrders) : "Loading..."}
+            </p>
+            <p className={contentStyle}>
+              Completed:{" "}
+              {userData ? Math.max(0, userData.completedOrders) : "Loading..."}
+            </p>
           </div>
 
           {/* Tax Section */}
@@ -107,7 +125,7 @@ export default function Page() {
       ) : (
         <div className="flex flex-col min-h-screen gap-4">
           <Header title="Artisan Track" />
-          <NotLoggedWindow/>        
+          <NotLoggedWindow />
         </div>
       )}
     </div>

@@ -85,7 +85,7 @@ export default function Page() {
         setShop(selectedMaterial.shop || "");
         setCurrency(selectedMaterial.currency || "USD");
         setQuantity(selectedMaterial.quantity || 0);
-        setTotal(selectedMaterial.total || "0.00");
+        setTotal(selectedMaterial.total || 0);
         setDesc(selectedMaterial.description || "");
         setImages(selectedMaterial.images || []);
         setImageUrls([]);
@@ -93,6 +93,7 @@ export default function Page() {
         setLoading(false);
       
       }, [selectedMaterial]);
+
 
     useEffect(()=>{
         if (!user) {return;}
@@ -195,32 +196,19 @@ export default function Page() {
 
         try {
             const updatedMaterialData = {
-                materialId: userMaterialId,
-                name,
-                categories,
-                color,
-                costItems: costItems || [],
-                total: total.trim() === "" ? "" : parseFloat(total).toFixed(2),
-                currency: total.trim() === "" ? "" : currency,
-                quantity,
-                description: desc,
-                images: allImages
+                materialId: userMaterialId || "",
+                name: name || "",
+                description: desc || "",
+                color: color || "",
+                categories: categories || [],
+                images: allImages || [],
+                shop: shop || "",
+                quantity: quantity || 0.00,
+                total: total || 0.00,
+                currency: total === 0 ? "" : (typeof total === 'string' ? total.trim() : total) === "" ? "" : currency,
+                costPerUnit: cost || 0.00,
             };
 
-            // handle color
-            const colorCollectionRef = collection(db, `users/${user.uid}/colors`);
-            const colorSnap = await getDocs(colorCollectionRef);
-
-            let existingColorDoc = colorSnap.docs.find(doc => doc.data().name === color);
-
-            if (!existingColorDoc) {
-                const newColorRef = await addDoc(colorCollectionRef, { name: color });
-                console.log("New color added to Firestore:", color);
-                updatedMaterialData.color = newColorRef.id;
-            } else {
-                updatedMaterialData.color = existingColorDoc.id;
-                console.log("Color already exists:", color);
-            }
             await updateMaterial(user.uid, id, updatedMaterialData);
 
             console.log("Material updated successfully!");
@@ -254,7 +242,7 @@ export default function Page() {
                 <p className="text-red">{errorMessage}</p>
                 )}
     
-                <p className="text-lg font-semibold underline">Main</p>
+                <p className="text-lg font-semibold underline">General</p>
     
                 {/* Product Id */}
                 <div className="flex flex-col gap-2">
@@ -473,19 +461,19 @@ export default function Page() {
                 <div className="flex flex-row justify-between">
                     <label>Total</label>
                     <img
-                    src={(total === 0 || total === "") ? "/cross.png" : "/check.png"}
-                className={(total === 0 || total === "") ? "h-4" : "h-6 text-green"}
+                        src={(total === 0 || total === "") ? "/cross.png" : "/check.png"}
+                        className={(total === 0 || total === "") ? "h-4" : "h-6 text-green"}
                     />
                 </div>
                 <div className="flex flex-row gap-2">
-                    <input
-                    className={inputStyle}
-                    value={total===0 ? "" : total}
-                    type="number"
-                    placeholder="0.00"
-                    onChange={(e) => {
-                        setTotal(e.target.value); // Allow empty value
-                    }}
+                        <input
+                        className={inputStyle}
+                        value={total===0 ? "" : total}
+                        type="number"
+                        placeholder="0.00"
+                        onChange={(e) => {
+                        setTotal(e.target.value);
+                        }}
                     />
                     <select
                     data-id="currency-select"
@@ -524,7 +512,7 @@ export default function Page() {
                 <Menu
                 type="CreateMenu"
                 firstTitle="Cancel"
-                secondTitle="Create"
+                secondTitle="Save"
                 onFirstFunction={() => window.location.href = `/materials/${id}`}
                 />
             </form>

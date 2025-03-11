@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserData } from "@/app/_services/user-data";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
@@ -10,9 +11,10 @@ import { useEffect, useState } from "react";
 export default function WelcomePage() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
 
   const tileStyle =
-    "border-b border-b-darkBeige px-4 pb-4 rounded-xl flex flex-col gap-4 items-start justify-between transition-all duration-300";
+    "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-between transition-all duration-300";
   const titleStyle = "text-lg font-bold";
   const infoStyle = "text text-blackBeige";
   const LinkStyle =
@@ -25,6 +27,15 @@ export default function WelcomePage() {
 
     return () => clearTimeout(timeout);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      setLoading(true);
+      getUserData(user, setUserData).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -53,8 +64,18 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Orders</p>
               <div className="space-y-2">
-                <p className={infoStyle}>In Progress: 123</p>
-                <p className={infoStyle}>Completed: 456</p>
+                <p className={infoStyle}>
+                  In Progress:{" "}
+                  {userData
+                    ? Math.max(0, userData.inProgressOrders)
+                    : "Loading..."}
+                </p>
+                <p className={infoStyle}>
+                  Completed:{" "}
+                  {userData
+                    ? Math.max(0, userData.completedOrders)
+                    : "Loading..."}
+                </p>
               </div>
               <Link className={LinkStyle} href="/orders">
                 View Orders
@@ -64,7 +85,12 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Materials</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Total Materials: 123</p>
+                <p className={infoStyle}>
+                  Total Materials:{" "}
+                  {userData
+                    ? Math.max(0, userData.materialCount)
+                    : "Loading..."}{" "}
+                </p>
               </div>
               <Link className={LinkStyle} href="/materials">
                 View Materials
@@ -74,7 +100,10 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Products</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Total Products: 45</p>
+                <p className={infoStyle}>
+                  Total Products:{" "}
+                  {userData ? Math.max(0, userData.productCount) : "Loading..."}
+                </p>
               </div>
               <Link className={LinkStyle} href="/products">
                 View Products
@@ -84,8 +113,18 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Finance</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Revenue: $1,234</p>
-                <p className={infoStyle}>Expenses: $567</p>
+                <p className={infoStyle}>
+                  Revenue: $
+                  {userData?.monthlyIncome
+                    ? userData.monthlyIncome.toFixed(2)
+                    : "Loading..."}
+                </p>
+                <p className={infoStyle}>
+                  Expenses: $
+                  {userData?.monthlyExpenses
+                    ? userData?.monthlyExpenses?.toFixed(2)
+                    : "Loading..."}
+                </p>
               </div>
               <Link className={LinkStyle} href="/finances">
                 View Finances

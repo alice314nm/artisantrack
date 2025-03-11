@@ -35,21 +35,29 @@ describe("Product Page Tests", () => {
     cy.url().should("include", "/products");
   });
 
+  it("should change the view for client or default view", () => {
+    cy.get('[data-id="product-block"]').first().click();
+    cy.contains("View for client").click();
+    cy.get('[data-id="Client view"]').should("be.visible");
+    cy.contains("Default View").click();
+    cy.get('[data-id="Your view"]').should("be.visible");
+  });
+
   it("should add the product when create new product button is clicked", () => {
     cy.contains("Create product +").click();
     cy.url().should("include", "/create_product");
     cy.get('[data-id="product-id"]').type("3012005");
     cy.get('[data-id="product-name"]').type("Cypress Test Product");
+    cy.get('[data-id="product-description"]').type("Cypress Test Description");
     cy.get('[data-id="product-category"]').type("Cypress Test Category");
     cy.get('[data-id="add-category-button"]').click();
-    cy.get('[data-id="product-average-cost"]').type("3012005");
-    cy.get('[data-id="currency-select"]').select("CAD");
-    cy.get('[data-id="product-description"]').type("Cypress Test Description");
     cy.get('input[type="file"]')
       .first()
       .selectFile("cypress/fixtures/BananaCat.png", {
         force: true,
       });
+    cy.get('[data-id="product-average-cost"]').type("3012005");
+    cy.get('[data-id="currency-select"]').select("CAD");
     cy.get('[data-id="create-button"]').click();
     cy.wait(5000);
   });
@@ -82,20 +90,38 @@ describe("Product Page Tests", () => {
 
   it("should sort products by name ascending", () => {
     cy.get('[data-id="filter-button"]').click();
-    cy.get('[data-id="sort-by"]').click();
-    cy.contains("Name Ascending").click();
+    cy.get('[data-id="sort-by-option"]').click();
+    cy.get('[data-id="sort-by"]').contains("Name Ascending").click();
     cy.get('[data-id="apply-filters"]').click();
+    cy.get('[data-id="product-title"]').then(($elements) => {
+      const productNames = [...$elements].map((el) => el.innerText.trim());
+      const sortedNames = [...productNames].sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: "base" })
+      );
+      expect(productNames).to.deep.equal(sortedNames);
+    });
   });
 
   it("should sort products by name descending", () => {
     cy.get('[data-id="filter-button"]').click();
-    cy.get('[data-id="sort-by"]').click();
-    cy.contains("Name Descending").click();
+    cy.get('[data-id="sort-by-option"]').click();
+    cy.get('[data-id="sort-by"]').contains("Name Descending").click();
     cy.get('[data-id="apply-filters"]').click();
+    cy.get('[data-id="product-title"]').then(($elements) => {
+      const productNames = [...$elements].map((el) => el.innerText.trim());
+      const sortedNames = [...productNames]
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+        .reverse();
+      expect(productNames).to.deep.equal(sortedNames);
+    });
   });
 
   it("should display search results for products", () => {
     cy.get('[data-id="search-bar"]').type("test");
-    cy.get('[data-id="product-block"]').should("include", "test");
+    cy.get('[data-id="product-block"]').should("exist");
+    cy.get('[data-id="product-block"]').each(($el) => {
+      const productName = $el.text().toLowerCase();
+      expect(productName).to.include("test");
+    });
   });
 });

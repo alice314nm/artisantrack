@@ -45,12 +45,15 @@ export default function Page() {
           {/* Profile Header */}
           <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
             {isEditing ? (
-              <input
-                type="text"
-                value={user.displayName}
-                onChange={(e) => {}}
-                className="border border-gray-400 rounded p-1"
-              />
+              <div className="flex flex-row gap-4 items-center">
+                <p className="text-xl font-semibold">Artisan: </p>
+                <input
+                  type="text"
+                  value={user.displayName}
+                  onChange={(e) => {}}
+                  className="border border-gray-400 rounded p-1"
+                />
+              </div>
             ) : (
               <p className="text-xl font-semibold">
                 Artisan: {user.displayName}

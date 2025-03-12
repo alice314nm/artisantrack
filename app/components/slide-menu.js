@@ -58,7 +58,11 @@ export default function SlideMenu({ menuVisible }) {
             <p>Documents</p>
           </Link>
 
-          <Link className={buttonStyleLi} href="/finances">
+          <Link
+            className={buttonStyleLi}
+            href="/finances"
+            data-id="slide-finance"
+          >
             <img src="/finances.png" className="w-5" />
             <p>Finance</p>
           </Link>
@@ -114,7 +118,7 @@ export default function SlideMenu({ menuVisible }) {
               </Link>
             </div>
           </li>
-          <Link className={buttonStyleLi} href="/orders">
+          <Link className={buttonStyleLi} href="/orders" data-id="slide-orders">
             <img src="/orders.png" className="w-5" />
             <p>Orders</p>
           </Link>

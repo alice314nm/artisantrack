@@ -393,6 +393,55 @@ export default function WelcomePage() {
             {/* view */}
             <div className="flex flex-col gap-2">
               <p className="font-semibold">Show</p>
+              {filterLabel && (
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="font-semibold text-lg">{filterLabel}</p>
+                        <button
+                          onClick={() => {
+                            setFilteredOrders([]);
+                            setFilterLabel("");
+                          }}
+                          className="rounded-md text-white bg-red py-y px-4"
+                        >
+                          Clear filter
+                        </button>
+                      </div>
+                      <div
+                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                        gap-4 sm:gap-6 lg:gap-8 
+                        auto-rows-[1fr] 
+                        justify-center items-stretch"
+                      >
+                      {(filteredOrders).map((order, index) => (
+                        <Link
+                          href={`/orders/${order.id}`}
+                          key={order.id}
+                          data-id="order-block"
+                        >
+                          <BlockHolder
+                            id={index + 1}
+                            title={order.nameOrder}
+                            imageSource={order.imageUrl || "/noImage.png"}
+                            deadline={
+                              order.deadline?.seconds
+                                ? formatDeadline(order.deadline.seconds)
+                                : ["No deadline", 0, "No deadline"]
+                            }
+                            currency={order.currency}
+                            total={order.totalCost}
+                            customerId={order.customerId}
+                            type={"order"}
+                          />
+                        </Link>
+                      ))}
+                      </div>
+
+                    </div>
+                    
+                    
+                  )}
+
               <div className="flex flex-row gap-2 justify-between items-center">
                 <button
                   className={`w-[33%] py-1 rounded-md ${
@@ -428,29 +477,13 @@ export default function WelcomePage() {
 
               {stateShow === "orders" && (
                 <div className="w-full px-4 pb-20">
-
-                  {filterLabel && (
-                    <div className="flex justify-between items-center mb-2">
-                      <p className="font-semibold text-lg">{filterLabel}</p>
-                      <button
-                        onClick={() => {
-                          setFilteredOrders([]);
-                          setFilterLabel("");
-                        }}
-                        className="text-sm text-red underline"
-                      >
-                        Clear filter
-                      </button>
-                    </div>
-                  )}
-
                   <div
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
                     gap-4 sm:gap-6 lg:gap-8 
                     auto-rows-[1fr] 
                     justify-center items-stretch"
                   >
-                    {(filteredOrders.length > 0 ? filteredOrders : orders).map((order, index) => (
+                    {(orders).map((order, index) => (
                       <Link
                         href={`/orders/${order.id}`}
                         key={order.id}

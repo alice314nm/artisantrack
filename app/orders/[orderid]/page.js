@@ -74,8 +74,8 @@ export default function OrderPageID() {
     }
   }, [user, id]);
 
-  const closeConfirmation = () => {
-    setConfirmWindowVisibility(false);
+  const openCloseConfirmation = () => {
+    setConfirmWindowVisibility((prev) => !prev);
   };
 
   const changeView = () => {
@@ -261,13 +261,6 @@ export default function OrderPageID() {
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Description:</p>
-                  <p className={commonClasses.sectionText}>
-                    {selectedOrder.description || "No set description."}
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Client:</p>
                   <p className={commonClasses.sectionText}>
                     {selectedOrder.customerName || "No set client."}
@@ -275,9 +268,9 @@ export default function OrderPageID() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Client:</p>
+                  <p className={commonClasses.sectionTitle}>Description:</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedOrder.customerName || "No set description."}
+                    {selectedOrder.description || "No set description."}
                   </p>
                 </div>
 
@@ -322,7 +315,7 @@ export default function OrderPageID() {
                   <button
                     data-id="delete-button"
                     className="hover:arrow text-sm bg-red w-[25%] h text-white rounded-md"
-                    onClick={() => console.log("Delete action triggered")}
+                    onClick={openCloseConfirmation}
                   >
                     Delete
                   </button>
@@ -350,7 +343,7 @@ export default function OrderPageID() {
           {/* Confirmation Window */}
           <ConfirmationWindow
             windowVisibility={confirmWindowVisibility}
-            onClose={closeConfirmation}
+            onClose={openCloseConfirmation}
             onDelete={handleDeleteOrder}
           />
 

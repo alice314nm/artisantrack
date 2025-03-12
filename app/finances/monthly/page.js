@@ -383,21 +383,21 @@ useEffect(() => {
                 <p>
                 Popular product this month:{" "}
               <button className="underline" onClick={showOrdersWithPopularProduct}>
-                {popularProduct?.productId || "N/A"} | {popularProduct?.name || "N/A"} | {popularProduct?.count || 0}
+                {popularProduct?.productId || "N/A"} | {popularProduct?.name || "N/A"} | amount: {popularProduct?.count || 0}
               </button>
                 </p>
 
                 <p>
                   Popular material this month:{" "}
                   <button className="underline" onClick={showOrdersWithPopularMaterial}>
-                    {popularMaterial?.materialId || "N/A"} | {popularMaterial?.name || "N/A"} | {popularMaterial?.count || 0}
+                    {popularMaterial?.materialId || "N/A"} | {popularMaterial?.name || "N/A"} | amount: {popularMaterial?.count || 0}
                   </button>
                 </p>
 
                 <p>
                 Regular client this month:{" "}
                 <button className="underline" onClick={showOrdersWithRegularClient}>
-                  {regularClient?.name || "N/A"} | {regularClient?.count || 0}
+                  {regularClient?.name || "N/A"} | amount: {regularClient?.count || 0}
                 </button>
               </p>
 

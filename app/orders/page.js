@@ -33,7 +33,7 @@ export default function Page() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timeout);
   }, []);
@@ -42,7 +42,6 @@ export default function Page() {
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user) return;
-      setLoading(true);
       try {
         const db = getFirestore(app);
         const ordersCollection = collection(db, `users/${user.uid}/orders`);
@@ -79,8 +78,6 @@ export default function Page() {
         setFilteredOrders(ordersData); // Initialize filteredOrders with all orders
       } catch (error) {
         console.error("Error fetching orders: ", error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchOrders();
@@ -230,6 +227,7 @@ export default function Page() {
 
     return [formattedDate, daysLeft, daysStatus];
   };
+
 
   if (loading) {
     return (

@@ -23,15 +23,15 @@ export default function SignInPage() {
   const inputStyle = "w-80 border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500";
 
   useEffect(() => {
-      // Simulating a delay for loading state
-      const timeout = setTimeout(() => {
-        setLoading(false);
-      }, 1000); // 1 second delay
+    // Simulating a delay for loading state
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // 1 second delay
 
-      return () => clearTimeout(timeout); // Cleanup timeout
-    }, []);
+    return () => clearTimeout(timeout); // Cleanup timeout
+  }, []);
 
-    
+
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ export default function SignInPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <img src="/loading-gif.gif" className="h-10"/>      
+        <img src="/loading-gif.gif" className="h-10" />
       </div>
     );
   }
@@ -85,34 +85,35 @@ export default function SignInPage() {
           {/* Email */}
           <div className="flex flex-col w-80">
             <label className="text-left">Email <span className="text-red">*</span></label>
-            <input type="email" placeholder="eg. example@mail.com" value={email} onChange={(e) => setEmail(e.target.value)} className={inputStyle} required />
+            <input data-id="email" type="email" placeholder="eg. example@mail.com" value={email} onChange={(e) => setEmail(e.target.value)} className={inputStyle} required />
           </div>
 
           {/* Name */}
           <div className="flex flex-col w-80">
             <label className="text-left">Name <span className="text-red">*</span></label>
-            <input type="text" placeholder="eg. Alex Smith" value={name} onChange={(e) => setName(e.target.value)} className={inputStyle} required />
+            <input data-id="name" type="text" placeholder="eg. Alex Smith" value={name} onChange={(e) => setName(e.target.value)} className={inputStyle} required />
           </div>
 
           {/* Tax */}
           <div className="flex flex-col w-80">
             <label className="text-left">Tax</label>
-            <input type="text" placeholder="eg. 4%" value={tax} onChange={(e) => setTax(e.target.value)} className={inputStyle} />
+            <input data-id="tax" type="text" placeholder="eg. 4%" value={tax} onChange={(e) => setTax(e.target.value)} className={inputStyle} />
           </div>
 
           {/* Password */}
           <div className="flex flex-col w-80">
             <label className="text-left">Password <span className="text-red">*</span></label>
-            <input type="password" placeholder="******" value={password} onChange={(e) => setPassword(e.target.value)} className={inputStyle} required />
+            <input data-id="password" type="password" placeholder="******" value={password} onChange={(e) => setPassword(e.target.value)} className={inputStyle} required />
           </div>
 
           {/* Repeat Password */}
           <div className="flex flex-col w-80">
             <label className="text-left">Repeat Password <span className="text-red">*</span></label>
-            <input type="password" placeholder="*******" value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} className={inputStyle} required />
+            <input data-id="repeat-password" type="password" placeholder="*******" value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} className={inputStyle} required />
           </div>
 
           <button
+            data-id="sign-up"
             type="submit"
             className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"}`}
             disabled={isLoading}

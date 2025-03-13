@@ -16,11 +16,11 @@ export default function FilterWindow({
     Categories: [],
     Colors: [],
     Clients: [],
-    "Sort by": "Category", // Default opened
+    "Sort by": "", // Default opened
   });
   const [colors, setColors] = useState([]);
   const [clients, setClients] = useState([]);
-  const [openDropdown, setOpenDropdown] = useState("Categories"); // Default opened
+  const [openDropdown, setOpenDropdown] = useState(""); // Default opened
 
   const filters =
     pageType === "material"
@@ -144,6 +144,15 @@ export default function FilterWindow({
         <div
           className="flex justify-between items-center cursor-pointer border-b border-darkBeige pb-2"
           onClick={() => toggleDropdown(category)}
+          data-id={
+            category === "Sort by"
+              ? "sort-by-option"
+              : category === "Colors"
+              ? "color-option"
+              : category === "Clients"
+              ? "client-option"
+              : ""
+          }
         >
           <h3 className="text-lg font-semibold">{category}</h3>
           <img
@@ -190,13 +199,15 @@ export default function FilterWindow({
                     }
                   `}
                 data-id={
-                  category === "Categories"
+                  category === "Sort by"
+                    ? "sort-by"
+                    : category === "Categories"
                     ? "category-filter"
                     : category === "Colors"
                     ? "color-filter"
                     : category === "Clients"
                     ? "client-filter"
-                    : "sort-by"
+                    : ""
                 }
               >
                 {item}

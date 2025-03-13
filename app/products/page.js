@@ -92,10 +92,14 @@ export default function Home() {
   if (filters["Sort by"]) {
     switch (filters["Sort by"]) {
       case "Name Ascending":
-        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+        filteredProducts.sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+        );
         break;
       case "Name Descending":
-        filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+        filteredProducts.sort((a, b) =>
+          b.name.localeCompare(a.name, undefined, { sensitivity: "base" })
+        );
         break;
       case "Category":
         filteredProducts.sort((a, b) =>

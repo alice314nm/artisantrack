@@ -100,10 +100,14 @@ export default function Page() {
   if (filters["Sort by"]) {
     switch (filters["Sort by"]) {
       case "Name Ascending":
-        filteredMaterials.sort((a, b) => a.name.localeCompare(b.name));
+        filteredMaterials.sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+        );
         break;
       case "Name Descending":
-        filteredMaterials.sort((a, b) => b.name.localeCompare(a.name));
+        filteredMaterials.sort((a, b) =>
+          b.name.localeCompare(a.name, undefined, { sensitivity: "base" })
+        );
         break;
       case "Category":
         filteredMaterials.sort((a, b) =>

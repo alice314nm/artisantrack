@@ -16,7 +16,12 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import { dbDeleteOrderById, dbGetOrderById, toggleOrderCompleted, toggleOrderPaid } from "@/app/_services/order-service";
+import {
+  dbDeleteOrderById,
+  dbGetOrderById,
+  toggleOrderCompleted,
+  toggleOrderPaid,
+} from "@/app/_services/order-service";
 import MateriaOrderDisplay from "@/app/components/material-order-display";
 import MaterialOrderDisplay from "@/app/components/material-order-display";
 
@@ -60,18 +65,17 @@ export default function OrderPageID() {
   }, []);
 
   useEffect(() => {
-      if (!user) {
-        return;
-      }
-  
-      if (user && id) {
-        dbGetOrderById(user.uid, id, setSelectedOrder);
-      }
+    if (!user) {
+      return;
+    }
+
+    if (user && id) {
+      dbGetOrderById(user.uid, id, setSelectedOrder);
+    }
   }, [user, id]);
 
-
-  const closeConfirmation = () => {
-    setConfirmWindowVisibility(false);
+  const openCloseConfirmation = () => {
+    setConfirmWindowVisibility((prev) => !prev);
   };
 
   const changeView = () => {
@@ -79,8 +83,8 @@ export default function OrderPageID() {
   };
 
   useEffect(() => {
-    setPaid(selectedOrder.paid)
-    setCompleted(selectedOrder.completed)
+    setPaid(selectedOrder.paid);
+    setCompleted(selectedOrder.completed);
 
     if (selectedOrder?.productForOrderData?.productImages?.length) {
       setMainImage(selectedOrder.productForOrderData.productImages[0].url);
@@ -98,13 +102,16 @@ export default function OrderPageID() {
 
   const toggleCompleted = async () => {
     try {
-      const newCompletedStatus = await toggleOrderCompleted(user.uid, id, completed);
+      const newCompletedStatus = await toggleOrderCompleted(
+        user.uid,
+        id,
+        completed
+      );
       setCompleted(newCompletedStatus);
     } catch (error) {
       console.error("Failed to toggle completed status:", error);
     }
   };
-  
 
   const formatDeadline = (timestamp) => {
     const deadlineDate = new Date(timestamp * 1000);
@@ -133,25 +140,25 @@ export default function OrderPageID() {
     return `${formattedDate}`;
   };
 
-    const handleDeleteOrder = async (e) => {  
-      setLoading(true);
-      try {
-          await dbDeleteOrderById(user.uid, id);
-          console.log("Order deleted successfully");
-          window.location.href = '/orders';
-      } catch (error) {
-          console.error("Error adding material:", error);
-      }
-    };
-      
-    const handleImageChange = (image) => {
-      if (mainImage === image.url || transitioning) return;
-      setTransitioning(true);
-      setTimeout(() => {
-        setMainImage(image.url);
-        setTransitioning(false)
-      }, 300); 
-    };
+  const handleDeleteOrder = async (e) => {
+    setLoading(true);
+    try {
+      await dbDeleteOrderById(user.uid, id);
+      console.log("Order deleted successfully");
+      window.location.href = "/orders";
+    } catch (error) {
+      console.error("Error adding material:", error);
+    }
+  };
+
+  const handleImageChange = (image) => {
+    if (mainImage === image.url || transitioning) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setMainImage(image.url);
+      setTransitioning(false);
+    }, 300);
+  };
 
   if (loading) {
     return (
@@ -173,47 +180,57 @@ export default function OrderPageID() {
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between items-center">
-                <p className="font-bold text-xl text-blackBeige" data-id="Your view">
-                  Your View
-                </p>
-                <Link href="/orders">
-                  <button className={commonClasses.headerButton}>
-                    <img src="/arrow-left.png" width={20} alt="Back" />
-                    <p>Back</p>
-                  </button>
-                </Link>
-              </div>
+              <p
+                className="font-bold text-xl text-blackBeige"
+                data-id="Your view"
+              >
+                Your View
+              </p>
+              <Link href="/orders">
+                <button className={commonClasses.headerButton}>
+                  <img src="/arrow-left.png" width={20} alt="Back" />
+                  <p>Back</p>
+                </button>
+              </Link>
+            </div>
 
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex flex-col gap-4 md:w-1/2">
-              <img
+                <img
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
                   className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
                   }`}
                 />
 
-                {selectedOrder?.productForOrderData?.productImages?.length > 0 && (
+                {selectedOrder?.productForOrderData?.productImages?.length >
+                  0 && (
                   <div className={commonClasses.thumbnailContainer}>
-                    {selectedOrder.productForOrderData.productImages.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
-                    {selectedOrder.productForOrderData.patternImages.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
+                    {selectedOrder.productForOrderData.productImages.map(
+                      (image, index) => (
+                        <SmallBlockHolder
+                          key={index}
+                          type="plainPicture"
+                          imageSource={image.url}
+                          onButtonFunction={() => handleImageChange(image)}
+                          mainStatus={mainImage === image.url}
+                        />
+                      )
+                    )}
+                    {selectedOrder.productForOrderData.patternImages.map(
+                      (image, index) => (
+                        <SmallBlockHolder
+                          key={index}
+                          type="plainPicture"
+                          imageSource={image.url}
+                          onButtonFunction={() => handleImageChange(image)}
+                          mainStatus={mainImage === image.url}
+                        />
+                      )
+                    )}
                   </div>
                 )}
               </div>
@@ -224,9 +241,11 @@ export default function OrderPageID() {
                     <p>Create receipt</p>
                     <img src="/receipt.png" alt="Pencil" className="w-5" />
                   </button>
-                  <button 
-                  className="relative bg-green rounded-md w-[28%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0"
-                  onClick={() => window.location.href = `/orders/${id}/edit`}
+                  <button
+                    className="relative bg-green rounded-md w-[28%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0"
+                    onClick={() =>
+                      (window.location.href = `/orders/${id}/edit`)
+                    }
                   >
                     <p>Edit</p>
                     <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
@@ -234,30 +253,24 @@ export default function OrderPageID() {
                 </div>
 
                 <p className="text-2xl font-bold text-blackBeige">
-                  {selectedOrder.nameOrder} <br/>Deadline:{" "}
+                  {selectedOrder.nameOrder} <br />
+                  Deadline:{" "}
                   {selectedOrder.deadline?.seconds
                     ? formatDeadline(selectedOrder.deadline.seconds)
                     : "No deadline"}
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Description:</p>
-                  <p className={commonClasses.sectionText}>
-                    {selectedOrder.description || "No set description."}
-                  </p>
-                </div>
-                
-                <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Client:</p>
                   <p className={commonClasses.sectionText}>
                     {selectedOrder.customerName || "No set client."}
                   </p>
                 </div>
-                
+
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Client:</p>
+                  <p className={commonClasses.sectionTitle}>Description:</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedOrder.customerName || "No set description."}
+                    {selectedOrder.description || "No set description."}
                   </p>
                 </div>
 
@@ -273,18 +286,22 @@ export default function OrderPageID() {
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Materials:</p>
 
-                  {selectedOrder?.materialsForOrderData?.map((material, index) => (
+                  {selectedOrder?.materialsForOrderData?.map(
+                    (material, index) => (
                       <MaterialOrderDisplay
-                      key={index}
-                      index={index+1}
-                      id={material.materialId}
-                      name={material.materialName}
-                      quantity={selectedOrder.quantities[index].quantity}
-                      imageSrc={material.materialImage.url || "/noImage.png"}
+                        key={index}
+                        index={index + 1}
+                        id={material.materialId}
+                        name={material.materialName}
+                        quantity={selectedOrder.quantities[index].quantity}
+                        imageSrc={material.materialImage.url || "/noImage.png"}
                       />
-                  ))}
-                  
-                  <p className={commonClasses.sectionText}>Material cost: ${selectedOrder.materialsCost}</p>
+                    )
+                  )}
+
+                  <p className={commonClasses.sectionText}>
+                    Material cost: ${selectedOrder.materialsCost}
+                  </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -296,19 +313,24 @@ export default function OrderPageID() {
 
                 <div className="flex flex-row float-right gap-1 justify-between font-bold">
                   <button
+                    data-id="delete-button"
                     className="hover:arrow text-sm bg-red w-[25%] h text-white rounded-md"
-                    onClick={() => console.log("Delete action triggered")}
+                    onClick={openCloseConfirmation}
                   >
                     Delete
                   </button>
                   <button
-                    className={`${paid ? "bg-darkYellow text-white" : "bg-yellow"} text-sm py-1 rounded-md w-[60%]`}
+                    className={`${
+                      paid ? "bg-darkYellow text-white" : "bg-yellow"
+                    } text-sm py-1 rounded-md w-[60%]`}
                     onClick={togglePaid}
                   >
                     {paid ? "Set as unpaid" : "Set as Paid"}
                   </button>
                   <button
-                    className={`${completed ? "bg-darkYellow text-white" : "bg-yellow"} text-sm py-1 rounded-md w-[60%]`}
+                    className={`${
+                      completed ? "bg-darkYellow text-white" : "bg-yellow"
+                    } text-sm py-1 rounded-md w-[60%]`}
                     onClick={toggleCompleted}
                   >
                     {completed ? "Set as Incomplete" : "Set as Completed"}
@@ -316,13 +338,12 @@ export default function OrderPageID() {
                 </div>
               </div>
             </div>
- 
           </div>
 
           {/* Confirmation Window */}
           <ConfirmationWindow
             windowVisibility={confirmWindowVisibility}
-            onClose={closeConfirmation}
+            onClose={openCloseConfirmation}
             onDelete={handleDeleteOrder}
           />
 
@@ -346,7 +367,9 @@ export default function OrderPageID() {
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
-              <p className="font-bold">Client view:</p>
+              <p className="font-bold" data-id="Client view">
+                Client view:
+              </p>
               <Link href="/orders">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />

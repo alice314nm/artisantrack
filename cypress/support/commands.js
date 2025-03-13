@@ -34,3 +34,12 @@ Cypress.Commands.add("login", () => {
   cy.contains("Log In").click();
   cy.wait(2000);
 });
+
+Cypress.Commands.add("loginTest", () => {
+  indexedDB.deleteDatabase("firebaseLocalStorageDb");
+  cy.contains("Log In").click();
+  cy.get('[data-id="email"]').type("test@gmail.com");
+  cy.get('[data-id="password"]').type("password");
+  cy.contains("Log In").click();
+  cy.wait(3000);
+});

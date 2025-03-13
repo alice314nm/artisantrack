@@ -48,19 +48,18 @@ describe("Material Page Tests", () => {
     cy.url().should("include", "/create_material");
     cy.get('[data-id="material-id"]').type("3012005");
     cy.get('[data-id="material-name"]').type("Cypress Test Material");
+    cy.get('[data-id="material-description"]').type("Cypress Test Description");
     cy.get('[data-id="material-color"]').type("Cypress Test Material Color");
     cy.get('[data-id="material-category"]').type("Cypress Test Category");
     cy.get('[data-id="material-add-category"]').click();
-    cy.get('[data-id="material-shop"]').type("Cypress Test Shop");
-    cy.get('[data-id="material-price"]').type("3012005");
-    cy.get('[data-id="material-add-cost"]').click();
-    cy.get('[data-id="material-quantity"]').type("2");
-    cy.get('[data-id="currency-select"]').select("CAD");
-
-    cy.get('[data-id="material-description"]').type("Cypress Test Description");
     cy.get('input[type="file"]').selectFile("cypress/fixtures/BananaCat.png", {
       force: true,
     });
+    cy.get('[data-id="material-shop"]').type("Cypress Test Shop");
+    cy.get('[data-id="material-total-price"]').type("100");
+    cy.get('[data-id="material-quantity"]').type("2");
+    cy.get('[data-id="currency-select"]').select("CAD");
+    cy.get('[data-id="material-cost-per-unit"]').should("have.value", "50.00");
     cy.get('[data-id="create-button"]').click();
     cy.wait(5000);
   });
@@ -84,39 +83,66 @@ describe("Material Page Tests", () => {
   it("should filter materials by category 'wool'", () => {
     cy.get('[data-id="filter-button"]').click();
     cy.contains("Categories").click();
-    cy.get('[data-id="category-filter"]').contains("wool").click();
+    cy.get('[data-id="category-filter"]').contains(/wool/i).click();
     cy.get('[data-id="apply-filters"]').click();
     cy.get('[data-id="material-block"]').each(($el) => {
-      cy.wrap($el).should("contain.text", "wool");
+      cy.wrap($el)
+        .invoke("text")
+        .then((text) => {
+          expect(text.toLowerCase()).to.contain("wool");
+        });
     });
   });
 
-  it("should filter materials by color 'white'", () => {
+  it("should filter materials by color 'grey'", () => {
     cy.get('[data-id="filter-button"]').click();
-    cy.get('[data-id="color-filter"]').click();
-    cy.get('[data-id="color-filter"]').contains("white").click();
+    cy.get('[data-id="color-option"]').click();
+    cy.get('[data-id="color-filter"]').contains(/grey/i).click();
     cy.get('[data-id="apply-filters"]').click();
     cy.get('[data-id="material-block"]').each(($el) => {
-      cy.wrap($el).should("contain.text", "white");
+      cy.wrap($el)
+        .invoke("text")
+        .then((text) => {
+          expect(text.toLowerCase()).to.contain("grey");
+        });
     });
   });
 
   it("should sort materials by name ascending", () => {
     cy.get('[data-id="filter-button"]').click();
-    cy.get('[data-id="sort-by"]').click();
-    cy.contains("Name Ascending").click();
+    cy.get('[data-id="sort-by-option"]').click();
+    cy.get('[data-id="sort-by"]').contains("Name Ascending").click();
     cy.get('[data-id="apply-filters"]').click();
+    cy.get('[data-id="material-title"]').then(($elements) => {
+      const materialNames = [...$elements].map((el) => el.innerText.trim());
+      const sortedNames = [...materialNames].sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: "base" })
+      );
+      expect(materialNames).to.deep.equal(sortedNames);
+    });
   });
 
   it("should sort materials by name descending", () => {
     cy.get('[data-id="filter-button"]').click();
-    cy.get('[data-id="sort-by"]').click();
+    cy.get('[data-id="sort-by-option"]').click();
+    cy.get('[data-id="sort-by"]').contains("Name Descending").click();
     cy.contains("Name Descending").click();
     cy.get('[data-id="apply-filters"]').click();
+    cy.get('[data-id="material-title"]').then(($elements) => {
+      const materialNames = [...$elements].map((el) => el.innerText.trim());
+      const sortedNames = [...materialNames]
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+        .reverse();
+      expect(materialNames).to.deep.equal(sortedNames);
+    });
   });
 
   it("should display search results for materials", () => {
-    cy.get('[data-id="search-bar"]').type("white wool");
-    cy.get('[data-id="material-block"]').should("include", "white wool");
+    cy.get('[data-id="search-bar"]').type("white with red");
+    cy.get('[data-id="material-block"]').should("exist");
+    cy.get('[data-id="material-block"]').each(($el) => {
+      const productName = $el.text().toLowerCase();
+      expect(productName).to.include("white with red");
+    });
   });
 });

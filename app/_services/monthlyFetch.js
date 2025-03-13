@@ -30,7 +30,7 @@ export const fetchOrders = async (user, currentMonth) => {
 
   const filteredOrders = ordersData.filter((order) => {
     if (order.startDate?.seconds) {
-      const orderDate = new Date(order.startDate.seconds * 1000);
+      const orderDate = new Date(order.deadline.seconds * 1000);
       return orderDate >= startOfMonth && orderDate <= endOfMonth;
     }
     return false;

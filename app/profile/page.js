@@ -8,12 +8,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ChangePasswordWindow from "@/app/components/change-password-window";
 import NotLoggedWindow from "@/app/components/not-logged-window";
+import { updateProfile } from "@/app/_services/auth";
+import { db } from "@/app/_utils/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function Page() {
   const { user } = useUserAuth();
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
+  const [editableDisplayName, setEditableDisplayName] = useState(user?.displayName || "");
 
   useEffect(() => {
     if (user) {
@@ -25,8 +29,21 @@ export default function Page() {
     "flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4";
   const contentStyle = "";
 
-  const handleSave = () => {
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      await updateProfile(user, {
+        displayName: editableDisplayName,
+      });
+
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        displayName: editableDisplayName,
+      });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   const openChangePasswordWindow = () => {
@@ -49,8 +66,8 @@ export default function Page() {
                 <p className="text-xl font-semibold">Artisan: </p>
                 <input
                   type="text"
-                  value={user.displayName}
-                  onChange={(e) => {}}
+                  value={editableDisplayName}
+                  onChange={(e) => setEditableDisplayName(e.target.value)}
                   className="border border-gray-400 rounded p-1"
                 />
               </div>
@@ -80,6 +97,7 @@ export default function Page() {
           {/* Change Password Section */}
           <div className={sectionStyle}>
             <button
+              data-id="change-password-button"
               className="text-black underline bg-green self-start p-2 rounded-md"
               onClick={openChangePasswordWindow}
             >

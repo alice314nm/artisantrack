@@ -22,16 +22,15 @@ export default function SlideMenu({ menuVisible }) {
         className={`
           fixed z-10 w-[200px] h-screen bg-beige font-bold bottom-16 
           transition-all duration-300 ease-in-out 
-          ${
-            menuVisible
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-full"
+          ${menuVisible
+            ? "opacity-100 translate-x-0"
+            : "opacity-0 -translate-x-full"
           }
         `}
         data-id="slide-menu"
       >
         <ul className="h-screen flex flex-col justify-end">
-          <a
+          <a data-id="logout"
             onClick={firebaseSignOut}
             className="flex gap-2 justify-end py-2 px-4 text-right border-b border-green w-full bg-beige hover:bg-darkBeige cursor-pointer"
             style={{
@@ -48,7 +47,7 @@ export default function SlideMenu({ menuVisible }) {
             <p>Home</p>
           </Link>
 
-          <Link className={buttonStyleLi} href="/profile">
+          <Link className={buttonStyleLi} href="/profile" data-id="slide-profile">
             <img src="/profile.png" className="w-5" />
             <p>Profile</p>
           </Link>
@@ -92,11 +91,10 @@ export default function SlideMenu({ menuVisible }) {
 
             {/* Submenu */}
             <div
-              className={`transition-all duration-300 overflow-hidden flex flex-col ${
-                inventoryVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
-              }`}
+              className={`transition-all duration-300 overflow-hidden flex flex-col ${inventoryVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-4"
+                }`}
               style={{
                 maxHeight: inventoryVisible ? "200px" : "0px",
               }}

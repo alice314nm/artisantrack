@@ -177,6 +177,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                 </label>
                 <div className="relative">
                   <input
+                    data-id="current-password"
                     id="current-password"
                     type={showCurrentPassword ? "text" : "password"}
                     value={currentPassword}
@@ -210,6 +211,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                 </label>
                 <div className="relative">
                   <input
+                    data-id="new-password"
                     id="new-password"
                     type={showNewPassword ? "text" : "password"}
                     value={newPassword}
@@ -259,6 +261,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                 </label>
                 <div className="relative">
                   <input
+                    data-id="confirm-new-password"
                     id="confirm-new-password"
                     type={showConfirmNewPassword ? "text" : "password"}
                     value={confirmNewPassword}
@@ -302,6 +305,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
               <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between font-bold gap-3">
                   <button
+                    data-id="change-button"
                     className="flex-1 text-center text-red border-r border-darkBeige p-2 bg-green rounded-full hover:bg-darkGreen"
                     onClick={handleSubmit}
                   >

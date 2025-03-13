@@ -115,15 +115,11 @@ export default function WelcomePage() {
               <div className="space-y-2">
                 <p className={infoStyle}>
                   Revenue: $
-                  {userData?.monthlyIncome
-                    ? userData.monthlyIncome.toFixed(2)
-                    : "Loading..."}
+                  {userData?.monthlyIncome ?? "Loading..."}
                 </p>
                 <p className={infoStyle}>
                   Expenses: $
-                  {userData?.monthlyExpenses
-                    ? userData?.monthlyExpenses?.toFixed(2)
-                    : "Loading..."}
+                  {userData?.monthlyExpenses ?? "Loading..."}
                 </p>
               </div>
               <Link className={LinkStyle} href="/finances">

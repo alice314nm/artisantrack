@@ -1,7 +1,14 @@
 "use client";
 
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { app } from "../../_utils/firebase";
+import { db } from "../../_utils/firebase";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
@@ -15,7 +22,9 @@ import {
   fetchMaterials,
 } from "@/app/_services/monthlyFetch";
 
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 export default function WelcomePage() {
   const { user } = useUserAuth();
@@ -28,7 +37,6 @@ export default function WelcomePage() {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [filterLabel, setFilterLabel] = useState("");
 
-
   const [popularProduct, setPopularProduct] = useState({});
   const [popularMaterial, setPopularMaterial] = useState({});
   const [regularClient, setRegularClient] = useState("");
@@ -39,16 +47,17 @@ export default function WelcomePage() {
 
   const isInMonth = (deadlineSeconds, targetMonth) => {
     if (!deadlineSeconds || !targetMonth) {
-      return false; 
-  }
+      return false;
+    }
     const deadlineDate = new Date(deadlineSeconds * 1000);
     const deadlineMonth = deadlineDate.getMonth(); // 0 = January, 1 = February, ...
     const deadlineYear = deadlineDate.getFullYear();
     const [targetMonthName, targetYear] = targetMonth.split(" ");
-    const targetMonthIndex = new Date(Date.parse(targetMonthName + " 1, 2012")).getMonth(); // Convert string month to index
+    const targetMonthIndex = new Date(
+      Date.parse(targetMonthName + " 1, 2012")
+    ).getMonth(); // Convert string month to index
     const targetYearInt = parseInt(targetYear, 10);
-    
-    
+
     console.log("Comparing:");
     console.log("  Deadline Month:", deadlineMonth);
     console.log("  Target Month Index:", targetMonthIndex);
@@ -57,7 +66,6 @@ export default function WelcomePage() {
 
     return deadlineMonth === targetMonthIndex && deadlineYear === targetYearInt;
   };
-  
 
   const monthYear = currentMonth.toLocaleString("default", {
     month: "long",
@@ -65,37 +73,232 @@ export default function WelcomePage() {
   });
 
   const showOrdersWithPopularProduct = () => {
-    const filtered = orders.filter(order =>
-      order.productId === popularProduct?.id
+    const filtered = orders.filter(
+      (order) => order.productId === popularProduct?.id
     );
     setFilteredOrders(filtered);
     setFilterLabel("Orders with popular product this month");
     setStateShow("orders");
   };
-  
-    const showOrdersWithPopularMaterial = () => {
-    const filtered = orders.filter(order =>
+
+  const showOrdersWithPopularMaterial = () => {
+    const filtered = orders.filter((order) =>
       order.materialIds?.includes(popularMaterial?.id)
     );
     setFilteredOrders(filtered);
     setFilterLabel("Orders with popular material this month");
     setStateShow("orders");
   };
-  
+
   const showOrdersWithRegularClient = () => {
-    const filtered = orders.filter(order =>
-      order.customerName === regularClient?.name
+    const filtered = orders.filter(
+      (order) => order.customerName === regularClient?.name
     );
     setFilteredOrders(filtered);
     setFilterLabel("Orders from regular client this month");
     setStateShow("orders");
   };
 
-  // In your useEffect to handle current month initialization
-useEffect(() => {
-  // Set currentMonth to today on initial load
-  setCurrentMonth(new Date());
-}, []);  // Empty dependency array ensures this runs once on component mount
+  const exportToExcel = async (data, selectedMonth, selectedYear, userName) => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Report");
+
+    // Title Section
+
+    const titleCell = sheet.addRow([`${selectedMonth} ${selectedYear}`]);
+    titleCell.font = { bold: true, size: 14 };
+    sheet.addRow([]);
+
+    // Income and Expenses
+    sheet.addRow([`INCOME:`, data.income]);
+    sheet.addRow([`EXPENSES:`, data.expenses]);
+    sheet.addRow([]);
+
+    // Popular Product, Materials and Client
+    sheet.addRow([`Popular Product:`, data.popularProduct?.name]);
+    sheet.addRow([`Popular Material:`, data.popularMaterial?.name]);
+    sheet.addRow([`Regular Client:`, data.regularClient?.name]);
+    sheet.addRow([]);
+
+    // ORDERS Section
+    sheet.addRow(["ORDERS"]);
+    const orderHeaders = [
+      "Title of the order",
+      "Customer's name",
+      "Product Id",
+      "Product cost",
+      "Material Id",
+      "Quantity",
+      "Material Cost",
+      "Work cost",
+      "Total Cost",
+    ];
+    sheet.addRow(orderHeaders);
+
+    const filteredOrders = orders.filter((order) => {
+      return (
+        new Date(order.startDate.seconds * 1000).getMonth() === selectedMonth &&
+        new Date(order.startDate.seconds * 1000).getFullYear() === selectedYear
+      );
+    });
+
+    const orderRows = filteredOrders.map(async (order) => {
+      console.log("Order: ", order);
+
+      // Fetch product data if it's a reference
+      const productId = order.productId;
+      const productRef = doc(collection(db, "products"), productId); // Adjust this to match your Firestore structure.
+      const productSnapshot = await getDoc(productRef);
+
+      let productName = "—";
+      let productCost = 0;
+
+      if (productSnapshot.exists) {
+        console.log("productSnapshot.data(): ", productSnapshot.data());
+        const productData = productSnapshot.data();
+        if (productData !== null && productData && productData.name) {
+          productName = productData.name;
+          productCost = productData.cost;
+        } else {
+          console.warn(`Product not found for order ID: ${order.id}`);
+        }
+      }
+      let materialDetails = "";
+      let totalMaterialCost = 0;
+
+      if (
+        order.materialIds &&
+        Array.isArray(order.materialIds) &&
+        order.quantities &&
+        Array.isArray(order.quantities)
+      ) {
+        order.materialIds.forEach((materialId, index) => {
+          const material = data.materials.find((m) => m.id === materialId);
+          if (material && order.quantities[index] !== undefined) {
+            let quantityValue = order.quantities[index];
+            if (
+              typeof order.quantities[index] === "object" &&
+              order.quantities[index] !== null
+            ) {
+              if (order.quantities[index].hasOwnProperty("value")) {
+                // example of checking for a value property.
+                quantityValue = order.quantities[index].value; // Access the value property
+              } else {
+                console.warn("Quantity object does not have 'value' property.");
+              }
+            }
+            const materialCost = material.cost * quantityValue; // Use quantityValue
+            totalMaterialCost += materialCost;
+            materialDetails += `${material.name} (Qty: ${quantityValue}), `; // Use quantityValue
+          }
+        });
+        // Remove the last comma and space.
+        materialDetails = materialDetails.slice(0, -2);
+      } else {
+        materialDetails = "—"; // If no material info, mark it as empty.
+      }
+
+      // Check if required fields are missing and log
+      if (!order.productId || !order.customerName) {
+        console.warn(
+          `Missing productId or customerName for order ID: ${order.id}`
+        );
+      }
+
+      return [
+        order.nameOrder || "—",
+        order.customerName || "—",
+        order.productId || "—",
+        order.productCost,
+        order.materialIds ? order.materialIds.join(", ") : "—",
+        order.quantities ? order.quantities.join(", ") : "—",
+        order.totalMaterialCost,
+        order.workCost || 0,
+        order.totalCost || 0,
+      ];
+    });
+
+    // Since you're using async calls, you need to ensure that all promises resolve before proceeding
+    const resolvedOrderRows = await Promise.all(orderRows);
+
+    // Add the rows to the sheet
+    resolvedOrderRows.forEach((row) => {
+      sheet.addRow(row);
+    });
+
+    sheet.addRow([]);
+
+    // PRODUCTS Section
+    sheet.addRow(["PRODUCTS"]);
+
+    const productHeaders = [
+      "Product ID",
+      "Product name",
+      "Category",
+      "Average Total",
+    ];
+    sheet.addRow(productHeaders);
+
+    data.products.forEach((prod) => {
+      sheet.addRow([
+        prod.productId,
+        prod.name,
+        prod.categories.join(", "),
+        prod.averageCost,
+      ]);
+    });
+
+    sheet.addRow([]);
+
+    // MATERIALS Section
+    sheet.addRow(["MATERIALS"]);
+
+    const materialHeaders = [
+      "Material Id",
+      "Material Name",
+      "Category",
+      "Color",
+      "Shop",
+      "Quantity",
+      "Cost per unit",
+      "Total",
+    ];
+
+    sheet.addRow(materialHeaders);
+
+    data.materials.forEach((mat) => {
+      sheet.addRow([
+        mat.materialId,
+        mat.name,
+        mat.categories.join(", "),
+        mat.color,
+        mat.shop,
+        mat.quantity,
+        mat.costPerUnit,
+        mat.total,
+      ]);
+    });
+
+    // Apply width to all columns
+    sheet.columns = sheet.columns.map((col) => ({
+      ...col,
+      width: 25,
+    }));
+
+    // Apply font size 12
+    sheet.eachRow((row) => {
+      row.font = { size: 12 };
+    });
+
+    // Create a buffer and save the file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const fileName = `${selectedMonth}-${selectedYear}-artisan-${userName}.xlsx`;
+    saveAs(new Blob([buffer]), fileName);
+  };
+
+  useEffect(() => {
+    setCurrentMonth(new Date());
+  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -105,7 +308,6 @@ useEffect(() => {
     return () => clearTimeout(timeout);
   }, []);
 
-  //Function where to set/change variables for popular entities, incomes, expense when the chosen month is changing
   useEffect(() => {}, [currentMonth]);
 
   // Fetch orders, products, materials
@@ -124,6 +326,7 @@ useEffect(() => {
 
     const loadProducts = async () => {
       const fetchedProducts = await fetchProducts(user, currentMonth);
+      console.log("Fetched Products:", fetchedProducts);
       setProducts(fetchedProducts);
     };
     loadProducts();
@@ -182,13 +385,13 @@ useEffect(() => {
         const monthYear = currentMonth.toLocaleString("default", {
           month: "long",
           year: "numeric",
-      });
+        });
 
-      console.log("Current Month:", currentMonth);
-      console.log("Month Year:", monthYear);
+        console.log("Current Month:", currentMonth);
+        console.log("Month Year:", monthYear);
 
         // Filter orders based on the current month and year (e.g., February 2025)
-        const filteredOrdersForMonth = orders.filter(order =>
+        const filteredOrdersForMonth = orders.filter((order) =>
           isInMonth(order.deadline?.seconds, monthYear)
         );
 
@@ -197,7 +400,8 @@ useEffect(() => {
         // Calculate Monthly Popular Material
         const materialCount = {};
 
-        filteredOrdersForMonth.forEach((order) => { // Use filtered orders
+        filteredOrdersForMonth.forEach((order) => {
+          // Use filtered orders
           if (order.materialIds && Array.isArray(order.materialIds)) {
             order.materialIds.forEach((materialId) => {
               if (materialCount[materialId]) {
@@ -211,64 +415,64 @@ useEffect(() => {
             });
           }
         });
-      
+
         // Find the monthly most popular material
-      const mostPopularMaterial = Object.values(materialCount).reduce(
-        (max, material) =>
-          material.count > max.count ? material : max,
-        { count: 0 }
-      );
+        const mostPopularMaterial = Object.values(materialCount).reduce(
+          (max, material) => (material.count > max.count ? material : max),
+          { count: 0 }
+        );
 
-      console.log("Material count:", materialCount);
-      setPopularMaterial(mostPopularMaterial);
-      
+        console.log("Material count:", materialCount);
+        setPopularMaterial(mostPopularMaterial);
 
-      // Calculate Monthly Popular Product 
-      const productCount = {};
+        // Calculate Monthly Popular Product
+        const productCount = {};
 
-      filteredOrdersForMonth.forEach((order) => { // Use filtered orders
-        if (order.productId) {
-          if (productCount[order.productId]) {
-            productCount[order.productId].count += 1;
-          } else {
-            const product = products.find((p) => p.id === order.productId);
-            if (product) {
-              productCount[order.productId] = { ...product, count: 1 };
+        filteredOrdersForMonth.forEach((order) => {
+          // Use filtered orders
+          if (order.productId) {
+            if (productCount[order.productId]) {
+              productCount[order.productId].count += 1;
+            } else {
+              const product = products.find((p) => p.id === order.productId);
+              if (product) {
+                productCount[order.productId] = { ...product, count: 1 };
+              }
             }
           }
-        }
-      });
+        });
 
-      // Find the most popular product
-      const mostPopularProduct = Object.values(productCount).reduce(
-        (max, product) =>
-          product.count > max.count ? product : max,
-        { count: 0 }
-      );
+        // Find the most popular product
+        const mostPopularProduct = Object.values(productCount).reduce(
+          (max, product) => (product.count > max.count ? product : max),
+          { count: 0 }
+        );
 
-      setPopularProduct(mostPopularProduct);
+        setPopularProduct(mostPopularProduct);
 
-      // Find the monthly most popular Client
-      const clientCount = {}  
+        // Find the monthly most popular Client
+        const clientCount = {};
 
-      monthlyOrders.forEach((order) => {
-        if (order.customerName) {
-          if (clientCount[order.customerName]) {
-            clientCount[order.customerName].count += 1;
-          } else {
-            clientCount[order.customerName] = { name: order.customerName, count: 1 };
+        monthlyOrders.forEach((order) => {
+          if (order.customerName) {
+            if (clientCount[order.customerName]) {
+              clientCount[order.customerName].count += 1;
+            } else {
+              clientCount[order.customerName] = {
+                name: order.customerName,
+                count: 1,
+              };
+            }
           }
-        }
-      }) 
+        });
 
-      const regularClient = Object.values(clientCount).reduce(
-        (max, client) => (client.count > max.count ? client : max),
-        { count: 0 }
-      ) 
-      setRegularClient(regularClient) 
+        const regularClient = Object.values(clientCount).reduce(
+          (max, client) => (client.count > max.count ? client : max),
+          { count: 0 }
+        );
+        setRegularClient(regularClient);
 
-      console.log("Regular Client:", regularClient);
-
+        console.log("Regular Client:", regularClient);
       } catch (error) {
         console.error("Error fetching:", error);
       } finally {
@@ -347,6 +551,10 @@ useEffect(() => {
   }
 
   if (user) {
+    const selectedMonth = currentMonth.getMonth();
+    const selectedYear = currentMonth.getFullYear();
+    const userName = user.displayName || user.email || "User";
+
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Monthly Report" />
@@ -381,80 +589,44 @@ useEffect(() => {
 
               <div className="pt-2">
                 <p>
-                Popular product this month:{" "}
-              <button className="underline" onClick={showOrdersWithPopularProduct}>
-                {popularProduct?.productId || "N/A"} | {popularProduct?.name || "N/A"} | amount: {popularProduct?.count || 0}
-              </button>
-                </p>
-
-                <p>
-                  Popular material this month:{" "}
-                  <button className="underline" onClick={showOrdersWithPopularMaterial}>
-                    {popularMaterial?.materialId || "N/A"} | {popularMaterial?.name || "N/A"} | amount: {popularMaterial?.count || 0}
+                  Popular product this month:{" "}
+                  <button
+                    className="underline"
+                    onClick={showOrdersWithPopularProduct}
+                  >
+                    {popularProduct?.productId || "N/A"} |{" "}
+                    {popularProduct?.name || "N/A"} |{" "}
+                    {popularProduct?.count || 0}
                   </button>
                 </p>
 
                 <p>
-                Regular client this month:{" "}
-                <button className="underline" onClick={showOrdersWithRegularClient}>
-                  {regularClient?.name || "N/A"} | amount: {regularClient?.count || 0}
-                </button>
-              </p>
+                  Popular material this month:{" "}
+                  <button
+                    className="underline"
+                    onClick={showOrdersWithPopularMaterial}
+                  >
+                    {popularMaterial?.materialId || "N/A"} |{" "}
+                    {popularMaterial?.name || "N/A"} |{" "}
+                    {popularMaterial?.count || 0}
+                  </button>
+                </p>
 
+                <p>
+                  Regular client this month:{" "}
+                  <button
+                    className="underline"
+                    onClick={showOrdersWithRegularClient}
+                  >
+                    {regularClient?.name || "N/A"} | {regularClient?.count || 0}
+                  </button>
+                </p>
               </div>
             </div>
 
             {/* view */}
             <div className="flex flex-col gap-2">
               <p className="font-semibold">Show</p>
-              {filterLabel && (
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <p className="font-semibold text-lg">{filterLabel}</p>
-                        <button
-                          onClick={() => {
-                            setFilteredOrders([]);
-                            setFilterLabel("");
-                          }}
-                          className="rounded-md text-white bg-red py-y px-4"
-                        >
-                          Clear filter
-                        </button>
-                      </div>
-                      <div
-                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
-                        gap-4 sm:gap-6 lg:gap-8 
-                        auto-rows-[1fr] 
-                        justify-center items-stretch"
-                      >
-                      {(filteredOrders).map((order, index) => (
-                        <Link
-                          href={`/orders/${order.id}`}
-                          key={order.id}
-                          data-id="order-block"
-                        >
-                          <BlockHolder
-                            id={index + 1}
-                            title={order.nameOrder}
-                            imageSource={order.imageUrl || "/noImage.png"}
-                            deadline={
-                              order.deadline?.seconds
-                                ? formatDeadline(order.deadline.seconds)
-                                : ["No deadline", 0, "No deadline"]
-                            }
-                            currency={order.currency}
-                            total={order.totalCost}
-                            customerId={order.customerId}
-                            type={"order"}
-                          />
-                        </Link>
-                      ))}
-                      </div>
-
-                    </div>
-                    
-                    
-                  )}
               <div className="flex flex-row gap-2 justify-between items-center">
                 <button
                   className={`w-[33%] py-1 rounded-md ${
@@ -490,35 +662,51 @@ useEffect(() => {
 
               {stateShow === "orders" && (
                 <div className="w-full px-4 pb-20">
+                  {filterLabel && (
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="font-semibold text-lg">{filterLabel}</p>
+                      <button
+                        onClick={() => {
+                          setFilteredOrders([]);
+                          setFilterLabel("");
+                        }}
+                        className="text-sm text-red underline"
+                      >
+                        Clear filter
+                      </button>
+                    </div>
+                  )}
+
                   <div
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
                     gap-4 sm:gap-6 lg:gap-8 
                     auto-rows-[1fr] 
                     justify-center items-stretch"
                   >
-                    {(orders).map((order, index) => (
-                      <Link
-                        href={`/orders/${order.id}`}
-                        key={order.id}
-                        data-id="order-block"
-                      >
-
-                      <BlockHolder
-                          id={index + 1}
-                          title={order.nameOrder}
-                          imageSource={order.imageUrl || "/noImage.png"}
-                          deadline={
-                            order.deadline?.seconds
-                              ? formatDeadline(order.deadline.seconds)
-                              : ["No deadline", 0, "No deadline"]
-                          }
-                          currency={order.currency}
-                          total={order.totalCost}
-                          customerId={order.customerId}
-                          type={"order"}
-                        />
-                      </Link>
-                    ))}
+                    {(filteredOrders.length > 0 ? filteredOrders : orders).map(
+                      (order, index) => (
+                        <Link
+                          href={`/orders/${order.id}`}
+                          key={order.id}
+                          data-id="order-block"
+                        >
+                          <BlockHolder
+                            id={index + 1}
+                            title={order.nameOrder}
+                            imageSource={order.imageUrl || "/noImage.png"}
+                            deadline={
+                              order.deadline?.seconds
+                                ? formatDeadline(order.deadline.seconds)
+                                : ["No deadline", 0, "No deadline"]
+                            }
+                            currency={order.currency}
+                            total={order.totalCost}
+                            customerId={order.customerId}
+                            type={"order"}
+                          />
+                        </Link>
+                      )
+                    )}
                   </div>
                 </div>
               )}
@@ -526,31 +714,30 @@ useEffect(() => {
               {stateShow === "products" && (
                 <div className="w-full px-4 pb-20">
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 auto-rows-[1fr] justify-center items-stretch">
-                    {products
-                      .filter((product) => product.id === popularProduct?.productId) // Filter by popular product
-                      .map((product) => (
-                        <Link
-                          href={`/products/${product.id}`}
-                          key={product.id}
-                          data-id="product-block"
-                          className="transition-all duration-300 rounded-lg overflow-hidden"
-                        >
-                          <BlockHolder
-                            key={product.productId}
-                            id={product.productId}
-                            title={product.name}
-                            currency={product.currency}
-                            category={product.categories?.join(", ") || "—"}
-                            total={product.averageCost || "—"}
-                            imageSource={product.productImages?.[0]?.url || "/noImage.png"}
-                            type={"product"}
-                          />
-                        </Link>
-                      ))}
+                    {Object.values(products).map((product) => (
+                      <Link
+                        href={`/products/${product.productId}`}
+                        key={product.productId}
+                        data-id="product-block"
+                        className="transition-all duration-300 rounded-lg overflow-hidden"
+                      >
+                        <BlockHolder
+                          key={product.productId}
+                          id={product.productId}
+                          title={product.name}
+                          currency={product.currency}
+                          category={product.categories?.join(", ") || "—"}
+                          total={product.averageCost || "—"}
+                          imageSource={
+                            product.productImages?.[0]?.url || "/noImage.png"
+                          }
+                          type={"product"}
+                        />
+                      </Link>
+                    ))}
                   </div>
                 </div>
               )}
-
 
               {stateShow === "materials" && (
                 <div className="w-full px-4 pb-20">
@@ -594,7 +781,20 @@ useEffect(() => {
           onFirstFunction={() => (window.location.href = `/finances`)}
           secondTitle={"Download"}
           iconSecond={"/download.png"}
-          onSecondFunction={() => console.log(0)}
+          onSecondFunction={() => {
+            const yourData = {
+              income,
+              expenses,
+              popularProduct,
+              popularMaterial,
+              regularClient,
+              orders,
+              products,
+              materials,
+            };
+
+            exportToExcel(yourData, selectedMonth, selectedYear, userName);
+          }}
         />
       </div>
     );

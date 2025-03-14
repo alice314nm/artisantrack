@@ -50,7 +50,8 @@ export default function Page() {
     setAccountDeleted(true);
     setTimeout(() => {
       setAccountDeleted(false);
-    }, 4000);
+      window.location.href = "/";
+    }, 3000);
   };
 
   const handleSave = async () => {
@@ -120,11 +121,16 @@ export default function Page() {
   if (accountDeleted && !user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Profile" />
         <div className="fixed top-0 left-0 w-full font-semibold text-2xl bg-green px-5 py-4 text-center animate-pulse">
           <p>Account successfully deleted!</p>
         </div>
-        <NotLoggedWindow />
+        <div className="flex flex-1 items-center justify-center">
+          <img
+            src="/loading-gif.gif"
+            className="h-10"
+            data-id="loading-spinner"
+          />
+        </div>
       </div>
     );
   }

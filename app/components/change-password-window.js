@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   sendPasswordResetEmail,
@@ -117,8 +119,9 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${windowVisibility ? "" : "hidden"
-        }`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
+        windowVisibility ? "" : "hidden"
+      }`}
       data-id="changing-password-window"
     >
       <div className="bg-beige border border-darkBeige rounded-md w-[400px]">
@@ -243,11 +246,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                 </div>
                 {/* Progress Text */}
                 <p className="text-sm mt-1">
-                  {progress <= 1
-                    ? "Weak"
-                    : progress <= 3
-                      ? "Medium"
-                      : "Strong"}
+                  {progress <= 1 ? "Weak" : progress <= 3 ? "Medium" : "Strong"}
                 </p>
               </div>
 

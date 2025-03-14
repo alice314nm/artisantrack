@@ -22,7 +22,6 @@ import {
   toggleOrderCompleted,
   toggleOrderPaid,
 } from "@/app/_services/order-service";
-import MateriaOrderDisplay from "@/app/components/material-order-display";
 import MaterialOrderDisplay from "@/app/components/material-order-display";
 
 export default function OrderPageID() {

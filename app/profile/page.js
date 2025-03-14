@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { app } from "../_utils/firebase";
 import { getUserData } from "@/app/_services/user-data";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
@@ -8,9 +17,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ChangePasswordWindow from "@/app/components/change-password-window";
 import NotLoggedWindow from "@/app/components/not-logged-window";
-import { updateProfile } from "@/app/_services/auth";
-import { db } from "@/app/_utils/firebase";
-import { doc, updateDoc } from "firebase/firestore";
 
 export default function Page() {
   const { user } = useUserAuth();
@@ -30,20 +36,28 @@ export default function Page() {
   const contentStyle = "";
 
   const handleSave = async () => {
-    try {
-      await updateProfile(user, {
-        displayName: editableDisplayName,
-      });
+    if (!editableDisplayName.trim()) return;
 
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
+    try {
+      const db = getFirestore(app);
+      const userDoc = doc(db, `users/${user.uid}`);
+      await updateDoc(userDoc, {
         displayName: editableDisplayName,
       });
+      setUserData((prevData) => ({
+        ...prevData,
+        displayName: editableDisplayName,
+      }));
 
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
     }
+  };
+
+  const handleCancel = () => {
+    setEditableDisplayName(user.displayName || "");
+    setIsEditing(false);
   };
 
   const openChangePasswordWindow = () => {
@@ -63,7 +77,7 @@ export default function Page() {
           <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
             {isEditing ? (
               <div className="flex flex-row gap-4 items-center">
-                <p className="text-xl font-semibold">Artisan: </p>
+                <p className="text-xl font-semibold">Artisan:</p>
                 <input
                   type="text"
                   value={editableDisplayName}
@@ -73,19 +87,44 @@ export default function Page() {
               </div>
             ) : (
               <p className="text-xl font-semibold">
-                Artisan: {user.displayName}
+                Artisan: {userData?.displayName || ""}
               </p>
             )}
-            <button
-              className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-200"
-              onClick={isEditing ? handleSave : () => setIsEditing(true)}
-            >
-              <p className="font-semibold">{isEditing ? "Save" : "Edit"}</p>
-              <img
-                src={isEditing ? "/Save.png" : "/Pencil.png"}
-                className="w-5"
-              />
-            </button>
+            <div className="flex gap-2">
+              {isEditing ? (
+                <>
+                  <button
+                    className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
+                    onClick={handleSave}
+                  >
+                    <p className="font-semibold">Save</p>
+                    <img
+                      src="/Save.png"
+                      className="w-5"
+                    />
+                  </button>
+                  <button
+                    className="flex items-center bg-red py-2 px-4 rounded-md hover:bg-rose-800 transition-all duration-200"
+                    onClick={handleCancel}
+                  >
+                    <p className="font-semibold">Cancel</p>
+
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <p className="font-semibold">Edit</p>
+                  <img
+                    src="/Pencil.png"
+                    className="w-5"
+                  />
+                </button>
+              )}
+            </div>
+
           </div>
 
           {/* Email Section */}

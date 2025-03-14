@@ -3,18 +3,18 @@ describe("Test Cases 1-7", () => {
         cy.visit("http://localhost:3000/");
     });
 
-    // it("1. should create an account and sign up", () => {
-    //     indexedDB.deleteDatabase("firebaseLocalStorageDb");
-    //     cy.contains("Create Account").click();
-    //     cy.get('[data-id="email"]').type("test@gmail.com");
-    //     cy.get('[data-id="name"]').type("Test User");
-    //     cy.get('[data-id="tax"]').type("5");
-    //     cy.get('[data-id="password"]').type("password");
-    //     cy.get('[data-id="repeat-password"]').type("password");
-    //     cy.get('[data-id="sign-up"]').click();
-    //     cy.wait(2000);
-    //     cy.contains("Welcome back, Test User!").should("be.visible");
-    // });
+    it("1. should create an account and sign up", () => {
+        indexedDB.deleteDatabase("firebaseLocalStorageDb");
+        cy.contains("Create Account").click();
+        cy.get('[data-id="email"]').type("test@gmail.com");
+        cy.get('[data-id="name"]').type("Test User");
+        cy.get('[data-id="tax"]').type("5");
+        cy.get('[data-id="password"]').type("password");
+        cy.get('[data-id="repeat-password"]').type("password");
+        cy.get('[data-id="sign-up"]').click();
+        cy.wait(2000);
+        cy.contains("Welcome back, Test User!").should("be.visible");
+    });
 
     it("2. should log in with the new account", () => {
         cy.loginTest();
@@ -26,7 +26,7 @@ describe("Test Cases 1-7", () => {
         cy.contains("Welcome back, Test User!").should("be.visible");
         cy.get('[data-id="menu-button"]').click({ force: true });
         cy.get('[data-id="logout"]').click({ force: true });
-        cy.wait(2000);
+        cy.wait(3000);
         cy.contains("Welcome to Artisan Track!").should("be.visible");
     });
 

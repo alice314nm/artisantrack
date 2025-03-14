@@ -1,7 +1,7 @@
 "use client";
 
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
-import { getAuth, updateProfile } from "firebase/auth";
+import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { app } from "../_utils/firebase";
 import { getUserData } from "@/app/_services/user-data";
 import { useUserAuth } from "@/app/_utils/auth-context";
@@ -26,6 +26,10 @@ export default function Page() {
   const [deleteConfirmWindow, setDeleteConfirmWindow] = useState(false);
   const [passwordConfirmWindow, setPasswordConfirmWindow] = useState(false);
   const [accountDeleted, setAccountDeleted] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [editableEmail, setEditableEmail] = useState(user?.email || "");
+  const [emailConfirmWindowVisibility, setEmailConfirmWindowVisibility] =
+    useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -81,6 +85,54 @@ export default function Page() {
       console.error("Error updating profile:", error);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleEmailUpdate = async () => {
+    setSaving(true);
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        await updateEmail(user, editableEmail);
+        setUserData((prevData) => ({
+          ...prevData,
+          email: editableEmail,
+        }));
+        setIsEditingEmail(false);
+        setEmailConfirmWindowVisibility(false);
+      }
+    } catch (error) {
+      console.error("Error updating email:", error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const checkEmailVerification = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user && user.emailVerified) {
+      const db = getFirestore(app);
+      const userDoc = doc(db, `users/${user.uid}`);
+
+      await updateDoc(userDoc, {
+        email: editableEmail,
+      });
+
+      await updateEmail(user, editableEmail);
+
+      setUserData((prevData) => ({
+        ...prevData,
+        email: editableEmail,
+      }));
+
+      setIsEditingEmail(false);
+      setEmailConfirmWindowVisibility(false);
+    } else {
+      console.error("Email not verified.");
     }
   };
 
@@ -215,7 +267,58 @@ export default function Page() {
           {/* Email Section */}
           <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
             <p className="underline">Current email:</p>
-            <p>{user.email || "email@example.com"}</p>
+            {isEditingEmail ? (
+              <div className="flex flex-row justify-between items-center">
+                <div className="flex flex-row gap-4 items-center">
+                  <input
+                    type="email"
+                    value={editableEmail}
+                    onChange={(e) => setEditableEmail(e.target.value)}
+                    className="border border-gray-400 rounded p-1 w-80"
+                    disabled={saving}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    className={`flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200 ${
+                      saving ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    onClick={() => setEmailConfirmWindowVisibility(true)}
+                    disabled={saving}
+                  >
+                    {saving ? (
+                      <>
+                        <img src="/loading-gif.gif" className="w-5" />
+                        <p className="font-semibold">Saving...</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="font-semibold">Save</p>
+                        <img src="/Save.png" className="w-5" />
+                      </>
+                    )}
+                  </button>
+                  <button
+                    className="flex items-center bg-red py-2 px-4 rounded-md hover:bg-rose-800 transition-all duration-200"
+                    onClick={() => setIsEditingEmail(false)}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-row justify-between items-center">
+                <p>{user.email || "email@example.com"}</p>
+                <button
+                  className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
+                  onClick={() => setIsEditingEmail(true)}
+                >
+                  <p className="font-semibold">Edit</p>
+                  <img src="/Pencil.png" className="w-5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Change Password Section */}
@@ -272,11 +375,25 @@ export default function Page() {
           />
 
           {/* Password Confirmation Window */}
-          <PasswordConfirmationWindow
-            windowVisibility={passwordConfirmWindow}
-            onClose={closePasswordConfirmWindow}
-            onConfirm={handleAccountDeletion}
-          />
+          {passwordConfirmWindow && (
+            <PasswordConfirmationWindow
+              windowVisibility={passwordConfirmWindow}
+              onClose={closePasswordConfirmWindow}
+              onConfirm={handleAccountDeletion}
+              mode="delete"
+            />
+          )}
+
+          {/* Email Confirmation Window */}
+          {emailConfirmWindowVisibility && (
+            <PasswordConfirmationWindow
+              windowVisibility={emailConfirmWindowVisibility}
+              onClose={() => setEmailConfirmWindowVisibility(false)}
+              onConfirm={checkEmailVerification}
+              mode="updateEmail"
+              newEmail={editableEmail}
+            />
+          )}
 
           <Menu type="OnlySlideMenu" />
         </div>

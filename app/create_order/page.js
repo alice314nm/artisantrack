@@ -14,6 +14,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { dbAddOrder } from "@/app/_services/order-service";
 import { fetchMaterialsForOrder } from "../_services/material-service";
 import { fetchProductsForOrder } from "../_services/product-service";
+import { doc } from "firebase/firestore";
 
 export default function Page() {
   const router = useRouter();
@@ -51,6 +52,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
+    document.title = "Create an Order";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);

@@ -31,6 +31,7 @@ export default function Page() {
 
   // Initial loading timeout
   useEffect(() => {
+    document.title = "Orders";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 3000);
@@ -227,7 +228,6 @@ export default function Page() {
 
     return [formattedDate, daysLeft, daysStatus];
   };
-
 
   if (loading) {
     return (

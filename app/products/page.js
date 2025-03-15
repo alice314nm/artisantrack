@@ -28,6 +28,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = "Products";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);

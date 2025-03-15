@@ -3,6 +3,7 @@
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import SignInOutWindow from "@/app/components/sign-in-out-window";
+import { doc } from "firebase/firestore";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -23,6 +24,7 @@ export default function SignInPage() {
     "w-80 border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500";
 
   useEffect(() => {
+    document.title = "Sign Up";
     // Simulating a delay for loading state
     const timeout = setTimeout(() => {
       setLoading(false);

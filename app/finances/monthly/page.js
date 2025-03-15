@@ -301,6 +301,7 @@ export default function WelcomePage() {
   }, []);
 
   useEffect(() => {
+    document.title = "Monthly Report";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);

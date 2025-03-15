@@ -56,12 +56,13 @@ export default function OrderPageID() {
   };
 
   useEffect(() => {
+    document.title = selectedOrder.nameOrder || "Loading...";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 2000);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [selectedOrder]);
 
   useEffect(() => {
     if (!user) {

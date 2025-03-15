@@ -32,6 +32,7 @@ export default function Page() {
   const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60 text-center";
 
   useEffect(() => {
+    document.title = "Finance";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);

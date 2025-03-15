@@ -28,6 +28,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = "Materials";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);

@@ -21,6 +21,7 @@ export default function WelcomePage() {
     "w-44 text-center bg-green px-4 font-semibold rounded-lg py-2 hover:bg-darkGreen transition-all duration-300";
 
   useEffect(() => {
+    document.title = "Home - Artisan Track";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);

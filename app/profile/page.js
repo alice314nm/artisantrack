@@ -32,6 +32,7 @@ export default function Page() {
     useState(false);
 
   useEffect(() => {
+    document.title = "Profile";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -83,28 +84,6 @@ export default function Page() {
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleEmailUpdate = async () => {
-    setSaving(true);
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        await updateEmail(user, editableEmail);
-        setUserData((prevData) => ({
-          ...prevData,
-          email: editableEmail,
-        }));
-        setIsEditingEmail(false);
-        setEmailConfirmWindowVisibility(false);
-      }
-    } catch (error) {
-      console.error("Error updating email:", error);
     } finally {
       setSaving(false);
     }

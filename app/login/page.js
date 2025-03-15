@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    document.title = "Login";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);

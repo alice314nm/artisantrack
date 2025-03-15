@@ -27,7 +27,6 @@ export default function WelcomePage() {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [filterLabel, setFilterLabel] = useState("");
 
-
   const [popularProduct, setPopularProduct] = useState({});
   const [popularMaterial, setPopularMaterial] = useState({});
   const [regularClient, setRegularClient] = useState("");
@@ -37,35 +36,34 @@ export default function WelcomePage() {
   const [materials, setMaterials] = useState([]);
 
   const showOrdersWithPopularProduct = () => {
-    const filtered = orders.filter(order =>
-      order.productId === popularProduct?.id
+    const filtered = orders.filter(
+      (order) => order.productId === popularProduct?.id
     );
     setFilteredOrders(filtered);
     setFilterLabel("Orders with popular product");
     setStateShow("orders");
   };
-  
-    const showOrdersWithPopularMaterial = () => {
-    const filtered = orders.filter(order =>
+
+  const showOrdersWithPopularMaterial = () => {
+    const filtered = orders.filter((order) =>
       order.materialIds?.includes(popularMaterial?.id)
     );
     setFilteredOrders(filtered);
     setFilterLabel("Orders with popular material");
     setStateShow("orders");
   };
-  
+
   const showOrdersWithRegularClient = () => {
-    const filtered = orders.filter(order =>
-      order.customerName === regularClient?.name
+    const filtered = orders.filter(
+      (order) => order.customerName === regularClient?.name
     );
     setFilteredOrders(filtered);
     setFilterLabel("Orders from regular client");
     setStateShow("orders");
   };
-  
-      
 
   useEffect(() => {
+    document.title = "Yearly Report";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -160,16 +158,16 @@ export default function WelcomePage() {
           id: doc.id,
           ...doc.data(),
         }));
-  
+
         console.log(ordersData);
-  
+
         const currentYearValue = new Date(currentYear, 0, 1).getFullYear();
         const yearlyOrders = ordersData.filter((order) => {
           if (!order.startDate || !order.startDate.seconds) return false;
           const orderDate = new Date(order.startDate.seconds * 1000);
           return orderDate.getFullYear() === currentYearValue;
         });
-  
+
         const yearlyIncome = yearlyOrders.reduce(
           (sum, order) =>
             sum +
@@ -177,87 +175,87 @@ export default function WelcomePage() {
             (parseFloat(order.workCost) || 0),
           0
         );
-  
+
         const yearlyExpenses = yearlyOrders.reduce(
           (sum, order) => sum + (parseFloat(order.materialsCost) || 0),
           0
         );
-  
+
         setIncome(yearlyIncome);
         setExpenses(yearlyExpenses);
-  
+
         // Calculate Popular Material
         const materialCount = {};
-  
+
         yearlyOrders.forEach((order) => {
           if (order.materialIds && Array.isArray(order.materialIds)) {
             order.materialIds.forEach((materialId) => {
               if (materialCount[materialId]) {
                 materialCount[materialId].count += 1;
-            } else {
-              const material = materials.find((p) => p.id === materialId);
-              if (material) {
-                materialCount[materialId] = { ...material, count: 1 };
+              } else {
+                const material = materials.find((p) => p.id === materialId);
+                if (material) {
+                  materialCount[materialId] = { ...material, count: 1 };
+                }
               }
-            }
-          });  
-        }
-      });
-  
+            });
+          }
+        });
+
         // Find the most popular material
         const mostPopularMaterial = Object.values(materialCount).reduce(
-          (max, material) =>
-            material.count > max.count ? material : max,
+          (max, material) => (material.count > max.count ? material : max),
           { count: 0 }
         );
-  
+
         console.log("Material count:", materialCount);
         setPopularMaterial(mostPopularMaterial);
-  
-        // Calculate Popular Product 
+
+        // Calculate Popular Product
         const productCount = {};
-  
+
         yearlyOrders.forEach((order) => {
           if (order.productId) {
             if (productCount[order.productId]) {
               productCount[order.productId].count += 1;
             } else {
               const product = products.find((p) => p.id === order.productId);
-                productCount[order.productId] = { ...product, count: 1 };
-              }
+              productCount[order.productId] = { ...product, count: 1 };
             }
-          });
+          }
+        });
 
         // Find the most popular Product
         const mostPopularProduct = Object.values(productCount).reduce(
-          (max, product) =>
-            product.count > max.count ? product : max,
+          (max, product) => (product.count > max.count ? product : max),
           { count: 0 }
         );
-  
+
         setPopularProduct(mostPopularProduct);
-  
+
         // Find the most popular Client
-        const clientCount = {}  
+        const clientCount = {};
 
         yearlyOrders.forEach((order) => {
           if (order.customerName) {
             if (clientCount[order.customerName]) {
               clientCount[order.customerName].count += 1;
             } else {
-              clientCount[order.customerName] = { name: order.customerName, count: 1 };
+              clientCount[order.customerName] = {
+                name: order.customerName,
+                count: 1,
+              };
             }
           }
-        }) 
+        });
 
         const regularClient = Object.values(clientCount).reduce(
           (max, client) => (client.count > max.count ? client : max),
           { count: 0 }
-        ) 
-        setRegularClient(regularClient) 
+        );
+        setRegularClient(regularClient);
 
         console.log("Regular Client:", regularClient);
-  
       } catch (error) {
         console.error("Error fetching:", error);
       } finally {
@@ -267,7 +265,6 @@ export default function WelcomePage() {
 
     fetchIncomeAndExpenses();
   }, [user, currentYear, products]);
-  
 
   const handleStateOrders = () => {
     setStateShow("orders");
@@ -367,80 +364,91 @@ export default function WelcomePage() {
               </div>
 
               <div className="pt-2">
-              <p>
-              Popular product this year:{" "}
-              <button className="underline" onClick={showOrdersWithPopularProduct}>
-                {popularProduct?.productId || "N/A"} | {popularProduct?.name || "N/A"} |  amount: {popularProduct?.count || 0}
-              </button>
-                </p>
-
                 <p>
-                  Popular material this year:{" "}
-                  <button className="underline" onClick={showOrdersWithPopularMaterial}>
-                    {popularMaterial?.materialId || "N/A"} | {popularMaterial?.name || "N/A"} | amount: {popularMaterial?.count || 0}
+                  Popular product this year:{" "}
+                  <button
+                    className="underline"
+                    onClick={showOrdersWithPopularProduct}
+                  >
+                    {popularProduct?.productId || "N/A"} |{" "}
+                    {popularProduct?.name || "N/A"} | amount:{" "}
+                    {popularProduct?.count || 0}
                   </button>
                 </p>
 
                 <p>
-                Regular client:{" "}
-                <button className="underline" onClick={showOrdersWithRegularClient}>
-                  {regularClient?.name || "N/A"} | amount: {regularClient?.count || 0}
-                </button>
-              </p>
+                  Popular material this year:{" "}
+                  <button
+                    className="underline"
+                    onClick={showOrdersWithPopularMaterial}
+                  >
+                    {popularMaterial?.materialId || "N/A"} |{" "}
+                    {popularMaterial?.name || "N/A"} | amount:{" "}
+                    {popularMaterial?.count || 0}
+                  </button>
+                </p>
+
+                <p>
+                  Regular client:{" "}
+                  <button
+                    className="underline"
+                    onClick={showOrdersWithRegularClient}
+                  >
+                    {regularClient?.name || "N/A"} | amount:{" "}
+                    {regularClient?.count || 0}
+                  </button>
+                </p>
+              </div>
             </div>
-          </div>
 
             {/* view */}
             <div className="flex flex-col gap-2">
               <p className="font-semibold">Show</p>
               {filterLabel && (
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <p className="font-semibold text-lg">{filterLabel}</p>
-                        <button
-                          onClick={() => {
-                            setFilteredOrders([]);
-                            setFilterLabel("");
-                          }}
-                          className="rounded-md text-white bg-red py-y px-4"
-                        >
-                          Clear filter
-                        </button>
-                      </div>
-                      <div
-                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <p className="font-semibold text-lg">{filterLabel}</p>
+                    <button
+                      onClick={() => {
+                        setFilteredOrders([]);
+                        setFilterLabel("");
+                      }}
+                      className="rounded-md text-white bg-red py-y px-4"
+                    >
+                      Clear filter
+                    </button>
+                  </div>
+                  <div
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
                         gap-4 sm:gap-6 lg:gap-8 
                         auto-rows-[1fr] 
                         justify-center items-stretch"
+                  >
+                    {filteredOrders.map((order, index) => (
+                      <Link
+                        href={`/orders/${order.id}`}
+                        key={order.id}
+                        data-id="order-block"
                       >
-                      {(filteredOrders).map((order, index) => (
-                        <Link
-                          href={`/orders/${order.id}`}
-                          key={order.id}
-                          data-id="order-block"
-                        >
-                          <BlockHolder
-                            id={index + 1}
-                            title={order.nameOrder}
-                            imageSource={order.imageUrl || "/noImage.png"}
-                            deadline={
-                              order.deadline?.seconds
-                                ? formatDeadline(order.deadline.seconds)
-                                : ["No deadline", 0, "No deadline"]
-                            }
-                            currency={order.currency}
-                            total={order.totalCost}
-                            customerId={order.customerId}
-                            type={"order"}
-                          />
-                        </Link>
-                      ))}
-                      </div>
-
-                    </div>
-                    
-                    
-                  )}
+                        <BlockHolder
+                          id={index + 1}
+                          title={order.nameOrder}
+                          imageSource={order.imageUrl || "/noImage.png"}
+                          deadline={
+                            order.deadline?.seconds
+                              ? formatDeadline(order.deadline.seconds)
+                              : ["No deadline", 0, "No deadline"]
+                          }
+                          currency={order.currency}
+                          total={order.totalCost}
+                          customerId={order.customerId}
+                          type={"order"}
+                        />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-row gap-2 justify-between items-center">
                 <button
@@ -483,7 +491,7 @@ export default function WelcomePage() {
                     auto-rows-[1fr] 
                     justify-center items-stretch"
                   >
-                    {(orders).map((order, index) => (
+                    {orders.map((order, index) => (
                       <Link
                         href={`/orders/${order.id}`}
                         key={order.id}

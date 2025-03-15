@@ -14,6 +14,7 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // Import the useRouter hook
+import { doc } from "firebase/firestore";
 
 export default function Page() {
   const router = useRouter();
@@ -43,6 +44,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
+    document.title = "Create a Product";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -178,14 +180,14 @@ export default function Page() {
     const productObj = {
       productId: productId || "",
       name: name || "",
-      averageCost: averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
+      averageCost:
+        averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
       currency: averageCost.trim() === "" ? "" : currency,
       categories: categories || [],
       description: desc || "",
       productImages: uploadedProductImages || [],
       patternImages: uploadedPatternImages || [],
     };
-   
 
     try {
       await dbAddProduct(user.uid, productObj);
@@ -211,11 +213,11 @@ export default function Page() {
         <form
           className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4"
           onSubmit={handleCreateProduct}
-        >  
+        >
           {errorMessage.length === 0 ? null : (
             <p className="text-red">{errorMessage}</p>
           )}
-  
+
           <p className="text-lg font-semibold underline">General</p>
 
           {/* Product ID */}
@@ -236,7 +238,7 @@ export default function Page() {
               onChange={(e) => setProductId(e.target.value)}
             />
           </div>
-  
+
           {/* Product Name */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -256,8 +258,8 @@ export default function Page() {
             />
           </div>
 
-           {/* Description */}
-           <div className="flex flex-col gap-2">
+          {/* Description */}
+          <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
               <label className="text-blackBeige">Description</label>
               <img
@@ -272,9 +274,8 @@ export default function Page() {
               onChange={(e) => setDesc(e.target.value)}
             />
           </div>
-  
-          <p className="text-lg font-semibold underline">Details</p>
 
+          <p className="text-lg font-semibold underline">Details</p>
 
           {/* Category */}
           <div className="flex flex-col gap-2">
@@ -307,7 +308,7 @@ export default function Page() {
                 <option key={index} value={category} />
               ))}
             </datalist>
-  
+
             {/* Category List */}
             <ul className="flex flex-col gap-2 list-decimal pl-8">
               {categories.map((cat, index) => (
@@ -348,10 +349,10 @@ export default function Page() {
                 data-id="product-image-input"
               />
               <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-              select image
+                select image
               </p>
             </div>
-  
+
             {/* Preview Product Images */}
             {productImages.length > 0 && (
               <div className="flex flex-row gap-2 overflow-x-auto">
@@ -369,7 +370,7 @@ export default function Page() {
               </div>
             )}
           </div>
-  
+
           {/* Pattern Image Selection */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -381,7 +382,7 @@ export default function Page() {
                 }
               />
             </div>
-  
+
             <div className="relative inline-block">
               <input
                 type="file"
@@ -393,7 +394,7 @@ export default function Page() {
                 select image
               </p>
             </div>
-  
+
             {/* Preview Pattern Image */}
             {patternImages.length > 0 && (
               <div className="flex flex-row gap-2 overflow-x-auto">
@@ -411,9 +412,8 @@ export default function Page() {
               </div>
             )}
           </div>
-  
-          <p className="text-lg font-semibold underline">Price</p>
 
+          <p className="text-lg font-semibold underline">Price</p>
 
           {/* Average Cost */}
           <div className="flex flex-col gap-2">
@@ -451,16 +451,15 @@ export default function Page() {
               </select>
             </div>
           </div>
-    
 
           {/* Submit */}
-            <Menu
-              type="CreateMenu"
-              firstTitle="Cancel"
-              secondTitle="Create"
-              onFirstFunction={handleNavigateToListPage}
-              data-id="create-menu"
-            />
+          <Menu
+            type="CreateMenu"
+            firstTitle="Cancel"
+            secondTitle="Create"
+            onFirstFunction={handleNavigateToListPage}
+            data-id="create-menu"
+          />
         </form>
       </div>
     );

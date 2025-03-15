@@ -44,12 +44,13 @@ export default function ProductPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
+    document.title = product.name || "Loading...";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 2000);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [product]);
 
   useEffect(() => {
     if (!user) {

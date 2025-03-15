@@ -58,38 +58,55 @@ export default function PasswordConfirmationWindow({
       return;
     }
 
+    // Check if the new email is the same as the current email
+    const user = auth.currentUser;
+    if (!user) {
+      setError("No user is signed in.");
+      return;
+    }
+
+    if (mode === "delete") {
+      try {
+        const credential = EmailAuthProvider.credential(
+          user.email,
+          currentPassword
+        );
+        await reauthenticateWithCredential(user, credential);
+
+        const db = getFirestore(app);
+        await deleteDoc(doc(db, `users/${user.uid}`));
+        await deleteUser(user);
+        onConfirm();
+      } catch (error) {
+        if (error.code === "auth/invalid-credential") {
+          setError("Current password is incorrect.");
+        } else {
+          setError(error.message);
+        }
+      }
+      return;
+    }
+
+    if (!newEmail) {
+      setError("Please enter a new email address.");
+      return;
+    }
+
+    if (newEmail === user.email) {
+      setError("Your new email cannot be the same as the current email.");
+      return;
+    }
+
     try {
-      const user = auth.currentUser;
-      if (!user) {
-        setError("No user is signed in.");
-        return;
-      }
-
-      if (!newEmail) {
-        setError("Please enter a new email address.");
-        return;
-      }
-
-      if (newEmail === user.email) {
-        setError("Your new email cannot be the same as the current email.");
-        return;
-      }
-
       const credential = EmailAuthProvider.credential(
         user.email,
         currentPassword
       );
       await reauthenticateWithCredential(user, credential);
 
-      if (mode === "delete") {
-        const db = getFirestore(app);
-        await deleteDoc(doc(db, `users/${user.uid}`));
-        await deleteUser(user);
-        onConfirm();
-      } else if (mode === "updateEmail" && newEmail) {
+      if (mode === "updateEmail" && newEmail) {
         try {
           await resendVerificationEmail();
-
           setIsVerificationSent(true);
         } catch (error) {
           setError(`Failed to send verification email: ${error.message}`);

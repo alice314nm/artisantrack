@@ -74,7 +74,7 @@ export default function RootLayout({ children }) {
         <AuthContextProvider>
           {children}
           <button className="chatbot-button" onClick={() => setIsOpen(!isOpen)}>
-          💬
+            💬
           </button>
           <div className="chatbot-container">
             <iframe

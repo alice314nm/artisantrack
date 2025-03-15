@@ -11,6 +11,7 @@ import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
 import SmallBlockHolder from "@/app/components/small-block-holder";
+import { doc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 
@@ -42,6 +43,7 @@ export default function Page() {
   );
 
   useEffect(() => {
+    document.title = "Create a material";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);

@@ -13,6 +13,7 @@ import {
   fetchMaterialById,
   fetchMaterials,
 } from "@/app/_services/material-service";
+import { doc } from "firebase/firestore";
 
 export default function MaterialPage() {
   const { user } = useUserAuth();
@@ -41,13 +42,15 @@ export default function MaterialPage() {
     deleteButton:
       "bg-red text-white rounded-md w-32 py-2 hover:bg-darkRed transition-colors duration-300",
   };
+
   useEffect(() => {
+    document.title = selectedMaterial.name || "Loading...";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 2000);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [selectedMaterial]);
 
   useEffect(() => {
     if (!user) return;

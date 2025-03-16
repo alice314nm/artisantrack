@@ -189,6 +189,7 @@ export default function Page() {
               <div className="flex flex-row gap-4 items-center">
                 <p className="text-xl font-semibold">Artisan:</p>
                 <input
+                  data-id="new-name"
                   type="text"
                   value={editableDisplayName}
                   onChange={(e) => setEditableDisplayName(e.target.value)}
@@ -205,6 +206,7 @@ export default function Page() {
               {isEditing ? (
                 <>
                   <button
+                    data-id="confirm-name-change"
                     className={`flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200 ${
                       saving ? "opacity-50 cursor-not-allowed" : ""
                     }`}
@@ -233,6 +235,7 @@ export default function Page() {
                 </>
               ) : (
                 <button
+                  data-id="edit-name-button"
                   className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
                   onClick={() => setIsEditing(true)}
                 >
@@ -250,6 +253,7 @@ export default function Page() {
               <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row gap-4 items-center">
                   <input
+                    data-id="new-email"
                     type="email"
                     value={editableEmail}
                     onChange={(e) => setEditableEmail(e.target.value)}
@@ -262,6 +266,7 @@ export default function Page() {
                     className={`flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200 ${
                       saving ? "opacity-50 cursor-not-allowed" : ""
                     }`}
+                    data-id="confirm-email-change"
                     onClick={() => setEmailConfirmWindowVisibility(true)}
                     disabled={saving}
                   >
@@ -290,6 +295,7 @@ export default function Page() {
               <div className="flex flex-row justify-between items-center">
                 <p>{user.email || "email@example.com"}</p>
                 <button
+                  data-id="edit-email-button"
                   className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
                   onClick={() => setIsEditingEmail(true)}
                 >

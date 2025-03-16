@@ -132,6 +132,7 @@ export default function PasswordConfirmationWindow({
         {!isVerificationSent ? (
           <>
             <input
+              data-id="confirm-password"
               type="password"
               placeholder="Enter your password"
               value={currentPassword}
@@ -147,6 +148,7 @@ export default function PasswordConfirmationWindow({
                 Cancel
               </button>
               <button
+                data-id="confirm-button-email-delete/change"
                 className="bg-green py-2 px-4 rounded-md hover:bg-darkGreen"
                 onClick={handleConfirm}
               >

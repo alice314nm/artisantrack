@@ -66,19 +66,19 @@ export default function WelcomePage() {
               <p className={titleStyle}>Orders</p>
               <div className="space-y-2">
                 <p className={infoStyle}>
-                  In Progress:{" "}
+                  In Progress:
                   {userData
                     ? Math.max(0, userData.inProgressOrders)
                     : "Loading..."}
                 </p>
                 <p className={infoStyle}>
-                  Completed:{" "}
+                  Completed:
                   {userData
                     ? Math.max(0, userData.completedOrders)
                     : "Loading..."}
                 </p>
               </div>
-              <Link className={LinkStyle} href="/orders">
+              <Link data-id="view-orders" className={LinkStyle} href="/orders">
                 View Orders
               </Link>
             </div>
@@ -87,13 +87,17 @@ export default function WelcomePage() {
               <p className={titleStyle}>Materials</p>
               <div className="space-y-2">
                 <p className={infoStyle}>
-                  Total Materials:{" "}
+                  Total Materials:
                   {userData
                     ? Math.max(0, userData.materialCount)
-                    : "Loading..."}{" "}
+                    : "Loading..."}
                 </p>
               </div>
-              <Link className={LinkStyle} href="/materials">
+              <Link
+                data-id="view-materials"
+                className={LinkStyle}
+                href="/materials"
+              >
                 View Materials
               </Link>
             </div>
@@ -102,11 +106,15 @@ export default function WelcomePage() {
               <p className={titleStyle}>Products</p>
               <div className="space-y-2">
                 <p className={infoStyle}>
-                  Total Products:{" "}
+                  Total Products:
                   {userData ? Math.max(0, userData.productCount) : "Loading..."}
                 </p>
               </div>
-              <Link className={LinkStyle} href="/products">
+              <Link
+                data-id="view-products"
+                className={LinkStyle}
+                href="/products"
+              >
                 View Products
               </Link>
             </div>
@@ -121,7 +129,11 @@ export default function WelcomePage() {
                   Expenses: ${userData?.monthlyExpenses ?? "Loading..."}
                 </p>
               </div>
-              <Link className={LinkStyle} href="/finances">
+              <Link
+                data-id="view-finances"
+                className={LinkStyle}
+                href="/finances"
+              >
                 View Finances
               </Link>
             </div>

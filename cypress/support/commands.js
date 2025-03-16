@@ -37,9 +37,33 @@ Cypress.Commands.add("login", () => {
 
 Cypress.Commands.add("loginTest", () => {
   indexedDB.deleteDatabase("firebaseLocalStorageDb");
+  cy.visit("http://localhost:3000/");
   cy.contains("Log In").click();
   cy.get('[data-id="email"]').type("test@gmail.com");
   cy.get('[data-id="password"]').type("password");
   cy.contains("Log In").click();
-  cy.wait(3000);
+  cy.wait(5000);
+});
+
+Cypress.Commands.add("loginTestNew", () => {
+  indexedDB.deleteDatabase("firebaseLocalStorageDb");
+  cy.visit("http://localhost:3000/");
+  cy.contains("Log In").click();
+  cy.get('[data-id="email"]').type("test@gmail.com");
+  cy.get('[data-id="password"]').type("Newpassword");
+  cy.contains("Log In").click();
+  cy.wait(5000);
+});
+
+Cypress.Commands.add("signInTest", () => {
+  indexedDB.deleteDatabase("firebaseLocalStorageDb");
+  cy.visit("http://localhost:3000/");
+  cy.contains("Create Account").click();
+  cy.get('[data-id="email"]').type("test@gmail.com");
+  cy.get('[data-id="name"]').type("Test User");
+  cy.get('[data-id="tax"]').type("5");
+  cy.get('[data-id="password"]').type("password");
+  cy.get('[data-id="repeat-password"]').type("password");
+  cy.get('[data-id="sign-up"]').click();
+  cy.wait(5000);
 });

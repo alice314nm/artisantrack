@@ -31,7 +31,7 @@ describe("Test Cases 1-7", () => {
     cy.get("header").contains("Profile").should("be.visible");
   });
 
-  it("5. should update user display name", () => {
+  it("5.1. should update user display name", () => {
     cy.loginTest();
     cy.get('[data-id="menu-button"]').click({ force: true });
     cy.get('[data-id="slide-profile"]').click({ force: true });
@@ -40,6 +40,21 @@ describe("Test Cases 1-7", () => {
     cy.get('[data-id="confirm-name-change"]').click();
     cy.wait(3000);
     cy.contains("New Test User").should("be.visible");
+  });
+
+  it("5.2. should send verification for changing user email", () => {
+    cy.loginTest();
+    cy.get('[data-id="menu-button"]').click({ force: true });
+    cy.get('[data-id="slide-profile"]').click({ force: true });
+    cy.get('[data-id="edit-email-button"]').click();
+    cy.get('[data-id="new-email"]').clear().type("newtest@gmail.com");
+    cy.get('[data-id="confirm-email-change"]').click();
+    cy.get('[data-id="confirm-password"]').type("password");
+    cy.get('[data-id="confirm-button-email-delete/change"]').click();
+    cy.wait(3000);
+    cy.contains(
+      "A verification email has been sent to newtest@gmail.com"
+    ).should("be.visible");
   });
 
   it("6. should change password", () => {

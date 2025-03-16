@@ -43,6 +43,12 @@ export default function SignInPage() {
       return;
     }
 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setError("Invalid email format. Please try again.");
+      return;
+    }
+
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
       return;
@@ -109,7 +115,7 @@ export default function SignInPage() {
             </label>
             <input
               data-id="email"
-              type="email"
+              type="text"
               placeholder="eg. example@mail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

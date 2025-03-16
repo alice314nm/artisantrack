@@ -30,19 +30,17 @@ describe("Test Cases 8-14", () => {
     ).should("be.visible");
   });
 
-  it("12. should send verification for changing user email", () => {
-    cy.loginTestNew();
-    cy.get('[data-id="menu-button"]').click({ force: true });
-    cy.get('[data-id="slide-profile"]').click({ force: true });
-    cy.get('[data-id="edit-email-button"]').click();
-    cy.get('[data-id="new-email"]').clear().type("newtest@gmail.com");
-    cy.get('[data-id="confirm-email-change"]').click();
-    cy.get('[data-id="confirm-password"]').type("Newpassword");
-    cy.get('[data-id="confirm-button-email-delete/change"]').click();
-    cy.wait(3000);
-    cy.contains(
-      "A verification email has been sent to newtest@gmail.com"
-    ).should("be.visible");
+  it("12. should verify user email validation", () => {
+    indexedDB.deleteDatabase("firebaseLocalStorageDb");
+    cy.visit("http://localhost:3000/");
+    cy.contains("Create Account").click();
+    cy.get('[data-id="email"]').type("test#test");
+    cy.get('[data-id="name"]').type("Test User");
+    cy.get('[data-id="tax"]').type("5");
+    cy.get('[data-id="password"]').type("password");
+    cy.get('[data-id="repeat-password"]').type("password");
+    cy.get('[data-id="sign-up"]').click();
+    cy.contains("Invalid email format. Please try again.").should("be.visible");
   });
 
   it("13. should check password complexity", () => {

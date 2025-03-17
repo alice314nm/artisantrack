@@ -38,7 +38,7 @@ export default function MaterialPage() {
     sectionTitle: "text-lg font-semibold ",
     sectionText: "",
     editButton:
-      "py-2 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
+      "py-2 font-bold rounded-md w-full flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
     deleteButton:
       "bg-red text-white rounded-md w-32 py-2 hover:bg-darkRed transition-colors duration-300",
   };
@@ -163,7 +163,10 @@ export default function MaterialPage() {
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
                 <div className="relative bg-green rounded-md w-32">
                   <Link href={`./${id}/edit`}>
-                    <button className={commonClasses.editButton}>
+                    <button
+                      data-id="edit-button"
+                      className={commonClasses.editButton}
+                    >
                       <p>Edit</p>
                       <img src="/Pencil.png" alt="Pencil" className="w-4 h-4" />
                     </button>

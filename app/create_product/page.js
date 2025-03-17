@@ -271,8 +271,16 @@ export default function Page() {
               data-id="product-description"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={desc}
-              onChange={(e) => setDesc(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setDesc(e.target.value);
+                }
+              }}
             />
+            {/* Display character count */}
+            <div className="text-sm text-gray-500 mt-1">
+              {desc.length} / 1000 characters
+            </div>
           </div>
 
           <p className="text-lg font-semibold underline">Details</p>

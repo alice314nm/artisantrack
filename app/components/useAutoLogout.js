@@ -1,20 +1,27 @@
+"use client";
+
 import { useEffect } from "react";
 import { useUserAuth } from "@/app/_utils/auth-context";
 
 const AUTO_LOGOUT_TIME = 30 * 60 * 1000; // 30 minutes
 
-export function useAutoLogout() {
-  const { firebaseSignOut } = useUserAuth();
+export function useAutoLogout({ setSessionExpired }) {
+  const { firebaseSignOut, user } = useUserAuth();
 
   useEffect(() => {
-    if (!firebaseSignOut) return;
+    if (!firebaseSignOut || !user) return;
 
     let timeout;
+    let isMounted = true;
 
     const resetTimer = () => {
+      if (!isMounted || !user) return;
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        firebaseSignOut();
+        if (user) {
+          setSessionExpired(true);
+          firebaseSignOut();
+        }
       }, AUTO_LOGOUT_TIME);
     };
 
@@ -24,9 +31,10 @@ export function useAutoLogout() {
     resetTimer();
 
     return () => {
+      isMounted = false;
       clearTimeout(timeout);
       window.removeEventListener("mousemove", resetTimer);
       window.removeEventListener("keydown", resetTimer);
     };
-  }, [firebaseSignOut]);
+  }, [firebaseSignOut, user, setSessionExpired]);
 }

@@ -323,6 +323,7 @@ export default function Page() {
             </div>
 
             <textarea
+              data-id="product-description"
               className="rounded-lg border p-2"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}

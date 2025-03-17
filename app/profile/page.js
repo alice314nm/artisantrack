@@ -182,7 +182,7 @@ export default function Page() {
     return (
       <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
         <Header title="Profile" />
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 overflow-auto pb-16">
           {/* Profile Header */}
           <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
             {isEditing ? (
@@ -345,6 +345,7 @@ export default function Page() {
           {/* Delete Account Section */}
           <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
             <button
+              data-id="delete-account"
               className="bg-red self-start p-2 rounded-md hover:bg-rose-800"
               onClick={openDeleteConfirmWindow}
             >

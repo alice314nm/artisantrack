@@ -91,16 +91,40 @@ export default function Page() {
   };
 
   const handlePatternImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPatternImages((prev) => [...prev, file]);
+    try {
+      if (!e || !e.target || !e.target.files) return;
+
+      const files = Array.from(e.target.files);
+      const validFiles = files.filter((file) =>
+        ["image/png", "image/jpeg"].includes(file.type)
+      );
+
+      if (validFiles.length !== files.length) {
+        setErrorMessage("Only PNG and JPG files are allowed.");
+      }
+
+      setPatternImages((prev) => [...prev, ...validFiles]);
+    } catch (error) {
+      console.error("Failed to handle pattern image upload:", error);
     }
   };
 
   const handleProductImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProductImages((prev) => [...prev, file]);
+    try {
+      if (!e || !e.target || !e.target.files) return;
+
+      const files = Array.from(e.target.files);
+      const validFiles = files.filter((file) =>
+        ["image/png", "image/jpeg"].includes(file.type)
+      );
+
+      if (validFiles.length !== files.length) {
+        setErrorMessage("Only PNG and JPG files are allowed.");
+      }
+
+      setProductImages((prev) => [...prev, ...validFiles]);
+    } catch (error) {
+      console.error("Failed to handle product image upload:", error);
     }
   };
 

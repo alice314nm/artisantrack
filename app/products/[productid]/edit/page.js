@@ -125,16 +125,40 @@ export default function Page() {
   };
 
   const handlePatternImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPatternImages((prev) => [...prev, file]);
+    try {
+      if (!e || !e.target || !e.target.files) return;
+
+      const files = Array.from(e.target.files);
+      const validFiles = files.filter((file) =>
+        ["image/png", "image/jpeg"].includes(file.type)
+      );
+
+      if (validFiles.length !== files.length) {
+        setErrorMessage("Only PNG and JPG files are allowed.");
+      }
+
+      setPatternImages((prev) => [...prev, ...validFiles]);
+    } catch (error) {
+      console.error("Failed to handle pattern image upload:", error);
     }
   };
 
   const handleProductImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProductImages((prev) => [...prev, file]);
+    try {
+      if (!e || !e.target || !e.target.files) return;
+
+      const files = Array.from(e.target.files);
+      const validFiles = files.filter((file) =>
+        ["image/png", "image/jpeg"].includes(file.type)
+      );
+
+      if (validFiles.length !== files.length) {
+        setErrorMessage("Only PNG and JPG files are allowed.");
+      }
+
+      setProductImages((prev) => [...prev, ...validFiles]);
+    } catch (error) {
+      console.error("Failed to handle product image upload:", error);
     }
   };
 
@@ -314,20 +338,27 @@ export default function Page() {
 
           {/* Description */}
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Description</label>
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Description</label>
               <img
                 src={desc === "" ? "/cross.png" : "/check.png"}
                 className={desc === "" ? "h-4" : "h-6 text-green"}
               />
             </div>
-
             <textarea
               data-id="product-description"
-              className="rounded-lg border p-2"
+              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={desc}
-              onChange={(e) => setDesc(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setDesc(e.target.value);
+                }
+              }}
             />
+            {/* Display character count */}
+            <div className="text-sm text-gray-500 mt-1">
+              {desc.length} / 1000 characters
+            </div>
           </div>
 
           <p className="text-lg font-semibold underline">Details</p>

@@ -45,6 +45,8 @@ export default function WelcomePage() {
   const [products, setProducts] = useState([]);
   const [materials, setMaterials] = useState([]);
 
+  const monthName = currentMonth.toLocaleString("default", { month: "long" });
+
   const isInMonth = (deadlineSeconds, targetMonth) => {
     if (!deadlineSeconds || !targetMonth) {
       return false;
@@ -292,7 +294,7 @@ export default function WelcomePage() {
 
     // Create a buffer and save the file
     const buffer = await workbook.xlsx.writeBuffer();
-    const fileName = `${selectedMonth}-${selectedYear}-artisan-${userName}.xlsx`;
+    const fileName = `${monthName}-${selectedYear}-artisan-${userName}.xlsx`;
     saveAs(new Blob([buffer]), fileName);
   };
 

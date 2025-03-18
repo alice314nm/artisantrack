@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useUserAuth } from "@/app/_utils/auth-context";
 
-const AUTO_LOGOUT_TIME = 30 * 60 * 1000; // 30 minutes
+const AUTO_LOGOUT_TIME = 2 * 60 * 60 * 1000; // 2 hours
 
 export function useAutoLogout({ setSessionExpired }) {
   const { firebaseSignOut, user } = useUserAuth();

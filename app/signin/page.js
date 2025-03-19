@@ -6,6 +6,7 @@ import SignInOutWindow from "@/app/components/sign-in-out-window";
 import { doc } from "firebase/firestore";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Menu from "../components/menu";
 
 export default function SignInPage() {
   const { user, doCreateUserWithEmailAndPassword } = useUserAuth();
@@ -94,7 +95,10 @@ export default function SignInPage() {
     <main className="">
       <Header title="Artisan Track" />
       {user ? (
-        <SignInOutWindow type="SignOut" />
+        <div>
+          <SignInOutWindow type={"SignOut"} />
+          <Menu type="OnlySlideMenu" />
+        </div>
       ) : (
         <form
           onSubmit={handleSignUp}

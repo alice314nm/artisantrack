@@ -161,8 +161,11 @@ export default function Page() {
             {new Date().toLocaleString("default", { month: "long" })}):
           </p>
           <p>
-            Income: {userData?.monthlyIncome ?? "Loading..."}$ Expenses:{" "}
-            {userData?.monthlyExpenses ?? "Loading..."}$
+            Income: {userData?.monthlyIncome ?? "Loading..."}$
+          </p>
+          <p>
+          Expenses:{" "}
+          {userData?.monthlyExpenses ?? "Loading..."}$  
           </p>
           <Link href="finances/monthly" className={buttonStyle}>
             Monthly Financial Report
@@ -172,7 +175,10 @@ export default function Page() {
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>This year ({new Date().getFullYear()}):</p>
           <p>
-            Income: {userData?.yearlyIncome ?? "Loading..."}$ Expenses:{" "}
+            Income: {userData?.yearlyIncome ?? "Loading..."}$
+          </p>
+          <p>
+            Expenses:{" "}
             {userData?.yearlyExpenses ?? "Loading..."}$
           </p>
           <Link href="finances/yearly" className={buttonStyle}>
@@ -180,14 +186,7 @@ export default function Page() {
           </Link>{" "}
         </div>
 
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <p>Other reports:</p>
-          <div className="flex flex-col gap-2 w-60">
-            <button className={buttonStyle}>Labor Cost</button>
-            <button className={buttonStyle}>Supply Expenses</button>
-            <button className={buttonStyle}>Order Payments</button>
-          </div>
-        </div>
+        
 
         <FilterWindow
           onClose={closeConfirmation}

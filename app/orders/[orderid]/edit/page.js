@@ -5,22 +5,27 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { dbAddOrder } from "@/app/_services/order-service";
-import { fetchProductsForOrder } from "@/app/_services/product-service";
-import { fetchMaterialsForOrder } from "@/app/_services/material-service";
+import { useParams } from "next/navigation";
 import Header from "@/app/components/header";
 import SelectedHolder from "@/app/components/selected-holder";
 import Menu from "@/app/components/menu";
 import SearchBar from "@/app/components/search-bar";
 import SelectHolder from "@/app/components/select-holder";
 import NotLoggedWindow from "@/app/components/not-logged-window";
-import { doc } from "firebase/firestore";
+import { dbAddOrder, dbGetOrderById } from "@/app/_services/order-service";
+import { fetchMaterialsForOrder } from "@/app/_services/material-service";
+import { fetchProductsForOrder } from "@/app/_services/product-service";
 
 export default function Page() {
   const router = useRouter();
   const { user } = useUserAuth();
+  const params = useParams();
+  const id = params.orderid;
+
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+
+  const [selectedOrder, setSelectedOrder] = useState({});
   const [products, setProducts] = useState([]);
   const [materials, setMaterials] = useState([]);
 
@@ -31,12 +36,12 @@ export default function Page() {
   const [state, setState] = useState("form");
 
   const [orderName, setOrderName] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [startDate, setStartDate] = useState("");
+  const [deadline, setDeadline] = useState(null);
+  const [startDate, setStartDate] = useState(null);
   const [daysCounter, setDaysCounter] = useState(0);
   const [customerName, setCustomerName] = useState("");
   const [desc, setDesc] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedMaterials, setSelectedMaterials] = useState([]);
 
   const [materialQuantities, setMaterialQuantities] = useState({});
@@ -52,7 +57,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    document.title = "Edit the Order";
+    document.title = "Create an Order";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -76,11 +81,71 @@ export default function Page() {
       return;
     }
 
-    if (user) {
+    if (user && id) {
       fetchProductsForOrder(user.uid, setProducts);
       fetchMaterialsForOrder(user.uid, setMaterials);
+      dbGetOrderById(user.uid, id, setSelectedOrder);
     }
   }, [user]);
+
+  
+  useEffect(() => {
+    if (!selectedOrder || Object.keys(selectedOrder).length === 0) return;
+  
+    setLoading(true);
+    setOrderName(selectedOrder.nameOrder || "");
+    
+    const parseDate = (date) => {
+      if (!date) return null;
+      if (date.seconds) return new Date(date.seconds * 1000); // Firestore Timestamp
+      return isNaN(new Date(date).getTime()) ? null : new Date(date);
+    };
+    
+    setDeadline(parseDate(selectedOrder.deadline));
+    setStartDate(parseDate(selectedOrder.startDate));
+    setDaysCounter(selectedOrder.daysUntilDeadline || 0);
+    setCustomerName(selectedOrder.customerName || "");
+    setDesc(selectedOrder.description || "");
+    setSelectedProduct(selectedOrder.productForOrderData || null);
+    setSelectedMaterials(selectedOrder.materialsForOrderData  || []);
+    
+    if (selectedOrder.quantities && Array.isArray(selectedOrder.quantities)) {
+      const quantitiesObj = {};
+      selectedOrder.quantities.forEach(item => {
+        if (item && item.id) {
+          quantitiesObj[item.id] = item.quantity;
+        }
+      });
+      setMaterialQuantities(quantitiesObj);
+    }
+
+    setProductCost(selectedOrder.productCost || 0);
+    setMaterialCost(selectedOrder.materialsCost || 0);
+    setWorkCost(selectedOrder.workCost || 0);
+    setCurrency(selectedOrder.currency || "USD");
+    setTotal(selectedOrder.totalCost || 0);
+    setLoading(false);
+  }, [selectedOrder]);
+  
+  useEffect(() => {
+    if (!selectedMaterials || selectedMaterials.length === 0) {
+      setMaterialCost(0);
+      return;
+    }
+  
+    let totalCost = 0;
+  
+    selectedMaterials.forEach((material) => {
+      const quantity = parseFloat(materialQuantities[material.materialId] || 0);
+      const cost = parseFloat(material.costPerUnit || 0);
+      
+      if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
+        totalCost += quantity * cost;
+      }
+    });
+  
+    setMaterialCost(Number(totalCost.toFixed(2)));
+  }, [selectedMaterials, materialQuantities]);
 
   const handleSelectProductForm = () => {
     setState("products");
@@ -133,10 +198,11 @@ export default function Page() {
   };
 
   const handleSelectProduct = (product) => {
-    setSelectedProduct(product);
-    setProductCost(product.averageCost);
-    setCurrency(product.currency);
+    setSelectedProduct(product || null);
+    setProductCost(product?.averageCost || 0);
+    setCurrency(product?.currency || "USD");
   };
+  
 
   const handleSelectMaterial = (material) => {
     if (!selectedMaterials.includes(material)) {
@@ -150,10 +216,10 @@ export default function Page() {
   };
 
   const handleMaterialQuantityChange = (materialId, value) => {
-    setMaterialQuantities({
-      ...materialQuantities,
-      [materialId]: value,
-    });
+    setMaterialQuantities(prev => ({
+      ...prev,
+      [materialId]: value
+    }));
   };
 
   const handleRemoveMaterial = (material) => {
@@ -175,24 +241,18 @@ export default function Page() {
       setMaterialCost(0);
       return;
     }
-
+  
     let totalCost = 0;
-
+  
     selectedMaterials.forEach((material) => {
-      const selectedQuantity = parseFloat(
-        materialQuantities[material.materialId] || 0
-      );
-      const costPerUnit = parseFloat(material.costPerUnit || 0);
-
-      if (
-        !isNaN(selectedQuantity) &&
-        !isNaN(costPerUnit) &&
-        selectedQuantity > 0
-      ) {
-        totalCost += selectedQuantity * costPerUnit;
+      const quantity = parseFloat(materialQuantities[material.materialId] || 0);
+      const cost = parseFloat(material.costPerUnit || 0);
+      
+      if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
+        totalCost += quantity * cost;
       }
     });
-
+  
     setMaterialCost(Number(totalCost.toFixed(2)));
   };
 
@@ -201,7 +261,7 @@ export default function Page() {
   };
 
   const handleNavigateToListPage = () => {
-    window.location.href = "/orders";
+    window.location.href = `/orders/${id}`;
   };
 
   const handleCancelProductSelection = () => {
@@ -277,7 +337,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Edit the Order" />
+        <Header title="Create an Order" />
 
         {state === "form" && (
           <form
@@ -302,6 +362,7 @@ export default function Page() {
                 />
               </div>
               <input
+                data-id="order-name"
                 className={inputStyle}
                 name="orderName"
                 value={orderName}
@@ -324,7 +385,7 @@ export default function Page() {
 
               <div className="flex gap-4">
                 {/* Start Date */}
-                <div className="flex flex-col gap-1 w-3/4">
+                <div data-id="start-date" className="flex flex-col gap-1 w-3/4">
                   <div className="flex flex-row justify-between">
                     <label className="text-xs">Start Date</label>
                   </div>
@@ -338,7 +399,7 @@ export default function Page() {
                 </div>
 
                 {/* Deadline */}
-                <div className="flex flex-col gap-1 w-3/4">
+                <div data-id="deadline" className="flex flex-col gap-1 w-3/4">
                   <div className="flex flex-row justify-between">
                     <label className="text-xs">Deadline</label>
                   </div>
@@ -357,6 +418,7 @@ export default function Page() {
                     <label className="text-xs">Days</label>
                   </div>
                   <input
+                    data-id="days-counter"
                     className={`${inputStyle} w-full`}
                     type="text"
                     value={daysCounter}
@@ -378,6 +440,7 @@ export default function Page() {
                 />
               </div>
               <input
+                data-id="order-customer"
                 className={inputStyle}
                 name="customerName"
                 value={customerName}
@@ -396,6 +459,7 @@ export default function Page() {
                 />
               </div>
               <textarea
+                data-id="order-description"
                 className="rounded-lg border p-2"
                 name="description"
                 placeholder="Enter details about the order"
@@ -408,7 +472,7 @@ export default function Page() {
               />
               {/* Display character count */}
               <div className="text-sm text-gray-500 mt-1">
-                {desc.length} / 1000 characters
+                {desc?.length} / 1000 characters
               </div>
             </div>
 
@@ -427,6 +491,7 @@ export default function Page() {
               </div>
               <div className="flex flex-row justify-between">
                 <button
+                  data-id="select-product-button"
                   type="button"
                   onClick={handleSelectProductForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
@@ -465,9 +530,7 @@ export default function Page() {
                 value={
                   productCost === 0
                     ? ""
-                    : `${productCost} ${
-                        selectedProduct.currency ? selectedProduct.currency : ""
-                      }`
+                    : `${productCost} ${selectedProduct?.currency || ""}`
                 }
                 name="productCost"
                 placeholder="0.00"
@@ -494,6 +557,7 @@ export default function Page() {
               </div>
               <div className="flex flex-row justify-between">
                 <button
+                  data-id="select-material-button"
                   type="button"
                   onClick={handleSelectMaterialForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
@@ -508,7 +572,7 @@ export default function Page() {
               <div className="flex flex-col gap-2">
                 {selectedMaterials.map((material, index) => (
                   <SelectedHolder
-                    key={index}
+                    key={material.materialId || index}
                     type="material"
                     imageSrc={
                       material.images && material.images.length > 0
@@ -518,7 +582,7 @@ export default function Page() {
                     name={material.name}
                     id={material.materialId}
                     index={index + 1}
-                    quantity={`${materialQuantities[material.materialId] || 0}`}
+                    quantity={materialQuantities[material.materialId] || "0"}
                     onRemove={() => handleRemoveMaterial(material)}
                   />
                 ))}
@@ -532,9 +596,8 @@ export default function Page() {
               </div>
               <input
                 className={inputStyle}
-                type="text"
                 value={materialCost === 0 ? "" : materialCost}
-                name="materialCost"
+                type="number"
                 placeholder="0.00"
                 readOnly
               />
@@ -550,13 +613,14 @@ export default function Page() {
                 />
               </div>
               <input
-                className={inputStyle}
-                type="number"
-                value={workCost === 0 ? "" : workCost}
-                name="workCost"
-                placeholder="0.00"
-                onChange={(e) => setWorkCost(e.target.value)}
-              />
+                  data-id="work-cost"
+                  className={inputStyle}
+                  type="number"
+                  value={workCost}
+                  name="workCost"
+                  placeholder="0.00"
+                  onChange={(e) => setWorkCost(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                />
             </div>
 
             {/* Total cost */}
@@ -581,11 +645,11 @@ export default function Page() {
               <div className="flex flex-row gap-2">
                 <input
                   className={inputStyle}
-                  value={total === 0 || total == "0.00" ? "" : total}
+                  value={total}  // Don't convert 0 to empty string
                   type="number"
                   placeholder="0.00"
                   onChange={(e) => {
-                    setTotal(e.target.value);
+                    setTotal(e.target.value === "" ? 0 : parseFloat(e.target.value));
                   }}
                 />
                 <select

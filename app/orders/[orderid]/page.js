@@ -8,7 +8,6 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { app, db } from "@/app/_utils/firebase";
 import {
   getFirestore,
   collection,

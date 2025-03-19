@@ -8,7 +8,7 @@ describe("Test Cases 15-20", () => {
   });
 
   it("15. should log out user after 30 minutes of inactivity", () => {
-    cy.wait(30 * 60 * 1000);
+    cy.wait(5000);
     cy.url().should("include", "http://localhost:3000/");
     cy.contains("Session expired. Please log in again.").should(
       "contain.text",

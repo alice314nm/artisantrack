@@ -56,6 +56,7 @@ function AutoLogoutWrapper({ setSessionExpired }) {
     closePopup();
     setTimeout(() => {
       firebaseSignOut().finally(() => {
+        window.location.href = "/login";
         setLoading(false);
       });
     }, 2000);
@@ -63,7 +64,7 @@ function AutoLogoutWrapper({ setSessionExpired }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-beige z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-beige z-[9999]">
         <img
           src="/loading-gif.gif"
           className="h-10"
@@ -76,21 +77,19 @@ function AutoLogoutWrapper({ setSessionExpired }) {
   return (
     <>
       {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <p className="text-lg font-semibold">Are you still here?</p>
-            <div className="mt-4 flex gap-4 justify-center">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 transition-opacity duration-300 ease-in-out">
+          <div className="bg-beige p-10 rounded-2xl shadow-lg text-center w-[400px] md:w-[500px] lg:w-[600px]">
+            <p className="text-2xl font-bold">Are you still here?</p>
+            <div className="mt-36 flex gap-6 justify-center">
               <button
-                onClick={() => {
-                  closePopup();
-                }}
-                className="px-4 py-2 bg-green rounded-md hover:bg-darkGreen"
+                onClick={closePopup}
+                className="px-6 py-3 bg-green text-lg rounded-lg hover:bg-darkGreen transition-colors duration-300"
               >
                 Yes, I'm here
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red rounded-md hover:bg-rose-800"
+                className="px-6 py-3 bg-red text-lg rounded-lg hover:bg-rose-800 transition-colors duration-300"
               >
                 No, log out
               </button>
@@ -100,4 +99,5 @@ function AutoLogoutWrapper({ setSessionExpired }) {
       )}
     </>
   );
+
 }

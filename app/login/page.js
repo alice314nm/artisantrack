@@ -5,6 +5,7 @@ import Header from "@/app/components/header";
 import SignInOutWindow from "@/app/components/sign-in-out-window";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Menu from "../components/menu";
 
 export default function LoginPage() {
   const { user, doSignInUserWithEmailAndPassword, resetPassword } =
@@ -84,7 +85,10 @@ export default function LoginPage() {
       )}
       <Header title="Artisan Track" />
       {user ? (
-        <SignInOutWindow type={"SignOut"} />
+        <div>
+          <SignInOutWindow type={"SignOut"} />
+          <Menu type="OnlySlideMenu" />
+        </div>        
       ) : (
         <div className="mt-20 flex flex-col items-center">
           {resetPasswordMode ? (

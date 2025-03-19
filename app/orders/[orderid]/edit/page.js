@@ -400,8 +400,16 @@ export default function Page() {
                 name="description"
                 placeholder="Enter details about the order"
                 value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-              ></textarea>
+                onChange={(e) => {
+                  if (e.target.value.length <= 1000) {
+                    setDesc(e.target.value);
+                  }
+                }}
+              />
+              {/* Display character count */}
+              <div className="text-sm text-gray-500 mt-1">
+                {desc.length} / 1000 characters
+              </div>
             </div>
 
             <p className="text-lg font-semibold underline">

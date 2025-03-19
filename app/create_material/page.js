@@ -79,7 +79,15 @@ export default function Page() {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
+    const allowedTypes = ["image/png", "image/jpeg"];
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      setErrorMessage("Only PNG and JPG files are allowed.");
+    } else {
+      setErrorMessage("");
+      setImages((prev) => [...prev, ...validFiles]);
+    }
   };
 
   const removeSelectedImage = (index) => {
@@ -258,11 +266,17 @@ export default function Page() {
             </div>
             <textarea
               data-id="material-description"
-              className="rounded-lg border p-2"
-              value={desc}
-              placeholder="Enter description"
-              onChange={(e) => setDesc(e.target.value)}
+              alue={desc}
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setDesc(e.target.value);
+                }
+              }}
             />
+            {/* Display character count */}
+            <div className="text-sm text-gray-500 mt-1">
+              {desc.length} / 1000 characters
+            </div>
           </div>
 
           <p className="text-lg underline font-semibold">Details</p>
@@ -347,15 +361,20 @@ export default function Page() {
               />
             </div>
             <div className="relative inline-block">
+              <label
+                htmlFor="fileInput"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                Select images
+              </label>
               <input
+                id="fileInput"
                 type="file"
-                className="absolute inset-0 w-40 opacity-0 cursor-pointer"
+                className="hidden"
                 multiple
+                accept="image/png, image/jpeg"
                 onChange={handleFileChange}
               />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-                select images
-              </p>
             </div>
 
             {/* Preview Chosen Images */}

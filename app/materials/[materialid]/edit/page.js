@@ -122,7 +122,15 @@ export default function Page() {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
+    const allowedTypes = ["image/png", "image/jpeg"];
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      setErrorMessage("Only PNG and JPG files are allowed.");
+    } else {
+      setErrorMessage("");
+      setImages((prev) => [...prev, ...validFiles]);
+    }
   };
 
   const removeSelectedImage = (index) => {
@@ -302,11 +310,18 @@ export default function Page() {
             </div>
             <textarea
               data-id="material-description"
-              className="rounded-lg border p-2"
+              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={desc}
-              placeholder="Enter description"
-              onChange={(e) => setDesc(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setDesc(e.target.value);
+                }
+              }}
             />
+            {/* Display character count */}
+            <div className="text-sm text-gray-500 mt-1">
+              {desc.length} / 1000 characters
+            </div>
           </div>
 
           <p className="text-lg underline font-semibold">Details</p>
@@ -390,10 +405,10 @@ export default function Page() {
                 className={images.length === 0 ? "h-4" : "h-6 text-green"}
               />
             </div>
-            <div className="relative inline-block text-center">
+            <div className="relative inline-block ">
               <label
                 htmlFor="fileInput"
-                className="bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
                 Select images
               </label>
@@ -401,6 +416,7 @@ export default function Page() {
                 id="fileInput"
                 type="file"
                 className="hidden"
+                accept="image/png, image/jpeg"
                 multiple
                 onChange={handleFileChange}
               />

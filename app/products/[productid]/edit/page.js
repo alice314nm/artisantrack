@@ -424,16 +424,20 @@ export default function Page() {
                 }
               />
             </div>
-            <div className="relative inline-block">
+            <div className="relative inline-block ">
+              <label
+                htmlFor="fileInput"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                select images
+              </label>
               <input
+                id="fileInput"
                 type="file"
-                className="absolute inset-0 w-40 opacity-0 cursor-pointer"
+                className="hidden"
                 multiple
                 onChange={handleProductImageChange}
               />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-                select images
-              </p>
             </div>
 
             {/* Preview Product Images */}
@@ -473,14 +477,19 @@ export default function Page() {
             </div>
 
             <div className="relative inline-block">
+              <label
+                htmlFor="fileInput"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                select images
+              </label>
               <input
+                id="fileInput"
+                multiple
                 type="file"
-                className="absolute inset-0 w-40 opacity-0 cursor-pointer"
+                className="hidden"
                 onChange={handlePatternImageChange}
               />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-                select images
-              </p>
             </div>
 
             {/* Preview Pattern Image */}

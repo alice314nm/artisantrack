@@ -285,7 +285,7 @@ export default function Page() {
           {/* Description */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Description</label>
+              <p>Description</p>
               <img
                 src={desc === "" ? "/cross.png" : "/check.png"}
                 className={desc === "" ? "h-4" : "h-6 text-green"}
@@ -373,16 +373,20 @@ export default function Page() {
               />
             </div>
             <div className="relative inline-block">
+              <label
+                htmlFor="fileInput"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                Select images
+              </label>
               <input
+                id="fileInput"
                 type="file"
-                className="absolute inset-0 w-full opacity-0 cursor-pointer"
+                className="hidden"
                 multiple
                 onChange={handleProductImageChange}
                 data-id="product-image-input"
               />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-                select image
-              </p>
             </div>
 
             {/* Preview Product Images */}
@@ -416,15 +420,19 @@ export default function Page() {
             </div>
 
             <div className="relative inline-block">
+              <label
+                htmlFor="fileInput"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                Select images
+              </label>
               <input
+                id="fileInput"
                 type="file"
-                className="absolute inset-0 w-full opacity-0 cursor-pointer"
+                className="hidden"
                 onChange={handlePatternImageChange}
                 data-id="pattern-image-input"
               />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-                select image
-              </p>
             </div>
 
             {/* Preview Pattern Image */}

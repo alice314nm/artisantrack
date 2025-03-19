@@ -46,6 +46,58 @@ export default function RootLayout({ children }) {
 }
 
 function AutoLogoutWrapper({ setSessionExpired }) {
-  useAutoLogout({ setSessionExpired });
-  return null;
+  const { showPopup, closePopup, firebaseSignOut } = useAutoLogout({
+    setSessionExpired,
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = () => {
+    setLoading(true);
+    closePopup();
+    setTimeout(() => {
+      firebaseSignOut().finally(() => {
+        setLoading(false);
+      });
+    }, 2000);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-beige z-50">
+        <img
+          src="/loading-gif.gif"
+          className="h-10"
+          data-id="loading-spinner"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+          <div className="bg-white p-6 rounded-lg shadow-md text-center">
+            <p className="text-lg font-semibold">Are you still here?</p>
+            <div className="mt-4 flex gap-4 justify-center">
+              <button
+                onClick={() => {
+                  closePopup();
+                }}
+                className="px-4 py-2 bg-green rounded-md hover:bg-darkGreen"
+              >
+                Yes, I'm here
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red rounded-md hover:bg-rose-800"
+              >
+                No, log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

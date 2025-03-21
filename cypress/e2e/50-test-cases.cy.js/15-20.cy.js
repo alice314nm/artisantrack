@@ -35,7 +35,13 @@ describe("Test Cases 15-20", () => {
     cy.contains("Welcome back, Soft Pillow!").should("be.visible");
   });
 
-  // 18 and 19 are both manual tests for reviewing the code.
+  // 18 is manual tests for reviewing the code.
+
+  it("19. should check dynamic routing for material", () => {
+    cy.login();
+    cy.visit("http://localhost:3000/materials/qDWiznQjGW2a0Cy4MsFv");
+    cy.contains("Grey Cotton").should("be.visible");
+  });
 
   it("20. should prevent excessively long product descriptions", () => {
     cy.login();

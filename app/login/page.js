@@ -17,6 +17,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     document.title = "Login";
@@ -57,6 +58,11 @@ export default function LoginPage() {
       setMessage("Password reset link sent! Check your email.");
       setError("");
       setResetPasswordMode(false);
+
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
     } catch (err) {
       setError(err.message);
     }
@@ -72,6 +78,11 @@ export default function LoginPage() {
 
   return (
     <main>
+      {showSuccess && (
+        <div className="fixed top-0 left-0 w-full font-semibold text-2xl bg-green px-5 py-4 text-center animate-pulse z-50">
+          <p>Password reset link sent successfully!</p>
+        </div>
+      )}
       <Header title="Artisan Track" />
       {user ? (
         <div>
@@ -133,11 +144,10 @@ export default function LoginPage() {
               />
               <button
                 type="submit"
-                className={`bg-green p-2 rounded-xl w-80 font-bold ${
-                  isLoading
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-green-600"
-                }`}
+                className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-green-600"
+                  }`}
                 disabled={isLoading}
               >
                 {isLoading ? "Logging in ..." : "Log In"}

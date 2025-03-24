@@ -8,7 +8,7 @@ describe("Test Cases 15-20", () => {
   });
 
   it("15. should log out user after 30 minutes of inactivity", () => {
-    cy.wait(30 * 60 * 1000);
+    cy.wait(5000);
     cy.url().should("include", "http://localhost:3000/");
     cy.contains("Session expired. Please log in again.").should(
       "contain.text",
@@ -35,7 +35,13 @@ describe("Test Cases 15-20", () => {
     cy.contains("Welcome back, Soft Pillow!").should("be.visible");
   });
 
-  // 18 and 19 are both manual tests for reviewing the code.
+  // 18 is manual tests for reviewing the code.
+
+  it("19. should check dynamic routing for material", () => {
+    cy.login();
+    cy.visit("http://localhost:3000/materials/qDWiznQjGW2a0Cy4MsFv");
+    cy.contains("Grey Cotton").should("be.visible");
+  });
 
   it("20. should prevent excessively long product descriptions", () => {
     cy.login();

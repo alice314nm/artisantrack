@@ -12,7 +12,7 @@ import { useUserAuth } from '../_utils/auth-context';
     - showUserName - true: show header with user name
 */
 
-export default function Header({title, showUserName}) {
+export default function Header({ title, showUserName }) {
     const { user } = useUserAuth();
 
     useEffect(() => {
@@ -21,11 +21,11 @@ export default function Header({title, showUserName}) {
     return (
         <header className="bg-beige font-bold flex flex-row p-2 px-4 items-center justify-between">
             <div className="gap-4 flex flex-row items-center justify-between">
-                <img
+                <Link href="/"><img
                     src="/LogoArtisanTrack.png"
                     className="w-12 h-12 border"
-                />
-                <Link href="/"><p className="italic text-2xl">{title}</p></Link>
+                /></Link>
+                <p className="italic text-2xl">{title}</p>
             </div>
         </header>
     );

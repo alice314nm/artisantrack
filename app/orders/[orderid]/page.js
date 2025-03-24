@@ -22,6 +22,8 @@ import {
   toggleOrderPaid,
 } from "@/app/_services/order-service";
 import MaterialOrderDisplay from "@/app/components/material-order-display";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function OrderPageID() {
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
@@ -130,9 +132,8 @@ export default function OrderPageID() {
       "Nov",
       "Dec",
     ];
-    const formattedDate = `${
-      monthNames[deadlineDate.getMonth()]
-    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+    const formattedDate = `${monthNames[deadlineDate.getMonth()]
+      } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
     const daysLeft = diffTime > 0 ? `(${diffTime} days)` : "(Due today)";
 
@@ -158,6 +159,89 @@ export default function OrderPageID() {
       setTransitioning(false);
     }, 300);
   };
+
+  console.log("data:", selectedOrder)
+
+  const handleDownloadReceipt = () => {
+    if (!selectedOrder) return;
+
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Receipt", 105, 20, { align: "center" });
+
+    // Order Info
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Order ID: ${id}`, 15, 40);
+    doc.text(`Client: ${selectedOrder.customerName || "N/A"}`, 15, 50);
+    doc.text(`Deadline: ${selectedOrder.deadline?.seconds ? formatDeadline(selectedOrder.deadline.seconds) : "No deadline"}`, 15, 60);
+    doc.text(`Description: ${selectedOrder.description || "N/A"}`, 15, 70);
+
+    // First Table: Materials
+    autoTable(doc, {
+      startY: 80, // Position below the order info
+      head: [["Material", "Quantity", "Price"]],
+      body: selectedOrder?.materialsForOrderData?.map((material, index) => [
+        material.materialName,
+        selectedOrder.quantities[index]?.quantity || "N/A",
+        `$${selectedOrder.materialsCost || "N/A"}`,
+      ]),
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 2 },
+      columnStyles: {
+        2: { cellWidth: 40 }, // Set the width of the price column (index 2) for materials
+      },
+    });
+
+    // Get Y position after first table
+    const afterMaterialTableY = doc.lastAutoTable.finalY + 10;
+
+    // Second Table: Products
+    autoTable(doc, {
+      startY: afterMaterialTableY, // Start after the first table
+      head: [["Product", "Price"]],
+      body: [
+        [
+          selectedOrder.productForOrderData.productName || "N/A",
+          `$${selectedOrder.productCost || "N/A"}`,
+        ],
+      ],
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 2 },
+      columnStyles: {
+        1: { cellWidth: 40 }, // Set the width of the price column (index 1) for products
+      },
+    });
+
+    const afterProductTableY = doc.lastAutoTable.finalY + 10;
+
+    // Third Table: Work Cost
+    autoTable(doc, {
+      startY: afterProductTableY,
+      head: [["Work Cost"]],
+      body: [[`$${selectedOrder.workCost || "N/A"}`]],
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 2 },
+    });
+
+    // Get Y position after second table
+    const afterWorkCostTableY = doc.lastAutoTable.finalY + 10;
+
+    // Display the total cost formula in the desired format
+    doc.setFont("helvetica", "bold");
+    doc.text(
+      `Total Cost = $${selectedOrder.materialsCost} + $${selectedOrder.productCost} + $${selectedOrder.workCost} = $${selectedOrder.totalCost}`,
+      15,
+      afterWorkCostTableY
+    );
+
+    // Download the PDF
+    doc.save(`Receipt_${id}.pdf`);
+  };
+
 
   if (loading) {
     return (
@@ -198,45 +282,44 @@ export default function OrderPageID() {
                 <img
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
-                  className={`${commonClasses.mainImage} ${
-                    transitioning
-                      ? "opacity-0 translate-y-1"
-                      : "opacity-100 translate-y-0"
-                  }`}
+                  className={`${commonClasses.mainImage} ${transitioning
+                    ? "opacity-0 translate-y-1"
+                    : "opacity-100 translate-y-0"
+                    }`}
                 />
 
                 {selectedOrder?.productForOrderData?.productImages?.length >
                   0 && (
-                  <div className={commonClasses.thumbnailContainer}>
-                    {selectedOrder.productForOrderData.productImages.map(
-                      (image, index) => (
-                        <SmallBlockHolder
-                          key={index}
-                          type="plainPicture"
-                          imageSource={image.url}
-                          onButtonFunction={() => handleImageChange(image)}
-                          mainStatus={mainImage === image.url}
-                        />
-                      )
-                    )}
-                    {selectedOrder.productForOrderData.patternImages.map(
-                      (image, index) => (
-                        <SmallBlockHolder
-                          key={index}
-                          type="plainPicture"
-                          imageSource={image.url}
-                          onButtonFunction={() => handleImageChange(image)}
-                          mainStatus={mainImage === image.url}
-                        />
-                      )
-                    )}
-                  </div>
-                )}
+                    <div className={commonClasses.thumbnailContainer}>
+                      {selectedOrder.productForOrderData.productImages.map(
+                        (image, index) => (
+                          <SmallBlockHolder
+                            key={index}
+                            type="plainPicture"
+                            imageSource={image.url}
+                            onButtonFunction={() => handleImageChange(image)}
+                            mainStatus={mainImage === image.url}
+                          />
+                        )
+                      )}
+                      {selectedOrder.productForOrderData.patternImages.map(
+                        (image, index) => (
+                          <SmallBlockHolder
+                            key={index}
+                            type="plainPicture"
+                            imageSource={image.url}
+                            onButtonFunction={() => handleImageChange(image)}
+                            mainStatus={mainImage === image.url}
+                          />
+                        )
+                      )}
+                    </div>
+                  )}
               </div>
 
               <div className="flex flex-col gap-2">
                 <div className="flex flex-row gap-2">
-                  <button className=" relative bg-green rounded-md w-[70%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
+                  <button onClick={handleDownloadReceipt} className="hover:bg-darkGreen relative bg-green rounded-md w-[70%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
                     <p>Create receipt</p>
                     <img src="/receipt.png" alt="Pencil" className="w-5" />
                   </button>
@@ -319,17 +402,15 @@ export default function OrderPageID() {
                     Delete
                   </button>
                   <button
-                    className={`${
-                      paid ? "bg-darkYellow text-white" : "bg-yellow"
-                    } text-sm py-1 rounded-md w-[60%]`}
+                    className={`${paid ? "bg-darkYellow text-white" : "bg-yellow"
+                      } text-sm py-1 rounded-md w-[60%]`}
                     onClick={togglePaid}
                   >
                     {paid ? "Set as unpaid" : "Set as Paid"}
                   </button>
                   <button
-                    className={`${
-                      completed ? "bg-darkYellow text-white" : "bg-yellow"
-                    } text-sm py-1 rounded-md w-[60%]`}
+                    className={`${completed ? "bg-darkYellow text-white" : "bg-yellow"
+                      } text-sm py-1 rounded-md w-[60%]`}
                     onClick={toggleCompleted}
                   >
                     {completed ? "Set as Incomplete" : "Set as Completed"}

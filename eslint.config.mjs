@@ -2,6 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import js from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
+import next from "eslint-config-next";
 
 export default defineConfig([
   globalIgnores([
@@ -20,9 +21,10 @@ export default defineConfig([
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
     plugins: { js },
-    extends: ["js/recommended"],
+    extends: ["js/recommended", "next"],
     rules: {
-      "no-unused-vars": "off",  // ✅ Disable globally
+      "no-unused-vars": "off",
+      "no-prototype-builtins": "off", 
     },
   },
   {

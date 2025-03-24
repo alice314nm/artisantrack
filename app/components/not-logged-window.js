@@ -2,17 +2,17 @@ import Link from "next/link";
 
 export default function NotLoggedWindow() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bottom-44">
+    <div className="inset-0 flex items-center justify-center bottom-44">
       <div className="w-96 p-6 flex flex-col text-left items-center gap-4">
-        <p className="text-lg text-center">
+        <p className="text-lg text-left">
           Welcome to <span className="font-bold">Artisan Track</span>!  
           Manage your products, orders, materials and finance.  
         </p>
-        <p className="text-center text-gray-600">
+        <p className="text-left text-gray-600">
           Sign in to continue or create a new account to get started.
         </p>
 
-        <div className="flex flex-col gap-3 mt-4 w-full">
+        <div className="flex flex-col gap-3 w-full">
           <Link href="/login">
             <button className="font-bold bg-green py-2 px-4 rounded-lg w-full">
               Log In

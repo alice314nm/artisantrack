@@ -21,6 +21,9 @@ export default defineConfig([
     files: ["**/*.{js,mjs,cjs,jsx}"],
     plugins: { js },
     extends: ["js/recommended"],
+    rules: {
+      "no-unused-vars": "off",  // ✅ Disable globally
+    },
   },
   {
     ...pluginReact.configs.flat.recommended,

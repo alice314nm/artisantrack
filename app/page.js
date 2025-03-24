@@ -9,8 +9,7 @@ import NotLoggedWindow from "./components/not-logged-window";
 import { useEffect, useState } from "react";
 
 export default function WelcomePage() {
-  //const { user } = useUserAuth();
-  const user = false;
+  const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
 

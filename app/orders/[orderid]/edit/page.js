@@ -88,30 +88,29 @@ export default function Page() {
     }
   }, [user]);
 
-  
   useEffect(() => {
     if (!selectedOrder || Object.keys(selectedOrder).length === 0) return;
-  
+
     setLoading(true);
     setOrderName(selectedOrder.nameOrder || "");
-    
+
     const parseDate = (date) => {
       if (!date) return null;
       if (date.seconds) return new Date(date.seconds * 1000); // Firestore Timestamp
       return isNaN(new Date(date).getTime()) ? null : new Date(date);
     };
-    
+
     setDeadline(parseDate(selectedOrder.deadline));
     setStartDate(parseDate(selectedOrder.startDate));
     setDaysCounter(selectedOrder.daysUntilDeadline || 0);
     setCustomerName(selectedOrder.customerName || "");
     setDesc(selectedOrder.description || "");
     setSelectedProduct(selectedOrder.productForOrderData || null);
-    setSelectedMaterials(selectedOrder.materialsForOrderData  || []);
-    
+    setSelectedMaterials(selectedOrder.materialsForOrderData || []);
+
     if (selectedOrder.quantities && Array.isArray(selectedOrder.quantities)) {
       const quantitiesObj = {};
-      selectedOrder.quantities.forEach(item => {
+      selectedOrder.quantities.forEach((item) => {
         if (item && item.id) {
           quantitiesObj[item.id] = item.quantity;
         }
@@ -126,24 +125,24 @@ export default function Page() {
     setTotal(selectedOrder.totalCost || 0);
     setLoading(false);
   }, [selectedOrder]);
-  
+
   useEffect(() => {
     if (!selectedMaterials || selectedMaterials.length === 0) {
       setMaterialCost(0);
       return;
     }
-  
+
     let totalCost = 0;
-  
+
     selectedMaterials.forEach((material) => {
       const quantity = parseFloat(materialQuantities[material.materialId] || 0);
       const cost = parseFloat(material.costPerUnit || 0);
-      
+
       if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
         totalCost += quantity * cost;
       }
     });
-  
+
     setMaterialCost(Number(totalCost.toFixed(2)));
   }, [selectedMaterials, materialQuantities]);
 
@@ -202,7 +201,6 @@ export default function Page() {
     setProductCost(product?.averageCost || 0);
     setCurrency(product?.currency || "USD");
   };
-  
 
   const handleSelectMaterial = (material) => {
     if (!selectedMaterials.includes(material)) {
@@ -216,9 +214,9 @@ export default function Page() {
   };
 
   const handleMaterialQuantityChange = (materialId, value) => {
-    setMaterialQuantities(prev => ({
+    setMaterialQuantities((prev) => ({
       ...prev,
-      [materialId]: value
+      [materialId]: value,
     }));
   };
 
@@ -241,18 +239,18 @@ export default function Page() {
       setMaterialCost(0);
       return;
     }
-  
+
     let totalCost = 0;
-  
+
     selectedMaterials.forEach((material) => {
       const quantity = parseFloat(materialQuantities[material.materialId] || 0);
       const cost = parseFloat(material.costPerUnit || 0);
-      
+
       if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
         totalCost += quantity * cost;
       }
     });
-  
+
     setMaterialCost(Number(totalCost.toFixed(2)));
   };
 
@@ -460,7 +458,7 @@ export default function Page() {
               </div>
               <textarea
                 data-id="order-description"
-                className="rounded-lg border p-2"
+                className={inputStyle}
                 name="description"
                 placeholder="Enter details about the order"
                 value={desc}
@@ -613,14 +611,18 @@ export default function Page() {
                 />
               </div>
               <input
-                  data-id="work-cost"
-                  className={inputStyle}
-                  type="number"
-                  value={workCost}
-                  name="workCost"
-                  placeholder="0.00"
-                  onChange={(e) => setWorkCost(e.target.value === "" ? 0 : parseFloat(e.target.value))}
-                />
+                data-id="work-cost"
+                className={inputStyle}
+                type="number"
+                value={workCost}
+                name="workCost"
+                placeholder="0.00"
+                onChange={(e) =>
+                  setWorkCost(
+                    e.target.value === "" ? 0 : parseFloat(e.target.value)
+                  )
+                }
+              />
             </div>
 
             {/* Total cost */}
@@ -645,11 +647,13 @@ export default function Page() {
               <div className="flex flex-row gap-2">
                 <input
                   className={inputStyle}
-                  value={total}  // Don't convert 0 to empty string
+                  value={total} // Don't convert 0 to empty string
                   type="number"
                   placeholder="0.00"
                   onChange={(e) => {
-                    setTotal(e.target.value === "" ? 0 : parseFloat(e.target.value));
+                    setTotal(
+                      e.target.value === "" ? 0 : parseFloat(e.target.value)
+                    );
                   }}
                 />
                 <select

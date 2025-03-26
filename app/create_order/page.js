@@ -399,8 +399,8 @@ export default function Page() {
                 />
               </div>
               <textarea
+                className={inputStyle}
                 data-id="order-description"
-                className="rounded-lg border p-2"
                 name="description"
                 placeholder="Enter details about the order"
                 value={desc}

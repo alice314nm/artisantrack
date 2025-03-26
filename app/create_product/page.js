@@ -261,6 +261,7 @@ export default function Page() {
               />
             </div>
             <input
+              placeholder="Enter id (2-16 characters)"
               data-id="product-id"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={productId}
@@ -281,6 +282,7 @@ export default function Page() {
               />
             </div>
             <input
+              placeholder="Enter name (2-64 characters)"
               data-id="product-name"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={name}
@@ -299,6 +301,7 @@ export default function Page() {
               />
             </div>
             <textarea
+              placeholder="Enter description"
               data-id="product-description"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={desc}
@@ -328,6 +331,7 @@ export default function Page() {
             </div>
             <div className="flex flex-row gap-2">
               <input
+                placeholder="Add a category for a material "
                 list="categories"
                 className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 value={category}

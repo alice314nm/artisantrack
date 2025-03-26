@@ -267,6 +267,8 @@ export default function Page() {
             <textarea
               data-id="material-description"
               alue={desc}
+              className={inputStyle}
+              placeholder="Enter description"
               onChange={(e) => {
                 if (e.target.value.length <= 1000) {
                   setDesc(e.target.value);

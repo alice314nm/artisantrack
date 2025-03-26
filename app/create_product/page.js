@@ -94,16 +94,16 @@ export default function Page() {
     try {
       if (!e || !e.target || !e.target.files) return;
 
-      const files = Array.from(e.target.files);
-      const validFiles = files.filter((file) =>
+      const filesPattern = Array.from(e.target.files);
+      const validPatternFiles = filesPattern.filter((file) =>
         ["image/png", "image/jpeg"].includes(file.type)
       );
 
-      if (validFiles.length !== files.length) {
+      if (validPatternFiles.length !== filesPattern.length) {
         setErrorMessage("Only PNG and JPG files are allowed.");
       }
 
-      setPatternImages((prev) => [...prev, ...validFiles]);
+      setPatternImages((prev) => [...prev, ...validPatternFiles]);
     } catch (error) {
       console.error("Failed to handle pattern image upload:", error);
     }
@@ -113,20 +113,25 @@ export default function Page() {
     try {
       if (!e || !e.target || !e.target.files) return;
 
-      const files = Array.from(e.target.files);
-      const validFiles = files.filter((file) =>
+      const filesProduct = Array.from(e.target.files);
+      const validProductFiles = filesProduct.filter((file) =>
         ["image/png", "image/jpeg"].includes(file.type)
       );
 
-      if (validFiles.length !== files.length) {
+      if (validProductFiles.length !== filesProduct.length) {
         setErrorMessage("Only PNG and JPG files are allowed.");
       }
 
-      setProductImages((prev) => [...prev, ...validFiles]);
+      setProductImages((prev) => [...prev, ...validProductFiles]);
     } catch (error) {
       console.error("Failed to handle product image upload:", error);
     }
   };
+
+  useEffect(()=>{
+    console.log(patternImages)
+    console.log(0, productImages)
+  }, [patternImages, productImages])
 
   const handleUpload = async () => {
     const uploadedProductImages = [];
@@ -259,6 +264,7 @@ export default function Page() {
               data-id="product-id"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={productId}
+              placeholder="Enter id (2-16 characters)"
               onChange={(e) => setProductId(e.target.value)}
             />
           </div>
@@ -278,6 +284,7 @@ export default function Page() {
               data-id="product-name"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={name}
+              placeholder="Enter name (2-64 characters)"
               onChange={(e) => setName(e.target.value)}
             />
           </div>
@@ -295,6 +302,7 @@ export default function Page() {
               data-id="product-description"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={desc}
+              placeholder="Enter description"
               onChange={(e) => {
                 if (e.target.value.length <= 1000) {
                   setDesc(e.target.value);
@@ -323,6 +331,7 @@ export default function Page() {
                 list="categories"
                 className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 value={category}
+                placeholder="Add a category for a material "
                 onChange={(e) => setCategory(e.target.value)}
                 data-id="product-category"
               />
@@ -374,18 +383,18 @@ export default function Page() {
             </div>
             <div className="relative inline-block">
               <label
-                htmlFor="fileInput"
+                htmlFor="fileInputProduct"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
                 Select images
               </label>
               <input
-                id="fileInput"
+                id="fileInputProduct"
                 type="file"
                 className="hidden"
                 multiple
+                accept="image/png, image/jpeg"
                 onChange={handleProductImageChange}
-                data-id="product-image-input"
               />
             </div>
 
@@ -421,17 +430,18 @@ export default function Page() {
 
             <div className="relative inline-block">
               <label
-                htmlFor="fileInput"
+                htmlFor="fileInputPattern"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
                 Select images
               </label>
               <input
-                id="fileInput"
+                id="fileInputPattern"
                 type="file"
                 className="hidden"
+                multiple
+                accept="image/png, image/jpeg"
                 onChange={handlePatternImageChange}
-                data-id="pattern-image-input"
               />
             </div>
 

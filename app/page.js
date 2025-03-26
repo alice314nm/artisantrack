@@ -14,8 +14,11 @@ export default function WelcomePage() {
   const [userData, setUserData] = useState(null);
 
   const tileStyle =
+    "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-between transition-all duration-300";
+    const tileStyle2 =
     "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-start transition-all duration-300";
-  const titleStyle = "text-lg font-bold";
+  
+    const titleStyle = "text-lg font-bold";
   const infoStyle = "text text-blackBeige";
   const LinkStyle =
     "w-44 text-center bg-green px-4 font-semibold rounded-lg py-2 hover:bg-darkGreen transition-all duration-300";
@@ -149,19 +152,19 @@ export default function WelcomePage() {
         <Header title="Artisan Track" />
         <NotLoggedWindow />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className={tileStyle}>
+            <div className={tileStyle2}>
               <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5"src="/inventory.png"/>Track your inventory!</p>
               <p className={infoStyle}>Add patterns, materials, models and more.</p>
               <p className={infoStyle}>Keep track of your categories.</p>
             </div>
 
-            <div className={tileStyle}>
+            <div className={tileStyle2}>
               <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5"src="/orders.png"/>Track your orders!</p>
               <p className={infoStyle}>Add entities to your order from your inventory.</p>
               <p className={infoStyle}>Set deadlines and clients.</p>
             </div>
 
-            <div className={tileStyle}>
+            <div className={tileStyle2}>
               <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5"src="/finances.png"/>Track your finances!</p>
               <p className={infoStyle}>Receive monthly and yearly reports about your incomes and expenses.</p>
               <p className={infoStyle}>See what products and materials are popular among your clients.</p>

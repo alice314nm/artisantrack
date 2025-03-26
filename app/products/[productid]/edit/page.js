@@ -424,18 +424,19 @@ export default function Page() {
                 }
               />
             </div>
-            <div className="relative inline-block ">
+            <div className="relative inline-block">
               <label
-                htmlFor="fileInput"
+                htmlFor="fileInputProduct"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
-                select images
+                Select images
               </label>
               <input
-                id="fileInput"
+                id="fileInputProduct"
                 type="file"
                 className="hidden"
                 multiple
+                accept="image/png, image/jpeg"
                 onChange={handleProductImageChange}
               />
             </div>
@@ -478,16 +479,17 @@ export default function Page() {
 
             <div className="relative inline-block">
               <label
-                htmlFor="fileInput"
+                htmlFor="fileInputPattern"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
-                select images
+                Select images
               </label>
               <input
-                id="fileInput"
-                multiple
+                id="fileInputPattern"
                 type="file"
                 className="hidden"
+                multiple
+                accept="image/png, image/jpeg"
                 onChange={handlePatternImageChange}
               />
             </div>

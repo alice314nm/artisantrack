@@ -99,5 +99,4 @@ function AutoLogoutWrapper({ setSessionExpired }) {
       )}
     </>
   );
-
 }

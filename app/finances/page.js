@@ -29,7 +29,8 @@ export default function Page() {
   const [newTax, setNewTax] = useState("");
   const [isTaxChanging, setIsTaxChanging] = useState(false);
 
-  const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60 text-center";
+  const buttonStyle =
+    "bg-green px-2 py-1 rounded-lg w-60 text-center hover:bg-darkGreen";
 
   useEffect(() => {
     document.title = "Finance";
@@ -108,25 +109,26 @@ export default function Page() {
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <div className="flex flex-row justify-between">
             <p>All orders:</p>
-            <div>
+            <div className="h-10 flex items-center">
               Set Tax:{" "}
               {isTaxChanging ? (
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center ">
                   <input
                     type="number"
                     value={newTax}
                     onChange={handleTaxChange}
-                    className="w-20"
+                    className="ml-2 w-20 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green p-2"
                   />
+                  <span>%</span>
                   <button
                     onClick={saveTax}
-                    className="bg-green px-2 py-1 rounded-lg"
+                    className="bg-green py-2 px-4 rounded-lg hover:bg-darkGreen"
                   >
                     Save
                   </button>
                   <button
                     onClick={cancelTaxChange}
-                    className="bg-red px-2 py-1 rounded-lg"
+                    className="bg-red py-2 px-4 rounded-lg hover:bg-rose-800"
                   >
                     Cancel
                   </button>
@@ -146,7 +148,7 @@ export default function Page() {
             </div>
             {!isTaxChanging && (
               <button
-                className="bg-green px-2 py-1 rounded-lg"
+                className="bg-green px-2 py-1 rounded-lg hover:bg-darkGreen"
                 onClick={() => setIsTaxChanging(true)}
               >
                 Change Tax
@@ -160,13 +162,8 @@ export default function Page() {
             This month (
             {new Date().toLocaleString("default", { month: "long" })}):
           </p>
-          <p>
-            Income: {userData?.monthlyIncome ?? "Loading..."}$
-          </p>
-          <p>
-          Expenses:{" "}
-          {userData?.monthlyExpenses ?? "Loading..."}$  
-          </p>
+          <p>Income: {userData?.monthlyIncome ?? "Loading..."}$</p>
+          <p>Expenses: {userData?.monthlyExpenses ?? "Loading..."}$</p>
           <Link href="finances/monthly" className={buttonStyle}>
             Monthly Financial Report
           </Link>
@@ -174,19 +171,12 @@ export default function Page() {
 
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>This year ({new Date().getFullYear()}):</p>
-          <p>
-            Income: {userData?.yearlyIncome ?? "Loading..."}$
-          </p>
-          <p>
-            Expenses:{" "}
-            {userData?.yearlyExpenses ?? "Loading..."}$
-          </p>
+          <p>Income: {userData?.yearlyIncome ?? "Loading..."}$</p>
+          <p>Expenses: {userData?.yearlyExpenses ?? "Loading..."}$</p>
           <Link href="finances/yearly" className={buttonStyle}>
             Yearly Financial Report
           </Link>{" "}
         </div>
-
-        
 
         <FilterWindow
           onClose={closeConfirmation}

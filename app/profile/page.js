@@ -26,10 +26,16 @@ export default function Page() {
   const [deleteConfirmWindow, setDeleteConfirmWindow] = useState(false);
   const [passwordConfirmWindow, setPasswordConfirmWindow] = useState(false);
   const [accountDeleted, setAccountDeleted] = useState(false);
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [editableEmail, setEditableEmail] = useState(user?.email || "");
   const [emailConfirmWindowVisibility, setEmailConfirmWindowVisibility] =
     useState(false);
+  // New state for tax editing
+  const [editableTax, setEditableTax] = useState("");
+
+  // Consistent styling for both view and edit modes
+  const sectionStyle = "flex items-center h-9 gap-2"; // Fixed height for consistent spacing
+  const inputStyle =
+    "p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
 
   useEffect(() => {
     document.title = "Profile";
@@ -51,6 +57,14 @@ export default function Page() {
     fetchData();
   }, [user]);
 
+  // Add effect to set initial tax value when userData loads
+  useEffect(() => {
+    if (userData && userData.tax) {
+      // Remove % sign if present
+      setEditableTax(userData.tax.replace("%", ""));
+    }
+  }, [userData]);
+
   const handleAccountDeletion = () => {
     setAccountDeleted(true);
     setTimeout(() => {
@@ -67,9 +81,14 @@ export default function Page() {
       const db = getFirestore(app);
       const userDoc = doc(db, `users/${user.uid}`);
 
-      await updateDoc(userDoc, {
+      // Create update object with all editable fields
+      const updateData = {
         displayName: editableDisplayName,
-      });
+        // Add tax to the update if it's provided
+        ...(editableTax.trim() ? { tax: `${editableTax}%` } : {}),
+      };
+
+      await updateDoc(userDoc, updateData);
 
       const auth = getAuth();
       await updateProfile(auth.currentUser, {
@@ -79,13 +98,21 @@ export default function Page() {
       setUserData((prevData) => ({
         ...prevData,
         displayName: editableDisplayName,
+        ...(editableTax.trim() ? { tax: `${editableTax}%` } : {}),
       }));
 
-      setIsEditing(false);
+      // Check if email needs to be updated
+      if (editableEmail !== user.email) {
+        setEmailConfirmWindowVisibility(true);
+      } else {
+        setIsEditing(false);
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
     } finally {
-      setSaving(false);
+      if (editableEmail === user.email) {
+        setSaving(false);
+      }
     }
   };
 
@@ -108,15 +135,24 @@ export default function Page() {
         email: editableEmail,
       }));
 
-      setIsEditingEmail(false);
+      setIsEditing(false);
       setEmailConfirmWindowVisibility(false);
+      setSaving(false);
     } else {
       console.error("Email not verified.");
+      setSaving(false);
     }
   };
 
   const handleCancel = () => {
     setEditableDisplayName(user.displayName || "");
+    setEditableEmail(user.email || "");
+    // Reset tax to original value
+    if (userData && userData.tax) {
+      setEditableTax(userData.tax.replace("%", ""));
+    } else {
+      setEditableTax("");
+    }
     setIsEditing(false);
   };
 
@@ -183,25 +219,23 @@ export default function Page() {
       <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
         <Header title="Profile" />
         <div className="flex flex-col gap-4 overflow-auto pb-16">
-          {/* Profile Header */}
+          {/* Profile Header with Edit Button */}
           <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
-            {isEditing ? (
-              <div className="flex flex-row gap-4 items-center">
-                <p className="text-xl font-semibold">Artisan:</p>
+            <div className={sectionStyle}>
+              <p className="text-xl font-semibold">Artisan:</p>
+              {isEditing ? (
                 <input
                   data-id="new-name"
                   type="text"
                   value={editableDisplayName}
                   onChange={(e) => setEditableDisplayName(e.target.value)}
-                  className="border border-gray-400 rounded p-1"
+                  className={inputStyle}
                   disabled={saving}
                 />
-              </div>
-            ) : (
-              <p className="text-xl font-semibold">
-                Artisan: {user.displayName}
-              </p>
-            )}
+              ) : (
+                <p>{user.displayName}</p>
+              )}
+            </div>
             <div className="flex gap-2">
               {isEditing ? (
                 <>
@@ -235,11 +269,11 @@ export default function Page() {
                 </>
               ) : (
                 <button
-                  data-id="edit-name-button"
+                  data-id="edit-profile-button"
                   className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
                   onClick={() => setIsEditing(true)}
                 >
-                  <p className="font-semibold">Edit</p>
+                  <p className="font-semibold">Edit Profile</p>
                   <img src="/Pencil.png" className="w-5" />
                 </button>
               )}
@@ -247,70 +281,30 @@ export default function Page() {
           </div>
 
           {/* Email Section */}
-          <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
+          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
             <p className="underline">Current email:</p>
-            {isEditingEmail ? (
-              <div className="flex flex-row justify-between items-center">
-                <div className="flex flex-row gap-4 items-center">
-                  <input
-                    data-id="new-email"
-                    type="email"
-                    value={editableEmail}
-                    onChange={(e) => setEditableEmail(e.target.value)}
-                    className="border border-gray-400 rounded p-1 w-80"
-                    disabled={saving}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    className={`flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200 ${
-                      saving ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                    data-id="confirm-email-change"
-                    onClick={() => setEmailConfirmWindowVisibility(true)}
-                    disabled={saving}
-                  >
-                    {saving ? (
-                      <>
-                        <img src="/loading-gif.gif" className="w-5" />
-                        <p className="font-semibold">Saving...</p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="font-semibold">Save</p>
-                        <img src="/Save.png" className="w-5" />
-                      </>
-                    )}
-                  </button>
-                  <button
-                    className="flex items-center bg-red py-2 px-4 rounded-md hover:bg-rose-800 transition-all duration-200"
-                    onClick={() => setIsEditingEmail(false)}
-                    disabled={saving}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-row justify-between items-center">
+            <div className={sectionStyle}>
+              {isEditing ? (
+                <input
+                  className={`${inputStyle} w-1/5`}
+                  data-id="new-email"
+                  type="email"
+                  value={editableEmail}
+                  onChange={(e) => setEditableEmail(e.target.value)}
+                  disabled={saving}
+                  style={{ minWidth: "250px" }}
+                />
+              ) : (
                 <p>{user.email || "email@example.com"}</p>
-                <button
-                  data-id="edit-email-button"
-                  className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
-                  onClick={() => setIsEditingEmail(true)}
-                >
-                  <p className="font-semibold">Edit</p>
-                  <img src="/Pencil.png" className="w-5" />
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Change Password Section */}
           <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
             <button
               data-id="change-password-button"
-              className="text-black bg-green self-start p-2 rounded-md"
+              className="hover:bg-darkGreen bg-green self-start p-2 rounded-md"
               onClick={openChangePasswordWindow}
             >
               Change Password
@@ -324,22 +318,49 @@ export default function Page() {
           </div>
 
           {/* Inventory Section */}
-          <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
+          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
             <p className="underline">Inventory:</p>
-            <p>Total products: {userData?.productCount ?? "Loading..."}</p>
-            <p>Total materials: {userData?.materialCount ?? "Loading..."}</p>
+            <p className={sectionStyle}>
+              Total products: {userData?.productCount ?? "Loading..."}
+            </p>
+            <p className={sectionStyle}>
+              Total materials: {userData?.materialCount ?? "Loading..."}
+            </p>
           </div>
 
           {/* Orders Section */}
-          <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
+          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
             <p className="underline">Orders:</p>
-            <p>In progress: {userData?.inProgressOrders ?? "Loading..."}</p>
-            <p>Completed: {userData?.completedOrders ?? "Loading..."}</p>
+            <p className={sectionStyle}>
+              In progress: {userData?.inProgressOrders ?? "Loading..."}
+            </p>
+            <p className={sectionStyle}>
+              Completed: {userData?.completedOrders ?? "Loading..."}
+            </p>
           </div>
 
-          {/* Tax Section */}
-          <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
-            <p>Set tax: {userData?.tax || "Tax not set"}</p>
+          {/* Tax Section - Updated to integrate with main profile editing */}
+          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
+            <p className="underline">Set tax:</p>
+            <div className={sectionStyle}>
+              {isEditing ? (
+                <div className="flex items-center">
+                  <input
+                    data-id="edit-tax"
+                    type="number"
+                    value={editableTax}
+                    onChange={(e) => setEditableTax(e.target.value)}
+                    className={inputStyle}
+                    style={{ width: "80px" }}
+                    placeholder="0"
+                    disabled={saving}
+                  />
+                  <span className="ml-1">%</span>
+                </div>
+              ) : (
+                <p>{userData?.tax || "Tax not set"}</p>
+              )}
+            </div>
           </div>
 
           {/* Delete Account Section */}
@@ -374,7 +395,10 @@ export default function Page() {
           {emailConfirmWindowVisibility && (
             <PasswordConfirmationWindow
               windowVisibility={emailConfirmWindowVisibility}
-              onClose={() => setEmailConfirmWindowVisibility(false)}
+              onClose={() => {
+                setEmailConfirmWindowVisibility(false);
+                setSaving(false);
+              }}
               onConfirm={checkEmailVerification}
               mode="updateEmail"
               newEmail={editableEmail}

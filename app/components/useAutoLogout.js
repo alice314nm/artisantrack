@@ -35,7 +35,9 @@ export function useAutoLogout({ setSessionExpired }) {
       timeout = setTimeout(() => {
         if (isMounted && user) {
           setSessionExpired(true);
-          firebaseSignOut(); // Log out after 2 hours if no response
+          setShowPopup(false);
+          popupActive.current = false;
+          firebaseSignOut();
         }
       }, AUTO_LOGOUT_TIME);
     };

@@ -1,0 +1,34 @@
+{
+  "welcome": {
+    "greeting": "Welcome back, {name}!",
+    "title": "Artisan Track",
+    "loading": "Loading...",
+    "notLogged": {
+      "trackInventory": "Track your inventory!",
+      "addPatterns": "Add patterns, materials, models and more.",
+      "keepTrack": "Keep track of your categories.",
+      "trackOrders": "Track your orders!",
+      "addEntities": "Add entities to your order from your inventory.",
+      "setDeadlines": "Set deadlines and clients.",
+      "trackFinances": "Track your finances!",
+      "receiveReports": "Receive monthly and yearly reports about your incomes and expenses.",
+      "seePopular": "See what products and materials are popular among your clients."
+    },
+    "dashboard": {
+      "orders": "Orders",
+      "inProgress": "In Progress:",
+      "completed": "Completed:",
+      "viewOrders": "View Orders",
+      "materials": "Materials",
+      "totalMaterials": "Total Materials:",
+      "viewMaterials": "View Materials",
+      "products": "Products",
+      "totalProducts": "Total Products:",
+      "viewProducts": "View Products",
+      "finance": "Finance",
+      "revenue": "Revenue:",
+      "expenses": "Expenses:",
+      "viewFinances": "View Finances"
+    }
+  }
+}

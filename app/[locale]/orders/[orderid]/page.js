@@ -1,10 +1,11 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
-import ConfirmationWindow from "@/app/components/confirmation-window";
-import Header from "@/app/components/header";
-import Menu from "@/app/components/menu";
-import SmallBlockHolder from "@/app/components/small-block-holder";
+import { useTranslations } from 'next-intl';
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
+import ConfirmationWindow from "@/app/[locale]/components/confirmation-window";
+import Header from "@/app/[locale]/components/header";
+import Menu from "@/app/[locale]/components/menu";
+import SmallBlockHolder from "@/app/[locale]/components/small-block-holder";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -20,8 +21,8 @@ import {
   dbGetOrderById,
   toggleOrderCompleted,
   toggleOrderPaid,
-} from "@/app/_services/order-service";
-import MaterialOrderDisplay from "@/app/components/material-order-display";
+} from "@/app/[locale]/_services/order-service";
+import MaterialOrderDisplay from "@/app/[locale]/components/material-order-display";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 

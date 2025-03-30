@@ -1,31 +1,26 @@
 "use client";
 
 import { useUserAuth } from "@/app/_utils/auth-context";
+import Header from "@/app/components/header";
+import NotLoggedWindow from "@/app/components/not-logged-window";
+import SearchBar from "@/app/components/search-bar";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import SelectHolder from "../components/select-holder";
+import Menu from "../components/menu";
+import SelectedHolder from "../components/selected-holder";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useParams } from "next/navigation";
-import Header from "@/app/[locale]/components/header";
-import SelectedHolder from "@/app/[locale]/components/selected-holder";
-import Menu from "@/app/[locale]/components/menu";
-import SearchBar from "@/app/[locale]/components/search-bar";
-import SelectHolder from "@/app/[locale]/components/select-holder";
-import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
-import { dbAddOrder, dbGetOrderById } from "@/app/[locale]/_services/order-service";
-import { fetchMaterialsForOrder } from "@/app/[locale]/_services/material-service";
-import { fetchProductsForOrder } from "@/app/[locale]/_services/product-service";
+import { dbAddOrder } from "@/app/[locale]/_services/order-service";
+import { fetchMaterialsForOrder } from "../_services/material-service";
+import { fetchProductsForOrder } from "../_services/product-service";
+import { doc } from "firebase/firestore";
 
 export default function Page() {
   const router = useRouter();
   const { user } = useUserAuth();
-  const params = useParams();
-  const id = params.orderid;
-
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
-
-  const [selectedOrder, setSelectedOrder] = useState({});
   const [products, setProducts] = useState([]);
   const [materials, setMaterials] = useState([]);
 
@@ -36,12 +31,12 @@ export default function Page() {
   const [state, setState] = useState("form");
 
   const [orderName, setOrderName] = useState("");
-  const [deadline, setDeadline] = useState(null);
-  const [startDate, setStartDate] = useState(null);
+  const [deadline, setDeadline] = useState("");
+  const [startDate, setStartDate] = useState("");
   const [daysCounter, setDaysCounter] = useState(0);
   const [customerName, setCustomerName] = useState("");
   const [desc, setDesc] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedMaterials, setSelectedMaterials] = useState([]);
 
   const [materialQuantities, setMaterialQuantities] = useState({});
@@ -81,70 +76,11 @@ export default function Page() {
       return;
     }
 
-    if (user && id) {
+    if (user) {
       fetchProductsForOrder(user.uid, setProducts);
       fetchMaterialsForOrder(user.uid, setMaterials);
-      dbGetOrderById(user.uid, id, setSelectedOrder);
     }
   }, [user]);
-
-  useEffect(() => {
-    if (!selectedOrder || Object.keys(selectedOrder).length === 0) return;
-
-    setLoading(true);
-    setOrderName(selectedOrder.nameOrder || "");
-
-    const parseDate = (date) => {
-      if (!date) return null;
-      if (date.seconds) return new Date(date.seconds * 1000); // Firestore Timestamp
-      return isNaN(new Date(date).getTime()) ? null : new Date(date);
-    };
-
-    setDeadline(parseDate(selectedOrder.deadline));
-    setStartDate(parseDate(selectedOrder.startDate));
-    setDaysCounter(selectedOrder.daysUntilDeadline || 0);
-    setCustomerName(selectedOrder.customerName || "");
-    setDesc(selectedOrder.description || "");
-    setSelectedProduct(selectedOrder.productForOrderData || null);
-    setSelectedMaterials(selectedOrder.materialsForOrderData || []);
-
-    if (selectedOrder.quantities && Array.isArray(selectedOrder.quantities)) {
-      const quantitiesObj = {};
-      selectedOrder.quantities.forEach((item) => {
-        if (item && item.id) {
-          quantitiesObj[item.id] = item.quantity;
-        }
-      });
-      setMaterialQuantities(quantitiesObj);
-    }
-
-    setProductCost(selectedOrder.productCost || 0);
-    setMaterialCost(selectedOrder.materialsCost || 0);
-    setWorkCost(selectedOrder.workCost || 0);
-    setCurrency(selectedOrder.currency || "USD");
-    setTotal(selectedOrder.totalCost || 0);
-    setLoading(false);
-  }, [selectedOrder]);
-
-  useEffect(() => {
-    if (!selectedMaterials || selectedMaterials.length === 0) {
-      setMaterialCost(0);
-      return;
-    }
-
-    let totalCost = 0;
-
-    selectedMaterials.forEach((material) => {
-      const quantity = parseFloat(materialQuantities[material.materialId] || 0);
-      const cost = parseFloat(material.costPerUnit || 0);
-
-      if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
-        totalCost += quantity * cost;
-      }
-    });
-
-    setMaterialCost(Number(totalCost.toFixed(2)));
-  }, [selectedMaterials, materialQuantities]);
 
   const handleSelectProductForm = () => {
     setState("products");
@@ -197,9 +133,9 @@ export default function Page() {
   };
 
   const handleSelectProduct = (product) => {
-    setSelectedProduct(product || null);
-    setProductCost(product?.averageCost || 0);
-    setCurrency(product?.currency || "USD");
+    setSelectedProduct(product);
+    setProductCost(product.averageCost);
+    setCurrency(product.currency);
   };
 
   const handleSelectMaterial = (material) => {
@@ -214,10 +150,10 @@ export default function Page() {
   };
 
   const handleMaterialQuantityChange = (materialId, value) => {
-    setMaterialQuantities((prev) => ({
-      ...prev,
+    setMaterialQuantities({
+      ...materialQuantities,
       [materialId]: value,
-    }));
+    });
   };
 
   const handleRemoveMaterial = (material) => {
@@ -243,11 +179,17 @@ export default function Page() {
     let totalCost = 0;
 
     selectedMaterials.forEach((material) => {
-      const quantity = parseFloat(materialQuantities[material.materialId] || 0);
-      const cost = parseFloat(material.costPerUnit || 0);
+      const selectedQuantity = parseFloat(
+        materialQuantities[material.materialId] || 0
+      );
+      const costPerUnit = parseFloat(material.costPerUnit || 0);
 
-      if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
-        totalCost += quantity * cost;
+      if (
+        !isNaN(selectedQuantity) &&
+        !isNaN(costPerUnit) &&
+        selectedQuantity > 0
+      ) {
+        totalCost += selectedQuantity * costPerUnit;
       }
     });
 
@@ -259,7 +201,7 @@ export default function Page() {
   };
 
   const handleNavigateToListPage = () => {
-    window.location.href = `/orders/${id}`;
+    window.location.href = "/orders";
   };
 
   const handleCancelProductSelection = () => {
@@ -457,8 +399,8 @@ export default function Page() {
                 />
               </div>
               <textarea
-                data-id="order-description"
                 className={inputStyle}
+                data-id="order-description"
                 name="description"
                 placeholder="Enter details about the order"
                 value={desc}
@@ -470,7 +412,7 @@ export default function Page() {
               />
               {/* Display character count */}
               <div className="text-sm text-gray-500 mt-1">
-                {desc?.length} / 1000 characters
+                {desc.length} / 1000 characters
               </div>
             </div>
 
@@ -528,7 +470,8 @@ export default function Page() {
                 value={
                   productCost === 0
                     ? ""
-                    : `${productCost} ${selectedProduct?.currency || ""}`
+                    : `${productCost} ${selectedProduct.currency ? selectedProduct.currency : ""
+                    }`
                 }
                 name="productCost"
                 placeholder="0.00"
@@ -570,7 +513,7 @@ export default function Page() {
               <div className="flex flex-col gap-2">
                 {selectedMaterials.map((material, index) => (
                   <SelectedHolder
-                    key={material.materialId || index}
+                    key={index}
                     type="material"
                     imageSrc={
                       material.images && material.images.length > 0
@@ -580,7 +523,7 @@ export default function Page() {
                     name={material.name}
                     id={material.materialId}
                     index={index + 1}
-                    quantity={materialQuantities[material.materialId] || "0"}
+                    quantity={`${materialQuantities[material.materialId] || 0}`}
                     onRemove={() => handleRemoveMaterial(material)}
                   />
                 ))}
@@ -594,8 +537,9 @@ export default function Page() {
               </div>
               <input
                 className={inputStyle}
+                type="text"
                 value={materialCost === 0 ? "" : materialCost}
-                type="number"
+                name="materialCost"
                 placeholder="0.00"
                 readOnly
               />
@@ -614,14 +558,10 @@ export default function Page() {
                 data-id="work-cost"
                 className={inputStyle}
                 type="number"
-                value={workCost}
+                value={workCost === 0 ? "" : workCost}
                 name="workCost"
                 placeholder="0.00"
-                onChange={(e) =>
-                  setWorkCost(
-                    e.target.value === "" ? 0 : parseFloat(e.target.value)
-                  )
-                }
+                onChange={(e) => setWorkCost(e.target.value)}
               />
             </div>
 
@@ -647,13 +587,11 @@ export default function Page() {
               <div className="flex flex-row gap-2">
                 <input
                   className={inputStyle}
-                  value={total} // Don't convert 0 to empty string
+                  value={total === 0 || total == "0.00" ? "" : total}
                   type="number"
                   placeholder="0.00"
                   onChange={(e) => {
-                    setTotal(
-                      e.target.value === "" ? 0 : parseFloat(e.target.value)
-                    );
+                    setTotal(e.target.value);
                   }}
                 />
                 <select

@@ -3,8 +3,8 @@
 
 import { useState, useEffect } from "react";
 import "./globals.css";
-import { AuthContextProvider } from "./_utils/auth-context";
-import { useAutoLogout } from "./components/useAutoLogout";
+import { AuthContextProvider } from "@/app/[locale]/_utils/auth-context";
+import { useAutoLogout } from "@/app/[locale]/components/useAutoLogout";
 
 export default function RootLayout({ children }) {
   const [isOpen, setIsOpen] = useState(false);

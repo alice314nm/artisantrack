@@ -1,75 +1,75 @@
 {
   "WelcomePage": {
-    "pageTitle": "Главная - Artisan Track",
+    "pageTitle": "Home - Artisan Track",
     "headerTitle": "Artisan Track",
-    "loadingAlt": "Загрузка",
-    "welcomeBack": "С возвращением, {name}!",
-    "loading": "Загрузка...",
-    
+    "loadingAlt": "Loading",
+    "welcomeBack": "Welcome back, {name}!",
+    "loading": "Loading...",
+
     "orders": {
-      "title": "Заказы",
-      "inProgress": "В процессе",
-      "completed": "Завершено",
-      "viewButton": "Смотреть заказы"
+      "title": "Orders",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "viewButton": "View Orders"
     },
-    
+
     "materials": {
-      "title": "Материалы",
-      "total": "Всего материалов",
-      "viewButton": "Смотреть материалы"
+      "title": "Materials",
+      "total": "Total Materials",
+      "viewButton": "View Materials"
     },
-    
+
     "products": {
-      "title": "Товары",
-      "total": "Всего товаров",
-      "viewButton": "Смотреть товары"
+      "title": "Products",
+      "total": "Total Products",
+      "viewButton": "View Products"
     },
-    
+
     "finance": {
-      "title": "Финансы",
-      "revenue": "Доходы",
-      "expenses": "Расходы",
-      "viewButton": "Смотреть финансы"
+      "title": "Finance",
+      "revenue": "Revenue",
+      "expenses": "Expenses",
+      "viewButton": "View Finance"
     },
-    
+
     "inventory": {
-      "imageAlt": "Иконка инвентаря",
-      "title": "Отслеживайте инвентарь!",
-      "description1": "Добавляйте выкройки, материалы, модели и многое другое.",
-      "description2": "Следите за своими категориями."
+      "imageAlt": "Inventory Icon",
+      "title": "Track Your Inventory!",
+      "description1": "Add patterns, materials, models, and more.",
+      "description2": "Keep an eye on your categories."
     },
-    
+
     "trackOrders": {
-      "imageAlt": "Иконка заказов",
-      "title": "Отслеживайте заказы!",
-      "description1": "Добавляйте товары из инвентаря в заказ.",
-      "description2": "Устанавливайте сроки и клиентов."
+      "imageAlt": "Orders Icon",
+      "title": "Track Your Orders!",
+      "description1": "Add products from inventory to an order.",
+      "description2": "Set deadlines and assign clients."
     },
-    
+
     "trackFinances": {
-      "imageAlt": "Иконка финансов",
-      "title": "Отслеживайте финансы!",
-      "description1": "Получайте месячные и годовые отчеты о доходах и расходах.",
-      "description2": "Узнайте, какие товары и материалы популярны среди ваших клиентов."
+      "imageAlt": "Finance Icon",
+      "title": "Track Your Finances!",
+      "description1": "Get monthly and yearly reports on income and expenses.",
+      "description2": "Find out which products and materials are popular among your clients."
     }
   },
   "loginPage": {
-    "pageTitle": "Вход",
-    "resetPasswordTitle": "Сброс пароля",
-    "loginTitle": "Вход",
-    "enterEmail": "Введите ваш email",
-    "enterPassword": "Пароль",
-    "sendResetLink": "Отправить ссылку для сброса",
-    "backToLogin": "Вернуться к входу",
-    "forgotPassword": "Забыли пароль?",
-    "signUpPrompt": "Еще нет аккаунта?",
-    "signUpLink": "Зарегистрироваться",
-    "errorNoAccount": "Аккаунт с таким email не найден.",
-    "errorInvalidPassword": "Неверный пароль. Пожалуйста, попробуйте снова.",
-    "errorMissingPassword": "Пожалуйста, введите пароль для входа.",
-    "errorInvalidEmail": "Пожалуйста, введите действительный email для входа.",
-    "resetPasswordMessage": "Ссылка для сброса пароля отправлена! Проверьте ваш email.",
-    "successMessage": "Ссылка для сброса пароля успешно отправлена!"
+    "pageTitle": "Login",
+    "resetPasswordTitle": "Reset Password",
+    "loginTitle": "Login",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Password",
+    "sendResetLink": "Send Reset Link",
+    "backToLogin": "Back to Login",
+    "forgotPassword": "Forgot Password?",
+    "signUpPrompt": "Don't have an account yet?",
+    "signUpLink": "Sign Up",
+    "errorNoAccount": "No account found with this email.",
+    "errorInvalidPassword": "Incorrect password. Please try again.",
+    "errorMissingPassword": "Please enter a password to log in.",
+    "errorInvalidEmail": "Please enter a valid email to log in.",
+    "resetPasswordMessage": "A password reset link has been sent! Check your email.",
+    "successMessage": "Password reset link sent successfully!"
   },
   "OrdersPage": {
     "pageTitle": "Orders",
@@ -84,7 +84,7 @@
     "dueToday": "Due today",
     "noOrdersFound": "No orders found",
     "noDeadline": "No deadline",
-    "createOrderButton": "Create order +",
+    "createOrderButton": "Create Order +",
     "months": {
       "jan": "Jan",
       "feb": "Feb",
@@ -99,5 +99,60 @@
       "nov": "Nov",
       "dec": "Dec"
     }
+  },
+  "FilterTotal": {
+    "total": "Total",
+    "filterAndSort": "Filter and Sort",
+    "filterAlt": "Filter icon"
+  },
+  "BlockHolder": {
+    "productId": "Product ID",
+    "orderId": "Order ID",
+    "materialId": "Material ID",
+    "category": "Category",
+    "deadline": "Deadline",
+    "total": "Total",
+    "quantity": "Quantity",
+    "color": "Color",
+    "productImageAlt": "Product image",
+    "orderImageAlt": "Order image",
+    "materialImageAlt": "Material image"
+  },
+  "SearchBar": {
+    "placeholder": "Search...",
+    "searchAlt": "Search icon"
+  },
+  "FilterWindow": {
+    "title": "Filters",
+    "toggleDropdown": "Toggle dropdown",
+    "apply": "Apply Filters",
+    "categories": {
+      "Sort by": "Sort by",
+      "Categories": "Categories",
+      "Colors": "Colors",
+      "Clients": "Clients"
+    },
+    "sort": {
+      "category": "Category",
+      "nameDesc": "Name Descending",
+      "nameAsc": "Name Ascending",
+      "idAsc": "ID Ascending",
+      "idDesc": "ID Descending",
+      "earliestDeadline": "Earliest Deadline",
+      "latestDeadline": "Latest Deadline"
+    }
+  },
+  "SlideMenu": {
+    "logout": "Log out",
+    "home": "Home",
+    "profile": "Profile",
+    "documents": "Documents",
+    "finances": "Finance",
+    "inventory": "Inventory",
+    "products": "Products",
+    "materials": "Materials",
+    "orders": "Orders",
+    "expand": "Expand",
+    "collapse": "Collapse"
   }
 }

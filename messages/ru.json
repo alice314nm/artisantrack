@@ -99,5 +99,60 @@
       "nov": "Ноя",
       "dec": "Дек"
     }
+  },
+  "FilterTotal": {
+    "total": "Всего",
+    "filterAndSort": "Фильтр и сортировка",
+    "filterAlt": "Иконка фильтра"
+  },
+  "BlockHolder": {
+    "productId": "ID товара",
+    "orderId": "ID заказа",
+    "materialId": "ID материала",
+    "category": "Категория",
+    "deadline": "Дедлайн",
+    "total": "Всего",
+    "quantity": "Количество",
+    "color": "Цвет",
+    "productImageAlt": "Изображение товара",
+    "orderImageAlt": "Изображение заказа",
+    "materialImageAlt": "Изображение материала"
+  },
+  "SearchBar": {
+    "placeholder": "Поиск...",
+    "searchAlt": "Иконка поиска"
+  },
+  "FilterWindow": {
+    "title": "Фильтры",
+    "toggleDropdown": "Развернуть список",
+    "apply": "Применить фильтры",
+    "categories": {
+      "Sort by": "Сортировать по",
+      "Categories": "Категории",
+      "Colors": "Цвета",
+      "Clients": "Клиенты"
+    },
+    "sort": {
+      "category": "Категория",
+      "nameDesc": "Имя (убыв.)",
+      "nameAsc": "Имя (возр.)",
+      "idAsc": "ID (возр.)",
+      "idDesc": "ID (убыв.)",
+      "earliestDeadline": "Ранний дедлайн",
+      "latestDeadline": "Поздний дедлайн"
+    }
+  },
+  "SlideMenu": {
+    "logout": "Выйти",
+    "home": "Главная",
+    "profile": "Профиль",
+    "documents": "Документы",
+    "finances": "Финансы",
+    "inventory": "Инвентарь",
+    "products": "Продукты",
+    "materials": "Материалы",
+    "orders": "Заказы",
+    "expand": "Развернуть",
+    "collapse": "Свернуть"
   }
 }

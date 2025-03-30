@@ -1,11 +1,11 @@
 "use client";
 
-import { getUserData } from "@/app/_services/user-data";
-import { useUserAuth } from "@/app/_utils/auth-context";
-import Header from "@/app/components/header";
-import Menu from "@/app/components/menu";
+import { getUserData } from "@/app/[locale]/_services/user-data";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
+import Header from "@/app/[locale]/components/header";
+import Menu from "@/app/[locale]/components/menu";
 import Link from "next/link";
-import NotLoggedWindow from "@/app/components/not-logged-window";
+import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 

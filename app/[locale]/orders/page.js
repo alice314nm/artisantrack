@@ -1,15 +1,15 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
-import BlockHolder from "@/app/components/block-holder";
-import FilterWindow from "@/app/components/filter-window";
-import Header from "@/app/components/header";
-import Menu from "@/app/components/menu";
-import NotLoggedWindow from "@/app/components/not-logged-window";
-import SearchBar from "@/app/components/search-bar";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
+import BlockHolder from "@/app/[locale]/components/block-holder";
+import FilterWindow from "@/app/[locale]/components/filter-window";
+import Header from "@/app/[locale]/components/header";
+import Menu from "@/app/[locale]/components/menu";
+import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
+import SearchBar from "@/app/[locale]/components/search-bar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { app } from "../../_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 import {
   getFirestore,
   collection,
@@ -17,7 +17,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import FilterTotal from "../../components/filter-total";
+import FilterTotal from "../components/filter-total";
 import { useTranslations } from "next-intl";
 
 export default function Page() {
@@ -220,9 +220,8 @@ export default function Page() {
       t("months.dec"),
     ];
 
-    const formattedDate = `${
-      monthNames[deadlineDate.getMonth()]
-    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+    const formattedDate = `${monthNames[deadlineDate.getMonth()]
+      } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
 
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
 

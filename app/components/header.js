@@ -26,7 +26,7 @@ export default function Header({ title, showUserName }) {
         </Link>
         <p className="italic text-2xl">{title}</p>
       </div>
-      {/* <LanguageSwitcher /> */}
+      <LanguageSwitcher />
     </header>
   );
 }

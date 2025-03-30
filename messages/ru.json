@@ -1,34 +1,103 @@
 {
-  "welcome": {
-    "greeting": "С возвращением, {name}!",
-    "title": "Artisan Track",
+  "WelcomePage": {
+    "pageTitle": "Главная - Artisan Track",
+    "headerTitle": "Artisan Track",
+    "loadingAlt": "Загрузочный спиннер",
+    "welcomeBack": "С возвращением, {name}!",
     "loading": "Загрузка...",
-    "notLogged": {
-      "trackInventory": "Отслеживайте свои запасы!",
-      "addPatterns": "Добавляйте выкройки, материалы, модели и многое другое.",
-      "keepTrack": "Ведите учет ваших категорий.",
-      "trackOrders": "Отслеживайте свои заказы!",
-      "addEntities": "Добавляйте элементы в заказ из своих запасов.",
-      "setDeadlines": "Устанавливайте сроки и добавляйте клиентов.",
-      "trackFinances": "Отслеживайте свои финансы!",
-      "receiveReports": "Получайте ежемесячные и годовые отчеты о доходах и расходах.",
-      "seePopular": "Узнайте, какие товары и материалы популярны среди ваших клиентов."
+    
+    "orders": {
+      "title": "Заказы",
+      "inProgress": "В процессе",
+      "completed": "Завершено",
+      "viewButton": "Посмотреть заказы"
     },
-    "dashboard": {
-      "orders": "Заказы",
-      "inProgress": "В процессе:",
-      "completed": "Завершено:",
-      "viewOrders": "Просмотр заказов",
-      "materials": "Материалы",
-      "totalMaterials": "Всего материалов:",
-      "viewMaterials": "Просмотр материалов",
-      "products": "Товары",
-      "totalProducts": "Всего товаров:",
-      "viewProducts": "Просмотр товаров",
-      "finance": "Финансы",
-      "revenue": "Доход:",
-      "expenses": "Расходы:",
-      "viewFinances": "Просмотр финансов"
+    
+    "materials": {
+      "title": "Материалы",
+      "total": "Всего материалов",
+      "viewButton": "Посмотреть материалы"
+    },
+    
+    "products": {
+      "title": "Продукты",
+      "total": "Всего продуктов",
+      "viewButton": "Посмотреть продукты"
+    },
+    
+    "finance": {
+      "title": "Финансы",
+      "revenue": "Доход",
+      "expenses": "Расходы",
+      "viewButton": "Посмотреть финансы"
+    },
+    
+    "inventory": {
+      "imageAlt": "Иконка инвентаря",
+      "title": "Отслеживайте свой инвентарь!",
+      "description1": "Добавляйте шаблоны, материалы, модели и многое другое.",
+      "description2": "Следите за своими категориями."
+    },
+    
+    "trackOrders": {
+      "imageAlt": "Иконка заказов",
+      "title": "Отслеживайте свои заказы!",
+      "description1": "Добавляйте элементы в заказ из своего инвентаря.",
+      "description2": "Устанавливайте сроки и клиентов."
+    },
+    
+    "trackFinances": {
+      "imageAlt": "Иконка финансов",
+      "title": "Отслеживайте свои финансы!",
+      "description1": "Получайте ежемесячные и ежегодные отчеты о доходах и расходах.",
+      "description2": "Смотрите, какие продукты и материалы популярны среди ваших клиентов."
+    }
+  },
+  "loginPage": {
+    "pageTitle": "Вход",
+    "resetPasswordTitle": "Сбросить пароль",
+    "loginTitle": "Вход",
+    "enterEmail": "Введите ваш email",
+    "enterPassword": "Пароль",
+    "sendResetLink": "Отправить ссылку для сброса пароля",
+    "backToLogin": "Назад к входу",
+    "forgotPassword": "Забыли пароль?",
+    "signUpPrompt": "Нет аккаунта?",
+    "signUpLink": "Зарегистрироваться",
+    "errorNoAccount": "Аккаунт с этим email не найден.",
+    "errorInvalidPassword": "Неверный пароль. Попробуйте снова.",
+    "errorMissingPassword": "Введите пароль для входа.",
+    "errorInvalidEmail": "Введите корректный email для входа.",
+    "resetPasswordMessage": "Ссылка для сброса пароля отправлена! Проверьте вашу почту.",
+    "successMessage": "Ссылка для сброса пароля успешно отправлена!"
+  },
+  "OrdersPage": {
+    "pageTitle": "Заказы",
+    "appTitle": "Artisan Track",
+    "unknown": "Неизвестно",
+    "nameAscending": "По имени (А-Я)",
+    "nameDescending": "По имени (Я-А)",
+    "category": "По категории",
+    "earliestDeadline": "По ближайшему сроку",
+    "latestDeadline": "По дальнему сроку",
+    "days": "дней",
+    "dueToday": "Срок сегодня",
+    "noOrdersFound": "Заказы не найдены",
+    "noDeadline": "Без срока",
+    "createOrderButton": "Создать заказ +",
+    "months": {
+      "jan": "Янв",
+      "feb": "Фев",
+      "mar": "Мар",
+      "apr": "Апр",
+      "may": "Май",
+      "jun": "Июн",
+      "jul": "Июл",
+      "aug": "Авг",
+      "sep": "Сен",
+      "oct": "Окт",
+      "nov": "Ноя",
+      "dec": "Дек"
     }
   }
 }

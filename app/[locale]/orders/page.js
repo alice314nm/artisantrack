@@ -9,7 +9,7 @@ import NotLoggedWindow from "@/app/components/not-logged-window";
 import SearchBar from "@/app/components/search-bar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { app } from "../_utils/firebase";
+import { app } from "../../_utils/firebase";
 import {
   getFirestore,
   collection,
@@ -17,9 +17,12 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import FilterTotal from "../components/filter-total";
+import FilterTotal from "../../components/filter-total";
+import { useTranslations } from "next-intl";
 
 export default function Page() {
+  const t = useTranslations("OrdersPage");
+
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({ Categories: [], "Sort by": "" });
@@ -31,13 +34,13 @@ export default function Page() {
 
   // Initial loading timeout
   useEffect(() => {
-    document.title = "Orders";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 3000);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [t]);
 
   // Fetch orders
   useEffect(() => {
@@ -65,13 +68,13 @@ export default function Page() {
                 const productSnapshot = await getDoc(productRef);
                 const productData = productSnapshot.data();
                 order.orderId = productData?.productId;
-                order.categories = productData?.categories || ["Unknown"];
-                return productData?.productImages?.[0]?.url || "Unknown";
+                order.categories = productData?.categories || [t("unknown")];
+                return productData?.productImages?.[0]?.url || t("unknown");
               })
             );
             order.imageUrl = productImages[0];
           } else {
-            order.imageUrl = "Unknown";
+            order.imageUrl = t("unknown");
           }
         }
 
@@ -82,7 +85,7 @@ export default function Page() {
       }
     };
     fetchOrders();
-  }, [user]);
+  }, [user, t]);
 
   // Fetch categories
   useEffect(() => {
@@ -136,29 +139,29 @@ export default function Page() {
     // Apply sorting
     if (filters["Sort by"]) {
       switch (filters["Sort by"]) {
-        case "Name Ascending":
+        case t("nameAscending"):
           result.sort((a, b) =>
             (a.nameOrder || "").localeCompare(b.nameOrder || "")
           );
           break;
-        case "Name Descending":
+        case t("nameDescending"):
           result.sort((a, b) =>
             (b.nameOrder || "").localeCompare(a.nameOrder || "")
           );
           break;
-        case "Category":
+        case t("category"):
           result.sort((a, b) =>
             a.categories.join(", ").localeCompare(b.categories.join(", "))
           );
           break;
-        case "Earliest Deadline":
+        case t("earliestDeadline"):
           result.sort((a, b) => {
             const deadlineA = a.deadline?.seconds || Infinity;
             const deadlineB = b.deadline?.seconds || Infinity;
             return deadlineA - deadlineB;
           });
           break;
-        case "Latest Deadline":
+        case t("latestDeadline"):
           result.sort((a, b) => {
             const deadlineA = a.deadline?.seconds || 0;
             const deadlineB = b.deadline?.seconds || 0;
@@ -180,7 +183,7 @@ export default function Page() {
     }
 
     setFilteredOrders(result);
-  }, [orders, filters, searchTerm, loading]);
+  }, [orders, filters, searchTerm, loading, t]);
 
   const handleNavigateToCreatePage = () => {
     window.location.href = "/create_order";
@@ -203,18 +206,18 @@ export default function Page() {
     const today = new Date();
 
     const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      t("months.jan"),
+      t("months.feb"),
+      t("months.mar"),
+      t("months.apr"),
+      t("months.may"),
+      t("months.jun"),
+      t("months.jul"),
+      t("months.aug"),
+      t("months.sep"),
+      t("months.oct"),
+      t("months.nov"),
+      t("months.dec"),
     ];
 
     const formattedDate = `${
@@ -224,7 +227,8 @@ export default function Page() {
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
 
     const daysLeft = diffTime > 0 ? diffTime : 0;
-    const daysStatus = diffTime > 0 ? `${diffTime} days` : "Due today";
+    const daysStatus =
+      diffTime > 0 ? `${diffTime} ${t("days")}` : t("dueToday");
 
     return [formattedDate, daysLeft, daysStatus];
   };
@@ -244,7 +248,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Orders" />
+        <Header title={t("pageTitle")} />
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
@@ -259,7 +263,7 @@ export default function Page() {
 
         {filteredOrders.length === 0 ? (
           <p className="flex flex-col items-center w-full py-40">
-            No orders found
+            {t("noOrdersFound")}
           </p>
         ) : (
           <div className="w-full px-4 pb-20">
@@ -282,7 +286,7 @@ export default function Page() {
                     deadline={
                       order.deadline?.seconds
                         ? formatDeadline(order.deadline.seconds)
-                        : ["No deadline", 0, "No deadline"]
+                        : [t("noDeadline"), 0, t("noDeadline")]
                     }
                     currency={order.currency}
                     total={order.totalCost}
@@ -306,7 +310,7 @@ export default function Page() {
         <Menu
           type="OneButtonMenu"
           iconFirst="/link.png"
-          firstTitle="Create order +"
+          firstTitle={t("createOrderButton")}
           onFirstFunction={handleNavigateToCreatePage}
         />
       </div>
@@ -314,7 +318,7 @@ export default function Page() {
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Artisan Track" />
+        <Header title={t("appTitle")} />
         <NotLoggedWindow />
       </div>
     );

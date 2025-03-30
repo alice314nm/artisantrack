@@ -1,34 +1,103 @@
 {
-  "welcome": {
-    "greeting": "Welcome back, {name}!",
-    "title": "Artisan Track",
-    "loading": "Loading...",
-    "notLogged": {
-      "trackInventory": "Track your inventory!",
-      "addPatterns": "Add patterns, materials, models and more.",
-      "keepTrack": "Keep track of your categories.",
-      "trackOrders": "Track your orders!",
-      "addEntities": "Add entities to your order from your inventory.",
-      "setDeadlines": "Set deadlines and clients.",
-      "trackFinances": "Track your finances!",
-      "receiveReports": "Receive monthly and yearly reports about your incomes and expenses.",
-      "seePopular": "See what products and materials are popular among your clients."
+  "WelcomePage": {
+    "pageTitle": "Главная - Artisan Track",
+    "headerTitle": "Artisan Track",
+    "loadingAlt": "Загрузка",
+    "welcomeBack": "С возвращением, {name}!",
+    "loading": "Загрузка...",
+    
+    "orders": {
+      "title": "Заказы",
+      "inProgress": "В процессе",
+      "completed": "Завершено",
+      "viewButton": "Смотреть заказы"
     },
-    "dashboard": {
-      "orders": "Orders",
-      "inProgress": "In Progress:",
-      "completed": "Completed:",
-      "viewOrders": "View Orders",
-      "materials": "Materials",
-      "totalMaterials": "Total Materials:",
-      "viewMaterials": "View Materials",
-      "products": "Products",
-      "totalProducts": "Total Products:",
-      "viewProducts": "View Products",
-      "finance": "Finance",
-      "revenue": "Revenue:",
-      "expenses": "Expenses:",
-      "viewFinances": "View Finances"
+    
+    "materials": {
+      "title": "Материалы",
+      "total": "Всего материалов",
+      "viewButton": "Смотреть материалы"
+    },
+    
+    "products": {
+      "title": "Товары",
+      "total": "Всего товаров",
+      "viewButton": "Смотреть товары"
+    },
+    
+    "finance": {
+      "title": "Финансы",
+      "revenue": "Доходы",
+      "expenses": "Расходы",
+      "viewButton": "Смотреть финансы"
+    },
+    
+    "inventory": {
+      "imageAlt": "Иконка инвентаря",
+      "title": "Отслеживайте инвентарь!",
+      "description1": "Добавляйте выкройки, материалы, модели и многое другое.",
+      "description2": "Следите за своими категориями."
+    },
+    
+    "trackOrders": {
+      "imageAlt": "Иконка заказов",
+      "title": "Отслеживайте заказы!",
+      "description1": "Добавляйте товары из инвентаря в заказ.",
+      "description2": "Устанавливайте сроки и клиентов."
+    },
+    
+    "trackFinances": {
+      "imageAlt": "Иконка финансов",
+      "title": "Отслеживайте финансы!",
+      "description1": "Получайте месячные и годовые отчеты о доходах и расходах.",
+      "description2": "Узнайте, какие товары и материалы популярны среди ваших клиентов."
+    }
+  },
+  "loginPage": {
+    "pageTitle": "Вход",
+    "resetPasswordTitle": "Сброс пароля",
+    "loginTitle": "Вход",
+    "enterEmail": "Введите ваш email",
+    "enterPassword": "Пароль",
+    "sendResetLink": "Отправить ссылку для сброса",
+    "backToLogin": "Вернуться к входу",
+    "forgotPassword": "Забыли пароль?",
+    "signUpPrompt": "Еще нет аккаунта?",
+    "signUpLink": "Зарегистрироваться",
+    "errorNoAccount": "Аккаунт с таким email не найден.",
+    "errorInvalidPassword": "Неверный пароль. Пожалуйста, попробуйте снова.",
+    "errorMissingPassword": "Пожалуйста, введите пароль для входа.",
+    "errorInvalidEmail": "Пожалуйста, введите действительный email для входа.",
+    "resetPasswordMessage": "Ссылка для сброса пароля отправлена! Проверьте ваш email.",
+    "successMessage": "Ссылка для сброса пароля успешно отправлена!"
+  },
+  "OrdersPage": {
+    "pageTitle": "Orders",
+    "appTitle": "Artisan Track",
+    "unknown": "Unknown",
+    "nameAscending": "Name Ascending",
+    "nameDescending": "Name Descending",
+    "category": "Category",
+    "earliestDeadline": "Earliest Deadline",
+    "latestDeadline": "Latest Deadline",
+    "days": "days",
+    "dueToday": "Due today",
+    "noOrdersFound": "No orders found",
+    "noDeadline": "No deadline",
+    "createOrderButton": "Create order +",
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
     }
   }
 }

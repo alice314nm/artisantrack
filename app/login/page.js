@@ -5,6 +5,7 @@ import Header from "@/app/components/header";
 import SignInOutWindow from "@/app/components/sign-in-out-window";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Menu from "../components/menu";
 
 export default function LoginPage() {
   const { user, doSignInUserWithEmailAndPassword, resetPassword } =
@@ -16,8 +17,10 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
+    document.title = "Login";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -55,6 +58,11 @@ export default function LoginPage() {
       setMessage("Password reset link sent! Check your email.");
       setError("");
       setResetPasswordMode(false);
+
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
     } catch (err) {
       setError(err.message);
     }
@@ -70,9 +78,17 @@ export default function LoginPage() {
 
   return (
     <main>
+      {showSuccess && (
+        <div className="fixed top-0 left-0 w-full font-semibold text-2xl bg-green px-5 py-4 text-center animate-pulse z-50">
+          <p>Password reset link sent successfully!</p>
+        </div>
+      )}
       <Header title="Artisan Track" />
       {user ? (
-        <SignInOutWindow type={"SignOut"} />
+        <div>
+          <SignInOutWindow type={"SignOut"} />
+          <Menu type="OnlySlideMenu" />
+        </div>        
       ) : (
         <div className="mt-20 flex flex-col items-center">
           {resetPasswordMode ? (
@@ -128,11 +144,10 @@ export default function LoginPage() {
               />
               <button
                 type="submit"
-                className={`bg-green p-2 rounded-xl w-80 font-bold ${
-                  isLoading
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-green-600"
-                }`}
+                className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-green-600"
+                  }`}
                 disabled={isLoading}
               >
                 {isLoading ? "Logging in ..." : "Log In"}

@@ -1,11 +1,12 @@
-
-'use client'
+"use client";
 
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import SignInOutWindow from "@/app/components/sign-in-out-window";
+import { doc } from "firebase/firestore";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Menu from "../components/menu";
 
 export default function SignInPage() {
   const { user, doCreateUserWithEmailAndPassword } = useUserAuth();
@@ -20,27 +21,32 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const inputStyle = "w-80 border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500";
+  const inputStyle =
+    "w-80 border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500";
 
   useEffect(() => {
-      // Simulating a delay for loading state
-      const timeout = setTimeout(() => {
-        setLoading(false);
-      }, 1000); // 1 second delay
+    document.title = "Sign Up";
+    // Simulating a delay for loading state
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // 1 second delay
 
-      return () => clearTimeout(timeout); // Cleanup timeout
-    }, []);
-
-    
+    return () => clearTimeout(timeout); // Cleanup timeout
+  }, []);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
 
-
     if (!email || !name || !password || !repeatPassword) {
       setError("All fields marked with * are required.");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setError("Invalid email format. Please try again.");
       return;
     }
 
@@ -49,13 +55,27 @@ export default function SignInPage() {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password should be at least 6 characters.");
+      return;
+    }
+
+    let formattedTax = tax.trim();
+    if (formattedTax && !formattedTax.endsWith("%")) {
+      formattedTax = `${formattedTax}%`;
+    }
+
     setIsLoading(true);
 
     try {
-      await doCreateUserWithEmailAndPassword(email, password, name, tax);
+      await doCreateUserWithEmailAndPassword(
+        email,
+        password,
+        name,
+        formattedTax
+      );
       setSuccess(true);
       window.location.href = "/";
-
     } catch (error) {
       setError(error.message);
     } finally {
@@ -66,7 +86,7 @@ export default function SignInPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <img src="/loading-gif.gif" className="h-10"/>      
+        <img src="/loading-gif.gif" className="h-10" />
       </div>
     );
   }
@@ -75,46 +95,106 @@ export default function SignInPage() {
     <main className="">
       <Header title="Artisan Track" />
       {user ? (
-        <SignInOutWindow type="SignOut" />
+        <div>
+          <SignInOutWindow type={"SignOut"} />
+          <Menu type="OnlySlideMenu" />
+        </div>
       ) : (
-        <form onSubmit={handleSignUp} className="mt-10 flex flex-col gap-4 p-6 items-center justify-center">
+        <form
+          onSubmit={handleSignUp}
+          className="mt-10 flex flex-col gap-4 p-6 items-center justify-center"
+        >
           <h2 className="text-xl font-bold">Sign Up</h2>
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          {success && <p className="text-green-500 text-sm">Account successfully created!</p>}
+          {success && (
+            <p className="text-green-500 text-sm">
+              Account successfully created!
+            </p>
+          )}
 
           {/* Email */}
           <div className="flex flex-col w-80">
-            <label className="text-left">Email <span className="text-red">*</span></label>
-            <input type="email" placeholder="eg. example@mail.com" value={email} onChange={(e) => setEmail(e.target.value)} className={inputStyle} required />
+            <label className="text-left">
+              Email <span className="text-red">*</span>
+            </label>
+            <input
+              data-id="email"
+              type="text"
+              placeholder="eg. example@mail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={inputStyle}
+              required
+            />
           </div>
 
           {/* Name */}
           <div className="flex flex-col w-80">
-            <label className="text-left">Name <span className="text-red">*</span></label>
-            <input type="text" placeholder="eg. Alex Smith" value={name} onChange={(e) => setName(e.target.value)} className={inputStyle} required />
+            <label className="text-left">
+              Name <span className="text-red">*</span>
+            </label>
+            <input
+              data-id="name"
+              type="text"
+              placeholder="eg. Alex Smith"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={inputStyle}
+              required
+            />
           </div>
 
           {/* Tax */}
           <div className="flex flex-col w-80">
             <label className="text-left">Tax</label>
-            <input type="text" placeholder="eg. 4%" value={tax} onChange={(e) => setTax(e.target.value)} className={inputStyle} />
+            <input
+              data-id="tax"
+              type="text"
+              placeholder="eg. 4%"
+              value={tax}
+              onChange={(e) => setTax(e.target.value)}
+              className={inputStyle}
+            />
           </div>
 
           {/* Password */}
           <div className="flex flex-col w-80">
-            <label className="text-left">Password <span className="text-red">*</span></label>
-            <input type="password" placeholder="******" value={password} onChange={(e) => setPassword(e.target.value)} className={inputStyle} required />
+            <label className="text-left">
+              Password <span className="text-red">*</span>
+            </label>
+            <input
+              data-id="password"
+              type="password"
+              placeholder="******"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={inputStyle}
+              required
+            />
           </div>
 
           {/* Repeat Password */}
           <div className="flex flex-col w-80">
-            <label className="text-left">Repeat Password <span className="text-red">*</span></label>
-            <input type="password" placeholder="*******" value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} className={inputStyle} required />
+            <label className="text-left">
+              Repeat Password <span className="text-red">*</span>
+            </label>
+            <input
+              data-id="repeat-password"
+              type="password"
+              placeholder="*******"
+              value={repeatPassword}
+              onChange={(e) => setRepeatPassword(e.target.value)}
+              className={inputStyle}
+              required
+            />
           </div>
 
           <button
+            data-id="sign-up"
             type="submit"
-            className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"}`}
+            className={`bg-green p-2 rounded-xl w-80 font-bold ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"
+            }`}
             disabled={isLoading}
           >
             {isLoading ? "Signing Up..." : "Sign Up"}
@@ -122,7 +202,10 @@ export default function SignInPage() {
 
           <Link href="/login">
             <p className="text-sm text-center">
-              Already have account? <span className="underline cursor-pointer text-sky-500">Log in</span>
+              Already have account?{" "}
+              <span className="underline cursor-pointer text-sky-500">
+                Log in
+              </span>
             </p>
           </Link>
         </form>

@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   getFirestore,
   collection,
@@ -29,14 +28,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = "Products";
     const timeout = setTimeout(() => {
-    setLoading(false);
-    }, 500); 
+      setLoading(false);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, []);
 
-  
   useEffect(() => {
     const fetchProducts = async () => {
       if (!user) return;
@@ -51,35 +50,7 @@ export default function Home() {
         }));
         console.log(productsData);
 
-        const productsWithCategoriesAndImages = await Promise.all(
-          productsData.map(async (product) => {
-            const categoryNames = await Promise.all(
-              product.categories.map(async (categoryId) => {
-                const categoryDocRef = doc(
-                  db,
-                  `users/${user.uid}/productCategories/${categoryId}`
-                );
-                const categoryDoc = await getDoc(categoryDocRef);
-                return categoryDoc.exists()
-                  ? categoryDoc.data().name
-                  : "Unknown";
-              })
-            );
-
-            const productImageUrls = product.productImages?.map((image) => image.url) || [];
-            const patternImageUrls = product.patternImages?.map((image) => image.url) || [];
-
-
-            return {
-              ...product,
-              categories: categoryNames,
-              productImages: productImageUrls,
-              patternImage: patternImageUrls,
-            };
-          })
-        );
-
-        setProducts(productsWithCategoriesAndImages);
+        setProducts(productsData);
       } catch (error) {
         console.error("Error fetching fetchProducts:", error);
       } finally {
@@ -122,10 +93,14 @@ export default function Home() {
   if (filters["Sort by"]) {
     switch (filters["Sort by"]) {
       case "Name Ascending":
-        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+        filteredProducts.sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+        );
         break;
       case "Name Descending":
-        filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+        filteredProducts.sort((a, b) =>
+          b.name.localeCompare(a.name, undefined, { sensitivity: "base" })
+        );
         break;
       case "Category":
         filteredProducts.sort((a, b) =>
@@ -168,27 +143,31 @@ export default function Home() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Products"/>
+        <Header title="Products" />
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
           onSearch={setSearchTerm}
           data-id="search-bar"
         />
-        
+
         <FilterTotal
-        onOpenFilters={toggleConfirmation}
-        total={filteredProducts.length}
+          onOpenFilters={toggleConfirmation}
+          total={filteredProducts.length}
         />
 
         {filteredProducts.length === 0 ? (
-          <p className="flex flex-col items-center w-full py-40">No products yet</p>
+          <p className="flex flex-col items-center w-full py-40">
+            No products yet
+          </p>
         ) : (
           <div className="w-full px-4 pb-20">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
               gap-4 sm:gap-6 lg:gap-8 
               auto-rows-[1fr] 
-              justify-center items-stretch">
+              justify-center items-stretch"
+            >
               {filteredProducts.map((product) => (
                 <Link
                   href={`/products/${product.id}`}
@@ -205,14 +184,16 @@ export default function Home() {
                     currency={product.currency}
                     category={product.categories.join(", ") || "—"}
                     total={product.averageCost || "—"}
-                    imageSource={product.productImages[0] || "/noImage.png"}
+                    imageSource={
+                      product.productImages?.[0]?.url || "/noImage.png"
+                    }
                     type={"product"}
                   />
                 </Link>
               ))}
             </div>
           </div>
-        )}        
+        )}
 
         <FilterWindow
           onClose={closeConfirmation}

@@ -28,11 +28,10 @@ export default function ProductPage() {
     sectionTitle: "text-lg font-semibold ",
     sectionText: "",
     editButton:
-      "py-2 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
+      "py-2 font-bold w-full rounded-md flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
     deleteButton:
       "bg-red text-white rounded-md w-32 py-2 hover:bg-darkRed transition-colors duration-300",
   };
-  
 
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [clientView, setClientView] = useState(false);
@@ -42,18 +41,18 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
   const [mainImage, setMainImage] = useState(null);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
+    document.title = product.name || "Loading...";
     const timeout = setTimeout(() => {
-    setLoading(false);
-    }, 500); 
+      setLoading(false);
+    }, 2000);
 
     return () => clearTimeout(timeout);
-  }, []);
-  
-  useEffect(() => {
-    setLoading(true);
+  }, [product]);
 
+  useEffect(() => {
     if (!user) {
       return;
     }
@@ -61,7 +60,6 @@ export default function ProductPage() {
     if (user && productId) {
       fetchProductById(user.uid, productId, setProduct);
     }
-    setLoading(false);
   }, [user, productId]);
 
   useEffect(() => {
@@ -114,11 +112,14 @@ export default function ProductPage() {
       return (
         <div className={commonClasses.container}>
           <Header title="Product" />
-    
+
           <div className="mx-4 flex flex-col gap-6 pb-24">
             {/* Back Button and View Title */}
             <div className="flex flex-row justify-between items-center">
-              <p className="font-bold text-xl text-blackBeige" data-id="Your view">
+              <p
+                className="font-bold text-xl text-blackBeige"
+                data-id="Your view"
+              >
                 Your View
               </p>
               <Link href="/products">
@@ -128,7 +129,7 @@ export default function ProductPage() {
                 </button>
               </Link>
             </div>
-    
+
             {/* Main Content */}
             <div className="flex flex-col md:flex-row gap-6">
               {/* Images Section (Left Side on Non-Mobile) */}
@@ -137,10 +138,12 @@ export default function ProductPage() {
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
                   className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
                   }`}
                 />
-    
+
                 {(product?.productImages?.length > 0 ||
                   product?.patternImages?.length > 0) && (
                   <div className={commonClasses.thumbnailContainer}>
@@ -165,45 +168,50 @@ export default function ProductPage() {
                   </div>
                 )}
               </div>
-    
+
               {/* Product Details Section (Right Side on Non-Mobile) */}
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
                 <div className="relative bg-green rounded-md w-32">
                   <Link href={`./${productId}/edit`}>
-                    <button className={commonClasses.editButton}>
+                    <button
+                      data-id="edit-button"
+                      className={commonClasses.editButton}
+                    >
                       <p>Edit</p>
                       <img src="/Pencil.png" alt="Pencil" className="w-4 h-4" />
                     </button>
                   </Link>
                 </div>
-    
+
                 <p className="text-2xl font-bold text-blackBeige">
                   #{product.productId} | {product.name}
                 </p>
-    
+
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Categories:</p>
                   <p className={commonClasses.sectionText}>
-                    {Array.isArray(product?.categories) && product.categories.length > 0
+                    {Array.isArray(product?.categories) &&
+                    product.categories.length > 0
                       ? product.categories.join(", ")
                       : "No set categories"}
                   </p>
                 </div>
-    
+
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Description:</p>
                   <p className={commonClasses.sectionText}>
                     {product.description || "No Description"}
                   </p>
                 </div>
-    
+
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Average Total:</p>
                   <p className={commonClasses.sectionText}>
-                    {product.averageCost || "Cost is not set"} {product.currency}
+                    {product.averageCost || "Cost is not set"}{" "}
+                    {product.currency}
                   </p>
                 </div>
-    
+
                 <button
                   className={commonClasses.deleteButton}
                   onClick={openCloseConfirmation}
@@ -214,14 +222,14 @@ export default function ProductPage() {
               </div>
             </div>
           </div>
-    
+
           {/* Confirmation Window */}
           <ConfirmationWindow
             windowVisibility={confirmWindowVisibility}
             onClose={openCloseConfirmation}
             onDelete={handleDeleteProduct}
           />
-    
+
           <Menu
             type="TwoButtonsMenu"
             iconFirst="/link.png"
@@ -233,7 +241,7 @@ export default function ProductPage() {
         </div>
       );
     }
-  
+
     // View for unlogged users
     else {
       return (
@@ -243,7 +251,10 @@ export default function ProductPage() {
           <div className="mx-4 flex flex-col gap-6 pb-24">
             {/* Back Button and View Title */}
             <div className="flex flex-row justify-between items-center">
-              <p className="font-bold text-xl text-blackBeige" data-id="Your view">
+              <p
+                className="font-bold text-xl text-blackBeige"
+                data-id="Client view"
+              >
                 Client View
               </p>
               <Link href="/products">
@@ -253,7 +264,7 @@ export default function ProductPage() {
                 </button>
               </Link>
             </div>
-    
+
             {/* Main Content */}
             <div className="flex flex-col md:flex-row gap-6">
               {/* Images Section (Left Side on Non-Mobile) */}
@@ -262,10 +273,12 @@ export default function ProductPage() {
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
                   className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
                   }`}
                 />
-    
+
                 {(product?.productImages?.length > 0 ||
                   product?.patternImages?.length > 0) && (
                   <div className={commonClasses.thumbnailContainer}>
@@ -290,23 +303,23 @@ export default function ProductPage() {
                   </div>
                 )}
               </div>
-    
+
               {/* Product Details Section (Right Side on Non-Mobile) */}
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                    
                 <p className="text-2xl font-bold text-blackBeige">
                   #{product.productId} | {product.name}
                 </p>
-    
+
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Categories:</p>
                   <p className={commonClasses.sectionText}>
-                    {Array.isArray(product?.categories) && product.categories.length > 0
+                    {Array.isArray(product?.categories) &&
+                    product.categories.length > 0
                       ? product.categories.join(", ")
                       : "No set categories"}
                   </p>
                 </div>
-    
+
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Description:</p>
                   <p className={commonClasses.sectionText}>
@@ -316,7 +329,7 @@ export default function ProductPage() {
               </div>
             </div>
           </div>
-  
+
           <Menu
             type="TwoButtonsMenu"
             iconFirst="/link.png"
@@ -332,70 +345,72 @@ export default function ProductPage() {
     return (
       <div className={commonClasses.container}>
         <Header title="Artisan Track" />
-  
-        <div className="mx-4 flex flex-col gap-6 pb-24">    
-            {/* Main Content */}
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Images Section (Left Side on Non-Mobile) */}
-              <div className="flex flex-col gap-4 md:w-1/2">
-                <img
-                  src={mainImage || "/noImage.png"}
-                  alt="Product Image"
-                  className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
-                  }`}
-                />
-    
-                {(product?.productImages?.length > 0 ||
-                  product?.patternImages?.length > 0) && (
-                  <div className={commonClasses.thumbnailContainer}>
-                    {product?.productImages?.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
-                    {product?.patternImages?.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-    
-              {/* Product Details Section (Right Side on Non-Mobile) */}
-              <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                    
-                <p className="text-2xl font-bold text-blackBeige">
-                  #{product.productId} | {product.name}
+
+        <div className="mx-4 flex flex-col gap-6 pb-24">
+          {/* Main Content */}
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Images Section (Left Side on Non-Mobile) */}
+            <div className="flex flex-col gap-4 md:w-1/2">
+              <img
+                src={mainImage || "/noImage.png"}
+                alt="Product Image"
+                className={`${commonClasses.mainImage} ${
+                  transitioning
+                    ? "opacity-0 translate-y-1"
+                    : "opacity-100 translate-y-0"
+                }`}
+              />
+
+              {(product?.productImages?.length > 0 ||
+                product?.patternImages?.length > 0) && (
+                <div className={commonClasses.thumbnailContainer}>
+                  {product?.productImages?.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                  {product?.patternImages?.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Product Details Section (Right Side on Non-Mobile) */}
+            <div className={`${commonClasses.productDetails} md:w-1/2`}>
+              <p className="text-2xl font-bold text-blackBeige">
+                #{product.productId} | {product.name}
+              </p>
+
+              <div className="flex flex-col gap-2">
+                <p className={commonClasses.sectionTitle}>Categories:</p>
+                <p className={commonClasses.sectionText}>
+                  {Array.isArray(product?.categories) &&
+                  product.categories.length > 0
+                    ? product.categories.join(", ")
+                    : "No set categories"}
                 </p>
-    
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Categories:</p>
-                  <p className={commonClasses.sectionText}>
-                    {Array.isArray(product?.categories) && product.categories.length > 0
-                      ? product.categories.join(", ")
-                      : "No set categories"}
-                  </p>
-                </div>
-    
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Description:</p>
-                  <p className={commonClasses.sectionText}>
-                    {product.description || "No Description"}
-                  </p>
-                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <p className={commonClasses.sectionTitle}>Description:</p>
+                <p className={commonClasses.sectionText}>
+                  {product.description || "No Description"}
+                </p>
               </div>
             </div>
           </div>
+        </div>
       </div>
     );
   }

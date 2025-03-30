@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserData } from "@/app/_services/user-data";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
@@ -10,21 +11,35 @@ import { useEffect, useState } from "react";
 export default function WelcomePage() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
 
   const tileStyle =
-    "border-b border-b-darkBeige px-4 pb-4 rounded-xl flex flex-col gap-4 items-start justify-between transition-all duration-300";
-  const titleStyle = "text-lg font-bold";
+    "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-between transition-all duration-300";
+    const tileStyle2 =
+    "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-start transition-all duration-300";
+  
+    const titleStyle = "text-lg font-bold";
   const infoStyle = "text text-blackBeige";
   const LinkStyle =
     "w-44 text-center bg-green px-4 font-semibold rounded-lg py-2 hover:bg-darkGreen transition-all duration-300";
 
   useEffect(() => {
+    document.title = "Home - Artisan Track";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
 
     return () => clearTimeout(timeout);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      setLoading(true);
+      getUserData(user, setUserData).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -53,10 +68,20 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Orders</p>
               <div className="space-y-2">
-                <p className={infoStyle}>In Progress: 123</p>
-                <p className={infoStyle}>Completed: 456</p>
+                <p className={infoStyle}>
+                  In Progress:
+                  {userData
+                    ? Math.max(0, userData.inProgressOrders)
+                    : "Loading..."}
+                </p>
+                <p className={infoStyle}>
+                  Completed:
+                  {userData
+                    ? Math.max(0, userData.completedOrders)
+                    : "Loading..."}
+                </p>
               </div>
-              <Link className={LinkStyle} href="/orders">
+              <Link data-id="view-orders" className={LinkStyle} href="/orders">
                 View Orders
               </Link>
             </div>
@@ -64,9 +89,18 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Materials</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Total Materials: 123</p>
+                <p className={infoStyle}>
+                  Total Materials:
+                  {userData
+                    ? Math.max(0, userData.materialCount)
+                    : "Loading..."}
+                </p>
               </div>
-              <Link className={LinkStyle} href="/materials">
+              <Link
+                data-id="view-materials"
+                className={LinkStyle}
+                href="/materials"
+              >
                 View Materials
               </Link>
             </div>
@@ -74,9 +108,16 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Products</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Total Products: 45</p>
+                <p className={infoStyle}>
+                  Total Products:
+                  {userData ? Math.max(0, userData.productCount) : "Loading..."}
+                </p>
               </div>
-              <Link className={LinkStyle} href="/products">
+              <Link
+                data-id="view-products"
+                className={LinkStyle}
+                href="/products"
+              >
                 View Products
               </Link>
             </div>
@@ -84,10 +125,18 @@ export default function WelcomePage() {
             <div className={tileStyle}>
               <p className={titleStyle}>Finance</p>
               <div className="space-y-2">
-                <p className={infoStyle}>Revenue: $1,234</p>
-                <p className={infoStyle}>Expenses: $567</p>
+                <p className={infoStyle}>
+                  Revenue: ${userData?.monthlyIncome ?? "Loading..."}
+                </p>
+                <p className={infoStyle}>
+                  Expenses: ${userData?.monthlyExpenses ?? "Loading..."}
+                </p>
               </div>
-              <Link className={LinkStyle} href="/finances">
+              <Link
+                data-id="view-finances"
+                className={LinkStyle}
+                href="/finances"
+              >
                 View Finances
               </Link>
             </div>
@@ -102,6 +151,25 @@ export default function WelcomePage() {
       <div className="flex flex-col min-h-screen gap-6">
         <Header title="Artisan Track" />
         <NotLoggedWindow />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className={tileStyle2}>
+              <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5"src="/inventory.png"/>Track your inventory!</p>
+              <p className={infoStyle}>Add patterns, materials, models and more.</p>
+              <p className={infoStyle}>Keep track of your categories.</p>
+            </div>
+
+            <div className={tileStyle2}>
+              <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5"src="/orders.png"/>Track your orders!</p>
+              <p className={infoStyle}>Add entities to your order from your inventory.</p>
+              <p className={infoStyle}>Set deadlines and clients.</p>
+            </div>
+
+            <div className={tileStyle2}>
+              <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5"src="/finances.png"/>Track your finances!</p>
+              <p className={infoStyle}>Receive monthly and yearly reports about your incomes and expenses.</p>
+              <p className={infoStyle}>See what products and materials are popular among your clients.</p>
+            </div>
+        </div>
       </div>
     );
   }

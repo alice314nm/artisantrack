@@ -9,6 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { app } from "../_utils/firebase";
+import { getUserData } from "@/app/_services/user-data";
 import { useUserAuth } from "@/app/_utils/auth-context";
 import BlockHolder from "@/app/components/block-holder";
 import DocumentHolder from "@/app/components/document-holder";
@@ -25,18 +26,14 @@ export default function Page() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [inProgress, setInProgress] = useState(0);
-  const [completed, setCompleted] = useState(0);
-  const [monthlyIncome, setMonthlyIncome] = useState(0);
-  const [monthlyExpenses, setMonthlyExpenses] = useState(0);
-  const [yearlyIncome, setYearlyIncome] = useState(0);
-  const [yearlyExpenses, setYearlyExpenses] = useState(0);
   const [newTax, setNewTax] = useState("");
   const [isTaxChanging, setIsTaxChanging] = useState(false);
 
-  const buttonStyle = "bg-green px-2 py-1 rounded-lg w-60 text-center";
+  const buttonStyle =
+    "bg-green px-2 py-1 rounded-lg w-60 text-center hover:bg-darkGreen";
 
   useEffect(() => {
+    document.title = "Finance";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -45,27 +42,17 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    fetchTax();
+    if (user) {
+      setLoading(true);
+      getUserData(user, setUserData).finally(() => setLoading(false));
+    }
   }, [user]);
 
-  const fetchTax = async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const db = getFirestore(app);
-      const userDoc = doc(db, `users/${user.uid}`);
-      const userSnapshot = await getDoc(userDoc);
-      const userData = userSnapshot.data();
-      console.log(userData);
-
-      setUserData(userData);
+  useEffect(() => {
+    if (userData && userData.tax) {
       setNewTax(userData?.tax ? `${userData.tax}%` : "");
-    } catch (error) {
-      console.error("Error fetching:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [userData]);
 
   const handleTaxChange = (e) => {
     const value = e.target.value;
@@ -80,7 +67,10 @@ export default function Page() {
       const db = getFirestore(app);
       const userDoc = doc(db, `users/${user.uid}`);
       await updateDoc(userDoc, { tax: `${newTax}%` });
-      await fetchTax();
+      setUserData((prevData) => ({
+        ...prevData,
+        tax: `${newTax}%`,
+      }));
       setIsTaxChanging(false);
       console.log("Tax updated successfully");
     } catch (error) {
@@ -94,88 +84,6 @@ export default function Page() {
     setNewTax(userData?.tax ? `${userData.tax}%` : "");
     setIsTaxChanging(false);
   };
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!user) return;
-      setLoading(true);
-      try {
-        const db = getFirestore(app);
-        const ordersCollection = collection(db, `users/${user.uid}/orders`);
-        const ordersSnapshot = await getDocs(ordersCollection);
-        const ordersData = ordersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        console.log(ordersData);
-
-        const inProgressCount = ordersData.filter(
-          (order) => !order.completed
-        ).length;
-        const completedCount = ordersData.filter(
-          (order) => order.completed
-        ).length;
-        setInProgress(inProgressCount);
-        setCompleted(completedCount);
-
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
-
-        const monthlyOrders = ordersData.filter((order) => {
-          if (!order.startDate || !order.startDate.seconds) return false;
-          const orderDate = new Date(order.startDate.seconds * 1000);
-          return (
-            orderDate.getMonth() === currentMonth &&
-            orderDate.getFullYear() === currentYear
-          );
-        });
-
-        const monthlyIncome = monthlyOrders.reduce(
-          (sum, order) =>
-            sum +
-            (parseFloat(order.productCost) || 0) +
-            (parseFloat(order.workCost) || 0),
-          0
-        );
-
-        const monthlyExpenses = monthlyOrders.reduce(
-          (sum, order) => sum + (parseFloat(order.materialsCost) || 0),
-          0
-        );
-
-        const yearlyOrders = ordersData.filter((order) => {
-          if (!order.startDate || !order.startDate.seconds) return false;
-          const orderDate = new Date(order.startDate.seconds * 1000);
-          return orderDate.getFullYear() === currentYear;
-        });
-
-        const yearlyIncome = yearlyOrders.reduce(
-          (sum, order) =>
-            sum +
-            (parseFloat(order.productCost) || 0) +
-            (parseFloat(order.workCost) || 0),
-          0
-        );
-
-        const yearlyExpenses = yearlyOrders.reduce(
-          (sum, order) => sum + (parseFloat(order.materialsCost) || 0),
-          0
-        );
-
-        setMonthlyIncome(monthlyIncome);
-        setMonthlyExpenses(monthlyExpenses);
-        setYearlyIncome(yearlyIncome);
-        setYearlyExpenses(yearlyExpenses);
-      } catch (error) {
-        console.error("Error fetching:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
-  }, [user]);
 
   const closeConfirmation = () => {
     setConfirmWindowVisibility(false);
@@ -201,25 +109,26 @@ export default function Page() {
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <div className="flex flex-row justify-between">
             <p>All orders:</p>
-            <div>
+            <div className="h-10 flex items-center">
               Set Tax:{" "}
               {isTaxChanging ? (
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center ">
                   <input
                     type="number"
                     value={newTax}
                     onChange={handleTaxChange}
-                    className="w-20"
+                    className="ml-2 w-20 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green p-2"
                   />
+                  <span>%</span>
                   <button
                     onClick={saveTax}
-                    className="bg-green px-2 py-1 rounded-lg"
+                    className="bg-green py-2 px-4 rounded-lg hover:bg-darkGreen"
                   >
                     Save
                   </button>
                   <button
                     onClick={cancelTaxChange}
-                    className="bg-red px-2 py-1 rounded-lg"
+                    className="bg-red py-2 px-4 rounded-lg hover:bg-rose-800"
                   >
                     Cancel
                   </button>
@@ -234,12 +143,12 @@ export default function Page() {
 
           <div className="flex flex-row justify-between items-start">
             <div>
-              <p>In progress: {inProgress}</p>
-              <p>Completed: {completed}</p>
+              <p>In progress: {userData?.inProgressOrders ?? "Loading..."}</p>
+              <p>Completed: {userData?.completedOrders ?? "Loading..."}</p>
             </div>
             {!isTaxChanging && (
               <button
-                className="bg-green px-2 py-1 rounded-lg"
+                className="bg-green px-2 py-1 rounded-lg hover:bg-darkGreen"
                 onClick={() => setIsTaxChanging(true)}
               >
                 Change Tax
@@ -253,9 +162,8 @@ export default function Page() {
             This month (
             {new Date().toLocaleString("default", { month: "long" })}):
           </p>
-          <p>
-            Income: {monthlyIncome}$ Expenses: {monthlyExpenses}$
-          </p>
+          <p>Income: {userData?.monthlyIncome ?? "Loading..."}$</p>
+          <p>Expenses: {userData?.monthlyExpenses ?? "Loading..."}$</p>
           <Link href="finances/monthly" className={buttonStyle}>
             Monthly Financial Report
           </Link>
@@ -263,21 +171,11 @@ export default function Page() {
 
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>This year ({new Date().getFullYear()}):</p>
-          <p>
-            Income: {yearlyIncome}$ Expenses: {yearlyExpenses}$
-          </p>
+          <p>Income: {userData?.yearlyIncome ?? "Loading..."}$</p>
+          <p>Expenses: {userData?.yearlyExpenses ?? "Loading..."}$</p>
           <Link href="finances/yearly" className={buttonStyle}>
             Yearly Financial Report
           </Link>{" "}
-        </div>
-
-        <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <p>Other reports:</p>
-          <div className="flex flex-col gap-2 w-60">
-            <button className={buttonStyle}>Labor Cost</button>
-            <button className={buttonStyle}>Supply Expenses</button>
-            <button className={buttonStyle}>Order Payments</button>
-          </div>
         </div>
 
         <FilterWindow

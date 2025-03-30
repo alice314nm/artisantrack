@@ -7,7 +7,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
 } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { initializeUserData } from "../_services/user-data";
@@ -17,38 +17,49 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-
-
-  const doCreateUserWithEmailAndPassword = async (email, password, displayName, tax) => {
+  const doCreateUserWithEmailAndPassword = async (
+    email,
+    password,
+    displayName,
+    tax
+  ) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-  
+
       await updateProfile(user, {
         displayName: displayName,
       });
-  
+
       await initializeUserData(user, db, displayName, tax);
-  
+
       return user;
     } catch (error) {
-      console.error("Error creating user:", error.message);
-      throw error;
+      if (error.code === "auth/email-already-in-use") {
+        throw new Error(
+          "This email address is already associated with an account."
+        );
+      }
+      throw new Error(error.message);
     }
   };
-  
 
   const doSignInUserWithEmailAndPassword = async (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
-  }
+  };
 
   const resetPassword = async (email) => {
+    if (!email) {
+      throw new Error("Please enter a valid email address.");
+    }
     try {
       await sendPasswordResetEmail(auth, email);
-      alert("Password reset email sent!");
     } catch (error) {
       console.error("Error resetting password: ", error.message);
-      alert("Error sending password reset email. Please try again.");
     }
   };
 
@@ -65,12 +76,13 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ 
-        user, 
-        firebaseSignOut, 
-        doCreateUserWithEmailAndPassword, 
+      value={{
+        user,
+        firebaseSignOut,
+        doCreateUserWithEmailAndPassword,
         doSignInUserWithEmailAndPassword,
-        resetPassword }}
+        resetPassword,
+      }}
     >
       {children}
     </AuthContext.Provider>

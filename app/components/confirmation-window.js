@@ -16,9 +16,9 @@ export default function ConfirmationWindow({
 }) {
   return (
     <div
-      className={`fixed flex h-screen w-screen items-center justify-center bg-opacity-20 bg-black z-10 ${
-        windowVisibility ? "" : "hidden"
-      }`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
+        windowVisibility ? "opacity-100 visible" : "opacity-0 invisible"
+      } transition-opacity duration-300 ease-in-out`}
       data-id="confirmation-window"
     >
       <div className="bg-beige border border-darkBeige rounded">

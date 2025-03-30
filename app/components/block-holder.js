@@ -30,15 +30,18 @@ export default function BlockHolder({
   imageSource,
   type,
 }) {
-  const commonImageClasses = "rounded-md h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 object-cover";
-  
-  const cardBaseClasses = "flex flex-col gap-2 w-full h-full transition-transform duration-300 ease-in-out";
+  const commonImageClasses =
+    "rounded-md h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 object-cover";
+
+  const cardBaseClasses =
+    "flex flex-col gap-2 w-full h-full transition-transform duration-300 ease-in-out";
 
   const textBaseClasses = "truncate max-w-[180px] text-darkerBeige";
-  const headerTextClasses = "truncate max-w-[180px] font-semibold text-lg text-gray-800";
-  const costClasses = "truncate max-w-[180px] italic"
-  const deadlineClasses = "truncate max-w-[180px] font-semibold text-sm leading-tight";
-
+  const headerTextClasses =
+    "truncate max-w-[180px] font-semibold text-lg text-gray-800";
+  const costClasses = "truncate max-w-[180px] italic";
+  const deadlineClasses =
+    "truncate max-w-[180px] font-semibold text-sm leading-tight";
 
   if (type === "product") {
     return (
@@ -50,10 +53,14 @@ export default function BlockHolder({
         <div className="flex flex-col">
           <div>
             <p className={`${textBaseClasses} text-xs`}>product id: #{id}</p>
-            <p className={`${headerTextClasses}`}>{title}</p>
+            <p className={`${headerTextClasses}`} data-id="product-title">
+              {title}
+            </p>
           </div>
           <p className={textBaseClasses}>category: {category}</p>
-          <p className={costClasses}>{total} {currency}</p>
+          <p className={costClasses}>
+            {total} {currency}
+          </p>
         </div>
       </div>
     );
@@ -67,9 +74,13 @@ export default function BlockHolder({
         <div className="flex flex-col">
           <div>
             <p className={`${textBaseClasses} text-xs`}>order id: #{id}</p>
-            <p className={`${headerTextClasses}`}>{title}</p>
-          </div>          
-          <p className={deadlineClasses}><span className="text-red">Deadline: {deadline[0]}</span></p>
+            <p className={`${headerTextClasses}`} data-id="order-title">
+              {title}
+            </p>
+          </div>
+          <p className={deadlineClasses}>
+            <span className="text-red">Deadline: {deadline[0]}</span>
+          </p>
           <p className={deadlineClasses}>{deadline[2]}</p>
           <p className={costClasses}>
             Total: {total} {currency}
@@ -87,8 +98,11 @@ export default function BlockHolder({
         <div className="flex flex-col">
           <div>
             <p className={`${textBaseClasses} text-xs`}>material id: #{id}</p>
-            <p className={`${headerTextClasses}`}>{title}</p>
-          </div>          <p className={textBaseClasses}>Quantity: {quantity}</p>
+            <p className={`${headerTextClasses}`} data-id="material-title">
+              {title}
+            </p>
+          </div>{" "}
+          <p className={textBaseClasses}>Quantity: {quantity}</p>
           <p className={textBaseClasses}>Category: {category}</p>
           <p className={textBaseClasses}>Color: {color}</p>
           <p className={costClasses}>

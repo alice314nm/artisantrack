@@ -15,10 +15,12 @@ export default function FilterWindow({
   const [selectedFilters, setSelectedFilters] = useState({
     Categories: [],
     Colors: [],
-    "Sort by": "Category", // Default opened
+    Clients: [],
+    "Sort by": "", // Default opened
   });
   const [colors, setColors] = useState([]);
-  const [openDropdown, setOpenDropdown] = useState("Categories"); // Default opened
+  const [clients, setClients] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(""); // Default opened
 
   const filters =
     pageType === "material"
@@ -33,7 +35,8 @@ export default function FilterWindow({
           Categories: categories,
           Colors: colors,
         }
-      : {
+      : pageType === "product"
+      ? {
           "Sort by": [
             "Category",
             "Name Descending",
@@ -42,6 +45,17 @@ export default function FilterWindow({
             "ID Descending",
           ],
           Categories: categories,
+        }
+      : {
+          "Sort by": [
+            "Category",
+            "Name Descending",
+            "Name Ascending",
+            "Earliest Deadline",
+            "Latest Deadline",
+          ],
+          Categories: categories,
+          Clients: clients,
         };
 
   useEffect(() => {
@@ -59,6 +73,24 @@ export default function FilterWindow({
     };
 
     fetchColors();
+  }, [user]);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const db = getFirestore(app);
+        const clientsCollection = collection(db, `users/${user.uid}/customers`);
+        const clientsSnapshot = await getDocs(clientsCollection);
+        const clientsData = clientsSnapshot.docs.map((doc) => doc.data().name);
+        setClients(clientsData);
+      } catch (error) {
+        console.error("Error fetching clients: ", error);
+      }
+    };
+
+    if (user) {
+      fetchClients();
+    }
   }, [user]);
 
   const handleFilterClick = (filter, category) => {
@@ -81,6 +113,13 @@ export default function FilterWindow({
         ...prev,
         "Sort by": filter,
       }));
+    } else if (category === "Clients") {
+      setSelectedFilters((prev) => {
+        const newClients = prev.Clients.includes(filter)
+          ? prev.Clients.filter((item) => item !== filter)
+          : [...prev.Clients, filter];
+        return { ...prev, Clients: newClients };
+      });
     }
   };
 
@@ -98,30 +137,44 @@ export default function FilterWindow({
   // Reusable dropdown rendering
   const renderDropdown = (category) => {
     return (
-      <div 
+      <div
         className="mb-4 transition-all duration-300 ease-in-out"
         key={category}
       >
-        <div 
+        <div
           className="flex justify-between items-center cursor-pointer border-b border-darkBeige pb-2"
           onClick={() => toggleDropdown(category)}
+          data-id={
+            category === "Sort by"
+              ? "sort-by-option"
+              : category === "Colors"
+              ? "color-option"
+              : category === "Clients"
+              ? "client-option"
+              : ""
+          }
         >
           <h3 className="text-lg font-semibold">{category}</h3>
-          <img 
-            src={openDropdown === category ? "/angle-small-up.png" : "/angle-small-down.png"} 
+          <img
+            src={
+              openDropdown === category
+                ? "/angle-small-up.png"
+                : "/angle-small-down.png"
+            }
             className="w-6 h-6 transition-transform duration-300"
             alt="Toggle dropdown"
           />
         </div>
 
-        <div 
+        <div
           className={`
-            overflow-hidden transition-all duration-300 ease-in-out
-            ${openDropdown === category 
-              ? "max-h-96 opacity-100 mt-3" 
-              : "max-h-0 opacity-0 mt-0"
-            }
-          `}
+              overflow-hidden transition-all duration-300 ease-in-out
+              ${
+                openDropdown === category
+                  ? "max-h-96 opacity-100 mt-3"
+                  : "max-h-0 opacity-0 mt-0"
+              }
+            `}
         >
           <div className="flex flex-wrap gap-2">
             {filters[category]?.map((item, index) => (
@@ -129,23 +182,32 @@ export default function FilterWindow({
                 key={`${category}-${item}-${index}`}
                 onClick={() => handleFilterClick(item, category)}
                 className={`
-                  px-4 py-2 rounded-full border border-darkBeige cursor-pointer 
-                  transition-all duration-200 ease-in-out
-                  hover:bg-darkBeige hover:scale-105
-                  ${
-                    (category === "Categories" && selectedFilters.Categories.includes(item)) ||
-                    (category === "Colors" && selectedFilters.Colors.includes(item)) ||
-                    (category === "Sort by" && selectedFilters["Sort by"] === item)
-                      ? "!bg-darkBeige text-white"
-                      : "bg-lightBeige"
-                  }
-                `}
+                    px-4 py-2 rounded-full border border-darkBeige cursor-pointer 
+                    transition-all duration-200 ease-in-out
+                    hover:bg-darkBeige hover:scale-105
+                    ${
+                      (category === "Categories" &&
+                        selectedFilters.Categories.includes(item)) ||
+                      (category === "Colors" &&
+                        selectedFilters.Colors.includes(item)) ||
+                      (category === "Sort by" &&
+                        selectedFilters["Sort by"] === item) ||
+                      (category === "Clients" &&
+                        selectedFilters.Clients.includes(item))
+                        ? "!bg-darkBeige text-white"
+                        : "bg-lightBeige"
+                    }
+                  `}
                 data-id={
-                  category === "Categories"
+                  category === "Sort by"
+                    ? "sort-by"
+                    : category === "Categories"
                     ? "category-filter"
                     : category === "Colors"
                     ? "color-filter"
-                    : "sort-by"
+                    : category === "Clients"
+                    ? "client-filter"
+                    : ""
                 }
               >
                 {item}
@@ -161,7 +223,7 @@ export default function FilterWindow({
   if (!windowVisibility) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-20"
       data-id="filter-window"
     >
@@ -181,9 +243,7 @@ export default function FilterWindow({
         {/* Content */}
         <div className="p-4 bg-beige max-h-[60vh] overflow-y-auto">
           {/* Dynamically render dropdowns in new order */}
-          {Object.keys(filters).map((category) => (
-            renderDropdown(category)
-          ))}
+          {Object.keys(filters).map((category) => renderDropdown(category))}
 
           {/* Apply Filters Button */}
           <div className="mt-8 flex justify-end">

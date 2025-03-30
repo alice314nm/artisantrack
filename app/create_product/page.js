@@ -14,6 +14,7 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // Import the useRouter hook
+import { doc } from "firebase/firestore";
 
 export default function Page() {
   const router = useRouter();
@@ -43,6 +44,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
+    document.title = "Create a Product";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -89,23 +91,49 @@ export default function Page() {
   };
 
   const handlePatternImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPatternImages((prev) => [...prev, file]);
+    try {
+      if (!e || !e.target || !e.target.files) return;
+
+      const filesPattern = Array.from(e.target.files);
+      const validPatternFiles = filesPattern.filter((file) =>
+        ["image/png", "image/jpeg"].includes(file.type)
+      );
+
+      if (validPatternFiles.length !== filesPattern.length) {
+        setErrorMessage("Only PNG and JPG files are allowed.");
+      }
+
+      setPatternImages((prev) => [...prev, ...validPatternFiles]);
+    } catch (error) {
+      console.error("Failed to handle pattern image upload:", error);
     }
   };
 
   const handleProductImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProductImages((prev) => [...prev, file]);
+    try {
+      if (!e || !e.target || !e.target.files) return;
+
+      const filesProduct = Array.from(e.target.files);
+      const validProductFiles = filesProduct.filter((file) =>
+        ["image/png", "image/jpeg"].includes(file.type)
+      );
+
+      if (validProductFiles.length !== filesProduct.length) {
+        setErrorMessage("Only PNG and JPG files are allowed.");
+      }
+
+      setProductImages((prev) => [...prev, ...validProductFiles]);
+    } catch (error) {
+      console.error("Failed to handle product image upload:", error);
     }
   };
 
-  const handleUpload = async () => {
-    // if (!patternImages.length) return [];
-    // if (!productImages.length) return [];
+  useEffect(()=>{
+    console.log(patternImages)
+    console.log(0, productImages)
+  }, [patternImages, productImages])
 
+  const handleUpload = async () => {
     const uploadedProductImages = [];
     const uploadedPatternImages = [];
 
@@ -179,15 +207,15 @@ export default function Page() {
     const uploadedPatternImages = uploadedImages?.[1] || [];
 
     const productObj = {
-      productId,
-      name,
+      productId: productId || "",
+      name: name || "",
       averageCost:
         averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
       currency: averageCost.trim() === "" ? "" : currency,
-      categories,
-      description: desc,
-      productImages: uploadedProductImages,
-      patternImages: uploadedPatternImages,
+      categories: categories || [],
+      description: desc || "",
+      productImages: uploadedProductImages || [],
+      patternImages: uploadedPatternImages || [],
     };
 
     try {
@@ -214,11 +242,13 @@ export default function Page() {
         <form
           className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4"
           onSubmit={handleCreateProduct}
-        >  
+        >
           {errorMessage.length === 0 ? null : (
             <p className="text-red">{errorMessage}</p>
           )}
-  
+
+          <p className="text-lg font-semibold underline">General</p>
+
           {/* Product ID */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -231,13 +261,15 @@ export default function Page() {
               />
             </div>
             <input
+              placeholder="Enter id (2-16 characters)"
               data-id="product-id"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={productId}
+              placeholder="Enter id (2-16 characters)"
               onChange={(e) => setProductId(e.target.value)}
             />
           </div>
-  
+
           {/* Product Name */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -250,13 +282,44 @@ export default function Page() {
               />
             </div>
             <input
+              placeholder="Enter name (2-64 characters)"
               data-id="product-name"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={name}
+              placeholder="Enter name (2-64 characters)"
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-  
+
+          {/* Description */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between items-center">
+              <p>Description</p>
+              <img
+                src={desc === "" ? "/cross.png" : "/check.png"}
+                className={desc === "" ? "h-4" : "h-6 text-green"}
+              />
+            </div>
+            <textarea
+              placeholder="Enter description"
+              data-id="product-description"
+              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
+              value={desc}
+              placeholder="Enter description"
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setDesc(e.target.value);
+                }
+              }}
+            />
+            {/* Display character count */}
+            <div className="text-sm text-gray-500 mt-1">
+              {desc.length} / 1000 characters
+            </div>
+          </div>
+
+          <p className="text-lg font-semibold underline">Details</p>
+
           {/* Category */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -268,9 +331,11 @@ export default function Page() {
             </div>
             <div className="flex flex-row gap-2">
               <input
+                placeholder="Add a category for a material "
                 list="categories"
                 className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 value={category}
+                placeholder="Add a category for a material "
                 onChange={(e) => setCategory(e.target.value)}
                 data-id="product-category"
               />
@@ -288,7 +353,7 @@ export default function Page() {
                 <option key={index} value={category} />
               ))}
             </datalist>
-  
+
             {/* Category List */}
             <ul className="flex flex-col gap-2 list-decimal pl-8">
               {categories.map((cat, index) => (
@@ -308,7 +373,102 @@ export default function Page() {
               ))}
             </ul>
           </div>
-  
+
+          {/* Product Image Selection */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Product Images</label>
+              <img
+                src={productImages.length === 0 ? "/cross.png" : "/check.png"}
+                className={
+                  productImages.length === 0 ? "h-4" : "h-6 text-green"
+                }
+              />
+            </div>
+            <div className="relative inline-block">
+              <label
+                htmlFor="fileInputProduct"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                Select images
+              </label>
+              <input
+                id="fileInputProduct"
+                type="file"
+                className="hidden"
+                multiple
+                accept="image/png, image/jpeg"
+                onChange={handleProductImageChange}
+              />
+            </div>
+
+            {/* Preview Product Images */}
+            {productImages.length > 0 && (
+              <div className="flex flex-row gap-2 overflow-x-auto">
+                {productImages.map((image, index) => (
+                  <div key={index}>
+                    <SmallBlockHolder
+                      type="multiplePictureDelete"
+                      id={index + 1}
+                      imageSource={URL.createObjectURL(image)}
+                      onButtonFunction={() => removeProductImage(index)}
+                      data-id={`product-image-preview-${index}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Pattern Image Selection */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row justify-between items-center">
+              <label className="text-blackBeige">Pattern Images</label>
+              <img
+                src={patternImages.length === 0 ? "/cross.png" : "/check.png"}
+                className={
+                  patternImages.length === 0 ? "h-4" : "h-6 text-green"
+                }
+              />
+            </div>
+
+            <div className="relative inline-block">
+              <label
+                htmlFor="fileInputPattern"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                Select images
+              </label>
+              <input
+                id="fileInputPattern"
+                type="file"
+                className="hidden"
+                multiple
+                accept="image/png, image/jpeg"
+                onChange={handlePatternImageChange}
+              />
+            </div>
+
+            {/* Preview Pattern Image */}
+            {patternImages.length > 0 && (
+              <div className="flex flex-row gap-2 overflow-x-auto">
+                {patternImages.map((patternImage, index) => (
+                  <div key={index}>
+                    <SmallBlockHolder
+                      type="multiplePictureDelete"
+                      id={index + 1}
+                      imageSource={URL.createObjectURL(patternImage)}
+                      onButtonFunction={() => removePatternImage(index)}
+                      data-id={`pattern-image-preview-${index}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <p className="text-lg font-semibold underline">Price</p>
+
           {/* Average Cost */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
@@ -345,115 +505,15 @@ export default function Page() {
               </select>
             </div>
           </div>
-  
-          {/* Description */}
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Description</label>
-              <img
-                src={desc === "" ? "/cross.png" : "/check.png"}
-                className={desc === "" ? "h-4" : "h-6 text-green"}
-              />
-            </div>
-            <textarea
-              data-id="product-description"
-              className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-            />
-          </div>
-  
-          {/* Product Image Selection */}
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Product Images</label>
-              <img
-                src={productImages.length === 0 ? "/cross.png" : "/check.png"}
-                className={
-                  productImages.length === 0 ? "h-4" : "h-6 text-green"
-                }
-              />
-            </div>
-            <div className="relative inline-block">
-              <input
-                type="file"
-                className="absolute inset-0 w-full opacity-0 cursor-pointer"
-                multiple
-                onChange={handleProductImageChange}
-                data-id="product-image-input"
-              />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-              select image
-              </p>
-            </div>
-  
-            {/* Preview Product Images */}
-            {productImages.length > 0 && (
-              <div className="flex flex-row gap-2 overflow-x-auto">
-                {productImages.map((image, index) => (
-                  <div key={index}>
-                    <SmallBlockHolder
-                      type="multiplePictureDelete"
-                      id={index + 1}
-                      imageSource={URL.createObjectURL(image)}
-                      onButtonFunction={() => removeProductImage(index)}
-                      data-id={`product-image-preview-${index}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-  
-          {/* Pattern Image Selection */}
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Pattern Images</label>
-              <img
-                src={patternImages.length === 0 ? "/cross.png" : "/check.png"}
-                className={
-                  patternImages.length === 0 ? "h-4" : "h-6 text-green"
-                }
-              />
-            </div>
-  
-            <div className="relative inline-block">
-              <input
-                type="file"
-                className="absolute inset-0 w-full opacity-0 cursor-pointer"
-                onChange={handlePatternImageChange}
-                data-id="pattern-image-input"
-              />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-                select image
-              </p>
-            </div>
-  
-            {/* Preview Pattern Image */}
-            {patternImages.length > 0 && (
-              <div className="flex flex-row gap-2 overflow-x-auto">
-                {patternImages.map((patternImage, index) => (
-                  <div key={index}>
-                    <SmallBlockHolder
-                      type="multiplePictureDelete"
-                      id={index + 1}
-                      imageSource={URL.createObjectURL(patternImage)}
-                      onButtonFunction={() => removePatternImage(index)}
-                      data-id={`pattern-image-preview-${index}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+
           {/* Submit */}
-            <Menu
-              type="CreateMenu"
-              firstTitle="Cancel"
-              secondTitle="Create"
-              onFirstFunction={handleNavigateToListPage}
-              data-id="create-menu"
-            />
+          <Menu
+            type="CreateMenu"
+            firstTitle="Cancel"
+            secondTitle="Create"
+            onFirstFunction={handleNavigateToListPage}
+            data-id="create-menu"
+          />
         </form>
       </div>
     );

@@ -11,16 +11,14 @@ import Header from "@/app/components/header";
 import Menu from "@/app/components/menu";
 import NotLoggedWindow from "@/app/components/not-logged-window";
 import SmallBlockHolder from "@/app/components/small-block-holder";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+import { doc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 
 export default function Page() {
   const { user } = useUserAuth();
-  const inputStyle = "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
+  const inputStyle =
+    "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
   const [loading, setLoading] = useState(true);
 
   const [materialId, setMaterialId] = useState("");
@@ -45,6 +43,7 @@ export default function Page() {
   );
 
   useEffect(() => {
+    document.title = "Create a material";
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -80,7 +79,15 @@ export default function Page() {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
+    const allowedTypes = ["image/png", "image/jpeg"];
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      setErrorMessage("Only PNG and JPG files are allowed.");
+    } else {
+      setErrorMessage("");
+      setImages((prev) => [...prev, ...validFiles]);
+    }
   };
 
   const removeSelectedImage = (index) => {
@@ -93,18 +100,17 @@ export default function Page() {
     const calculateCostPerUnit = () => {
       const totalValue = parseFloat(total);
       const quantityValue = parseInt(quantity);
-  
+
       if (isNaN(totalValue) || isNaN(quantityValue) || quantityValue <= 0) {
-        setCost(0.00);
+        setCost(0.0);
       } else {
         const costPerUnit = (totalValue / quantityValue).toFixed(2);
         setCost(costPerUnit);
       }
     };
-  
+
     calculateCostPerUnit();
   }, [total, quantity]);
-  
 
   const handleUpload = async () => {
     if (!images.length) return []; // Ensure it returns an empty array instead of undefined
@@ -166,15 +172,20 @@ export default function Page() {
       categories: categories || [],
       images: uploadedImages || [],
       shop: shop || "",
-      quantity: quantity || 0.00,
-      total: total || 0.00,
-      currency: total === 0 ? "" : (typeof total === 'string' ? total.trim() : total) === "" ? "" : currency,
-      costPerUnit: cost || 0.00,
+      quantity: quantity || 0.0,
+      total: total || 0.0,
+      currency:
+        total === 0
+          ? ""
+          : (typeof total === "string" ? total.trim() : total) === ""
+          ? ""
+          : currency,
+      costPerUnit: cost || 0.0,
     };
-    
+
     try {
       await dbAddMaterial(user.uid, materialObj);
-      console.log(materialObj)
+      console.log(materialObj);
       window.location.href = "/materials";
       setLoading(false);
     } catch (error) {
@@ -240,7 +251,6 @@ export default function Page() {
               className={inputStyle}
               value={name}
               placeholder="Enter name (2-64 characters)"
-
               onChange={(e) => setName(e.target.value)}
             />
           </div>
@@ -256,11 +266,19 @@ export default function Page() {
             </div>
             <textarea
               data-id="material-description"
-              className="rounded-lg border p-2"
-              value={desc}
+              className={inputStyle}
               placeholder="Enter description"
-              onChange={(e) => setDesc(e.target.value)}
+              value={desc}
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setDesc(e.target.value);
+                }
+              }}
             />
+            {/* Display character count */}
+            <div className="text-sm text-gray-500 mt-1">
+              {desc.length} / 1000 characters
+            </div>
           </div>
 
           <p className="text-lg underline font-semibold">Details</p>
@@ -345,15 +363,20 @@ export default function Page() {
               />
             </div>
             <div className="relative inline-block">
+              <label
+                htmlFor="fileInput"
+                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+              >
+                Select images
+              </label>
               <input
+                id="fileInput"
                 type="file"
-                className="absolute inset-0 w-40 opacity-0 cursor-pointer"
+                className="hidden"
                 multiple
+                accept="image/png, image/jpeg"
                 onChange={handleFileChange}
               />
-              <p className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300">
-                select images
-              </p>
             </div>
 
             {/* Preview Chosen Images */}
@@ -372,9 +395,9 @@ export default function Page() {
               </div>
             )}
           </div>
-            
+
           <p className="text-lg underline font-semibold">Price</p>
-  
+
           {/* Products Shops */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
@@ -390,7 +413,7 @@ export default function Page() {
               value={shop}
               placeholder="Enter a shop"
               onChange={(e) => setShop(e.target.value)}
-            />              
+            />
           </div>
 
           {/* Product Quantity */}
@@ -398,33 +421,42 @@ export default function Page() {
             <div className="flex flex-row justify-between">
               <label>Quantity</label>
               <img
-                src={(quantity === 0 || quantity==="") ? "/cross.png" : "/check.png"}
-                className={(quantity === 0 || quantity==="") ? "h-4" : "h-6 text-green"}
+                src={
+                  quantity === 0 || quantity === ""
+                    ? "/cross.png"
+                    : "/check.png"
+                }
+                className={
+                  quantity === 0 || quantity === "" ? "h-4" : "h-6 text-green"
+                }
               />
             </div>
             <input
               data-id="material-quantity"
               className={inputStyle}
-              value={quantity===0 ? "" : quantity}
+              value={quantity === 0 ? "" : quantity}
               placeholder="0.00"
               type="numbers"
               onChange={(e) => setQuantity(e.target.value)}
             />
           </div>
-          
+
           {/* Product Total  */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <label>Total</label>
               <img
-                src={(total === 0 || total === "") ? "/cross.png" : "/check.png"}
-                className={(total === 0 || total === "") ? "h-4" : "h-6 text-green"}
+                src={total === 0 || total === "" ? "/cross.png" : "/check.png"}
+                className={
+                  total === 0 || total === "" ? "h-4" : "h-6 text-green"
+                }
               />
             </div>
             <div className="flex flex-row gap-2">
               <input
+                data-id="material-total-price"
                 className={inputStyle}
-                value={total===0 ? "" : total}
+                value={total === 0 ? "" : total}
                 type="number"
                 placeholder="0.00"
                 onChange={(e) => {
@@ -444,7 +476,7 @@ export default function Page() {
               </select>
             </div>
           </div>
-            
+
           {/* Product Cost per Unit */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
@@ -457,10 +489,10 @@ export default function Page() {
             <input
               readOnly
               disabled
-              data-id="material-quantity"
+              data-id="material-cost-per-unit"
               className={inputStyle}
               placeholder="0.00"
-              value={cost===0 ? "" : cost}
+              value={cost === 0 ? "" : cost}
               onChange={(e) => setCost(e.target.value)}
             />
           </div>

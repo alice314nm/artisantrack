@@ -8,7 +8,12 @@ import SmallBlockHolder from "@/app/components/small-block-holder";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { dbDeleteMaterialById, fetchMaterialById, fetchMaterials } from "@/app/_services/material-service";
+import {
+  dbDeleteMaterialById,
+  fetchMaterialById,
+  fetchMaterials,
+} from "@/app/_services/material-service";
+import { doc } from "firebase/firestore";
 
 export default function MaterialPage() {
   const { user } = useUserAuth();
@@ -33,66 +38,67 @@ export default function MaterialPage() {
     sectionTitle: "text-lg font-semibold ",
     sectionText: "",
     editButton:
-      "py-2 font-bold w-full flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
+      "py-2 font-bold rounded-md w-full flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
     deleteButton:
       "bg-red text-white rounded-md w-32 py-2 hover:bg-darkRed transition-colors duration-300",
   };
 
-
   useEffect(() => {
-    
-    if (!user) return;
-
-    if(user) {
-      setLoading(true);
-      fetchMaterialById(user.uid, id, setSelectedMaterial);
+    document.title = selectedMaterial.name || "Loading...";
+    const timeout = setTimeout(() => {
       setLoading(false);
-    }
+    }, 2000);
 
-  }, [user]);
-  
-  
-  useEffect(() => {
-    if (selectedMaterial && selectedMaterial.images && selectedMaterial.images.length > 0) {
-      setMainImage(selectedMaterial.images[0].url);
-      console.log(selectedMaterial)
-    }
+    return () => clearTimeout(timeout);
   }, [selectedMaterial]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    if (user) {
+      fetchMaterialById(user.uid, id, setSelectedMaterial);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (
+      selectedMaterial &&
+      selectedMaterial.images &&
+      selectedMaterial.images.length > 0
+    ) {
+      setMainImage(selectedMaterial.images[0].url);
+      console.log(selectedMaterial);
+    }
+  }, [selectedMaterial]);
 
   const handleImageChange = (image) => {
     if (mainImage === image.url || transitioning) return;
     setTransitioning(true);
     setTimeout(() => {
       setMainImage(image.url);
-      setTransitioning(false)
-    }, 300); 
+      setTransitioning(false);
+    }, 300);
   };
 
-
-  const handleDeleteMaterial = async (e) => {  
+  const handleDeleteMaterial = async (e) => {
     setLoading(true);
     try {
-        await dbDeleteMaterialById(user.uid, selectedMaterial.id);
-        console.log("Material deleted successfully");
-        window.location.href = '/materials';
+      await dbDeleteMaterialById(user.uid, selectedMaterial.id);
+      console.log("Material deleted successfully");
+      window.location.href = "/materials";
     } catch (error) {
-        console.error("Error adding material:", error);
+      console.error("Error adding material:", error);
     }
   };
-    
 
   const openCloseConfirmation = () => {
     setConfirmWindowVisibility((prev) => !prev);
-    console.log(selectedMaterial.colors)
-
+    console.log(selectedMaterial.colors);
   };
-
 
   const changeView = () => {
     setClientView((prev) => !prev);
   };
-
 
   if (loading) {
     return (
@@ -111,16 +117,19 @@ export default function MaterialPage() {
           <div className="mx-4 flex flex-col gap-4 pb-24">
             {/* Back Button and View Title */}
             <div className="flex flex-row justify-between items-center">
-                <p className="font-bold text-xl text-blackBeige" data-id="Your view">
-                  Your View
-                </p>
-                <Link href="/materials">
-                  <button className={commonClasses.headerButton}>
-                    <img src="/arrow-left.png" width={20} alt="Back" />
-                    <p>Back</p>
-                  </button>
-                </Link>
-              </div>
+              <p
+                className="font-bold text-xl text-blackBeige"
+                data-id="Your view"
+              >
+                Your View
+              </p>
+              <Link href="/materials">
+                <button className={commonClasses.headerButton}>
+                  <img src="/arrow-left.png" width={20} alt="Back" />
+                  <p>Back</p>
+                </button>
+              </Link>
+            </div>
 
             {/* Main Content */}
             <div className="flex flex-col md:flex-row gap-6">
@@ -130,11 +139,13 @@ export default function MaterialPage() {
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
                   className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
                   }`}
                 />
 
-                {(selectedMaterial?.images?.length > 0) && (
+                {selectedMaterial?.images?.length > 0 && (
                   <div className={commonClasses.thumbnailContainer}>
                     {selectedMaterial.images.map((image, index) => (
                       <SmallBlockHolder
@@ -147,12 +158,15 @@ export default function MaterialPage() {
                     ))}
                   </div>
                 )}
-              </div> 
+              </div>
 
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
                 <div className="relative bg-green rounded-md w-32">
                   <Link href={`./${id}/edit`}>
-                    <button className={commonClasses.editButton}>
+                    <button
+                      data-id="edit-button"
+                      className={commonClasses.editButton}
+                    >
                       <p>Edit</p>
                       <img src="/Pencil.png" alt="Pencil" className="w-4 h-4" />
                     </button>
@@ -160,13 +174,14 @@ export default function MaterialPage() {
                 </div>
 
                 <p className="text-2xl font-bold text-blackBeige">
-                  #{selectedMaterial.materialId} | {selectedMaterial.name} 
+                  #{selectedMaterial.materialId} | {selectedMaterial.name}
                 </p>
 
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Categories:</p>
                   <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedMaterial?.categories) && selectedMaterial.categories.length > 0
+                    {Array.isArray(selectedMaterial?.categories) &&
+                    selectedMaterial.categories.length > 0
                       ? selectedMaterial.categories.join(", ")
                       : "No set categories"}
                   </p>
@@ -184,37 +199,38 @@ export default function MaterialPage() {
                   <p className={commonClasses.sectionText}>
                     {selectedMaterial.description || "No Description"}
                   </p>
-                </div>               
+                </div>
 
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Shop:</p>
                   <p className={commonClasses.sectionText}>
                     {selectedMaterial.shop || "No Description"}
                   </p>
-                </div>  
-                
+                </div>
+
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Quantity:</p>
                   <p className={commonClasses.sectionText}>
                     {selectedMaterial.quantity || "No set quantity"}
                   </p>
-                </div>   
+                </div>
 
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Cost per Unity:</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.costPerUnit || "No set cost per unit."} {selectedMaterial.currency}
+                    {selectedMaterial.costPerUnit || "No set cost per unit."}{" "}
+                    {selectedMaterial.currency}
                   </p>
-                </div>  
+                </div>
 
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Total:</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.total || "Cost is not set"} {selectedMaterial.currency}
+                    {selectedMaterial.total || "Cost is not set"}{" "}
+                    {selectedMaterial.currency}
                   </p>
-                </div>   
+                </div>
 
-                              
                 <button
                   className={commonClasses.deleteButton}
                   onClick={openCloseConfirmation}
@@ -244,7 +260,7 @@ export default function MaterialPage() {
         </div>
       );
     }
-    
+
     // View for unlogged users
     else {
       return (
@@ -254,16 +270,19 @@ export default function MaterialPage() {
           <div className="mx-4 flex flex-col gap-4 pb-24">
             {/* Back Button and View Title */}
             <div className="flex flex-row justify-between items-center">
-                <p className="font-bold text-xl text-blackBeige" data-id="Your view">
-                  Client View
-                </p>
-                <Link href="/materials">
-                  <button className={commonClasses.headerButton}>
-                    <img src="/arrow-left.png" width={20} alt="Back" />
-                    <p>Back</p>
-                  </button>
-                </Link>
-              </div>
+              <p
+                className="font-bold text-xl text-blackBeige"
+                data-id="Client view"
+              >
+                Client View
+              </p>
+              <Link href="/materials">
+                <button className={commonClasses.headerButton}>
+                  <img src="/arrow-left.png" width={20} alt="Back" />
+                  <p>Back</p>
+                </button>
+              </Link>
+            </div>
 
             {/* Main Content */}
             <div className="flex flex-col md:flex-row gap-6">
@@ -273,11 +292,13 @@ export default function MaterialPage() {
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
                   className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
                   }`}
                 />
 
-                {(selectedMaterial?.images?.length > 0) && (
+                {selectedMaterial?.images?.length > 0 && (
                   <div className={commonClasses.thumbnailContainer}>
                     {selectedMaterial.images.map((image, index) => (
                       <SmallBlockHolder
@@ -290,17 +311,18 @@ export default function MaterialPage() {
                     ))}
                   </div>
                 )}
-              </div> 
+              </div>
 
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
                 <p className="text-2xl font-bold text-blackBeige">
-                  {selectedMaterial.name} 
+                  {selectedMaterial.name}
                 </p>
 
                 <div className="flex flex-col gap-2">
                   <p className={commonClasses.sectionTitle}>Categories:</p>
                   <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedMaterial?.categories) && selectedMaterial.categories.length > 0
+                    {Array.isArray(selectedMaterial?.categories) &&
+                    selectedMaterial.categories.length > 0
                       ? selectedMaterial.categories.join(", ")
                       : "No set categories"}
                   </p>
@@ -318,10 +340,10 @@ export default function MaterialPage() {
                   <p className={commonClasses.sectionText}>
                     {selectedMaterial.description || "No Description"}
                   </p>
-                </div>                 
+                </div>
               </div>
             </div>
-          </div>          
+          </div>
 
           <Menu
             type="TwoButtonsMenu"
@@ -334,70 +356,72 @@ export default function MaterialPage() {
         </div>
       );
     }
-  } 
-  else {
+  } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
 
         <div className="mx-4 flex flex-col gap-4 pb-24">
-            {/* Main Content */}
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Images Section (Left Side on Non-Mobile) */}
-              <div className="flex flex-col gap-4 md:w-1/2">
-                <img
-                  src={mainImage || "/noImage.png"}
-                  alt="Product Image"
-                  className={`${commonClasses.mainImage} ${
-                    transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
-                  }`}
-                />
+          {/* Main Content */}
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Images Section (Left Side on Non-Mobile) */}
+            <div className="flex flex-col gap-4 md:w-1/2">
+              <img
+                src={mainImage || "/noImage.png"}
+                alt="Product Image"
+                className={`${commonClasses.mainImage} ${
+                  transitioning
+                    ? "opacity-0 translate-y-1"
+                    : "opacity-100 translate-y-0"
+                }`}
+              />
 
-                {(selectedMaterial?.images?.length > 0) && (
-                  <div className={commonClasses.thumbnailContainer}>
-                    {selectedMaterial.images.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div> 
+              {selectedMaterial?.images?.length > 0 && (
+                <div className={commonClasses.thumbnailContainer}>
+                  {selectedMaterial.images.map((image, index) => (
+                    <SmallBlockHolder
+                      key={index}
+                      type="plainPicture"
+                      imageSource={image.url}
+                      onButtonFunction={() => handleImageChange(image)}
+                      mainStatus={mainImage === image.url}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
 
-              <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                <p className="text-2xl font-bold text-blackBeige">
-                  {selectedMaterial.name} 
+            <div className={`${commonClasses.productDetails} md:w-1/2`}>
+              <p className="text-2xl font-bold text-blackBeige">
+                {selectedMaterial.name}
+              </p>
+
+              <div className="flex flex-col gap-2">
+                <p className={commonClasses.sectionTitle}>Categories:</p>
+                <p className={commonClasses.sectionText}>
+                  {Array.isArray(selectedMaterial?.categories) &&
+                  selectedMaterial.categories.length > 0
+                    ? selectedMaterial.categories.join(", ")
+                    : "No set categories"}
                 </p>
+              </div>
 
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Categories:</p>
-                  <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedMaterial?.categories) && selectedMaterial.categories.length > 0
-                      ? selectedMaterial.categories.join(", ")
-                      : "No set categories"}
-                  </p>
-                </div>
+              <div className="flex flex-col gap-2">
+                <p className={commonClasses.sectionTitle}>Color:</p>
+                <p className={commonClasses.sectionText}>
+                  {selectedMaterial.color || "No set colors"}
+                </p>
+              </div>
 
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Color:</p>
-                  <p className={commonClasses.sectionText}>
-                    {selectedMaterial.color || "No set colors"}
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Description:</p>
-                  <p className={commonClasses.sectionText}>
-                    {selectedMaterial.description || "No Description"}
-                  </p>
-                </div>        
+              <div className="flex flex-col gap-2">
+                <p className={commonClasses.sectionTitle}>Description:</p>
+                <p className={commonClasses.sectionText}>
+                  {selectedMaterial.description || "No Description"}
+                </p>
               </div>
             </div>
-          </div> 
+          </div>
+        </div>
       </div>
     );
   }

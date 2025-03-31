@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import ConfirmationWindow from "@/app/[locale]/components/confirmation-window";
 import Header from "@/app/[locale]/components/header";
@@ -9,13 +9,6 @@ import SmallBlockHolder from "@/app/[locale]/components/small-block-holder";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-} from "firebase/firestore";
 import {
   dbDeleteOrderById,
   dbGetOrderById,
@@ -27,8 +20,8 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function OrderPageID() {
+  const t = useTranslations("OrderPageID");
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
-  const [orders, setOrders] = useState([]);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [clientView, setClientView] = useState(false);
@@ -133,10 +126,15 @@ export default function OrderPageID() {
       "Nov",
       "Dec",
     ];
-    const formattedDate = `${monthNames[deadlineDate.getMonth()]
-      } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+
+    const month = monthNames[deadlineDate.getMonth()];
+    // Now accessing month translations under OrderPageID.months
+    const translatedMonth = t(`months.${month}`);
+
+    const formattedDate = `${translatedMonth} ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
-    const daysLeft = diffTime > 0 ? `(${diffTime} days)` : "(Due today)";
+    const daysLeft =
+      diffTime > 0 ? t("daysLeft", { days: diffTime }) : t("dueToday");
 
     return `${formattedDate}`;
   };
@@ -161,39 +159,64 @@ export default function OrderPageID() {
     }, 300);
   };
 
-  console.log("data:", selectedOrder)
+  console.log("data:", selectedOrder);
 
   const handleDownloadReceipt = () => {
     if (!selectedOrder) return;
 
-    const doc = new jsPDF();
+    // Create a new PDF document with explicit encoding
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+      hotfixes: ["px_scaling"], // Add hotfixes for scaling issues
+    });
+
+    // Add support for UTF-8 encoding
+    doc.addFont("helvetica", "normal");
+    doc.addFont("helvetica", "bold");
 
     // Title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
-    doc.text("Receipt", 105, 20, { align: "center" });
+    doc.text(t("createReceipt"), 105, 20, { align: "center" });
 
-    // Order Info
+    // Order Info - Use regular font
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    doc.text(`Order ID: ${id}`, 15, 40);
-    doc.text(`Client: ${selectedOrder.customerName || "N/A"}`, 15, 50);
-    doc.text(`Deadline: ${selectedOrder.deadline?.seconds ? formatDeadline(selectedOrder.deadline.seconds) : "No deadline"}`, 15, 60);
-    doc.text(`Description: ${selectedOrder.description || "N/A"}`, 15, 70);
+
+    // Break up strings into shorter segments for better handling
+    const orderInfo = [
+      `${t("orderID")}: ${id}`,
+      `${t("client")}: ${selectedOrder.customerName || t("noClient")}`,
+      `${t("deadline")}: ${
+        selectedOrder.deadline?.seconds
+          ? formatDeadline(selectedOrder.deadline.seconds)
+          : t("noDeadline")
+      }`,
+      `${t("description")}: ${selectedOrder.description || t("noDescription")}`,
+    ];
+
+    // Print each line separately
+    let yPosition = 40;
+    orderInfo.forEach((line) => {
+      doc.text(line, 15, yPosition);
+      yPosition += 10;
+    });
 
     // First Table: Materials
     autoTable(doc, {
-      startY: 80, // Position below the order info
-      head: [["Material", "Quantity", "Price"]],
+      startY: 80,
+      head: [[t("material"), t("quantity"), t("price")]],
       body: selectedOrder?.materialsForOrderData?.map((material, index) => [
         material.materialName,
-        selectedOrder.quantities[index]?.quantity || "N/A",
-        `$${selectedOrder.materialsCost || "N/A"}`,
+        selectedOrder.quantities[index]?.quantity || t("noQuantity"),
+        `$${selectedOrder.materialsCost || t("noCost")}`,
       ]),
       theme: "grid",
-      styles: { fontSize: 10, cellPadding: 2 },
+      styles: { fontSize: 10, cellPadding: 2, font: "helvetica" },
       columnStyles: {
-        2: { cellWidth: 40 }, // Set the width of the price column (index 2) for materials
+        2: { cellWidth: 40 },
       },
     });
 
@@ -202,18 +225,18 @@ export default function OrderPageID() {
 
     // Second Table: Products
     autoTable(doc, {
-      startY: afterMaterialTableY, // Start after the first table
-      head: [["Product", "Price"]],
+      startY: afterMaterialTableY,
+      head: [[t("product"), t("price")]],
       body: [
         [
-          selectedOrder.productForOrderData.productName || "N/A",
-          `$${selectedOrder.productCost || "N/A"}`,
+          selectedOrder.productForOrderData.productName || t("noProduct"),
+          `$${selectedOrder.productCost || t("noCost")}`,
         ],
       ],
       theme: "grid",
-      styles: { fontSize: 10, cellPadding: 2 },
+      styles: { fontSize: 10, cellPadding: 2, font: "helvetica" },
       columnStyles: {
-        1: { cellWidth: 40 }, // Set the width of the price column (index 1) for products
+        1: { cellWidth: 40 },
       },
     });
 
@@ -222,10 +245,10 @@ export default function OrderPageID() {
     // Third Table: Work Cost
     autoTable(doc, {
       startY: afterProductTableY,
-      head: [["Work Cost"]],
-      body: [[`$${selectedOrder.workCost || "N/A"}`]],
+      head: [[t("workCost")]],
+      body: [[`$${selectedOrder.workCost || t("noCost")}`]],
       theme: "grid",
-      styles: { fontSize: 10, cellPadding: 2 },
+      styles: { fontSize: 10, cellPadding: 2, font: "helvetica" },
     });
 
     // Get Y position after second table
@@ -233,16 +256,14 @@ export default function OrderPageID() {
 
     // Display the total cost formula in the desired format
     doc.setFont("helvetica", "bold");
-    doc.text(
-      `Total Cost = $${selectedOrder.materialsCost} + $${selectedOrder.productCost} + $${selectedOrder.workCost} = $${selectedOrder.totalCost}`,
-      15,
-      afterWorkCostTableY
-    );
+    const totalText = `${t("totalCost")} = $${selectedOrder.materialsCost} + $${
+      selectedOrder.productCost
+    } + $${selectedOrder.workCost} = $${selectedOrder.totalCost}`;
+    doc.text(totalText, 15, afterWorkCostTableY);
 
     // Download the PDF
-    doc.save(`Receipt_${id}.pdf`);
+    doc.save(`${t("receipt")}_${id}.pdf`);
   };
-
 
   if (loading) {
     return (
@@ -260,7 +281,7 @@ export default function OrderPageID() {
     if (!clientView) {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Order" showUserName={true} />
+          <Header title={t("title")} showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between items-center">
@@ -268,12 +289,12 @@ export default function OrderPageID() {
                 className="font-bold text-xl text-blackBeige"
                 data-id="Your view"
               >
-                Your View
+                {t("yourView")}
               </p>
               <Link href="/orders">
                 <button className={commonClasses.headerButton}>
                   <img src="/arrow-left.png" width={20} alt="Back" />
-                  <p>Back</p>
+                  <p>{t("back")}</p>
                 </button>
               </Link>
             </div>
@@ -283,91 +304,92 @@ export default function OrderPageID() {
                 <img
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
-                  className={`${commonClasses.mainImage} ${transitioning
-                    ? "opacity-0 translate-y-1"
-                    : "opacity-100 translate-y-0"
-                    }`}
+                  className={`${commonClasses.mainImage} ${
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
+                  }`}
                 />
 
                 {selectedOrder?.productForOrderData?.productImages?.length >
                   0 && (
-                    <div className={commonClasses.thumbnailContainer}>
-                      {selectedOrder.productForOrderData.productImages.map(
-                        (image, index) => (
-                          <SmallBlockHolder
-                            key={index}
-                            type="plainPicture"
-                            imageSource={image.url}
-                            onButtonFunction={() => handleImageChange(image)}
-                            mainStatus={mainImage === image.url}
-                          />
-                        )
-                      )}
-                      {selectedOrder.productForOrderData.patternImages.map(
-                        (image, index) => (
-                          <SmallBlockHolder
-                            key={index}
-                            type="plainPicture"
-                            imageSource={image.url}
-                            onButtonFunction={() => handleImageChange(image)}
-                            mainStatus={mainImage === image.url}
-                          />
-                        )
-                      )}
-                    </div>
-                  )}
+                  <div className={commonClasses.thumbnailContainer}>
+                    {selectedOrder.productForOrderData.productImages.map(
+                      (image, index) => (
+                        <SmallBlockHolder
+                          key={index}
+                          type="plainPicture"
+                          imageSource={image.url}
+                          onButtonFunction={() => handleImageChange(image)}
+                          mainStatus={mainImage === image.url}
+                        />
+                      )
+                    )}
+                    {selectedOrder.productForOrderData.patternImages.map(
+                      (image, index) => (
+                        <SmallBlockHolder
+                          key={index}
+                          type="plainPicture"
+                          imageSource={image.url}
+                          onButtonFunction={() => handleImageChange(image)}
+                          mainStatus={mainImage === image.url}
+                        />
+                      )
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col gap-2">
                 <div className="flex flex-row gap-2">
-                  <button onClick={handleDownloadReceipt} className="hover:bg-darkGreen relative bg-green rounded-md w-[70%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0">
-                    <p>Create receipt</p>
+                  <button
+                    onClick={handleDownloadReceipt}
+                    className="hover:bg-darkGreen relative bg-green rounded-md w-[70%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0"
+                  >
+                    <p>{t("createReceipt")}</p>
                     <img src="/receipt.png" alt="Pencil" className="w-5" />
                   </button>
                   <button
-                    className="relative bg-green rounded-md w-[28%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0"
+                    className="relative bg-green rounded-md w-[40%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0"
                     onClick={() =>
                       (window.location.href = `/orders/${id}/edit`)
                     }
                   >
-                    <p>Edit</p>
-                    <img src="/Pencil.png" alt="Pencil" className="w-4 h4" />
+                    <p>{t("edit")}</p>
+                    <img
+                      src="/Pencil.png"
+                      alt="Pencil"
+                      className="w-4 h-4 mr-1"
+                    />
                   </button>
                 </div>
 
                 <p className="text-2xl font-bold text-blackBeige">
                   {selectedOrder.nameOrder} <br />
-                  Deadline:{" "}
+                  {t("deadline")}{" "}
                   {selectedOrder.deadline?.seconds
                     ? formatDeadline(selectedOrder.deadline.seconds)
-                    : "No deadline"}
+                    : t("noDeadline")}
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Client:</p>
+                  <p className={commonClasses.sectionTitle}>{t("client")}</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedOrder.customerName || "No set client."}
+                    {selectedOrder.customerName || t("noClient")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Description:</p>
+                  <p className={commonClasses.sectionTitle}>
+                    {t("description")}
+                  </p>
                   <p className={commonClasses.sectionText}>
-                    {selectedOrder.description || "No set description."}
+                    {selectedOrder.description || t("noDescription")}
                   </p>
                 </div>
 
-                {/* <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Materials:</p>
-                  <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedOrder?.categories) && selectedMaterial.categories.length > 0
-                      ? selectedMaterial.categories.join(", ")
-                      : "No set categories"}
-                  </p>
-                </div> */}
-
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Materials:</p>
+                  <p className={commonClasses.sectionTitle}>{t("materials")}</p>
 
                   {selectedOrder?.materialsForOrderData?.map(
                     (material, index) => (
@@ -383,14 +405,14 @@ export default function OrderPageID() {
                   )}
 
                   <p className={commonClasses.sectionText}>
-                    Material cost: ${selectedOrder.materialsCost}
+                    {t("materialCost", { cost: selectedOrder.materialsCost })}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Total:</p>
+                  <p className={commonClasses.sectionTitle}>{t("total")}</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedOrder.totalCost || "No set total."}
+                    {selectedOrder.totalCost || t("noTotal")}
                   </p>
                 </div>
 
@@ -400,21 +422,23 @@ export default function OrderPageID() {
                     className="hover:arrow text-sm bg-red w-[25%] h text-white rounded-md"
                     onClick={openCloseConfirmation}
                   >
-                    Delete
+                    {t("delete")}
                   </button>
                   <button
-                    className={`${paid ? "bg-darkYellow text-white" : "bg-yellow"
-                      } text-sm py-1 rounded-md w-[60%]`}
+                    className={`${
+                      paid ? "bg-darkYellow text-white" : "bg-yellow"
+                    } text-sm py-1 rounded-md w-[60%]`}
                     onClick={togglePaid}
                   >
-                    {paid ? "Set as unpaid" : "Set as Paid"}
+                    {paid ? t("setUnpaid") : t("setPaid")}
                   </button>
                   <button
-                    className={`${completed ? "bg-darkYellow text-white" : "bg-yellow"
-                      } text-sm py-1 rounded-md w-[60%]`}
+                    className={`${
+                      completed ? "bg-darkYellow text-white" : "bg-yellow"
+                    } text-sm py-1 rounded-md w-[60%]`}
                     onClick={toggleCompleted}
                   >
-                    {completed ? "Set as Incomplete" : "Set as Completed"}
+                    {completed ? t("setIncomplete") : t("setCompleted")}
                   </button>
                 </div>
               </div>
@@ -432,8 +456,8 @@ export default function OrderPageID() {
             type="TwoButtonsMenu"
             iconFirst="/link.png"
             iconSecond="/eye.png"
-            firstTitle="Copy for client"
-            secondTitle="View for client"
+            firstTitle={t("copyForClient")}
+            secondTitle={t("viewForClient")}
             onSecondFunction={changeView}
           />
         </div>
@@ -444,17 +468,17 @@ export default function OrderPageID() {
     else {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Order" showUserName={true} />
+          <Header title={t("title")} showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between">
               <p className="font-bold" data-id="Client view">
-                Client view:
+                {t("clientView")}
               </p>
               <Link href="/orders">
                 <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
                   <img src="/arrow-left.png" width={20} />
-                  <p>Back</p>
+                  <p>{t("back")}</p>
                 </button>
               </Link>
             </div>
@@ -471,39 +495,31 @@ export default function OrderPageID() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="text-xl">testNameOrder | deadline: 1 Jan, 2025</p>
+              <p className="text-xl">
+                testNameOrder | {t("deadline")} 1 Jan, 2025
+              </p>
 
               <div>
-                <p>Client name:</p>
+                <p>{t("client")}</p>
                 <p>Alex Smith</p>
               </div>
 
               <div>
-                <p>Description</p>
+                <p>{t("description")}</p>
                 <p>Address, phone, measurements shoulder shoulder</p>
               </div>
 
               <div>
-                <p>Materials</p>
+                <p>{t("materials")}</p>
                 <ul className="list-decimal px-6">
                   <li>wool id123456 - 400g</li>
                   <li>wool id123456 - 100g</li>
                 </ul>
               </div>
 
-              <p>
-                Total cost: 140$
-                {/* {filteredProducts.length > 0
-                  ? filteredProducts[0].total
-                  : "Product not found"}$ */}
-              </p>
+              <p>{t("total")} 140$</p>
 
-              <p>
-                Prepayment: 70$
-                {/* {filteredProducts.length > 0
-                  ? filteredProducts[0].total
-                  : "Product not found"}$ */}
-              </p>
+              <p>{t("prepayment", { amount: 70 })}</p>
             </div>
           </div>
 
@@ -511,8 +527,8 @@ export default function OrderPageID() {
             type="TwoButtonsMenu"
             iconFirst="/link.png"
             iconSecond="/eye-crossed.png"
-            firstTitle="Copy for client"
-            secondTitle="Default View"
+            firstTitle={t("copyForClient")}
+            secondTitle={t("defaultView")}
             onSecondFunction={changeView}
           />
         </div>
@@ -521,7 +537,7 @@ export default function OrderPageID() {
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Artisan Track" />
+        <Header title={t("artisanTrack")} />
 
         <div className="mx-4 flex flex-col gap-4 pb-24">
           <div className="flex flex-col gap-2">
@@ -536,29 +552,31 @@ export default function OrderPageID() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <p className="text-xl">testNameOrder | deadline: 1 Jan, 2025</p>
+            <p className="text-xl">
+              testNameOrder | {t("deadline")} 1 Jan, 2025
+            </p>
 
             <div>
-              <p>Client name:</p>
+              <p>{t("client")}</p>
               <p>Alex Smith</p>
             </div>
 
             <div>
-              <p>Description</p>
+              <p>{t("description")}</p>
               <p>Address, phone, measurements shoulder shoulder</p>
             </div>
 
             <div>
-              <p>Materials</p>
+              <p>{t("materials")}</p>
               <ul className="list-decimal px-6">
                 <li>wool id123456 - 400g</li>
                 <li>wool id123456 - 100g</li>
               </ul>
             </div>
 
-            <p>Total cost: 140$</p>
+            <p>{t("total")} 140$</p>
 
-            <p>Prepayment: 70$</p>
+            <p>{t("prepayment", { amount: 70 })}</p>
           </div>
         </div>
       </div>

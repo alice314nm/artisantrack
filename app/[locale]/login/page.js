@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import SignInOutWindow from "@/app/[locale]/components/sign-in-out-window";
 import Link from "next/link";
@@ -147,10 +147,11 @@ export default function LoginPage() {
               />
               <button
                 type="submit"
-                className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading
+                className={`bg-green p-2 rounded-xl w-80 font-bold ${
+                  isLoading
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:bg-green-600"
-                  }`}
+                }`}
                 disabled={isLoading}
               >
                 {isLoading ? `${t("loginTitle")}...` : t("loginTitle")}

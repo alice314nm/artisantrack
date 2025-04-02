@@ -317,7 +317,7 @@ export default function Page() {
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title={t("appTitle")} />
+        <Header title={t("pageTitle")} />
         <NotLoggedWindow />
       </div>
     );

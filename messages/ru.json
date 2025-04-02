@@ -372,5 +372,41 @@
     "remove": "Удалить",
     "create": "Создать",
     "price": "Цена"
+  },
+  "createOrder": {
+    "title": "Создать заказ",
+    "general": "Общее",
+    "orderTitle": "Название заказа",
+    "required": "*",
+    "deadline": "Срок",
+    "startDate": "Дата начала",
+    "days": "Дни",
+    "customerName": "Имя клиента",
+    "description": "Описание",
+    "productMaterials": "Продукт и материалы",
+    "selectProduct": "Выбрать продукт",
+    "product": "Продукт",
+    "deadlineError": "Срок должен быть после даты начала.",
+    "invalidDateError": "Пожалуйста, убедитесь, что дата начала и срок действительны.",
+    "orderSuccess": "Заказ успешно добавлен",
+    "orderError": "Ошибка при добавлении заказа",
+    "selectedProduct": "Выбранный продукт",
+    "productCost": "Стоимость выбранного продукта",
+    "materials": "Материалы",
+    "selectMaterial": "Выбрать материал",
+    "materialCost": "Стоимость материалов",
+    "workCost": "Стоимость работы",
+    "totalCost": "Общая стоимость",
+    "currency": "Валюта",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "noProducts": "Нет товаров в инвентаре",
+    "noMaterials": "Нет материалов в инвентаре"
+  },
+  "productPage": {
+    "title": "Продукты",
+    "noProducts": "Продукты еще не добавлены",
+    "copyForClient": "Копировать для клиента",
+    "createProduct": "Создать продукт +"
   }
 }

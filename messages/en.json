@@ -372,5 +372,41 @@
     "remove": "Remove",
     "create": "Create",
     "price": "Price"
+  },
+  "createOrder": {
+    "title": "Create an Order",
+    "general": "General",
+    "orderTitle": "Title of the order",
+    "required": "*",
+    "deadline": "Deadline",
+    "startDate": "Start Date",
+    "days": "Days",
+    "customerName": "Customer name",
+    "description": "Description",
+    "productMaterials": "Product & Materials",
+    "selectProduct": "Select product",
+    "product": "Product",
+    "deadlineError": "Deadline must be after the start date.",
+    "invalidDateError": "Please ensure start date and deadline are valid.",
+    "orderSuccess": "Order added successfully",
+    "orderError": "Error adding order",
+    "selectedProduct": "Selected Product",
+    "productCost": "Cost for selected product",
+    "materials": "Materials",
+    "selectMaterial": "Select material",
+    "materialCost": "Materials cost",
+    "workCost": "Work cost",
+    "totalCost": "Total cost",
+    "currency": "Currency",
+    "cancel": "Cancel",
+    "create": "Create",
+    "noProducts": "No products in inventory",
+    "noMaterials": "No materials in inventory"
+  },
+  "productPage": {
+    "title": "Products",
+    "noProducts": "No products yet",
+    "copyForClient": "Copy for client",
+    "createProduct": "Create product +"
   }
 }

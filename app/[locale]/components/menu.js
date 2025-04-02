@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import SlideMenu from "./slide-menu";
 
@@ -13,6 +14,7 @@ export default function Menu({
   firstTitle,
   secondTitle,
 }) {
+  const t = useTranslations("menu");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const containerClasses =
@@ -71,7 +73,6 @@ export default function Menu({
       {/* Create Menu */}
       {type === "CreateMenu" && (
         <div className="flex h-16 flex-row font-bold py-2 gap-2 items-center justify-center">
-          {" "}
           {/* Reduced h-20 to h-16 */}
           <button
             data-id="cancel-button"
@@ -79,14 +80,14 @@ export default function Menu({
             className={`${redButtonClasses} w-[30%]`}
             onClick={onFirstFunction}
           >
-            <p>{firstTitle}</p>
+            <p>{t("cancel")}</p>
           </button>
           <button
             data-id="create-button"
             className={`py-3 bg-green rounded-md w-[70%]`}
             onClick={onSecondFunction}
           >
-            <p>{secondTitle}</p>
+            <p>{t("create")}</p>
           </button>
         </div>
       )}
@@ -135,26 +136,25 @@ export default function Menu({
       {type === "SelectMenu" && (
         <div className={containerClasses}>
           <div className="flex flex-row h-12 bg-beige font-bold px-4 py-2 gap-2 items-center justify-between">
-            {" "}
             {/* Reduced h-14 to h-12 */}
             <button
               onClick={onFirstFunction}
               className="flex flex-row gap-2 w-[28%] justify-center items-center"
             >
               <img src="/arrow-left.png" className="w-5" />
-              <p className="underline">Go back</p>
+              <p className="underline">{t("goBack")}</p>
             </button>
             <button
               onClick={onSecondFunction}
               className="bg-red rounded-md py-1 text-white w-[33%]"
             >
-              Reset
+              {t("reset")}
             </button>
             <button
               onClick={onThirdFunction}
               className="bg-green rounded-md py-1 w-[33%]"
             >
-              Confirm
+              {t("confirm")}
             </button>
           </div>
         </div>

@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 export default function SelectHolder({
   type,
   imageSource,
@@ -12,9 +14,11 @@ export default function SelectHolder({
   onQuantityChange,
   selectedQuantity,
 }) {
+  const t = useTranslations("SelectHolder");
+
   if (type === "product") {
     return (
-      <div className="flex flex-col gap-2 w-full h-full ">
+      <div className="flex flex-col gap-2 w-full h-full">
         <div>
           <img
             src={imageSource}
@@ -27,7 +31,7 @@ export default function SelectHolder({
             #{id} | {name}
           </p>
           <p className="truncate max-w-[180px]">
-            Average cost: {`${cost}${currency}`}
+            {t("averageCost")}: {`${cost}${currency}`}
           </p>
           <button
             data-id="select-product-holder-button"
@@ -39,14 +43,14 @@ export default function SelectHolder({
                 : "rounded-full bg-green w-full"
             }
           >
-            {selected ? "selected" : "select"}
+            {selected ? t("selected") : t("select")}
           </button>
         </div>
       </div>
     );
   } else if (type === "material") {
     return (
-      <div className="flex flex-col gap-2 w-full h-full ">
+      <div className="flex flex-col gap-2 w-full h-full">
         <div>
           <img
             src={imageSource}
@@ -59,10 +63,12 @@ export default function SelectHolder({
             #{id} | {name}
           </p>
           <p>
-            Total cost: {cost}
+            {t("totalCost")}: {cost}
             {currency}
           </p>
-          <p>Quantity: {quantity}</p>
+          <p>
+            {t("quantity")}: {quantity}
+          </p>
           <div className="flex flex-row gap-1">
             <button
               data-id="select-material-holder-button"
@@ -74,7 +80,7 @@ export default function SelectHolder({
                   : "h-8 rounded-full bg-green w-full"
               }
             >
-              {selected ? "selected" : "select"}
+              {selected ? t("selected") : t("select")}
             </button>
             {selected && (
               <input

@@ -1,6 +1,7 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useTranslations } from "next-intl";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
@@ -12,11 +13,15 @@ import Menu from "@/app/[locale]/components/menu";
 import SearchBar from "@/app/[locale]/components/search-bar";
 import SelectHolder from "@/app/[locale]/components/select-holder";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
-import { dbAddOrder, dbGetOrderById } from "@/app/[locale]/_services/order-service";
+import {
+  dbAddOrder,
+  dbGetOrderById,
+} from "@/app/[locale]/_services/order-service";
 import { fetchMaterialsForOrder } from "@/app/[locale]/_services/material-service";
 import { fetchProductsForOrder } from "@/app/[locale]/_services/product-service";
 
 export default function Page() {
+  const t = useTranslations("EditOrder");
   const router = useRouter();
   const { user } = useUserAuth();
   const params = useParams();
@@ -335,7 +340,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Create an Order" />
+        <Header title={t("createOrderTitle")} />
 
         {state === "form" && (
           <form
@@ -346,13 +351,13 @@ export default function Page() {
               <p className="text-red">{errorMessage}</p>
             )}
 
-            <p className="text-lg font-semibold underline">General</p>
+            <p className="text-lg font-semibold underline">{t("general")}</p>
 
             {/* Name of the order */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
                 <label>
-                  Title of the order <span className="text-red">*</span>
+                  {t("titleOfOrder")} <span className="text-red">*</span>
                 </label>
                 <img
                   src={orderName === "" ? "/cross.png" : "/check.png"}
@@ -364,16 +369,16 @@ export default function Page() {
                 className={inputStyle}
                 name="orderName"
                 value={orderName}
-                placeholder="Enter title for the order"
+                placeholder={t("enterTitle")}
                 onChange={(e) => setOrderName(e.target.value)}
-              ></input>
+              />
             </div>
 
             {/* Deadline, Start Date, and Days Counter */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-row justify-between">
                 <label>
-                  Deadline <span className="text-red">*</span>
+                  {t("deadline")} <span className="text-red">*</span>
                 </label>
                 <img
                   src={daysCounter === 0 ? "/cross.png" : "/check.png"}
@@ -385,11 +390,25 @@ export default function Page() {
                 {/* Start Date */}
                 <div data-id="start-date" className="flex flex-col gap-1 w-3/4">
                   <div className="flex flex-row justify-between">
-                    <label className="text-xs">Start Date</label>
+                    <label className="text-xs">{t("startDate")}</label>
                   </div>
                   <DatePicker
                     selected={startDate ? new Date(startDate) : null}
                     onChange={(date) => setStartDate(date)}
+                    dateFormat="dd-MM-yyyy"
+                    className={`${inputStyle} w-full`}
+                    placeholderText="dd-mm-yyyy"
+                  />
+                </div>
+
+                {/* Deadline */}
+                <div data-id="deadline" className="flex flex-col gap-1 w-3/4">
+                  <div className="flex flex-row justify-between">
+                    <label className="text-xs">{t("deadline")}</label>
+                  </div>
+                  <DatePicker
+                    selected={deadline ? new Date(deadline) : null}
+                    onChange={(date) => setDeadline(date)}
                     dateFormat="dd-MM-yyyy"
                     className={`${inputStyle} w-full`}
                     placeholderText="dd-mm-yyyy"
@@ -413,7 +432,7 @@ export default function Page() {
                 {/* Days Counter */}
                 <div className="flex flex-col gap-1 w-1/4">
                   <div className="flex flex-row justify-between">
-                    <label className="text-xs">Days</label>
+                    <label className="text-xs">{t("days")}</label>
                   </div>
                   <input
                     data-id="days-counter"
@@ -426,11 +445,11 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Customer name */}
+            {/* Customer Name */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
                 <label>
-                  Customer name <span className="text-red">*</span>
+                  {t("customerName")} <span className="text-red">*</span>
                 </label>
                 <img
                   src={customerName === "" ? "/cross.png" : "/check.png"}
@@ -442,15 +461,15 @@ export default function Page() {
                 className={inputStyle}
                 name="customerName"
                 value={customerName}
-                placeholder="Enter customer's name"
+                placeholder={t("enterCustomerName")}
                 onChange={(e) => setCustomerName(e.target.value)}
-              ></input>
+              />
             </div>
 
             {/* Description */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Description</label>
+                <label>{t("description")}</label>
                 <img
                   src={desc === "" ? "/cross.png" : "/check.png"}
                   className={desc === "" ? "h-4" : "h-6 text-green"}
@@ -460,7 +479,7 @@ export default function Page() {
                 data-id="order-description"
                 className={inputStyle}
                 name="description"
-                placeholder="Enter details about the order"
+                placeholder={t("enterDetails")}
                 value={desc}
                 onChange={(e) => {
                   if (e.target.value.length <= 1000) {
@@ -470,18 +489,18 @@ export default function Page() {
               />
               {/* Display character count */}
               <div className="text-sm text-gray-500 mt-1">
-                {desc?.length} / 1000 characters
+                {desc?.length} / 1000 {t("characters")}
               </div>
             </div>
 
             <p className="text-lg font-semibold underline">
-              Product & Materials
+              {t("productMaterials")}
             </p>
 
             {/* Product Selection */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Product</label>
+                <label>{t("product")}</label>
                 <img
                   src={selectedProduct ? "/check.png" : "/cross.png"}
                   className={selectedProduct ? "h-6 text-green" : "h-4"}
@@ -494,7 +513,7 @@ export default function Page() {
                   onClick={handleSelectProductForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  select product
+                  {t("selectProduct")}
                 </button>
               </div>
             </div>
@@ -506,7 +525,7 @@ export default function Page() {
                   type="product"
                   imageSrc={
                     selectedProduct.productImages &&
-                      selectedProduct.productImages.length > 0
+                    selectedProduct.productImages.length > 0
                       ? selectedProduct.productImages[0].url
                       : "/noImage.png"
                   }
@@ -517,10 +536,10 @@ export default function Page() {
               </div>
             )}
 
-            {/* Product cost */}
+            {/* Product Cost */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Cost for selected product</label>
+                <label>{t("costForSelectedProduct")}</label>
               </div>
               <input
                 className={inputStyle}
@@ -539,7 +558,7 @@ export default function Page() {
             {/* Material Selection */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Materials</label>
+                <label>{t("materials")}</label>
                 <img
                   src={
                     selectedMaterials && selectedMaterials.length > 0
@@ -560,7 +579,7 @@ export default function Page() {
                   onClick={handleSelectMaterialForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  select material
+                  {t("selectMaterial")}
                 </button>
               </div>
             </div>
@@ -587,10 +606,10 @@ export default function Page() {
               </div>
             )}
 
-            {/* Material cost */}
+            {/* Material Cost */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Materials cost</label>
+                <label>{t("materialsCost")}</label>
               </div>
               <input
                 className={inputStyle}
@@ -604,7 +623,7 @@ export default function Page() {
             {/* Work Cost */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <p>Work cost</p>
+                <p>{t("workCost")}</p>
                 <img
                   src={workCost === 0 ? "/cross.png" : "/check.png"}
                   className={workCost === 0 ? "h-4" : "h-6 text-green"}
@@ -629,7 +648,7 @@ export default function Page() {
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
                 <p>
-                  Total cost <span className="text-red">*</span>
+                  {t("totalCost")} <span className="text-red">*</span>
                 </p>
                 <img
                   src={
@@ -647,7 +666,7 @@ export default function Page() {
               <div className="flex flex-row gap-2">
                 <input
                   className={inputStyle}
-                  value={total} // Don't convert 0 to empty string
+                  value={total}
                   type="number"
                   placeholder="0.00"
                   onChange={(e) => {
@@ -672,8 +691,8 @@ export default function Page() {
 
             <Menu
               type="CreateMenu"
-              firstTitle="Cancel"
-              secondTitle="Create"
+              firstTitle={t("cancel")}
+              secondTitle={t("create")}
               onFirstFunction={handleNavigateToListPage}
             />
           </form>
@@ -686,7 +705,7 @@ export default function Page() {
 
             {products.length === 0 ? (
               <p className="flex flex-col items-center w-full py-40">
-                No products in inventory
+                {t("noProducts")}
               </p>
             ) : (
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
@@ -705,11 +724,11 @@ export default function Page() {
                     currency={product.currency || ""}
                     selected={
                       selectedProduct &&
-                        product.productId === selectedProduct.productId
+                      product.productId === selectedProduct.productId
                         ? 1
                         : 0
                     }
-                    onClick={(e) => handleSelectProduct(product)}
+                    onClick={() => handleSelectProduct(product)}
                   />
                 ))}
               </div>
@@ -730,7 +749,7 @@ export default function Page() {
 
             {materials.length === 0 ? (
               <p className="flex flex-col items-center w-full py-40">
-                No materials in inventory
+                {t("noMaterials")}
               </p>
             ) : (
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">

@@ -209,5 +209,60 @@
     "noProduct": "Product not specified",
     "totalCost": "Total cost",
     "receipt": "Receipt"
+  },
+  "confirmationWindow": {
+    "message": "Are you sure you want to",
+    "delete": "delete",
+    "cancel": "Cancel"
+  },
+  "EditOrder": {
+    "createOrderTitle": "Create an Order",
+    "general": "General",
+    "titleOfOrder": "Title of the order",
+    "enterTitle": "Enter title for the order",
+    "deadline": "Deadline",
+    "startDate": "Start Date",
+    "days": "Days",
+    "customerName": "Customer name",
+    "enterCustomerName": "Enter customer's name",
+    "description": "Description",
+    "enterDetails": "Enter details about the order",
+    "characters": "characters",
+    "productMaterials": "Product & Materials",
+    "product": "Product",
+    "selectProduct": "Select product",
+    "selectedProduct": "Selected Product",
+    "costForSelectedProduct": "Cost for selected product",
+    "materials": "Materials",
+    "selectMaterial": "Select material",
+    "materialsCost": "Materials cost",
+    "workCost": "Work cost",
+    "totalCost": "Total cost",
+    "cancel": "Cancel",
+    "create": "Create",
+    "noProducts": "No products in inventory",
+    "noMaterials": "No materials in inventory"
+  },
+  "SelectHolder": {
+    "select": "Select",
+    "selected": "Selected",
+    "averageCost": "Average cost",
+    "totalCost": "Total cost",
+    "quantity": "Quantity"
+  },
+  "SelectedHolder": {
+    "select": "Select",
+    "selected": "Selected",
+    "averageCost": "Average cost",
+    "totalCost": "Total cost",
+    "quantity": "Quantity",
+    "remove": "Remove"
+  },
+  "menu": {
+    "goBack": "Go back",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "create": "Create"
   }
 }

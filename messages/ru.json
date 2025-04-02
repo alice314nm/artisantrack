@@ -209,5 +209,60 @@
     "noProduct": "Продукт не указан",
     "totalCost": "Общая стоимость",
     "receipt": "Квитанция"
+  },
+  "confirmationWindow": {
+    "message": "Вы уверены, что хотите",
+    "delete": "удалить",
+    "cancel": "Отмена"
+  },
+  "EditOrder": {
+    "createOrderTitle": "Создать заказ",
+    "general": "Общие",
+    "titleOfOrder": "Название заказа",
+    "enterTitle": "Введите название заказа",
+    "deadline": "Крайний срок",
+    "startDate": "Дата начала",
+    "days": "Дни",
+    "customerName": "Имя клиента",
+    "enterCustomerName": "Введите имя клиента",
+    "description": "Описание",
+    "enterDetails": "Введите детали заказа",
+    "characters": "символов",
+    "productMaterials": "Продукты и Материалы",
+    "product": "Продукт",
+    "selectProduct": "Выбрать продукт",
+    "selectedProduct": "Выбранный продукт",
+    "costForSelectedProduct": "Стоимость выбранного продукта",
+    "materials": "Материалы",
+    "selectMaterial": "Выбрать материал",
+    "materialsCost": "Стоимость материалов",
+    "workCost": "Стоимость работы",
+    "totalCost": "Общая стоимость",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "noProducts": "Нет товаров в инвентаре",
+    "noMaterials": "Нет материалов в инвентаре"
+  },
+  "SelectHolder": {
+    "select": "Выбрать",
+    "selected": "Выбрано",
+    "averageCost": "Средняя стоимость",
+    "totalCost": "Общая стоимость",
+    "quantity": "Количество"
+  },
+  "SelectedHolder": {
+    "select": "Выбрать",
+    "selected": "Выбрано",
+    "averageCost": "Средняя стоимость",
+    "totalCost": "Общая стоимость",
+    "quantity": "Количество",
+    "remove": "Удалить"
+  },
+  "menu": {
+    "goBack": "Назад",
+    "reset": "Сбросить",
+    "confirm": "Подтвердить",
+    "cancel": "Отменить",
+    "create": "Создать"
   }
 }

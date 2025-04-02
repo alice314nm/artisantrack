@@ -1,12 +1,13 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import {
   dbAddMaterial,
   fetchMaterialCategories,
   fetchMaterialsIds,
 } from "@/app/[locale]/_services/material-service";
-import { useUserAuth } from "@/app/_utils/auth-context";
-import { storage } from "@/app/_utils/firebase";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
+import { storage } from "@/app/[locale]/_utils/firebase";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
@@ -16,6 +17,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 
 export default function Page() {
+  const t = useTranslations("createMaterial");
   const { user } = useUserAuth();
   const inputStyle =
     "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
@@ -43,7 +45,7 @@ export default function Page() {
   );
 
   useEffect(() => {
-    document.title = "Create a material";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -83,7 +85,7 @@ export default function Page() {
     const validFiles = files.filter((file) => allowedTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
-      setErrorMessage("Only PNG and JPG files are allowed.");
+      setErrorMessage(t("invalidFiles"));
     } else {
       setErrorMessage("");
       setImages((prev) => [...prev, ...validFiles]);
@@ -141,23 +143,22 @@ export default function Page() {
   const handleCreateMaterial = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     setErrorMessage("");
 
     if (!materialId || !name) {
-      setErrorMessage("Id and Name are required.");
+      setErrorMessage(t("idRequired"));
       setLoading(false);
       return;
     }
 
     if (materialId.length > 16) {
-      setErrorMessage("Id should be less than 12 characters.");
+      setErrorMessage(t("idTooLong"));
       setLoading(false);
       return;
     }
 
     if (materialIds.includes(materialId)) {
-      setErrorMessage(`Product with '${materialId}' Id already exists.`);
+      setErrorMessage(t("idExists", { id: materialId }));
       setLoading(false);
       return;
     }
@@ -165,22 +166,17 @@ export default function Page() {
     const uploadedImages = (await handleUpload()) || [];
 
     const materialObj = {
-      materialId: materialId || "",
-      name: name || "",
-      description: desc || "",
-      color: color || "",
-      categories: categories || [],
-      images: uploadedImages || [],
-      shop: shop || "",
-      quantity: quantity || 0.0,
-      total: total || 0.0,
-      currency:
-        total === 0
-          ? ""
-          : (typeof total === "string" ? total.trim() : total) === ""
-            ? ""
-            : currency,
-      costPerUnit: cost || 0.0,
+      materialId,
+      name,
+      description: desc,
+      color,
+      categories,
+      images: uploadedImages,
+      shop,
+      quantity,
+      total,
+      currency: total === 0 ? "" : currency,
+      costPerUnit: cost,
     };
 
     try {
@@ -204,7 +200,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Create a material" />
+        <Header title={t("title")} />
         <form
           className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4"
           onSubmit={handleCreateMaterial}
@@ -213,13 +209,13 @@ export default function Page() {
             <p className="text-red">{errorMessage}</p>
           )}
 
-          <p className="text-lg font-semibold underline">General</p>
+          <p className="text-lg font-semibold underline">{t("general")}</p>
 
           {/* Product Id */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
               <label>
-                Id <span className="text-red">*</span>
+                {t("id")} <span className="text-red">*</span>
               </label>
               <img
                 src={materialId === "" ? "/cross.png" : "/check.png"}
@@ -230,7 +226,7 @@ export default function Page() {
               data-id="material-id"
               className={inputStyle}
               value={materialId}
-              placeholder="Enter id (2-16 characters)"
+              placeholder={t("idPlaceholder")}
               onChange={(e) => setMaterialId(e.target.value)}
             />
           </div>
@@ -239,7 +235,7 @@ export default function Page() {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <label>
-                Name <span className="text-red">*</span>
+                {t("name")} <span className="text-red">*</span>
               </label>
               <img
                 src={name === "" ? "/cross.png" : "/check.png"}
@@ -250,7 +246,7 @@ export default function Page() {
               data-id="material-name"
               className={inputStyle}
               value={name}
-              placeholder="Enter name (2-64 characters)"
+              placeholder={t("namePlaceholder")}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
@@ -258,7 +254,7 @@ export default function Page() {
           {/* Product Description */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <p>Description</p>
+              <p>{t("description")}</p>
               <img
                 src={desc === "" ? "/cross.png" : "/check.png"}
                 className={desc === "" ? "h-4" : "h-6 text-green"}
@@ -267,7 +263,7 @@ export default function Page() {
             <textarea
               data-id="material-description"
               className={inputStyle}
-              placeholder="Enter description"
+              placeholder={t("descriptionPlaceholder")}
               value={desc}
               onChange={(e) => {
                 if (e.target.value.length <= 1000) {
@@ -275,18 +271,17 @@ export default function Page() {
                 }
               }}
             />
-            {/* Display character count */}
             <div className="text-sm text-gray-500 mt-1">
-              {desc.length} / 1000 characters
+              {desc.length} / 1000 {t("characters")}
             </div>
           </div>
 
-          <p className="text-lg underline font-semibold">Details</p>
+          <p className="text-lg underline font-semibold">{t("details")}</p>
 
           {/* Product Color */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Color</label>
+              <label>{t("color")}</label>
               <img
                 src={color === "" ? "/cross.png" : "/check.png"}
                 className={color === "" ? "h-4" : "h-6 text-green"}
@@ -296,7 +291,7 @@ export default function Page() {
               data-id="material-color"
               className={inputStyle}
               value={color}
-              placeholder="Enter a color"
+              placeholder={t("colorPlaceholder")}
               onChange={(e) => setColor(e.target.value)}
             />
           </div>
@@ -304,7 +299,7 @@ export default function Page() {
           {/* Products Categories */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Categories</label>
+              <label>{t("categories")}</label>
               <img
                 src={categories.length === 0 ? "/cross.png" : "/check.png"}
                 className={categories.length === 0 ? "h-4" : "h-6 text-green"}
@@ -316,7 +311,7 @@ export default function Page() {
                 list="categories"
                 className={inputStyle}
                 value={category}
-                placeholder="Add a category for a material "
+                placeholder={t("categoriesPlaceholder")}
                 onChange={(e) => setCategory(e.target.value)}
               />
               <button
@@ -325,9 +320,10 @@ export default function Page() {
                 className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
                 data-id="material-add-category"
               >
-                Add
+                {t("add")}
               </button>
             </div>
+
             <datalist id="categories">
               {existingMaterialCategories?.map((category, index) => (
                 <option key={index} value={category} />
@@ -345,7 +341,7 @@ export default function Page() {
                       onClick={() => handleRemoveCategory(cat)}
                       className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center"
                     >
-                      <p className="text-xs">x</p>
+                      <p className="text-xs">{t("remove")}</p>
                     </button>
                   </div>
                 </li>
@@ -356,7 +352,7 @@ export default function Page() {
           {/* Image Selection */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Select images</label>
+              <label>{t("selectImages")}</label>
               <img
                 src={images.length === 0 ? "/cross.png" : "/check.png"}
                 className={images.length === 0 ? "h-4" : "h-6 text-green"}
@@ -367,7 +363,7 @@ export default function Page() {
                 htmlFor="fileInput"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
-                Select images
+                {t("selectImages")}
               </label>
               <input
                 id="fileInput"
@@ -396,12 +392,12 @@ export default function Page() {
             )}
           </div>
 
-          <p className="text-lg underline font-semibold">Price</p>
+          <p className="text-lg underline font-semibold">{t("price")}</p>
 
           {/* Products Shops */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <p>Shop</p>
+              <p>{t("shop")}</p>
               <img
                 src={shop === "" ? "/cross.png" : "/check.png"}
                 className={shop === "" ? "h-4" : "h-6 text-green"}
@@ -411,7 +407,7 @@ export default function Page() {
               data-id="material-shop"
               className={`${inputStyle}`}
               value={shop}
-              placeholder="Enter a shop"
+              placeholder={t("shopPlaceholder")}
               onChange={(e) => setShop(e.target.value)}
             />
           </div>
@@ -419,7 +415,7 @@ export default function Page() {
           {/* Product Quantity */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Quantity</label>
+              <label>{t("quantity")}</label>
               <img
                 src={
                   quantity === 0 || quantity === ""
@@ -435,8 +431,8 @@ export default function Page() {
               data-id="material-quantity"
               className={inputStyle}
               value={quantity === 0 ? "" : quantity}
-              placeholder="0.00"
-              type="numbers"
+              placeholder={t("quantityPlaceholder")}
+              type="number"
               onChange={(e) => setQuantity(e.target.value)}
             />
           </div>
@@ -444,7 +440,7 @@ export default function Page() {
           {/* Product Total  */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Total</label>
+              <label>{t("total")}</label>
               <img
                 src={total === 0 || total === "" ? "/cross.png" : "/check.png"}
                 className={
@@ -458,10 +454,8 @@ export default function Page() {
                 className={inputStyle}
                 value={total === 0 ? "" : total}
                 type="number"
-                placeholder="0.00"
-                onChange={(e) => {
-                  setTotal(e.target.value); // Allow empty value
-                }}
+                placeholder={t("totalPlaceholder")}
+                onChange={(e) => setTotal(e.target.value)}
               />
               <select
                 data-id="currency-select"
@@ -480,7 +474,7 @@ export default function Page() {
           {/* Product Cost per Unit */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Cost per unit</label>
+              <label>{t("costPerUnit")}</label>
               <img
                 src={cost === 0 ? "/cross.png" : "/check.png"}
                 className={cost === 0 ? "h-4" : "h-6 text-green"}
@@ -499,8 +493,8 @@ export default function Page() {
 
           <Menu
             type="CreateMenu"
-            firstTitle="Cancel"
-            secondTitle="Create"
+            firstTitle={t("cancel")}
+            secondTitle={t("create")}
             onFirstFunction={handleNavigateToListPage}
           />
         </form>

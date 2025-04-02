@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { useTranslations } from "next-intl";
 
 /*
     SmallBlockHolder - component to hol information of picture and its functionality
@@ -15,40 +16,59 @@ import React from 'react';
     3. plainPicture: includes only picture
 */
 
-export default function SmallBlockHolder({ type, id, imageSource, onButtonFunction, mainStatus }) {
-    
-    if(type=="singlePictureDelete"){
-        return (
-            <div className="flex flex-col gap-2">
-                <div className="relative">
-                    <img src={imageSource} className="object-cover relative w-24 h-28 rounded-lg"/>
-                </div>
-                <button type="button" className="bg-red rounded-md w-24 text-white">delete</button>
-            </div>
-        );
-    }
-    else if (type=="multiplePictureDelete"){
-        return (
-            <div className="flex flex-col gap-2">
-                <div className="relative">
-                    <img src={imageSource} className="object-cover relative w-24 h-28 rounded-lg"/>
-                    <div className="absolute top-1 left-1 bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center">
-                        <p className="text-xs">{id}</p>
-                    </div>
-                </div>
-                <button type="button" onClick={onButtonFunction} className="bg-red rounded-md w-24 text-white ">delete</button>
-            </div>
-        );
-    }
-    else if (type=="plainPicture")
-    {
-        return (
-            <img 
-            src={imageSource} 
-            className={`rounded-lg object-cover transition-all duration-300 ${mainStatus ? "w-24 h-28" : "w-24 h-24"}`} 
-            onClick={onButtonFunction}
-            />  
-        );
-    }
-    
+export default function SmallBlockHolder({
+  type,
+  id,
+  imageSource,
+  onButtonFunction,
+  mainStatus,
+}) {
+  const t = useTranslations("smallBlockHolder"); // Get translations for 'smallBlockHolder' keys
+
+  if (type === "singlePictureDelete") {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="relative">
+          <img
+            src={imageSource}
+            className="object-cover relative w-24 h-28 rounded-lg"
+          />
+        </div>
+        <button type="button" className="bg-red rounded-md w-24 text-white">
+          {t("delete")}
+        </button>
+      </div>
+    );
+  } else if (type === "multiplePictureDelete") {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="relative">
+          <img
+            src={imageSource}
+            className="object-cover relative w-24 h-28 rounded-lg"
+          />
+          <div className="absolute top-1 left-1 bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center">
+            <p className="text-xs">{id}</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={onButtonFunction}
+          className="bg-red rounded-md w-24 text-white"
+        >
+          {t("delete")}
+        </button>
+      </div>
+    );
+  } else if (type === "plainPicture") {
+    return (
+      <img
+        src={imageSource}
+        className={`rounded-lg object-cover transition-all duration-300 ${
+          mainStatus ? "w-24 h-28" : "w-24 h-24"
+        }`}
+        onClick={onButtonFunction}
+      />
+    );
+  }
 }

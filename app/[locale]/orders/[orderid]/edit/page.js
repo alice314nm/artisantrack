@@ -62,7 +62,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    document.title = "Create an Order";
+    document.title = t("createTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -180,7 +180,7 @@ export default function Page() {
   useEffect(() => {
     if (startDate && deadline) {
       if (new Date(deadline) < new Date(startDate)) {
-        setErrorMessage("Deadline must be after the start date.");
+        setErrorMessage(t("deadlineError"));
         setDaysCounter(0);
       } else {
         setErrorMessage("");
@@ -278,7 +278,7 @@ export default function Page() {
     setErrorMessage("");
 
     if (!isValidDate(startDate) || !isValidDate(deadline)) {
-      setErrorMessage("Please ensure start date and deadline are valid.");
+      setErrorMessage(t("invalidDate"));
       setLoading(false);
       return;
     }
@@ -323,7 +323,7 @@ export default function Page() {
       window.location.href = "/orders";
     } catch (error) {
       console.error("Error adding order:", error);
-      setErrorMessage(`Error: ${error.message}`);
+      setErrorMessage(`${t("errorAdding")} ${error.message}`);
     } finally {
       setLoading(false);
     }

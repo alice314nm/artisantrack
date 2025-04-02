@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import {
   dbAddMaterial,
   fetchMaterialById,
@@ -8,8 +9,8 @@ import {
   fetchMaterialsIds,
   updateMaterial,
 } from "@/app/[locale]/_services/material-service";
-import { useUserAuth } from "@/app/_utils/auth-context";
-import { storage } from "@/app/_utils/firebase";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
+import { storage } from "@/app/[locale]/_utils/firebase";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
@@ -17,7 +18,7 @@ import SmallBlockHolder from "@/app/[locale]/components/small-block-holder";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { app } from "@/app/_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 import {
   getFirestore,
   collection,
@@ -28,6 +29,7 @@ import {
 } from "firebase/firestore";
 
 export default function Page() {
+  const t = useTranslations("editMaterial");
   const { user } = useUserAuth();
   const params = useParams();
   const id = params.materialid;
@@ -59,11 +61,10 @@ export default function Page() {
   );
 
   useEffect(() => {
-    document.title = "Edit the Material";
+    document.title = t("title");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
-
     return () => clearTimeout(timeout);
   }, []);
 
@@ -126,7 +127,7 @@ export default function Page() {
     const validFiles = files.filter((file) => allowedTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
-      setErrorMessage("Only PNG and JPG files are allowed.");
+      setErrorMessage(t("uploadError"));
     } else {
       setErrorMessage("");
       setImages((prev) => [...prev, ...validFiles]);
@@ -184,13 +185,13 @@ export default function Page() {
     setErrorMessage("");
 
     if (!userMaterialId || !name) {
-      setErrorMessage("Id and Name are required.");
+      setErrorMessage(t("requiredFields"));
       setLoading(false);
       return;
     }
 
     if (userMaterialId.length > 12) {
-      setErrorMessage("Id should be less than 12 characters.");
+      setErrorMessage(t("idTooLong"));
       setLoading(false);
       return;
     }
@@ -200,7 +201,7 @@ export default function Page() {
     );
 
     if (filteredMaterialIds.includes(userMaterialId)) {
-      setErrorMessage(`Product with '${userMaterialId}' Id already exists.`);
+      setErrorMessage(t("duplicateId", { id: userMaterialId }));
       setLoading(false);
       return;
     }
@@ -216,26 +217,20 @@ export default function Page() {
         shop: shop || "",
         quantity: quantity || 0.0,
         total: total || 0.0,
-        currency:
-          total === 0
-            ? ""
-            : (typeof total === "string" ? total.trim() : total) === ""
-              ? ""
-              : currency,
+        currency: total === 0 ? "" : currency,
         costPerUnit: cost || 0.0,
       };
 
       await updateMaterial(user.uid, id, updatedMaterialData);
 
-      console.log("Material updated successfully!");
+      console.log(t("updateSuccess"));
       setLoading(false);
       window.location.href = `/materials/${id}`;
     } catch (error) {
-      console.error("Error updating material:", error);
+      console.error(t("updateError"), error);
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -247,8 +242,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Edit the Material" />
-
+        <Header title={t("title")} />
         <form
           className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4"
           onSubmit={handleUpdateMaterial}
@@ -257,13 +251,13 @@ export default function Page() {
             <p className="text-red">{errorMessage}</p>
           )}
 
-          <p className="text-lg font-semibold underline">General</p>
+          <p className="text-lg font-semibold underline">{t("general")}</p>
 
           {/* Product Id */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
               <label>
-                Id <span className="text-red">*</span>
+                {t("productId")} <span className="text-red">*</span>
               </label>
               <img
                 src={userMaterialId === "" ? "/cross.png" : "/check.png"}
@@ -274,7 +268,7 @@ export default function Page() {
               data-id="material-id"
               className={inputStyle}
               value={userMaterialId}
-              placeholder="Enter id (2-64 characters)"
+              placeholder={t("productId")}
               onChange={(e) => setUserMaterialId(e.target.value)}
             />
           </div>
@@ -283,7 +277,7 @@ export default function Page() {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <label>
-                Name <span className="text-red">*</span>
+                {t("productName")} <span className="text-red">*</span>
               </label>
               <img
                 src={name === "" ? "/cross.png" : "/check.png"}
@@ -294,7 +288,7 @@ export default function Page() {
               data-id="material-name"
               className={inputStyle}
               value={name}
-              placeholder="Enter name (2-64 characters)"
+              placeholder={t("productName")}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
@@ -302,7 +296,7 @@ export default function Page() {
           {/* Product Description */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <p>Description</p>
+              <p>{t("productDescription")}</p>
               <img
                 src={desc === "" ? "/cross.png" : "/check.png"}
                 className={desc === "" ? "h-4" : "h-6 text-green"}
@@ -318,18 +312,17 @@ export default function Page() {
                 }
               }}
             />
-            {/* Display character count */}
             <div className="text-sm text-gray-500 mt-1">
-              {desc.length} / 1000 characters
+              {t("characterCount", { count: desc.length })}
             </div>
           </div>
 
-          <p className="text-lg underline font-semibold">Details</p>
+          <p className="text-lg underline font-semibold">{t("details")}</p>
 
           {/* Product Color */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Color</label>
+              <label>{t("productColor")}</label>
               <img
                 src={color === "" ? "/cross.png" : "/check.png"}
                 className={color === "" ? "h-4" : "h-6 text-green"}
@@ -339,7 +332,7 @@ export default function Page() {
               data-id="material-color"
               className={inputStyle}
               value={color}
-              placeholder="Enter a color"
+              placeholder={t("productColor")}
               onChange={(e) => setColor(e.target.value)}
             />
           </div>
@@ -347,7 +340,7 @@ export default function Page() {
           {/* Products Categories */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Categories</label>
+              <label>{t("categories")}</label>
               <img
                 src={categories.length === 0 ? "/cross.png" : "/check.png"}
                 className={categories.length === 0 ? "h-4" : "h-6 text-green"}
@@ -359,7 +352,7 @@ export default function Page() {
                 list="categories"
                 className={inputStyle}
                 value={category}
-                placeholder="Add a category for a material "
+                placeholder={t("addCategory")}
                 onChange={(e) => setCategory(e.target.value)}
               />
               <button
@@ -368,7 +361,7 @@ export default function Page() {
                 className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
                 data-id="material-add-category"
               >
-                Add
+                {t("addCategory")}
               </button>
             </div>
             <datalist id="categories">
@@ -388,7 +381,7 @@ export default function Page() {
                       onClick={() => handleRemoveCategory(cat)}
                       className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center"
                     >
-                      <p className="text-xs">x</p>
+                      <p className="text-xs">{t("removeCategory")}</p>
                     </button>
                   </div>
                 </li>
@@ -399,7 +392,7 @@ export default function Page() {
           {/* Image Selection */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Select images</label>
+              <label>{t("selectImages")}</label>
               <img
                 src={images.length === 0 ? "/cross.png" : "/check.png"}
                 className={images.length === 0 ? "h-4" : "h-6 text-green"}
@@ -410,7 +403,7 @@ export default function Page() {
                 htmlFor="fileInput"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
-                Select images
+                {t("selectImages")}
               </label>
               <input
                 id="fileInput"
@@ -446,12 +439,12 @@ export default function Page() {
             )}
           </div>
 
-          <p className="text-lg underline font-semibold">Price</p>
+          <p className="text-lg underline font-semibold">{t("price")}</p>
 
           {/* Products Shops */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <p>Shop</p>
+              <p>{t("shop")}</p>
               <img
                 src={shop === "" ? "/cross.png" : "/check.png"}
                 className={shop === "" ? "h-4" : "h-6 text-green"}
@@ -461,7 +454,7 @@ export default function Page() {
               data-id="material-shop"
               className={`${inputStyle}`}
               value={shop}
-              placeholder="Enter a shop"
+              placeholder={t("enterShop")}
               onChange={(e) => setShop(e.target.value)}
             />
           </div>
@@ -469,7 +462,7 @@ export default function Page() {
           {/* Product Quantity */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Quantity</label>
+              <label>{t("quantity")}</label>
               <img
                 src={
                   quantity === 0 || quantity === ""
@@ -486,15 +479,15 @@ export default function Page() {
               className={inputStyle}
               value={quantity === 0 ? "" : quantity}
               placeholder="0.00"
-              type="numbers"
+              type="number"
               onChange={(e) => setQuantity(e.target.value)}
             />
           </div>
 
-          {/* Product Total  */}
+          {/* Product Total */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Total</label>
+              <label>{t("total")}</label>
               <img
                 src={total === 0 || total === "" ? "/cross.png" : "/check.png"}
                 className={
@@ -518,10 +511,10 @@ export default function Page() {
                 onChange={(e) => setCurrency(e.target.value)}
                 className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="RUB">RUB (₽)</option>
+                <option value="USD">{t("usd")}</option>
+                <option value="EUR">{t("eur")}</option>
+                <option value="CAD">{t("cad")}</option>
+                <option value="RUB">{t("rub")}</option>
               </select>
             </div>
           </div>
@@ -529,7 +522,7 @@ export default function Page() {
           {/* Product Cost per Unit */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Cost per unit</label>
+              <label>{t("costPerUnit")}</label>
               <img
                 src={cost === 0 ? "/cross.png" : "/check.png"}
                 className={cost === 0 ? "h-4" : "h-6 text-green"}
@@ -548,8 +541,8 @@ export default function Page() {
 
           <Menu
             type="CreateMenu"
-            firstTitle="Cancel"
-            secondTitle="Save"
+            firstTitle={t("cancel")}
+            secondTitle={t("save")}
             onFirstFunction={() => (window.location.href = `/materials/${id}`)}
           />
         </form>

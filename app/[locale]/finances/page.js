@@ -8,9 +8,9 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "../_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 import { getUserData } from "@/app/[locale]/_services/user-data";
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import BlockHolder from "@/app/[locale]/components/block-holder";
 import DocumentHolder from "@/app/[locale]/components/document-holder";
 import FilterWindow from "@/app/[locale]/components/filter-window";

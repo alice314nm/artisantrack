@@ -381,7 +381,7 @@ export default function Page() {
                       onClick={() => handleRemoveCategory(cat)}
                       className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center"
                     >
-                      <p className="text-xs">{t("removeCategory")}</p>
+                      <p className="text-xs">x</p>
                     </button>
                   </div>
                 </li>

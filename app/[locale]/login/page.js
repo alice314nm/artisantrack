@@ -127,7 +127,7 @@ export default function LoginPage() {
               onSubmit={handleSignIn}
               className="flex flex-col gap-3 items-center"
             >
-              <h2 className="text-2xl font-bold">{t("loginTitle")}</h2>
+              <h2 className="text-2xl font-bold">{t("pageTitle")}</h2>
               {error && <p className="text-red-500">{error}</p>}
               <input
                 data-id="email"

@@ -80,14 +80,14 @@ export default function Menu({
             className={`${redButtonClasses} w-[30%]`}
             onClick={onFirstFunction}
           >
-            <p>{t("cancel")}</p>
+            <p>{firstTitle}</p>
           </button>
           <button
             data-id="create-button"
             className={`py-3 bg-green rounded-md w-[70%]`}
             onClick={onSecondFunction}
           >
-            <p>{t("create")}</p>
+            <p>{secondTitle}</p>
           </button>
         </div>
       )}

@@ -5,7 +5,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import { app } from "../_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 
 // Fetch Orders
 export const fetchOrders = async (user, currentMonth) => {

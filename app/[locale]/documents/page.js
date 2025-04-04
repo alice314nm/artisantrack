@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import BlockHolder from "@/app/[locale]/components/block-holder";
 import DocumentHolder from "@/app/[locale]/components/document-holder";
 import FilterWindow from "@/app/[locale]/components/filter-window";

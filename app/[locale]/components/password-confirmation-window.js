@@ -8,8 +8,8 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { getFirestore, doc, deleteDoc } from "firebase/firestore";
-import { auth } from "/app/_utils/firebase";
-import { app } from "../_utils/firebase";
+import { auth } from "@/app/[locale]/_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 
 export default function PasswordConfirmationWindow({
   windowVisibility,
@@ -123,9 +123,8 @@ export default function PasswordConfirmationWindow({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
-        windowVisibility ? "opacity-100 visible" : "opacity-0 invisible"
-      } transition-opacity duration-300 ease-in-out`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${windowVisibility ? "opacity-100 visible" : "opacity-0 invisible"
+        } transition-opacity duration-300 ease-in-out`}
     >
       <div className="bg-beige p-6 rounded-lg max-w-sm w-full">
         <h2 className="text-xl font-semibold mb-4">Confirm Password</h2>

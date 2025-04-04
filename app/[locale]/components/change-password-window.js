@@ -7,7 +7,7 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { auth } from "/app/_utils/firebase";
+import { auth } from "@/app/[locale]/_utils/firebase";
 
 export default function ChangePasswordWindow({ windowVisibility, onClose }) {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -119,9 +119,8 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
-        windowVisibility ? "" : "hidden"
-      }`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${windowVisibility ? "" : "hidden"
+        }`}
       data-id="changing-password-window"
     >
       <div className="bg-beige border border-darkBeige rounded-md w-[400px]">

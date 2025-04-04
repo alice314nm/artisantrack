@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { useUserAuth } from "../_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import { useTranslations } from "next-intl";
 
 export default function SlideMenu({ menuVisible }) {
@@ -104,8 +104,8 @@ export default function SlideMenu({ menuVisible }) {
             {/* Submenu */}
             <div
               className={`transition-all duration-300 overflow-hidden flex flex-col ${inventoryVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-4"
                 }`}
               style={{
                 maxHeight: inventoryVisible ? "200px" : "0px",

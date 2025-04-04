@@ -1,15 +1,16 @@
-import { 
-    addDoc, 
-    collection, 
-    doc, 
-    getDocs, 
-    query, 
-    where, 
-    setDoc, 
-    getDoc, 
-    deleteDoc, 
-    updateDoc} from "firebase/firestore";
-import { db } from "../_utils/firebase";
+import {
+    addDoc,
+    collection,
+    doc,
+    getDocs,
+    query,
+    where,
+    setDoc,
+    getDoc,
+    deleteDoc,
+    updateDoc
+} from "firebase/firestore";
+import { db } from "@/app/[locale]/_utils/firebase";
 
 async function getOrAddCustomer(userId, customerName) {
     const customerCollection = collection(db, "users", userId, "customers");
@@ -38,25 +39,25 @@ export async function dbAddOrder(userId, orderObj) {
         const customerId = await getOrAddCustomer(userId, orderObj.customerName);
 
         const newOrderRef = await addDoc(ordersCollection, {
-            nameOrder: orderObj.nameOrder, 
+            nameOrder: orderObj.nameOrder,
             startDate: orderObj.startDate,
             deadline: orderObj.deadline,
             daysUntilDeadline: orderObj.daysUntilDeadline,
             customerName: orderObj.customerName,
             description: orderObj.description,
             productId: orderObj.productId,
-            materialIds: orderObj.materialIds, 
+            materialIds: orderObj.materialIds,
             quantities: orderObj.quantities,
-            materialsCost: orderObj.materialsCost, 
+            materialsCost: orderObj.materialsCost,
             productCost: orderObj.productCost,
             workCost: orderObj.workCost,
             totalCost: orderObj.totalCost,
-            completed: orderObj.completed, 
-            paid: orderObj.paid, 
+            completed: orderObj.completed,
+            paid: orderObj.paid,
             currency: orderObj.currency,
             orderImages: orderObj.orderImages,
         });
-        
+
         console.log("Order created successfully with ID:", newOrderRef.id);
         return newOrderRef.id;
     } catch (error) {
@@ -67,9 +68,9 @@ export async function dbAddOrder(userId, orderObj) {
 
 
 export async function dbDeleteOrderById(userId, orderId) {
-    try {     
+    try {
         const productRef = doc(db, "users", userId, "orders", orderId);
-        
+
         const productDoc = await getDoc(productRef);
         if (!productDoc.exists()) {
             throw new Error(`Order with ID ${orderId} does not exist.`);
@@ -114,7 +115,7 @@ export async function dbGetOrderById(userId, orderId, orderSetter) {
             if (productSnapshot.exists()) {
                 productForOrderData = {
                     id: productSnapshot.id,
-                    productImages:productSnapshot.data().productImages || [],
+                    productImages: productSnapshot.data().productImages || [],
                     patternImages: productSnapshot.data().patternImages || [],
                     productName: productSnapshot.data().name,
                     productId: productSnapshot.data().productId,
@@ -157,24 +158,24 @@ export async function dbGetOrderById(userId, orderId, orderSetter) {
 
 export const toggleOrderPaid = async (userId, orderId, currentPaid) => {
     try {
-      const orderRef = doc(db, `users/${userId}/orders/${orderId}`);
-      await updateDoc(orderRef, { paid: !currentPaid });
-      return !currentPaid; // Return the new state
+        const orderRef = doc(db, `users/${userId}/orders/${orderId}`);
+        await updateDoc(orderRef, { paid: !currentPaid });
+        return !currentPaid; // Return the new state
     } catch (error) {
-      console.error("Error updating paid status:", error);
-      throw error;
+        console.error("Error updating paid status:", error);
+        throw error;
     }
-  };
-  
+};
+
 
 export const toggleOrderCompleted = async (userId, orderId, currentCompleted) => {
     try {
-      const orderRef = doc(db, `users/${userId}/orders/${orderId}`);
-      await updateDoc(orderRef, { completed: !currentCompleted });
-      return !currentCompleted;
+        const orderRef = doc(db, `users/${userId}/orders/${orderId}`);
+        await updateDoc(orderRef, { completed: !currentCompleted });
+        return !currentCompleted;
     } catch (error) {
-      console.error("Error updating completed status:", error);
-      throw error;
+        console.error("Error updating completed status:", error);
+        throw error;
     }
-  };
+};
 

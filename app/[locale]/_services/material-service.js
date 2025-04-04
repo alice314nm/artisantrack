@@ -1,15 +1,16 @@
-import { 
-    addDoc, 
-    collection, 
-    doc, 
-    getDocs, 
-    query, 
-    where, 
-    setDoc, 
-    getDoc, 
-    deleteDoc, 
-    updateDoc} from "firebase/firestore";
-import { db, storage } from "../_utils/firebase";
+import {
+    addDoc,
+    collection,
+    doc,
+    getDocs,
+    query,
+    where,
+    setDoc,
+    getDoc,
+    deleteDoc,
+    updateDoc
+} from "firebase/firestore";
+import { db, storage } from "@/app/[locale]/_utils/firebase";
 import { deleteObject, ref } from "firebase/storage";
 
 // Helper function to get or add a category
@@ -89,12 +90,12 @@ export async function dbAddMaterial(userId, materialObj) {
             description: materialObj.description,
             color: materialObj.color,
             categories: materialObj.categories,
-            images: materialObj.images ,
+            images: materialObj.images,
             shop: materialObj.shop,
             quantity: materialObj.quantity,
             total: materialObj.total,
             currency: materialObj.currency,
-            costPerUnit: materialObj.costPerUnit, 
+            costPerUnit: materialObj.costPerUnit,
         });
 
         console.log("Material added successfully with ID:", newMaterialRef.id);
@@ -104,9 +105,9 @@ export async function dbAddMaterial(userId, materialObj) {
 }
 
 export async function dbDeleteMaterialById(userId, materialId) {
-    try {     
+    try {
         const materialRef = doc(db, "users", userId, "materials", materialId);
-        
+
         const materialDoc = await getDoc(materialRef);
         if (!materialDoc.exists()) {
             throw new Error(`Material with ID ${materialId} does not exist.`);
@@ -179,8 +180,8 @@ export async function updateMaterial(userId, materialId, updatedMaterialData) {
     }
 };
 
-export async function fetchMaterialsIds(userId, materialsIdsSetter){
-    try{
+export async function fetchMaterialsIds(userId, materialsIdsSetter) {
+    try {
         const materialsRef = collection(db, 'users', userId, 'materials')
         const querySnapshot = await getDocs(materialsRef);
 
@@ -188,13 +189,13 @@ export async function fetchMaterialsIds(userId, materialsIdsSetter){
 
         materialsIdsSetter(materialIds);
         return materialIds;
-    } catch(error){
+    } catch (error) {
         console.error("Error while fetching materials ids: ", error.message)
     }
 }
 
-export async function fetchMaterialCategories(userId, materialCategoriesSetter){
-    try{
+export async function fetchMaterialCategories(userId, materialCategoriesSetter) {
+    try {
         const materialCategoriesRef = collection(db, 'users', userId, 'materialCategories');
         const querySnapshot = await getDocs(materialCategoriesRef);
 
@@ -202,19 +203,19 @@ export async function fetchMaterialCategories(userId, materialCategoriesSetter){
 
         materialCategoriesSetter(materialCategories);
         return materialCategories;
-    } catch(error){
+    } catch (error) {
         console.error("Error while fetching material categories: ", error.message)
     }
 }
 
 export async function fetchMaterialsForOrder(userId, materialsSetter) {
     try {
-        const materialsRef = collection(db, "users", userId, "materials"); 
+        const materialsRef = collection(db, "users", userId, "materials");
         const querySnapshot = await getDocs(materialsRef);
 
         const materials = querySnapshot.docs.map(material => ({
             id: material.id,
-            materialId: material.data().materialId, 
+            materialId: material.data().materialId,
             name: material.data().name,
             quantity: material.data().quantity,
             images: material.data().images || [],
@@ -234,7 +235,7 @@ export async function fetchMaterialsForOrder(userId, materialsSetter) {
 export async function updateMaterialQuantity(userId, materialId, updatedMaterialData) {
     try {
         const materialRef = doc(db, "users", userId, "materials", materialId);
-        await updateDoc(materialRef, updatedMaterialData);       
+        await updateDoc(materialRef, updatedMaterialData);
 
     } catch (error) {
         console.error("Error while updating the quantity of the product:", error)

@@ -10,7 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth, db } from "./firebase";
-import { initializeUserData } from "../_services/user-data";
+import { initializeUserData } from "@/app/[locale]/_services/user-data";
 
 const AuthContext = createContext();
 

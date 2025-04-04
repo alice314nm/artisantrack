@@ -54,6 +54,7 @@ describe("Test Cases 21-25", () => {
   it("24. should edit product details", () => {
     cy.get('[data-id="view-products"]').click();
     cy.get('[data-id="product-block"]').contains("testName").click();
+    cy.wait(2000);
     cy.get('[data-id="edit-button"]').click();
     cy.wait(2000);
     cy.get('[data-id="product-description"]').clear().type("editedDescription");
@@ -65,6 +66,7 @@ describe("Test Cases 21-25", () => {
   it("25. should edit material details", () => {
     cy.get('[data-id="view-materials"]').click();
     cy.get('[data-id="material-block"]').contains("testName").click();
+    cy.wait(2000);
     cy.get('[data-id="edit-button"]').click();
     cy.wait(2000);
     cy.get('[data-id="material-description"]')

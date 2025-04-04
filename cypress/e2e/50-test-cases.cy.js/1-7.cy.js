@@ -35,9 +35,9 @@ describe("Test Cases 1-7", () => {
     cy.loginTest();
     cy.get('[data-id="menu-button"]').click({ force: true });
     cy.get('[data-id="slide-profile"]').click({ force: true });
-    cy.get('[data-id="edit-name-button"]').click();
+    cy.get('[data-id="edit-profile-button"]').click();
     cy.get('[data-id="new-name"]').clear().type("New Test User");
-    cy.get('[data-id="confirm-name-change"]').click();
+    cy.get('[data-id="confirm-profile-change"]').click();
     cy.wait(3000);
     cy.contains("New Test User").should("be.visible");
   });
@@ -46,9 +46,9 @@ describe("Test Cases 1-7", () => {
     cy.loginTest();
     cy.get('[data-id="menu-button"]').click({ force: true });
     cy.get('[data-id="slide-profile"]').click({ force: true });
-    cy.get('[data-id="edit-email-button"]').click();
+    cy.get('[data-id="edit-profile-button"]').click();
     cy.get('[data-id="new-email"]').clear().type("newtest@gmail.com");
-    cy.get('[data-id="confirm-email-change"]').click();
+    cy.get('[data-id="confirm-profile-change"]').click();
     cy.get('[data-id="confirm-password"]').type("password");
     cy.get('[data-id="confirm-button-email-delete/change"]').click();
     cy.wait(3000);

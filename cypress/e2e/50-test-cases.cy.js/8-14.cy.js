@@ -10,16 +10,19 @@ describe("Test Cases 8-14", () => {
 
   it("8. should display order page", () => {
     cy.get('[data-id="view-orders"]').click();
+    cy.wait(3000);
     cy.url().should("include", "/orders");
   });
 
   it("9. should display products page", () => {
     cy.get('[data-id="view-products"]').click();
+    cy.wait(3000);
     cy.url().should("include", "/products");
   });
 
   it("10. should display materials page", () => {
     cy.get('[data-id="view-materials"]').click();
+    cy.wait(3000);
     cy.url().should("include", "/materials");
   });
 
@@ -33,6 +36,7 @@ describe("Test Cases 8-14", () => {
   it("12. should verify user email validation", () => {
     indexedDB.deleteDatabase("firebaseLocalStorageDb");
     cy.visit("http://localhost:3000/");
+    cy.wait(3000);
     cy.contains("Create Account").click();
     cy.get('[data-id="email"]').type("test#test");
     cy.get('[data-id="name"]').type("Test User");

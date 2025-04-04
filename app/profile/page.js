@@ -240,10 +240,9 @@ export default function Page() {
               {isEditing ? (
                 <>
                   <button
-                    data-id="confirm-name-change"
-                    className={`flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200 ${
-                      saving ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    data-id="confirm-profile-change"
+                    className={`flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200 ${saving ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     onClick={handleSave}
                     disabled={saving}
                   >

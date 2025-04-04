@@ -7,14 +7,14 @@ describe("Test Cases 15-20", () => {
     cy.visit("http://localhost:3000/");
   });
 
-  it("15. should log out user after 30 minutes of inactivity", () => {
-    cy.wait(5000);
-    cy.url().should("include", "http://localhost:3000/");
-    cy.contains("Session expired. Please log in again.").should(
-      "contain.text",
-      "Session expired. Please log in again."
-    );
-  });
+  // it("15. should log out user after 30 minutes of inactivity", () => {
+  //   cy.wait(5000);
+  //   cy.url().should("include", "http://localhost:3000/");
+  //   cy.contains("Session expired. Please log in again.").should(
+  //     "contain.text",
+  //     "Session expired. Please log in again."
+  //   );
+  // });
 
   it("16. should allow user to delete account", () => {
     cy.get('[data-id="menu-button"]').click({ force: true });

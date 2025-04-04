@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { app } from "@/app/[locale]/_utils/firebase";
@@ -14,6 +15,7 @@ import ConfirmationWindow from "@/app/[locale]/components/confirmation-window";
 import PasswordConfirmationWindow from "@/app/[locale]/components/password-confirmation-window";
 
 export default function Page() {
+  const t = useTranslations('Profile');
   const { user } = useUserAuth();
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +40,7 @@ export default function Page() {
     "p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
 
   useEffect(() => {
-    document.title = "Profile";
+    document.title = t('title');
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -189,7 +191,7 @@ export default function Page() {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <div className="fixed top-0 left-0 w-full font-semibold text-2xl bg-green px-5 py-4 text-center animate-pulse">
-          <p>Account successfully deleted!</p>
+          <p>{t('accountDeleted')}</p>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <img
@@ -217,12 +219,12 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
-        <Header title="Profile" />
+        <Header title={t('title')} />
         <div className="flex flex-col gap-4 overflow-auto pb-16">
           {/* Profile Header with Edit Button */}
           <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
             <div className={sectionStyle}>
-              <p className="text-xl font-semibold">Artisan:</p>
+              <p className="text-xl font-semibold">{t('artisan')}</p>
               {isEditing ? (
                 <input
                   data-id="new-name"
@@ -249,11 +251,11 @@ export default function Page() {
                     {saving ? (
                       <>
                         <img src="/loading-gif.gif" className="w-5" />
-                        <p className="font-semibold">Saving...</p>
+                        <p className="font-semibold">{t('saving')}</p>
                       </>
                     ) : (
                       <>
-                        <p className="font-semibold">Save</p>
+                        <p className="font-semibold">{t('save')}</p>
                         <img src="/Save.png" className="w-5" />
                       </>
                     )}
@@ -263,7 +265,7 @@ export default function Page() {
                     onClick={handleCancel}
                     disabled={saving}
                   >
-                    Cancel
+                    {t('cancel')}
                   </button>
                 </>
               ) : (
@@ -272,7 +274,7 @@ export default function Page() {
                   className="flex items-center gap-2 bg-green py-2 px-4 rounded-md hover:bg-darkGreen transition-all duration-200"
                   onClick={() => setIsEditing(true)}
                 >
-                  <p className="font-semibold">Edit Profile</p>
+                  <p className="font-semibold">{t('edit')}</p>
                   <img src="/Pencil.png" className="w-5" />
                 </button>
               )}
@@ -281,7 +283,7 @@ export default function Page() {
 
           {/* Email Section */}
           <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
-            <p className="underline">Current email:</p>
+            <p className="underline">{t('currentEmail')}</p>
             <div className={sectionStyle}>
               {isEditing ? (
                 <input
@@ -306,7 +308,7 @@ export default function Page() {
               className="hover:bg-darkGreen bg-green self-start p-2 rounded-md"
               onClick={openChangePasswordWindow}
             >
-              Change Password
+              {t('changePassword')}
             </button>
             {confirmWindowVisibility && (
               <ChangePasswordWindow
@@ -318,29 +320,29 @@ export default function Page() {
 
           {/* Inventory Section */}
           <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
-            <p className="underline">Inventory:</p>
+            <p className="underline">{t('inventory')}</p>
             <p className={sectionStyle}>
-              Total products: {userData?.productCount ?? "Loading..."}
+              {t('totalProducts')}: {userData?.productCount ?? t('loading')}
             </p>
             <p className={sectionStyle}>
-              Total materials: {userData?.materialCount ?? "Loading..."}
+              {t('totalMaterials')}: {userData?.materialCount ?? t('loading')}
             </p>
           </div>
 
           {/* Orders Section */}
           <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
-            <p className="underline">Orders:</p>
+            <p className="underline">{t('orders')}</p>
             <p className={sectionStyle}>
-              In progress: {userData?.inProgressOrders ?? "Loading..."}
+              {t('inProgressOrders')}: {userData?.inProgressOrders ?? t('loading')}
             </p>
             <p className={sectionStyle}>
-              Completed: {userData?.completedOrders ?? "Loading..."}
+              {t('completedOrders')}: {userData?.completedOrders ?? t('loading')}
             </p>
           </div>
 
-          {/* Tax Section - Updated to integrate with main profile editing */}
+          {/* Tax Section */}
           <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
-            <p className="underline">Set tax:</p>
+            <p className="underline">{t('setTax')}</p>
             <div className={sectionStyle}>
               {isEditing ? (
                 <div className="flex items-center">
@@ -357,7 +359,7 @@ export default function Page() {
                   <span className="ml-1">%</span>
                 </div>
               ) : (
-                <p>{userData?.tax || "Tax not set"}</p>
+                <p>{userData?.tax || t('taxNotSet')}</p>
               )}
             </div>
           </div>
@@ -369,7 +371,7 @@ export default function Page() {
               className="bg-red self-start p-2 rounded-md hover:bg-rose-800"
               onClick={openDeleteConfirmWindow}
             >
-              Delete Account
+              {t('deleteAccount')}
             </button>
           </div>
 

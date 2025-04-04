@@ -2,9 +2,9 @@
 
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
-import { app } from "../_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 import { getUserData } from "@/app/[locale]/_services/user-data";
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import { useEffect, useState } from "react";

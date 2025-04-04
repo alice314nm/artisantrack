@@ -3,10 +3,12 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { useUserAuth } from "../_utils/auth-context";
+import { useTranslations } from "next-intl";
 
 export default function SlideMenu({ menuVisible }) {
+  const t = useTranslations('SlideMenu');
   const buttonStyleLi =
-    "py-2 px-4 gap-2  border-b border-green hover:bg-lightBeige flex flex-row items-center";
+    "py-2 px-4 gap-2 border-b border-green hover:bg-lightBeige flex flex-row items-center";
   const [inventoryVisible, setInventoryVisible] = useState(false);
 
   const { firebaseSignOut } = useUserAuth();
@@ -27,10 +29,9 @@ export default function SlideMenu({ menuVisible }) {
         className={`
           fixed z-10 w-[200px] h-screen bg-beige font-bold bottom-16 
           transition-all duration-300 ease-in-out 
-          ${
-            menuVisible
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-full"
+          ${menuVisible
+            ? "opacity-100 translate-x-0"
+            : "opacity-0 -translate-x-full"
           }
         `}
         data-id="slide-menu"
@@ -45,13 +46,13 @@ export default function SlideMenu({ menuVisible }) {
               top: 0,
             }}
           >
-            <p>Log out</p>
-            <img src="/logout.png" className="w-5" alt="Logout" />
+            <p>{t('logout')}</p>
+            <img src="/logout.png" className="w-5" alt={t('logout')} />
           </a>
 
           <Link className={buttonStyleLi} href="/">
-            <img src="/home.png" className="w-5" />
-            <p>Home</p>
+            <img src="/home.png" className="w-5" alt={t('home')} />
+            <p>{t('home')}</p>
           </Link>
 
           <Link
@@ -59,13 +60,13 @@ export default function SlideMenu({ menuVisible }) {
             href="/profile"
             data-id="slide-profile"
           >
-            <img src="/profile.png" className="w-5" />
-            <p>Profile</p>
+            <img src="/profile.png" className="w-5" alt={t('profile')} />
+            <p>{t('profile')}</p>
           </Link>
 
           <Link className={buttonStyleLi} href="/documents">
-            <img src="/documents.png" className="w-5" />
-            <p>Documents</p>
+            <img src="/documents.png" className="w-5" alt={t('documents')} />
+            <p>{t('documents')}</p>
           </Link>
 
           <Link
@@ -73,8 +74,8 @@ export default function SlideMenu({ menuVisible }) {
             href="/finances"
             data-id="slide-finance"
           >
-            <img src="/finances.png" className="w-5" />
-            <p>Finance</p>
+            <img src="/finances.png" className="w-5" alt={t('finances')} />
+            <p>{t('finances')}</p>
           </Link>
           <li>
             <div
@@ -85,28 +86,27 @@ export default function SlideMenu({ menuVisible }) {
                 className="flex flex-row gap-2 items-center"
                 data-id="slide-inventory"
               >
-                <img src="/inventory.png" className="w-5" />
-                Inventory
+                <img src="/inventory.png" className="w-5" alt={t('inventory')} />
+                {t('inventory')}
               </p>
               <img
                 src="/angle-small-down.png"
                 className={`w-5 ${inventoryVisible ? "hidden" : ""}`}
-                alt="Expand"
+                alt={t('expand')}
               />
               <img
                 src="/angle-small-up.png"
                 className={`w-5 ${inventoryVisible ? "" : "hidden"}`}
-                alt="Collapse"
+                alt={t('collapse')}
               />
             </div>
 
             {/* Submenu */}
             <div
-              className={`transition-all duration-300 overflow-hidden flex flex-col ${
-                inventoryVisible
+              className={`transition-all duration-300 overflow-hidden flex flex-col ${inventoryVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-4"
-              }`}
+                }`}
               style={{
                 maxHeight: inventoryVisible ? "200px" : "0px",
               }}
@@ -117,20 +117,20 @@ export default function SlideMenu({ menuVisible }) {
                 className={`${buttonStyleLi} px-11`}
                 href="/products"
               >
-                Products
+                {t('products')}
               </Link>
               <Link
                 data-id="slide-materials"
                 className={`${buttonStyleLi} px-11`}
                 href="/materials"
               >
-                Materials
+                {t('materials')}
               </Link>
             </div>
           </li>
           <Link className={buttonStyleLi} href="/orders" data-id="slide-orders">
-            <img src="/orders.png" className="w-5" />
-            <p>Orders</p>
+            <img src="/orders.png" className="w-5" alt={t('orders')} />
+            <p>{t('orders')}</p>
           </Link>
         </ul>
       </div>

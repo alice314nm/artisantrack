@@ -1,11 +1,12 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import SignInOutWindow from "@/app/[locale]/components/sign-in-out-window";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Menu from "../components/menu";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const { user, doSignInUserWithEmailAndPassword, resetPassword } =
@@ -19,14 +20,16 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const t = useTranslations("loginPage");
+
   useEffect(() => {
-    document.title = "Login";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [t]);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -36,13 +39,13 @@ export default function LoginPage() {
       window.location.href = "/";
     } catch (err) {
       if (err.code === "auth/user-not-found") {
-        setError("No account found with this email.");
+        setError(t("errorNoAccount"));
       } else if (err.code === "auth/invalid-credential") {
-        setError("Incorrect password. Please try again.");
+        setError(t("errorInvalidPassword"));
       } else if (err.code === "auth/missing-password") {
-        setError("Please enter a password to log in.");
+        setError(t("errorMissingPassword"));
       } else if (err.code === "auth/invalid-email") {
-        setError("Please enter a valid email to log in.");
+        setError(t("errorInvalidEmail"));
       } else {
         setError(err.message);
       }
@@ -55,7 +58,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await resetPassword(email);
-      setMessage("Password reset link sent! Check your email.");
+      setMessage(t("resetPasswordMessage"));
       setError("");
       setResetPasswordMode(false);
 
@@ -80,7 +83,7 @@ export default function LoginPage() {
     <main>
       {showSuccess && (
         <div className="fixed top-0 left-0 w-full font-semibold text-2xl bg-green px-5 py-4 text-center animate-pulse z-50">
-          <p>Password reset link sent successfully!</p>
+          <p>{t("successMessage")}</p>
         </div>
       )}
       <Header title="Artisan Track" />
@@ -96,12 +99,12 @@ export default function LoginPage() {
               onSubmit={handleResetPassword}
               className="flex flex-col gap-3 items-center"
             >
-              <h2 className="text-2xl font-bold">Reset Password</h2>
+              <h2 className="text-2xl font-bold">{t("resetPasswordTitle")}</h2>
               {error && <p className="text-red-500">{error}</p>}
               {message && <p className="text-green-500">{message}</p>}
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t("enterEmail")}
                 className="border rounded-lg p-2 w-80 focus:ring-sky-500"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -110,13 +113,13 @@ export default function LoginPage() {
                 type="submit"
                 className="bg-green px-6 py-2 rounded-lg font-bold"
               >
-                Send Reset Link
+                {t("sendResetLink")}
               </button>
               <p
                 className="text-sky-500 underline cursor-pointer"
                 onClick={() => setResetPasswordMode(false)}
               >
-                Back to Login
+                {t("backToLogin")}
               </p>
             </form>
           ) : (
@@ -124,12 +127,12 @@ export default function LoginPage() {
               onSubmit={handleSignIn}
               className="flex flex-col gap-3 items-center"
             >
-              <h2 className="text-2xl font-bold">Login</h2>
+              <h2 className="text-2xl font-bold">{t("pageTitle")}</h2>
               {error && <p className="text-red-500">{error}</p>}
               <input
                 data-id="email"
                 type="email"
-                placeholder="Email"
+                placeholder={t("enterEmail")}
                 className="border rounded-lg p-2 w-80 focus:ring-sky-500"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -137,32 +140,33 @@ export default function LoginPage() {
               <input
                 data-id="password"
                 type="password"
-                placeholder="Password"
+                placeholder={t("enterPassword")}
                 className="border rounded-lg p-2 w-80 focus:ring-sky-500"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="submit"
-                className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-green-600"
-                  }`}
+                className={`bg-green p-2 rounded-xl w-80 font-bold ${
+                  isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-green-600"
+                }`}
                 disabled={isLoading}
               >
-                {isLoading ? "Logging in ..." : "Log In"}
+                {isLoading ? `${t("loginTitle")}...` : t("loginTitle")}
               </button>
               <p
                 className="text-sky-500 underline cursor-pointer"
                 onClick={() => setResetPasswordMode(true)}
               >
-                Forgot password?
+                {t("forgotPassword")}
               </p>
               <p>
-                No account yet?{" "}
+                {t("signUpPrompt")}{" "}
                 <Link href="/signin">
                   <span className="text-sky-500 underline cursor-pointer">
-                    Sign Up
+                    {t("signUpLink")}
                   </span>
                 </Link>
               </p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import BlockHolder from "@/app/[locale]/components/block-holder";
 import FilterWindow from "@/app/[locale]/components/filter-window";
 import Header from "@/app/[locale]/components/header";
@@ -9,7 +9,7 @@ import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import SearchBar from "@/app/[locale]/components/search-bar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { app } from "@/app/_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 import {
   getFirestore,
   collection,
@@ -18,8 +18,10 @@ import {
   doc,
 } from "firebase/firestore";
 import FilterTotal from "../components/filter-total";
+import { useTranslations } from "next-intl";
 
 export default function Page() {
+  const t = useTranslations();
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({ Categories: [], "Sort by": "" });
@@ -28,7 +30,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = "Materials";
+    document.title = t("materials.pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -151,7 +153,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Materials" />
+        <Header title={t("materials.pageTitle")} />
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
@@ -166,7 +168,7 @@ export default function Page() {
 
         {filteredMaterials.length === 0 ? (
           <p className="flex flex-col items-center w-full py-40">
-            No materials yet
+            {t("materials.noMaterials")}
           </p>
         ) : (
           <div className="w-full px-4 pb-20">
@@ -211,8 +213,8 @@ export default function Page() {
         <Menu
           type="TwoButtonsMenu"
           iconFirst="/link.png"
-          firstTitle="Copy for client"
-          secondTitle="Create material +"
+          firstTitle={t("materials.copyForClient")}
+          secondTitle={t("materials.createMaterial")}
           onSecondFunction={handleNavigateToCreatePage}
           data-id="menu-button"
         />
@@ -221,7 +223,7 @@ export default function Page() {
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Artisan Track" />
+        <Header title={t("materials.pageTitle")} />
         <NotLoggedWindow />
       </div>
     );

@@ -7,6 +7,7 @@ import {
   getCountFromServer,
   query,
   where,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../_utils/firebase";
 
@@ -157,4 +158,27 @@ export const getUserData = async (user, setUserData) => {
   };
 
   fetchUserData(); // Call the function to fetch data
+};
+
+export const updateUserLanguage = async (user, language) => {
+  if (!user || !user.uid) {
+    console.error("Invalid user data");
+    return false;
+  }
+
+  const userRef = doc(db, "users", user.uid);
+
+  try {
+    // Update the user document with the preferred language
+    await updateDoc(userRef, {
+      preferredLanguage: language,
+      updatedAt: new Date().toISOString(),
+    });
+
+    console.log("User language preference updated successfully");
+    return true;
+  } catch (error) {
+    console.error("Error updating user language preference:", error);
+    return false;
+  }
 };

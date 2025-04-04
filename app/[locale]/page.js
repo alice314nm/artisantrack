@@ -1,17 +1,19 @@
 "use client";
 
 import { getUserData } from "@/app/[locale]/_services/user-data";
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import Link from "next/link";
-import NotLoggedWindow from "./[locale]/components/not-logged-window";
+import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function WelcomePage() {
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const t = useTranslations("WelcomePage");
 
   const tileStyle =
     "border-b border-b-darkBeige px-4 pb-4 flex flex-col gap-4 items-start justify-between transition-all duration-300";
@@ -24,13 +26,13 @@ export default function WelcomePage() {
     "w-44 text-center bg-green px-4 font-semibold rounded-lg py-2 hover:bg-darkGreen transition-all duration-300";
 
   useEffect(() => {
-    document.title = "Home - Artisan Track";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (user) {
@@ -48,6 +50,7 @@ export default function WelcomePage() {
           src="/loading-gif.gif"
           className="h-10"
           data-id="loading-spinner"
+          alt={t("loadingAlt")}
         />
       </div>
     );
@@ -56,44 +59,44 @@ export default function WelcomePage() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-6">
-        <Header title="Artisan Track" />
+        <Header title={t("headerTitle")} />
 
         <div className="flex flex-col gap-4 pb-20">
           <h1 className="text-xl font-bold px-4">
-            Welcome back, {user.displayName}!
+            {t("welcomeBack", { name: user.displayName })}
           </h1>
 
           {/* Main Dashboard Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className={tileStyle}>
-              <p className={titleStyle}>Orders</p>
+              <p className={titleStyle}>{t("orders.title")}</p>
               <div className="space-y-2">
                 <p className={infoStyle}>
-                  In Progress:
+                  {t("orders.inProgress")}:
                   {userData
                     ? Math.max(0, userData.inProgressOrders)
-                    : "Loading..."}
+                    : t("loading")}
                 </p>
                 <p className={infoStyle}>
-                  Completed:
+                  {t("orders.completed")}:
                   {userData
                     ? Math.max(0, userData.completedOrders)
-                    : "Loading..."}
+                    : t("loading")}
                 </p>
               </div>
               <Link data-id="view-orders" className={LinkStyle} href="/orders">
-                View Orders
+                {t("orders.viewButton")}
               </Link>
             </div>
 
             <div className={tileStyle}>
-              <p className={titleStyle}>Materials</p>
+              <p className={titleStyle}>{t("materials.title")}</p>
               <div className="space-y-2">
                 <p className={infoStyle}>
-                  Total Materials:
+                  {t("materials.total")}:
                   {userData
                     ? Math.max(0, userData.materialCount)
-                    : "Loading..."}
+                    : t("loading")}
                 </p>
               </div>
               <Link
@@ -101,16 +104,16 @@ export default function WelcomePage() {
                 className={LinkStyle}
                 href="/materials"
               >
-                View Materials
+                {t("materials.viewButton")}
               </Link>
             </div>
 
             <div className={tileStyle}>
-              <p className={titleStyle}>Products</p>
+              <p className={titleStyle}>{t("products.title")}</p>
               <div className="space-y-2">
                 <p className={infoStyle}>
-                  Total Products:
-                  {userData ? Math.max(0, userData.productCount) : "Loading..."}
+                  {t("products.total")}:
+                  {userData ? Math.max(0, userData.productCount) : t("loading")}
                 </p>
               </div>
               <Link
@@ -118,18 +121,20 @@ export default function WelcomePage() {
                 className={LinkStyle}
                 href="/products"
               >
-                View Products
+                {t("products.viewButton")}
               </Link>
             </div>
 
             <div className={tileStyle}>
-              <p className={titleStyle}>Finance</p>
+              <p className={titleStyle}>{t("finance.title")}</p>
               <div className="space-y-2">
                 <p className={infoStyle}>
-                  Revenue: ${userData?.monthlyIncome ?? "Loading..."}
+                  {t("finance.revenue")}: $
+                  {userData?.monthlyIncome ?? t("loading")}
                 </p>
                 <p className={infoStyle}>
-                  Expenses: ${userData?.monthlyExpenses ?? "Loading..."}
+                  {t("finance.expenses")}: $
+                  {userData?.monthlyExpenses ?? t("loading")}
                 </p>
               </div>
               <Link
@@ -137,7 +142,7 @@ export default function WelcomePage() {
                 className={LinkStyle}
                 href="/finances"
               >
-                View Finances
+                {t("finance.viewButton")}
               </Link>
             </div>
           </div>
@@ -149,25 +154,46 @@ export default function WelcomePage() {
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-6">
-        <Header title="Artisan Track" />
+        <Header title={t("headerTitle")} />
         <NotLoggedWindow />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className={tileStyle2}>
-            <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5" src="/inventory.png" />Track your inventory!</p>
-            <p className={infoStyle}>Add patterns, materials, models and more.</p>
-            <p className={infoStyle}>Keep track of your categories.</p>
+            <p className={`flex flex-row items-center gap-2 ${titleStyle}`}>
+              <img
+                className="w-5"
+                src="/inventory.png"
+                alt={t("inventory.imageAlt")}
+              />
+              {t("inventory.title")}
+            </p>
+            <p className={infoStyle}>{t("inventory.description1")}</p>
+            <p className={infoStyle}>{t("inventory.description2")}</p>
           </div>
 
           <div className={tileStyle2}>
-            <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5" src="/orders.png" />Track your orders!</p>
-            <p className={infoStyle}>Add entities to your order from your inventory.</p>
-            <p className={infoStyle}>Set deadlines and clients.</p>
+            <p className={`flex flex-row items-center gap-2 ${titleStyle}`}>
+              <img
+                className="w-5"
+                src="/orders.png"
+                alt={t("trackOrders.imageAlt")}
+              />
+              {t("trackOrders.title")}
+            </p>
+            <p className={infoStyle}>{t("trackOrders.description1")}</p>
+            <p className={infoStyle}>{t("trackOrders.description2")}</p>
           </div>
 
           <div className={tileStyle2}>
-            <p className={`flex flex-row items-center gap-2 ${titleStyle}`}><img className="w-5" src="/finances.png" />Track your finances!</p>
-            <p className={infoStyle}>Receive monthly and yearly reports about your incomes and expenses.</p>
-            <p className={infoStyle}>See what products and materials are popular among your clients.</p>
+            <p className={`flex flex-row items-center gap-2 ${titleStyle}`}>
+              <img
+                className="w-5"
+                src="/finances.png"
+                alt={t("trackFinances.imageAlt")}
+              />
+              {t("trackFinances.title")}
+            </p>
+            <p className={infoStyle}>{t("trackFinances.description1")}</p>
+            <p className={infoStyle}>{t("trackFinances.description2")}</p>
           </div>
         </div>
       </div>

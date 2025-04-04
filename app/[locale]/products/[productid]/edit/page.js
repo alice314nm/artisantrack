@@ -1,13 +1,14 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   fetchProductById,
   fetchProductCategories,
   fetchProductIds,
   updateProduct,
 } from "@/app/[locale]/_services/product-service";
-import { useUserAuth } from "@/app/_utils/auth-context";
-import { app, storage } from "@/app/_utils/firebase";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
+import { app, storage } from "@/app/[locale]/_utils/firebase";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
@@ -18,6 +19,7 @@ import { useParams, useRouter } from "next/navigation"; // Import the useRouter 
 import { doc } from "firebase/firestore";
 
 export default function Page() {
+  const t = useTranslations("editProduct");
   const router = useRouter();
   const params = useParams();
   const productId = params.productid;
@@ -49,7 +51,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    document.title = "Edit the Product";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -134,12 +136,12 @@ export default function Page() {
       );
 
       if (validFiles.length !== files.length) {
-        setErrorMessage("Only PNG and JPG files are allowed.");
+        setErrorMessage(t("onlyPngJpgAllowed"));
       }
 
       setPatternImages((prev) => [...prev, ...validFiles]);
     } catch (error) {
-      console.error("Failed to handle pattern image upload:", error);
+      console.error(t("imageUploadError"), error);
     }
   };
 
@@ -153,12 +155,12 @@ export default function Page() {
       );
 
       if (validFiles.length !== files.length) {
-        setErrorMessage("Only PNG and JPG files are allowed.");
+        setErrorMessage(t("onlyPngJpgAllowed"));
       }
 
       setProductImages((prev) => [...prev, ...validFiles]);
     } catch (error) {
-      console.error("Failed to handle product image upload:", error);
+      console.error(t("imageUploadError"), error);
     }
   };
 
@@ -225,17 +227,16 @@ export default function Page() {
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     setErrorMessage("");
 
     if (!userProductId || !name) {
-      setErrorMessage("Id and Name are required.");
+      setErrorMessage(t("idNameRequired"));
       setLoading(false);
       return;
     }
 
     if (userProductId.length > 12) {
-      setErrorMessage("Id should be less than 12 characters.");
+      setErrorMessage(t("idTooLong"));
       setLoading(false);
       return;
     }
@@ -245,7 +246,7 @@ export default function Page() {
     );
 
     if (filteredProductIds.includes(userProductId)) {
-      setErrorMessage(`Product with '${userProductId}' Id already exists.`);
+      setErrorMessage(t("idAlreadyExists", { id: userProductId }));
       setLoading(false);
       return;
     }
@@ -287,7 +288,8 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Edit the Product" />
+        <Header title={t("pageTitle")} />
+
         <form
           className="mx-4 flex flex-col gap-4"
           onSubmit={handleUpdateProduct}
@@ -296,13 +298,13 @@ export default function Page() {
             <p className="text-red">{errorMessage}</p>
           )}
 
-          <p className="text-lg font-semibold underline">General</p>
+          <p className="text-lg font-semibold underline">{t("general")}</p>
 
           {/* Product ID */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <label>
-                Id <span className="text-red">*</span>
+                {t("id")} <span className="text-red">*</span>
               </label>
               <img
                 src={userProductId === "" ? "/cross.png" : "/check.png"}
@@ -311,7 +313,6 @@ export default function Page() {
             </div>
             <input
               className={inputStyle}
-              required
               value={userProductId}
               onChange={(e) => setUserProductId(e.target.value)}
             />
@@ -321,7 +322,7 @@ export default function Page() {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <label>
-                Name <span className="text-red">*</span>
+                {t("name")} <span className="text-red">*</span>
               </label>
               <img
                 src={name === "" ? "/cross.png" : "/check.png"}
@@ -330,7 +331,6 @@ export default function Page() {
             </div>
             <input
               className={inputStyle}
-              required
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -339,7 +339,7 @@ export default function Page() {
           {/* Description */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Description</label>
+              <label className="text-blackBeige">{t("description")}</label>
               <img
                 src={desc === "" ? "/cross.png" : "/check.png"}
                 className={desc === "" ? "h-4" : "h-6 text-green"}
@@ -357,16 +357,16 @@ export default function Page() {
             />
             {/* Display character count */}
             <div className="text-sm text-gray-500 mt-1">
-              {desc.length} / 1000 characters
+              {desc.length} / 1000 {t("characters")}
             </div>
           </div>
 
-          <p className="text-lg font-semibold underline">Details</p>
+          <p className="text-lg font-semibold underline">{t("details")}</p>
 
-          {/* Category*/}
+          {/* Category */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Category</label>
+              <label>{t("category")}</label>
               <img
                 src={categories.length === 0 ? "/cross.png" : "/check.png"}
                 className={categories.length === 0 ? "h-4" : "h-6 text-green"}
@@ -385,7 +385,7 @@ export default function Page() {
                 onClick={handleAddCategory}
                 className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
               >
-                Add
+                {t("add")}
               </button>
             </div>
             <datalist id="categories">
@@ -395,135 +395,143 @@ export default function Page() {
             </datalist>
 
             {/* Category List */}
-            <ul className="flex flex-col gap-2 list-decimal pl-8">
-              {categories.map((cat, index) => (
-                <li key={index}>
-                  <div className="flex flex-row items-center justify-between gap-2">
-                    <p>{cat}</p>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveCategory(cat)}
-                      className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center"
-                    >
-                      <p className="text-xs">x</p>
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Product Image Selection */}
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Product Images</label>
-              <img
-                src={productImages.length === 0 ? "/cross.png" : "/check.png"}
-                className={
-                  productImages.length === 0 ? "h-4" : "h-6 text-green"
-                }
-              />
-            </div>
-            <div className="relative inline-block">
-              <label
-                htmlFor="fileInputProduct"
-                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
-              >
-                Select images
-              </label>
-              <input
-                id="fileInputProduct"
-                type="file"
-                className="hidden"
-                multiple
-                accept="image/png, image/jpeg"
-                onChange={handleProductImageChange}
-              />
-            </div>
-
-            {/* Preview Product Images */}
-            {productImages.length > 0 && (
-              <div className="flex flex-row gap-2 overflow-x-auto">
-                {productImages.map((image, index) => {
-                  const imageUrl =
-                    typeof image.url === "string"
-                      ? image.url
-                      : URL.createObjectURL(image);
-
-                  return (
-                    <div key={index}>
-                      <SmallBlockHolder
-                        type="multiplePictureDelete"
-                        id={index + 1}
-                        imageSource={imageUrl}
-                        onButtonFunction={() => removeProductImage(index)}
-                      />
+            <div className="flex flex-col gap-2">
+              <p className="text-lg font-semibold">{t("categoryList")}</p>
+              <ul className="flex flex-col gap-2 list-decimal pl-8">
+                {categories.map((cat, index) => (
+                  <li key={index}>
+                    <div className="flex flex-row items-center justify-between gap-2">
+                      <p>{cat}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCategory(cat)}
+                        className="font-bold bg-lightBeige border-2 border-blackBeige rounded-xl w-5 h-5 flex justify-center items-center"
+                      >
+                        <p className="text-xs">x</p>
+                      </button>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Pattern Image Selection */}
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row justify-between">
-              <label>Pattern Images</label>
-              <img
-                src={patternImages.length === 0 ? "/cross.png" : "/check.png"}
-                className={
-                  patternImages.length === 0 ? "h-4" : "h-6 text-green"
-                }
-              />
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="relative inline-block">
-              <label
-                htmlFor="fileInputPattern"
-                className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
-              >
-                Select images
-              </label>
-              <input
-                id="fileInputPattern"
-                type="file"
-                className="hidden"
-                multiple
-                accept="image/png, image/jpeg"
-                onChange={handlePatternImageChange}
-              />
+            {/* Product Image Selection */}
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row justify-between">
+                <label>{t("productImages")}</label>
+                <img
+                  src={productImages.length === 0 ? "/cross.png" : "/check.png"}
+                  className={
+                    productImages.length === 0 ? "h-4" : "h-6 text-green"
+                  }
+                />
+              </div>
+              <div className="relative inline-block">
+                <label
+                  htmlFor="fileInputProduct"
+                  className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+                >
+                  {t("selectImages")}
+                </label>
+                <input
+                  id="fileInputProduct"
+                  type="file"
+                  className="hidden"
+                  multiple
+                  accept="image/png, image/jpeg"
+                  onChange={handleProductImageChange}
+                />
+              </div>
+
+              {/* Preview Product Images */}
+              {productImages.length > 0 && (
+                <div className="flex flex-row gap-2 overflow-x-auto">
+                  {productImages.map((image, index) => {
+                    const imageUrl =
+                      typeof image.url === "string"
+                        ? image.url
+                        : URL.createObjectURL(image);
+
+                    return (
+                      <div key={index}>
+                        <SmallBlockHolder
+                          type="multiplePictureDelete"
+                          id={index + 1}
+                          imageSource={imageUrl}
+                          onButtonFunction={() => removeProductImage(index)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Pattern Image Selection */}
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row justify-between">
+                <label>{t("patternImages")}</label>
+                <img
+                  src={patternImages.length === 0 ? "/cross.png" : "/check.png"}
+                  className={
+                    patternImages.length === 0 ? "h-4" : "h-6 text-green"
+                  }
+                />
+              </div>
+
+              <div className="relative inline-block">
+                <label
+                  htmlFor="fileInputPattern"
+                  className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
+                >
+                  {t("selectImages")}
+                </label>
+                <input
+                  id="fileInputPattern"
+                  type="file"
+                  className="hidden"
+                  multiple
+                  accept="image/png, image/jpeg"
+                  onChange={handlePatternImageChange}
+                />
+              </div>
             </div>
 
             {/* Preview Pattern Image */}
             {patternImages.length > 0 && (
-              <div className="flex flex-row gap-2 overflow-x-auto">
-                {patternImages.map((image, index) => {
-                  const imageUrl =
-                    typeof image.url === "string"
-                      ? image.url
-                      : URL.createObjectURL(image);
+              <div className="flex flex-col gap-2">
+                <p className="text-lg font-semibold">
+                  {t("previewPatternImage")}
+                </p>
+                <div className="flex flex-row gap-2 overflow-x-auto">
+                  {patternImages.map((image, index) => {
+                    const imageUrl =
+                      typeof image.url === "string"
+                        ? image.url
+                        : URL.createObjectURL(image);
 
-                  return (
-                    <div key={index}>
-                      <SmallBlockHolder
-                        type="multiplePictureDelete"
-                        id={index + 1}
-                        imageSource={imageUrl}
-                        onButtonFunction={() => removePatternImage(index)}
-                      />
-                    </div>
-                  );
-                })}
+                    return (
+                      <div key={index}>
+                        <SmallBlockHolder
+                          type="multiplePictureDelete"
+                          id={index + 1}
+                          imageSource={imageUrl}
+                          onButtonFunction={() => removePatternImage(index)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
 
-          <p className="text-lg font-semibold underline">Price</p>
+          <p className="text-lg font-semibold underline">{t("price")}</p>
 
           {/* Average Cost */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
-              <label>Average Cost</label>
+              <label>{t("averageCost")}</label>
               <img
                 src={averageCost === "" ? "/cross.png" : "/check.png"}
                 className={averageCost === "" ? "h-4" : "h-6 text-green"}
@@ -536,9 +544,7 @@ export default function Page() {
                 type="number"
                 value={averageCost}
                 placeholder="0.00"
-                onChange={(e) => {
-                  setAverageCost(e.target.value); // Allow empty value
-                }}
+                onChange={(e) => setAverageCost(e.target.value)}
                 onBlur={() => {
                   if (averageCost === "") {
                     setAverageCost("");
@@ -561,8 +567,8 @@ export default function Page() {
           {/* Submit */}
           <Menu
             type="CreateMenu"
-            firstTitle="Cancel"
-            secondTitle="Save"
+            firstTitle={t("cancel")}
+            secondTitle={t("save")}
             onFirstFunction={() =>
               (window.location.href = `/products/${productId}`)
             }

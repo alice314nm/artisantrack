@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import {
   getFirestore,
   collection,
@@ -20,6 +21,7 @@ import { app } from "../_utils/firebase";
 import FilterTotal from "../components/filter-total";
 
 export default function Home() {
+  const t = useTranslations("productPage");
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({ Categories: [], "Sort by": "" });
@@ -28,13 +30,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = "Products";
+    document.title = t("title");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, []);
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -143,7 +145,7 @@ export default function Home() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Products" />
+        <Header title={t("title")} />
 
         <SearchBar
           onOpenFilters={toggleConfirmation}
@@ -158,7 +160,7 @@ export default function Home() {
 
         {filteredProducts.length === 0 ? (
           <p className="flex flex-col items-center w-full py-40">
-            No products yet
+            {t("noProducts")}
           </p>
         ) : (
           <div className="w-full px-4 pb-20">
@@ -206,8 +208,8 @@ export default function Home() {
         <Menu
           type="TwoButtonsMenu"
           iconFirst="/link.png"
-          firstTitle="Copy for client"
-          secondTitle="Create product +"
+          firstTitle={t("copyForClient")}
+          secondTitle={t("createProduct")}
           onSecondFunction={handleNavigateToCreatePage}
           data-id="menu-button"
         />
@@ -216,7 +218,7 @@ export default function Home() {
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Products" />
+        <Header title={t("title")} />
         <NotLoggedWindow />
       </div>
     );

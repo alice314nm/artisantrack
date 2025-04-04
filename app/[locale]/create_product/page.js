@@ -1,12 +1,13 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import {
   dbAddProduct,
   fetchProductCategories,
   fetchProductIds,
 } from "@/app/[locale]/_services/product-service";
-import { useUserAuth } from "@/app/_utils/auth-context";
-import { storage } from "@/app/_utils/firebase";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
+import { storage } from "@/app/[locale]/_utils/firebase";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
@@ -17,8 +18,8 @@ import { useRouter } from "next/navigation"; // Import the useRouter hook
 import { doc } from "firebase/firestore";
 
 export default function Page() {
+  const t = useTranslations("createProduct");
   const router = useRouter();
-
   const [isMounted, setIsMounted] = useState(false);
   const { user } = useUserAuth();
   const inputStyle = "h-9 rounded-lg border p-2 w-full";
@@ -44,7 +45,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    document.title = "Create a Product";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -92,18 +93,17 @@ export default function Page() {
 
   const handlePatternImageChange = (e) => {
     try {
-      if (!e || !e.target || !e.target.files) return;
-
-      const filesPattern = Array.from(e.target.files);
-      const validPatternFiles = filesPattern.filter((file) =>
+      if (!e?.target?.files) return;
+      const files = Array.from(e.target.files);
+      const validFiles = files.filter((file) =>
         ["image/png", "image/jpeg"].includes(file.type)
       );
 
-      if (validPatternFiles.length !== filesPattern.length) {
-        setErrorMessage("Only PNG and JPG files are allowed.");
+      if (validFiles.length !== files.length) {
+        setErrorMessage(t("invalidImageFormat"));
       }
 
-      setPatternImages((prev) => [...prev, ...validPatternFiles]);
+      setPatternImages((prev) => [...prev, ...validFiles]);
     } catch (error) {
       console.error("Failed to handle pattern image upload:", error);
     }
@@ -111,27 +111,26 @@ export default function Page() {
 
   const handleProductImageChange = (e) => {
     try {
-      if (!e || !e.target || !e.target.files) return;
-
-      const filesProduct = Array.from(e.target.files);
-      const validProductFiles = filesProduct.filter((file) =>
+      if (!e?.target?.files) return;
+      const files = Array.from(e.target.files);
+      const validFiles = files.filter((file) =>
         ["image/png", "image/jpeg"].includes(file.type)
       );
 
-      if (validProductFiles.length !== filesProduct.length) {
-        setErrorMessage("Only PNG and JPG files are allowed.");
+      if (validFiles.length !== files.length) {
+        setErrorMessage(t("invalidImageFormat"));
       }
 
-      setProductImages((prev) => [...prev, ...validProductFiles]);
+      setProductImages((prev) => [...prev, ...validFiles]);
     } catch (error) {
       console.error("Failed to handle product image upload:", error);
     }
   };
 
   useEffect(() => {
-    console.log(patternImages)
-    console.log(0, productImages)
-  }, [patternImages, productImages])
+    console.log(patternImages);
+    console.log(0, productImages);
+  }, [patternImages, productImages]);
 
   const handleUpload = async () => {
     const uploadedProductImages = [];
@@ -181,23 +180,22 @@ export default function Page() {
   const handleCreateProduct = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     setErrorMessage("");
 
     if (!productId || !name) {
-      setErrorMessage("Id and Name are required.");
+      setErrorMessage(t("requiredFields"));
       setLoading(false);
       return;
     }
 
     if (productId.length > 12) {
-      setErrorMessage("Id should be less than 12 characters.");
+      setErrorMessage(t("idTooLong"));
       setLoading(false);
       return;
     }
 
     if (productIds.includes(productId)) {
-      setErrorMessage(`Product with '${productId}' Id already exists.`);
+      setErrorMessage(t("productExists", { id: productId }));
       setLoading(false);
       return;
     }
@@ -207,20 +205,20 @@ export default function Page() {
     const uploadedPatternImages = uploadedImages?.[1] || [];
 
     const productObj = {
-      productId: productId || "",
-      name: name || "",
+      productId,
+      name,
       averageCost:
         averageCost.trim() === "" ? "" : parseFloat(averageCost).toFixed(2),
       currency: averageCost.trim() === "" ? "" : currency,
-      categories: categories || [],
-      description: desc || "",
-      productImages: uploadedProductImages || [],
-      patternImages: uploadedPatternImages || [],
+      categories,
+      description: desc,
+      productImages: uploadedProductImages,
+      patternImages: uploadedPatternImages,
     };
 
     try {
       await dbAddProduct(user.uid, productObj);
-      console.log("Product added successfully");
+      console.log(t("productAdded"));
       window.location.href = "/products";
       setLoading(false);
     } catch (error) {
@@ -238,22 +236,18 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4 bg-lightBeige">
-        <Header title="Create a Product" />
+        <Header title={t("pageTitle")} />
         <form
           className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4"
           onSubmit={handleCreateProduct}
         >
-          {errorMessage.length === 0 ? null : (
-            <p className="text-red">{errorMessage}</p>
-          )}
-
-          <p className="text-lg font-semibold underline">General</p>
-
+          {errorMessage && <p className="text-red">{errorMessage}</p>}
+          <p className="text-lg font-semibold underline">{t("general")}</p>
           {/* Product ID */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
               <label className="text-blackBeige">
-                Id <span className="text-red">*</span>
+                {t("id")} <span className="text-red">*</span>
               </label>
               <img
                 src={productId === "" ? "/cross.png" : "/check.png"}
@@ -261,20 +255,18 @@ export default function Page() {
               />
             </div>
             <input
-              placeholder="Enter id (2-16 characters)"
+              placeholder={t("idPlaceholder")}
               data-id="product-id"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={productId}
-              placeholder="Enter id (2-16 characters)"
               onChange={(e) => setProductId(e.target.value)}
             />
           </div>
-
           {/* Product Name */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
               <label className="text-blackBeige">
-                Name <span className="text-red">*</span>
+                {t("name")} <span className="text-red">*</span>
               </label>
               <img
                 src={name === "" ? "/cross.png" : "/check.png"}
@@ -282,48 +274,42 @@ export default function Page() {
               />
             </div>
             <input
-              placeholder="Enter name (2-64 characters)"
+              placeholder={t("namePlaceholder")}
               data-id="product-name"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={name}
-              placeholder="Enter name (2-64 characters)"
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-
           {/* Description */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
-              <p>Description</p>
+              <p>{t("description")}</p>
               <img
                 src={desc === "" ? "/cross.png" : "/check.png"}
                 className={desc === "" ? "h-4" : "h-6 text-green"}
               />
             </div>
             <textarea
-              placeholder="Enter description"
+              placeholder={t("descriptionPlaceholder")}
               data-id="product-description"
               className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
               value={desc}
-              placeholder="Enter description"
               onChange={(e) => {
                 if (e.target.value.length <= 1000) {
                   setDesc(e.target.value);
                 }
               }}
             />
-            {/* Display character count */}
             <div className="text-sm text-gray-500 mt-1">
-              {desc.length} / 1000 characters
+              {desc.length} / 1000 {t("characters")}
             </div>
           </div>
-
-          <p className="text-lg font-semibold underline">Details</p>
-
+          <p className="text-lg font-semibold underline">{t("details")}</p>
           {/* Category */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Category</label>
+              <label className="text-blackBeige">{t("category")}</label>
               <img
                 src={categories.length === 0 ? "/cross.png" : "/check.png"}
                 className={categories.length === 0 ? "h-4" : "h-6 text-green"}
@@ -331,11 +317,10 @@ export default function Page() {
             </div>
             <div className="flex flex-row gap-2">
               <input
-                placeholder="Add a category for a material "
+                placeholder={t("categoryPlaceholder")}
                 list="categories"
                 className="w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 value={category}
-                placeholder="Add a category for a material "
                 onChange={(e) => setCategory(e.target.value)}
                 data-id="product-category"
               />
@@ -345,7 +330,7 @@ export default function Page() {
                 className="bg-green font-bold px-4 py-2 rounded-lg hover:bg-darkGreen transition-colors duration-300"
                 data-id="add-category-button"
               >
-                Add
+                {t("add")}
               </button>
             </div>
             <datalist id="categories">
@@ -373,11 +358,10 @@ export default function Page() {
               ))}
             </ul>
           </div>
-
           {/* Product Image Selection */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Product Images</label>
+              <label className="text-blackBeige">{t("productImages")}</label>
               <img
                 src={productImages.length === 0 ? "/cross.png" : "/check.png"}
                 className={
@@ -390,7 +374,7 @@ export default function Page() {
                 htmlFor="fileInputProduct"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
-                Select images
+                {t("selectImages")}
               </label>
               <input
                 id="fileInputProduct"
@@ -419,11 +403,10 @@ export default function Page() {
               </div>
             )}
           </div>
-
           {/* Pattern Image Selection */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Pattern Images</label>
+              <label className="text-blackBeige">{t("patternImages")}</label>
               <img
                 src={patternImages.length === 0 ? "/cross.png" : "/check.png"}
                 className={
@@ -437,7 +420,7 @@ export default function Page() {
                 htmlFor="fileInputPattern"
                 className="text-center bg-green block font-bold rounded-lg w-40 py-1 transition-colors duration-300 cursor-pointer hover:bg-darkGreen"
               >
-                Select images
+                {t("selectImages")}
               </label>
               <input
                 id="fileInputPattern"
@@ -467,12 +450,12 @@ export default function Page() {
             )}
           </div>
 
-          <p className="text-lg font-semibold underline">Price</p>
+          <p className="text-lg font-semibold underline">{t("price")}</p>
 
           {/* Average Cost */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
-              <label className="text-blackBeige">Cost</label>
+              <label className="text-blackBeige">{t("cost")}</label>
               <img
                 src={averageCost === "" ? "/cross.png" : "/check.png"}
                 className={averageCost === "" ? "h-4" : "h-6 text-green"}
@@ -498,10 +481,10 @@ export default function Page() {
                 className="w-15 md:w-auto p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green"
                 data-id="currency-select"
               >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="RUB">RUB (₽)</option>
+                <option value="USD">{t("currency.usd")}</option>
+                <option value="EUR">{t("currency.eur")}</option>
+                <option value="CAD">{t("currency.cad")}</option>
+                <option value="RUB">{t("currency.rub")}</option>
               </select>
             </div>
           </div>
@@ -509,8 +492,8 @@ export default function Page() {
           {/* Submit */}
           <Menu
             type="CreateMenu"
-            firstTitle="Cancel"
-            secondTitle="Create"
+            firstTitle={t("cancel")}
+            secondTitle={t("create")}
             onFirstFunction={handleNavigateToListPage}
             data-id="create-menu"
           />

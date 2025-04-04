@@ -1,15 +1,16 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 
 /*
-    BLockHolder - component to hold information about item to show it in the list
+    BlockHolder - component to hold information about an item to show in the list
 
     props:
-    - id - id of the item
-    - title - title of the item
-    - category - one of the categories of the item
-    - total - cost of the item
-    - imageSource - link for the image of the item
-    - type - type of the Block Holder
+    - id - ID of the item
+    - title - Title of the item
+    - category - One of the categories of the item
+    - total - Cost of the item
+    - imageSource - Link for the image of the item
+    - type - Type of the Block Holder
 
     type:
     - product
@@ -30,6 +31,8 @@ export default function BlockHolder({
   imageSource,
   type,
 }) {
+  const t = useTranslations("BlockHolder");
+
   const commonImageClasses =
     "rounded-md h-48 w-44 sm:h-44 sm:w-40 md:h-52 md:w-48 lg:h-64 lg:w-60 object-cover";
 
@@ -47,17 +50,17 @@ export default function BlockHolder({
     return (
       <div className={cardBaseClasses}>
         <div className="relative">
-          <img src={imageSource} className={commonImageClasses} />
+          <img src={imageSource} className={commonImageClasses} alt={t("productImageAlt")} />
         </div>
 
         <div className="flex flex-col">
           <div>
-            <p className={`${textBaseClasses} text-xs`}>product id: #{id}</p>
+            <p className={`${textBaseClasses} text-xs`}>{t("productId")}: #{id}</p>
             <p className={`${headerTextClasses}`} data-id="product-title">
               {title}
             </p>
           </div>
-          <p className={textBaseClasses}>category: {category}</p>
+          <p className={textBaseClasses}>{t("category")}: {category}</p>
           <p className={costClasses}>
             {total} {currency}
           </p>
@@ -68,22 +71,22 @@ export default function BlockHolder({
     return (
       <div className={cardBaseClasses}>
         <div className="relative">
-          <img src={imageSource} className={commonImageClasses} />
+          <img src={imageSource} className={commonImageClasses} alt={t("orderImageAlt")} />
         </div>
 
         <div className="flex flex-col">
           <div>
-            <p className={`${textBaseClasses} text-xs`}>order id: #{id}</p>
+            <p className={`${textBaseClasses} text-xs`}>{t("orderId")}: #{id}</p>
             <p className={`${headerTextClasses}`} data-id="order-title">
               {title}
             </p>
           </div>
           <p className={deadlineClasses}>
-            <span className="text-red">Deadline: {deadline[0]}</span>
+            <span className="text-red">{t("deadline")}: {deadline[0]}</span>
           </p>
           <p className={deadlineClasses}>{deadline[2]}</p>
           <p className={costClasses}>
-            Total: {total} {currency}
+            {t("total")}: {total} {currency}
           </p>
         </div>
       </div>
@@ -92,19 +95,19 @@ export default function BlockHolder({
     return (
       <div className={cardBaseClasses}>
         <div className="relative">
-          <img src={imageSource} className={commonImageClasses} />
+          <img src={imageSource} className={commonImageClasses} alt={t("materialImageAlt")} />
         </div>
 
         <div className="flex flex-col">
           <div>
-            <p className={`${textBaseClasses} text-xs`}>material id: #{id}</p>
+            <p className={`${textBaseClasses} text-xs`}>{t("materialId")}: #{id}</p>
             <p className={`${headerTextClasses}`} data-id="material-title">
               {title}
             </p>
-          </div>{" "}
-          <p className={textBaseClasses}>Quantity: {quantity}</p>
-          <p className={textBaseClasses}>Category: {category}</p>
-          <p className={textBaseClasses}>Color: {color}</p>
+          </div>
+          <p className={textBaseClasses}>{t("quantity")}: {quantity}</p>
+          <p className={textBaseClasses}>{t("category")}: {category}</p>
+          <p className={textBaseClasses}>{t("color")}: {color}</p>
           <p className={costClasses}>
             {total} {currency}
           </p>

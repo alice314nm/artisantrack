@@ -1,22 +1,24 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useTranslations } from "use-intl";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import SearchBar from "@/app/[locale]/components/search-bar";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import SelectHolder from "../components/select-holder";
-import Menu from "../components/menu";
-import SelectedHolder from "../components/selected-holder";
+import SelectHolder from "@/app/[locale]/components/select-holder";
+import Menu from "@/app/[locale]/components/menu";
+import SelectedHolder from "@/app/[locale]/components/selected-holder";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { dbAddOrder } from "@/app/[locale]/_services/order-service";
-import { fetchMaterialsForOrder } from "../_services/material-service";
-import { fetchProductsForOrder } from "../_services/product-service";
+import { fetchMaterialsForOrder } from "@/app/[locale]/_services/material-service";
+import { fetchProductsForOrder } from "@/app/[locale]/_services/product-service";
 import { doc } from "firebase/firestore";
 
 export default function Page() {
+  const t = useTranslations("createOrder");
   const router = useRouter();
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
@@ -52,7 +54,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    document.title = "Create an Order";
+    document.title = t("title");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -111,7 +113,7 @@ export default function Page() {
   useEffect(() => {
     if (startDate && deadline) {
       if (new Date(deadline) < new Date(startDate)) {
-        setErrorMessage("Deadline must be after the start date.");
+        setErrorMessage(t("deadlineError"));
         setDaysCounter(0);
       } else {
         setErrorMessage("");
@@ -215,7 +217,7 @@ export default function Page() {
     setErrorMessage("");
 
     if (!isValidDate(startDate) || !isValidDate(deadline)) {
-      setErrorMessage("Please ensure start date and deadline are valid.");
+      setErrorMessage(t("invalidDateError"));
       setLoading(false);
       return;
     }
@@ -256,11 +258,11 @@ export default function Page() {
 
     try {
       await dbAddOrder(user.uid, orderObj);
-      console.log("Order added successfully");
+      console.log(t("orderSuccess"));
       window.location.href = "/orders";
     } catch (error) {
-      console.error("Error adding order:", error);
-      setErrorMessage(`Error: ${error.message}`);
+      console.error(t("orderError"), error);
+      setErrorMessage(`${t("orderError")}: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -277,24 +279,21 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Create an Order" />
+        <Header title={t("title")} />
 
         {state === "form" && (
-          <form
-            className="mx-4 flex flex-col gap-4"
-            onSubmit={handleCreateOrder}
-          >
+          <form className="mx-4 flex flex-col gap-4" onSubmit={handleCreateOrder}>
             {errorMessage && errorMessage.length > 0 && (
               <p className="text-red">{errorMessage}</p>
             )}
 
-            <p className="text-lg font-semibold underline">General</p>
+            <p className="text-lg font-semibold underline">{t("general")}</p>
 
             {/* Name of the order */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
                 <label>
-                  Title of the order <span className="text-red">*</span>
+                  {t("orderTitle")} <span className="text-red">{t("required")}</span>
                 </label>
                 <img
                   src={orderName === "" ? "/cross.png" : "/check.png"}
@@ -302,20 +301,19 @@ export default function Page() {
                 />
               </div>
               <input
-                data-id="order-name"
                 className={inputStyle}
                 name="orderName"
                 value={orderName}
-                placeholder="Enter title for the order"
+                placeholder={t("orderTitle")}
                 onChange={(e) => setOrderName(e.target.value)}
-              ></input>
+              />
             </div>
 
             {/* Deadline, Start Date, and Days Counter */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-row justify-between">
                 <label>
-                  Deadline <span className="text-red">*</span>
+                  {t("deadline")} <span className="text-red">{t("required")}</span>
                 </label>
                 <img
                   src={daysCounter === 0 ? "/cross.png" : "/check.png"}
@@ -324,11 +322,8 @@ export default function Page() {
               </div>
 
               <div className="flex gap-4">
-                {/* Start Date */}
-                <div data-id="start-date" className="flex flex-col gap-1 w-3/4">
-                  <div className="flex flex-row justify-between">
-                    <label className="text-xs">Start Date</label>
-                  </div>
+                <div className="flex flex-col gap-1 w-3/4">
+                  <label className="text-xs">{t("startDate")}</label>
                   <DatePicker
                     selected={startDate ? new Date(startDate) : null}
                     onChange={(date) => setStartDate(date)}
@@ -338,11 +333,8 @@ export default function Page() {
                   />
                 </div>
 
-                {/* Deadline */}
-                <div data-id="deadline" className="flex flex-col gap-1 w-3/4">
-                  <div className="flex flex-row justify-between">
-                    <label className="text-xs">Deadline</label>
-                  </div>
+                <div className="flex flex-col gap-1 w-3/4">
+                  <label className="text-xs">{t("deadline")}</label>
                   <DatePicker
                     selected={deadline ? new Date(deadline) : null}
                     onChange={(date) => setDeadline(date)}
@@ -352,13 +344,9 @@ export default function Page() {
                   />
                 </div>
 
-                {/* Days Counter */}
                 <div className="flex flex-col gap-1 w-1/4">
-                  <div className="flex flex-row justify-between">
-                    <label className="text-xs">Days</label>
-                  </div>
+                  <label className="text-xs">{t("days")}</label>
                   <input
-                    data-id="days-counter"
                     className={`${inputStyle} w-full`}
                     type="text"
                     value={daysCounter}
@@ -372,7 +360,7 @@ export default function Page() {
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
                 <label>
-                  Customer name <span className="text-red">*</span>
+                  {t("customerName")} <span className="text-red">{t("required")}</span>
                 </label>
                 <img
                   src={customerName === "" ? "/cross.png" : "/check.png"}
@@ -380,19 +368,18 @@ export default function Page() {
                 />
               </div>
               <input
-                data-id="order-customer"
                 className={inputStyle}
                 name="customerName"
                 value={customerName}
-                placeholder="Enter customer's name"
+                placeholder={t("customerName")}
                 onChange={(e) => setCustomerName(e.target.value)}
-              ></input>
+              />
             </div>
 
             {/* Description */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Description</label>
+                <label>{t("description")}</label>
                 <img
                   src={desc === "" ? "/cross.png" : "/check.png"}
                   className={desc === "" ? "h-4" : "h-6 text-green"}
@@ -400,9 +387,8 @@ export default function Page() {
               </div>
               <textarea
                 className={inputStyle}
-                data-id="order-description"
                 name="description"
-                placeholder="Enter details about the order"
+                placeholder={t("description")}
                 value={desc}
                 onChange={(e) => {
                   if (e.target.value.length <= 1000) {
@@ -410,20 +396,17 @@ export default function Page() {
                   }
                 }}
               />
-              {/* Display character count */}
               <div className="text-sm text-gray-500 mt-1">
                 {desc.length} / 1000 characters
               </div>
             </div>
 
-            <p className="text-lg font-semibold underline">
-              Product & Materials
-            </p>
+            <p className="text-lg font-semibold underline">{t("productMaterials")}</p>
 
             {/* Product Selection */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Product</label>
+                <label>{t("product")}</label>
                 <img
                   src={selectedProduct ? "/check.png" : "/cross.png"}
                   className={selectedProduct ? "h-6 text-green" : "h-4"}
@@ -431,12 +414,11 @@ export default function Page() {
               </div>
               <div className="flex flex-row justify-between">
                 <button
-                  data-id="select-product-button"
                   type="button"
                   onClick={handleSelectProductForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  select product
+                  {t("selectProduct")}
                 </button>
               </div>
             </div>
@@ -447,8 +429,7 @@ export default function Page() {
                 <SelectedHolder
                   type="product"
                   imageSrc={
-                    selectedProduct.productImages &&
-                      selectedProduct.productImages.length > 0
+                    selectedProduct.productImages && selectedProduct.productImages.length > 0
                       ? selectedProduct.productImages[0].url
                       : "/noImage.png"
                   }
@@ -462,7 +443,7 @@ export default function Page() {
             {/* Product cost */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Cost for selected product</label>
+                <label>{t("productCost")}</label>
               </div>
               <input
                 className={inputStyle}
@@ -470,8 +451,7 @@ export default function Page() {
                 value={
                   productCost === 0
                     ? ""
-                    : `${productCost} ${selectedProduct.currency ? selectedProduct.currency : ""
-                    }`
+                    : `${productCost} ${selectedProduct.currency ? selectedProduct.currency : ""}`
                 }
                 name="productCost"
                 placeholder="0.00"
@@ -482,18 +462,10 @@ export default function Page() {
             {/* Material Selection */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Materials</label>
+                <label>{t("materials")}</label>
                 <img
-                  src={
-                    selectedMaterials && selectedMaterials.length > 0
-                      ? "/check.png"
-                      : "/cross.png"
-                  }
-                  className={
-                    selectedMaterials && selectedMaterials.length > 0
-                      ? "h-6 text-green"
-                      : "h-4"
-                  }
+                  src={selectedMaterials && selectedMaterials.length > 0 ? "/check.png" : "/cross.png"}
+                  className={selectedMaterials && selectedMaterials.length > 0 ? "h-6 text-green" : "h-4"}
                 />
               </div>
               <div className="flex flex-row justify-between">
@@ -503,7 +475,7 @@ export default function Page() {
                   onClick={handleSelectMaterialForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  select material
+                  {t("selectMaterial")}
                 </button>
               </div>
             </div>
@@ -533,7 +505,7 @@ export default function Page() {
             {/* Material cost */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <label>Materials cost</label>
+                <label>{t("materialCost")}</label>
               </div>
               <input
                 className={inputStyle}
@@ -548,7 +520,7 @@ export default function Page() {
             {/* Work Cost */}
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
-                <p>Work cost</p>
+                <p>{t("workCost")}</p>
                 <img
                   src={workCost === 0 ? "/cross.png" : "/check.png"}
                   className={workCost === 0 ? "h-4" : "h-6 text-green"}
@@ -569,7 +541,7 @@ export default function Page() {
             <div className="flex flex-col gap-2">
               <div className="flex flex-row justify-between">
                 <p>
-                  Total cost <span className="text-red">*</span>
+                  {t("totalCost")} <span className="text-red">*</span>
                 </p>
                 <img
                   src={
@@ -610,8 +582,8 @@ export default function Page() {
 
             <Menu
               type="CreateMenu"
-              firstTitle="Cancel"
-              secondTitle="Create"
+              firstTitle={t("cancel")}
+              secondTitle={t("create")}
               onFirstFunction={handleNavigateToListPage}
             />
           </form>
@@ -624,7 +596,7 @@ export default function Page() {
 
             {products.length === 0 ? (
               <p className="flex flex-col items-center w-full py-40">
-                No products in inventory
+                {t("createOrder.noProducts")}
               </p>
             ) : (
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
@@ -668,7 +640,7 @@ export default function Page() {
 
             {materials.length === 0 ? (
               <p className="flex flex-col items-center w-full py-40">
-                No materials in inventory
+                {t("createOrder.noMaterials")}
               </p>
             ) : (
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">

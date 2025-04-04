@@ -1,7 +1,8 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 
-export default function SearchBar({ onOpenFilters, onSearch, filterOn }) {
+export default function SearchBar({ onSearch }) {
+  const t = useTranslations("SearchBar");
   const [search, setSearch] = useState("");
 
   const handleSearch = (e) => {
@@ -23,12 +24,12 @@ export default function SearchBar({ onOpenFilters, onSearch, filterOn }) {
             ease-in-out"
           type="text"
           value={search}
-          placeholder="Search..."
+          placeholder={t("placeholder")}
           onChange={handleSearch}
         />
         <img
           src="/Search.png"
-          alt="Search"
+          alt={t("searchAlt")}
           className="w-5 h-5 absolute top-1/2 transform -translate-y-1/2 right-3"
         />
       </div>

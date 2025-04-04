@@ -1,6 +1,7 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useTranslations } from "use-intl";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import ConfirmationWindow from "@/app/[locale]/components/confirmation-window";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
@@ -13,9 +14,9 @@ import {
   fetchMaterialById,
   fetchMaterials,
 } from "@/app/[locale]/_services/material-service";
-import { doc } from "firebase/firestore";
 
 export default function MaterialPage() {
+  const t = useTranslations("IdMaterial");
   const { user } = useUserAuth();
   const params = useParams();
   const id = params.materialid;
@@ -40,7 +41,7 @@ export default function MaterialPage() {
     editButton:
       "py-2 font-bold rounded-md w-full flex flex-row items-center justify-center gap-2 flex-shrink-0 hover:bg-darkGreen transition-colors duration-300",
     deleteButton:
-      "bg-red text-white rounded-md w-32 py-2 hover:bg-darkRed transition-colors duration-300",
+      "bg-red text-white rounded-md w-40 py-2 hover:bg-darkRed transition-colors duration-300",
   };
 
   useEffect(() => {
@@ -112,7 +113,7 @@ export default function MaterialPage() {
     if (!clientView) {
       return (
         <div className={commonClasses.container}>
-          <Header title="Material" />
+          <Header title={t("pageTitle")} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             {/* Back Button and View Title */}
@@ -121,12 +122,12 @@ export default function MaterialPage() {
                 className="font-bold text-xl text-blackBeige"
                 data-id="Your view"
               >
-                Your View
+                {t("yourView")}
               </p>
               <Link href="/materials">
                 <button className={commonClasses.headerButton}>
                   <img src="/arrow-left.png" width={20} alt="Back" />
-                  <p>Back</p>
+                  <p>{t("back")}</p>
                 </button>
               </Link>
             </div>
@@ -138,10 +139,11 @@ export default function MaterialPage() {
                 <img
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
-                  className={`${commonClasses.mainImage} ${transitioning
-                    ? "opacity-0 translate-y-1"
-                    : "opacity-100 translate-y-0"
-                    }`}
+                  className={`${commonClasses.mainImage} ${
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
+                  }`}
                 />
 
                 {selectedMaterial?.images?.length > 0 && (
@@ -160,13 +162,13 @@ export default function MaterialPage() {
               </div>
 
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                <div className="relative bg-green rounded-md w-32">
+                <div className="relative bg-green rounded-md w-40">
                   <Link href={`./${id}/edit`}>
                     <button
                       data-id="edit-button"
                       className={commonClasses.editButton}
                     >
-                      <p>Edit</p>
+                      <p>{t("edit")}</p>
                       <img src="/Pencil.png" alt="Pencil" className="w-4 h-4" />
                     </button>
                   </Link>
@@ -177,55 +179,61 @@ export default function MaterialPage() {
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Categories:</p>
+                  <p className={commonClasses.sectionTitle}>
+                    {t("categories")}
+                  </p>
                   <p className={commonClasses.sectionText}>
                     {Array.isArray(selectedMaterial?.categories) &&
-                      selectedMaterial.categories.length > 0
+                    selectedMaterial.categories.length > 0
                       ? selectedMaterial.categories.join(", ")
-                      : "No set categories"}
+                      : t("noCategories")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Color:</p>
+                  <p className={commonClasses.sectionTitle}>{t("color")}</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.color || "No set colors"}
+                    {selectedMaterial.color || t("noColor")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Description:</p>
+                  <p className={commonClasses.sectionTitle}>
+                    {t("description")}
+                  </p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.description || "No Description"}
+                    {selectedMaterial.description || t("noDescription")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Shop:</p>
+                  <p className={commonClasses.sectionTitle}>{t("shop")}</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.shop || "No Description"}
+                    {selectedMaterial.shop || t("noShop")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Quantity:</p>
+                  <p className={commonClasses.sectionTitle}>{t("quantity")}</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.quantity || "No set quantity"}
+                    {selectedMaterial.quantity || t("noQuantity")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Cost per Unity:</p>
+                  <p className={commonClasses.sectionTitle}>
+                    {t("costPerUnit")}
+                  </p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.costPerUnit || "No set cost per unit."}{" "}
+                    {selectedMaterial.costPerUnit || t("noCostPerUnit")}{" "}
                     {selectedMaterial.currency}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Total:</p>
+                  <p className={commonClasses.sectionTitle}>{t("total")}</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.total || "Cost is not set"}{" "}
+                    {selectedMaterial.total || t("noTotal")}{" "}
                     {selectedMaterial.currency}
                   </p>
                 </div>
@@ -235,7 +243,7 @@ export default function MaterialPage() {
                   onClick={openCloseConfirmation}
                   data-id="delete-button"
                 >
-                  Delete
+                  {t("delete")}
                 </button>
               </div>
             </div>
@@ -251,9 +259,9 @@ export default function MaterialPage() {
           <Menu
             type="TwoButtonsMenu"
             iconFirst="/link.png"
-            iconSecond="/eye.png"
-            firstTitle="Copy for client"
-            secondTitle="View for client"
+            iconSecond="/eye-crossed.png"
+            firstTitle={t("copyForClient")}
+            secondTitle={t("defaultView")}
             onSecondFunction={changeView}
           />
         </div>
@@ -264,7 +272,7 @@ export default function MaterialPage() {
     else {
       return (
         <div className="flex flex-col min-h-screen gap-4">
-          <Header title="Materials" showUserName={true} />
+          <Header title={t("pageTitle")} showUserName={true} />
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             {/* Back Button and View Title */}
@@ -273,12 +281,12 @@ export default function MaterialPage() {
                 className="font-bold text-xl text-blackBeige"
                 data-id="Client view"
               >
-                Client View
+                {t("title")}
               </p>
               <Link href="/materials">
                 <button className={commonClasses.headerButton}>
                   <img src="/arrow-left.png" width={20} alt="Back" />
-                  <p>Back</p>
+                  <p>{t("back")}</p>
                 </button>
               </Link>
             </div>
@@ -290,10 +298,11 @@ export default function MaterialPage() {
                 <img
                   src={mainImage || "/noImage.png"}
                   alt="Product Image"
-                  className={`${commonClasses.mainImage} ${transitioning
-                    ? "opacity-0 translate-y-1"
-                    : "opacity-100 translate-y-0"
-                    }`}
+                  className={`${commonClasses.mainImage} ${
+                    transitioning
+                      ? "opacity-0 translate-y-1"
+                      : "opacity-100 translate-y-0"
+                  }`}
                 />
 
                 {selectedMaterial?.images?.length > 0 && (
@@ -317,26 +326,30 @@ export default function MaterialPage() {
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Categories:</p>
+                  <p className={commonClasses.sectionTitle}>
+                    {t("categories")}
+                  </p>
                   <p className={commonClasses.sectionText}>
                     {Array.isArray(selectedMaterial?.categories) &&
-                      selectedMaterial.categories.length > 0
+                    selectedMaterial.categories.length > 0
                       ? selectedMaterial.categories.join(", ")
-                      : "No set categories"}
+                      : t("noCategories")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Color:</p>
+                  <p className={commonClasses.sectionTitle}>{t("color")}</p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.color || "No set colors"}
+                    {selectedMaterial.color || t("noColor")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>Description:</p>
+                  <p className={commonClasses.sectionTitle}>
+                    {t("description")}
+                  </p>
                   <p className={commonClasses.sectionText}>
-                    {selectedMaterial.description || "No Description"}
+                    {selectedMaterial.description || t("noDescription")}
                   </p>
                 </div>
               </div>
@@ -347,8 +360,8 @@ export default function MaterialPage() {
             type="TwoButtonsMenu"
             iconFirst="/link.png"
             iconSecond="/eye-crossed.png"
-            firstTitle="Copy for client"
-            secondTitle="Default View"
+            firstTitle={t("copyForClient")}
+            secondTitle={t("defaultView")}
             onSecondFunction={changeView}
           />
         </div>
@@ -367,10 +380,11 @@ export default function MaterialPage() {
               <img
                 src={mainImage || "/noImage.png"}
                 alt="Product Image"
-                className={`${commonClasses.mainImage} ${transitioning
-                  ? "opacity-0 translate-y-1"
-                  : "opacity-100 translate-y-0"
-                  }`}
+                className={`${commonClasses.mainImage} ${
+                  transitioning
+                    ? "opacity-0 translate-y-1"
+                    : "opacity-100 translate-y-0"
+                }`}
               />
 
               {selectedMaterial?.images?.length > 0 && (
@@ -394,26 +408,26 @@ export default function MaterialPage() {
               </p>
 
               <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>Categories:</p>
+                <p className={commonClasses.sectionTitle}>{t("categories")}</p>
                 <p className={commonClasses.sectionText}>
                   {Array.isArray(selectedMaterial?.categories) &&
-                    selectedMaterial.categories.length > 0
+                  selectedMaterial.categories.length > 0
                     ? selectedMaterial.categories.join(", ")
-                    : "No set categories"}
+                    : t("noCategories")}
                 </p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>Color:</p>
+                <p className={commonClasses.sectionTitle}>{t("color")}</p>
                 <p className={commonClasses.sectionText}>
-                  {selectedMaterial.color || "No set colors"}
+                  {selectedMaterial.color || t("noColor")}
                 </p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>Description:</p>
+                <p className={commonClasses.sectionTitle}>{t("description")}</p>
                 <p className={commonClasses.sectionText}>
-                  {selectedMaterial.description || "No Description"}
+                  {selectedMaterial.description || t("noDescription")}
                 </p>
               </div>
             </div>

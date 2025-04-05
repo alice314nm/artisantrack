@@ -1,17 +1,18 @@
 "use client";
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useTranslations } from "next-intl";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import SignInOutWindow from "@/app/[locale]/components/sign-in-out-window";
 import { doc } from "firebase/firestore";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Menu from "../components/menu";
+import Menu from "@/app/[locale]/components/menu";
 
 export default function SignInPage() {
+  const t = useTranslations("signup");
   const { user, doCreateUserWithEmailAndPassword } = useUserAuth();
   const [loading, setLoading] = useState(true);
-
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [tax, setTax] = useState("");
@@ -25,13 +26,12 @@ export default function SignInPage() {
     "w-80 border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500";
 
   useEffect(() => {
-    document.title = "Sign Up";
-    // Simulating a delay for loading state
+    document.title = t("title");
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 1000); // 1 second delay
+    }, 1000);
 
-    return () => clearTimeout(timeout); // Cleanup timeout
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleSignUp = async (e) => {
@@ -40,23 +40,23 @@ export default function SignInPage() {
     setSuccess(false);
 
     if (!email || !name || !password || !repeatPassword) {
-      setError("All fields marked with * are required.");
+      setError(t("errors.requiredFields"));
       return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-      setError("Invalid email format. Please try again.");
+      setError(t("errors.invalidEmail"));
       return;
     }
 
     if (password !== repeatPassword) {
-      setError("Passwords do not match.");
+      setError(t("errors.passwordMismatch"));
       return;
     }
 
     if (password.length < 6) {
-      setError("Password should be at least 6 characters.");
+      setError(t("errors.passwordLength"));
       return;
     }
 
@@ -92,11 +92,11 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="">
+    <main>
       <Header title="Artisan Track" />
       {user ? (
         <div>
-          <SignInOutWindow type={"SignOut"} />
+          <SignInOutWindow type="SignOut" />
           <Menu type="OnlySlideMenu" />
         </div>
       ) : (
@@ -104,23 +104,19 @@ export default function SignInPage() {
           onSubmit={handleSignUp}
           className="mt-10 flex flex-col gap-4 p-6 items-center justify-center"
         >
-          <h2 className="text-xl font-bold">Sign Up</h2>
+          <h2 className="text-xl font-bold">{t("title")}</h2>
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          {success && (
-            <p className="text-green-500 text-sm">
-              Account successfully created!
-            </p>
-          )}
+          {success && <p className="text-green-500 text-sm">{t("success")}</p>}
 
           {/* Email */}
           <div className="flex flex-col w-80">
-            <label className="text-left">
-              Email <span className="text-red">*</span>
+            <label>
+              {t("email")} <span className="text-red">*</span>
             </label>
             <input
               data-id="email"
               type="text"
-              placeholder="eg. example@mail.com"
+              placeholder={t("placeholders.email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputStyle}
@@ -130,13 +126,13 @@ export default function SignInPage() {
 
           {/* Name */}
           <div className="flex flex-col w-80">
-            <label className="text-left">
-              Name <span className="text-red">*</span>
+            <label>
+              {t("name")} <span className="text-red">*</span>
             </label>
             <input
               data-id="name"
               type="text"
-              placeholder="eg. Alex Smith"
+              placeholder={t("placeholders.name")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={inputStyle}
@@ -146,11 +142,11 @@ export default function SignInPage() {
 
           {/* Tax */}
           <div className="flex flex-col w-80">
-            <label className="text-left">Tax</label>
+            <label>{t("tax")}</label>
             <input
               data-id="tax"
               type="text"
-              placeholder="eg. 4%"
+              placeholder={t("placeholders.tax")}
               value={tax}
               onChange={(e) => setTax(e.target.value)}
               className={inputStyle}
@@ -159,13 +155,13 @@ export default function SignInPage() {
 
           {/* Password */}
           <div className="flex flex-col w-80">
-            <label className="text-left">
-              Password <span className="text-red">*</span>
+            <label>
+              {t("password")} <span className="text-red">*</span>
             </label>
             <input
               data-id="password"
               type="password"
-              placeholder="******"
+              placeholder={t("placeholders.password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={inputStyle}
@@ -175,13 +171,13 @@ export default function SignInPage() {
 
           {/* Repeat Password */}
           <div className="flex flex-col w-80">
-            <label className="text-left">
-              Repeat Password <span className="text-red">*</span>
+            <label>
+              {t("repeatPassword")} <span className="text-red">*</span>
             </label>
             <input
               data-id="repeat-password"
               type="password"
-              placeholder="*******"
+              placeholder={t("placeholders.repeatPassword")}
               value={repeatPassword}
               onChange={(e) => setRepeatPassword(e.target.value)}
               className={inputStyle}
@@ -192,18 +188,19 @@ export default function SignInPage() {
           <button
             data-id="sign-up"
             type="submit"
-            className={`bg-green p-2 rounded-xl w-80 font-bold ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"
-              }`}
+            className={`bg-green p-2 rounded-xl w-80 font-bold ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"
+            }`}
             disabled={isLoading}
           >
-            {isLoading ? "Signing Up..." : "Sign Up"}
+            {isLoading ? t("signingUp") : t("signUp")}
           </button>
 
           <Link href="/login">
             <p className="text-sm text-center">
-              Already have account?{" "}
+              {t("alreadyHaveAccount")}{" "}
               <span className="underline cursor-pointer text-sky-500">
-                Log in
+                {t("login")}
               </span>
             </p>
           </Link>

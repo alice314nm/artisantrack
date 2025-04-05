@@ -492,6 +492,39 @@
     "cancel": "Cancel",
     "create": "Create"
   },
+  "signup": {
+    "title": "Sign Up",
+    "email": "Email",
+    "name": "Name",
+    "tax": "Tax",
+    "password": "Password",
+    "repeatPassword": "Repeat Password",
+    "signUp": "Sign Up",
+    "signingUp": "Signing Up...",
+    "success": "Account successfully created!",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Log in",
+    "errors": {
+      "requiredFields": "All fields marked with * are required.",
+      "invalidEmail": "Invalid email format. Please try again.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordLength": "Password should be at least 6 characters."
+    },
+    "placeholders": {
+      "email": "eg. example@mail.com",
+      "name": "eg. Alex Smith",
+      "tax": "eg. 4%",
+      "password": "******",
+      "repeatPassword": "*******"
+    }
+  },
+  "notLogged": {
+    "welcome": "Welcome to",
+    "description": " Manage your products, orders, materials, and finances.",
+    "prompt": "Sign in to continue or create a new account to get started.",
+    "login": "Log In",
+    "createAccount": "Create Account"
+  },
   "Profile": {
     "title": "Profile",
     "accountDeleted": "Account successfully deleted!",

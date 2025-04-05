@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import {
   getFirestore,
   collection,
@@ -8,6 +9,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+import { useLocale } from "next-intl";
 import { app } from "@/app/[locale]/_utils/firebase";
 import { getUserData } from "@/app/[locale]/_services/user-data";
 import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
@@ -22,18 +24,20 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Page() {
+  const t = useTranslations("Finance");
   const [confirmWindowVisibility, setConfirmWindowVisibility] = useState(false);
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [newTax, setNewTax] = useState("");
   const [isTaxChanging, setIsTaxChanging] = useState(false);
-
   const buttonStyle =
     "bg-green px-2 py-1 rounded-lg w-60 text-center hover:bg-darkGreen";
+  const locale = useLocale();
+  const currentMonth = new Date().toLocaleString(locale, { month: "long" });
 
   useEffect(() => {
-    document.title = "Finance";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -104,13 +108,13 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Finance" showUserName={true} />
+        <Header title={t("pageTitle")} showUserName={true} />
 
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <div className="flex flex-row justify-between">
-            <p>All orders:</p>
+            <p>{t("allOrders")}</p>
             <div className="h-10 flex items-center">
-              Set Tax:{" "}
+              {t("setTax")}:
               {isTaxChanging ? (
                 <div className="flex gap-2 items-center ">
                   <input
@@ -124,18 +128,18 @@ export default function Page() {
                     onClick={saveTax}
                     className="bg-green py-2 px-4 rounded-lg hover:bg-darkGreen"
                   >
-                    Save
+                    {t("buttons.save")}
                   </button>
                   <button
                     onClick={cancelTaxChange}
                     className="bg-red py-2 px-4 rounded-lg hover:bg-rose-800"
                   >
-                    Cancel
+                    {t("buttons.cancel")}
                   </button>
                 </div>
               ) : (
                 <span>
-                  {userData ? `${userData.tax ?? "N/A"}` : "Loading..."}
+                  {userData ? `${userData.tax ?? "N/A"}` : t("loading")}
                 </span>
               )}
             </div>
@@ -143,39 +147,50 @@ export default function Page() {
 
           <div className="flex flex-row justify-between items-start">
             <div>
-              <p>In progress: {userData?.inProgressOrders ?? "Loading..."}</p>
-              <p>Completed: {userData?.completedOrders ?? "Loading..."}</p>
+              <p>
+                {t("inProgress")}: {userData?.inProgressOrders ?? t("loading")}
+              </p>
+              <p>
+                {t("completed")}: {userData?.completedOrders ?? t("loading")}
+              </p>
             </div>
             {!isTaxChanging && (
               <button
                 className="bg-green px-2 py-1 rounded-lg hover:bg-darkGreen"
                 onClick={() => setIsTaxChanging(true)}
               >
-                Change Tax
+                {t("buttons.changeTax")}
               </button>
             )}
           </div>
         </div>
 
+        {/* Monthly Section */}
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
+          <p>{t("thisMonth", { month: currentMonth })}</p>
           <p>
-            This month (
-            {new Date().toLocaleString("default", { month: "long" })}):
+            {t("income")}: {userData?.monthlyIncome ?? t("loading")}$
           </p>
-          <p>Income: {userData?.monthlyIncome ?? "Loading..."}$</p>
-          <p>Expenses: {userData?.monthlyExpenses ?? "Loading..."}$</p>
+          <p>
+            {t("expenses")}: {userData?.monthlyExpenses ?? t("loading")}$
+          </p>
           <Link href="finances/monthly" className={buttonStyle}>
-            Monthly Financial Report
+            {t("monthlyReport")}
           </Link>
         </div>
 
+        {/* Yearly Section */}
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
-          <p>This year ({new Date().getFullYear()}):</p>
-          <p>Income: {userData?.yearlyIncome ?? "Loading..."}$</p>
-          <p>Expenses: {userData?.yearlyExpenses ?? "Loading..."}$</p>
+          <p>{t("thisYear", { year: new Date().getFullYear() })}</p>
+          <p>
+            {t("income")}: {userData?.yearlyIncome ?? t("loading")}$
+          </p>
+          <p>
+            {t("expenses")}: {userData?.yearlyExpenses ?? t("loading")}$
+          </p>
           <Link href="finances/yearly" className={buttonStyle}>
-            Yearly Financial Report
-          </Link>{" "}
+            {t("yearlyReport")}
+          </Link>
         </div>
 
         <FilterWindow

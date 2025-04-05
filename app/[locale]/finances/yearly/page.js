@@ -66,13 +66,13 @@ export default function WelcomePage() {
     document.title = "Yearly Report";
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 500);
+    }, 2000);
 
     return () => clearTimeout(timeout);
   }, []);
 
   //Function where to set/change variables for popular entities, incomes, expense when the chosen year is changing
-  useEffect(() => { }, [currentYear]);
+  useEffect(() => {}, [currentYear]);
 
   // Fetch orders, products, materials
   useEffect(() => {
@@ -305,8 +305,9 @@ export default function WelcomePage() {
       "Dec",
     ];
 
-    const formattedDate = `${monthNames[deadlineDate.getMonth()]
-      } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+    const formattedDate = `${
+      monthNames[deadlineDate.getMonth()]
+    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
 
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
 
@@ -451,28 +452,31 @@ export default function WelcomePage() {
 
               <div className="flex flex-row gap-2 justify-between items-center">
                 <button
-                  className={`w-[33%] py-1 rounded-md ${stateShow === "orders"
-                    ? "bg-transparent border-2 border-green"
-                    : "bg-green"
-                    }`}
+                  className={`w-[33%] py-1 rounded-md ${
+                    stateShow === "orders"
+                      ? "bg-transparent border-2 border-green"
+                      : "bg-green"
+                  }`}
                   onClick={handleStateOrders}
                 >
                   Orders
                 </button>
                 <button
-                  className={`w-[33%] py-1 rounded-md ${stateShow === "products"
-                    ? "bg-transparent border-2 border-green"
-                    : "bg-green"
-                    }`}
+                  className={`w-[33%] py-1 rounded-md ${
+                    stateShow === "products"
+                      ? "bg-transparent border-2 border-green"
+                      : "bg-green"
+                  }`}
                   onClick={handleStateProducts}
                 >
                   Products
                 </button>
                 <button
-                  className={`w-[33%] py-1 rounded-md ${stateShow === "materials"
-                    ? "bg-transparent border-2 border-red text-blackBeige"
-                    : "bg-red text-white"
-                    }`}
+                  className={`w-[33%] py-1 rounded-md ${
+                    stateShow === "materials"
+                      ? "bg-transparent border-2 border-red text-blackBeige"
+                      : "bg-red text-white"
+                  }`}
                   onClick={handleStateMaterials}
                 >
                   Materials

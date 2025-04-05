@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import {
   getFirestore,
   collection,
@@ -27,6 +28,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
 export default function WelcomePage() {
+  const t = useTranslations("FinanceMonthly");
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [stateShow, setStateShow] = useState("orders");
@@ -45,7 +47,9 @@ export default function WelcomePage() {
   const [products, setProducts] = useState([]);
   const [materials, setMaterials] = useState([]);
 
-  const monthName = currentMonth.toLocaleString("default", { month: "long" });
+  const monthIndex = currentMonth.getMonth(); // 0 = January, 1 = February, ...
+  const monthName = t(`months.${monthIndex}`); // Get the translated month name
+  const monthYear = `${monthName} ${currentMonth.getFullYear()}`;
 
   const isInMonth = (deadlineSeconds, targetMonth) => {
     if (!deadlineSeconds || !targetMonth) {
@@ -69,17 +73,12 @@ export default function WelcomePage() {
     return deadlineMonth === targetMonthIndex && deadlineYear === targetYearInt;
   };
 
-  const monthYear = currentMonth.toLocaleString("default", {
-    month: "long",
-    year: "numeric",
-  });
-
   const showOrdersWithPopularProduct = () => {
     const filtered = orders.filter(
       (order) => order.productId === popularProduct?.id
     );
     setFilteredOrders(filtered);
-    setFilterLabel("Orders with popular product this month");
+    setFilterLabel(t("filters.popularProduct"));
     setStateShow("orders");
   };
 
@@ -88,7 +87,7 @@ export default function WelcomePage() {
       order.materialIds?.includes(popularMaterial?.id)
     );
     setFilteredOrders(filtered);
-    setFilterLabel("Orders with popular material this month");
+    setFilterLabel(t("filters.popularMaterial"));
     setStateShow("orders");
   };
 
@@ -97,7 +96,7 @@ export default function WelcomePage() {
       (order) => order.customerName === regularClient?.name
     );
     setFilteredOrders(filtered);
-    setFilterLabel("Orders from regular client this month");
+    setFilterLabel(t("filters.regularClient"));
     setStateShow("orders");
   };
 
@@ -106,34 +105,34 @@ export default function WelcomePage() {
     const sheet = workbook.addWorksheet("Report");
 
     // Title Section
-
     const titleCell = sheet.addRow([`${selectedMonth} ${selectedYear}`]);
     titleCell.font = { bold: true, size: 14 };
     sheet.addRow([]);
 
     // Income and Expenses
-    sheet.addRow([`INCOME:`, data.income]);
-    sheet.addRow([`EXPENSES:`, data.expenses]);
+    sheet.addRow([t("excel.income"), data.income]);
+    sheet.addRow([t("excel.expenses"), data.expenses]);
     sheet.addRow([]);
 
     // Popular Product, Materials and Client
-    sheet.addRow([`Popular Product:`, data.popularProduct?.name]);
-    sheet.addRow([`Popular Material:`, data.popularMaterial?.name]);
-    sheet.addRow([`Regular Client:`, data.regularClient?.name]);
+    sheet.addRow([t("excel.popularProduct"), data.popularProduct?.name]);
+    sheet.addRow([t("excel.popularMaterial"), data.popularMaterial?.name]);
+    sheet.addRow([t("excel.regularClient"), data.regularClient?.name]);
     sheet.addRow([]);
 
     // ORDERS Section
-    sheet.addRow(["ORDERS"]);
+    sheet.addRow([t("excel.orders")]);
+
     const orderHeaders = [
-      "Title of the order",
-      "Customer's name",
-      "Product Id",
-      "Product cost",
-      "Material Id",
-      "Quantity",
-      "Material Cost",
-      "Work cost",
-      "Total Cost",
+      t("excel.headers.title"),
+      t("excel.headers.customerName"),
+      t("excel.headers.productId"),
+      t("excel.headers.productCost"),
+      t("excel.headers.materialId"),
+      t("excel.headers.quantity"),
+      t("excel.headers.materialCost"),
+      t("excel.headers.workCost"),
+      t("excel.headers.totalCost"),
     ];
     sheet.addRow(orderHeaders);
 
@@ -231,13 +230,13 @@ export default function WelcomePage() {
     sheet.addRow([]);
 
     // PRODUCTS Section
-    sheet.addRow(["PRODUCTS"]);
+    sheet.addRow([t("excel.products")]);
 
     const productHeaders = [
-      "Product ID",
-      "Product name",
-      "Category",
-      "Average Total",
+      t("excel.productHeaders.id"),
+      t("excel.productHeaders.name"),
+      t("excel.productHeaders.category"),
+      t("excel.productHeaders.average"),
     ];
     sheet.addRow(productHeaders);
 
@@ -253,17 +252,17 @@ export default function WelcomePage() {
     sheet.addRow([]);
 
     // MATERIALS Section
-    sheet.addRow(["MATERIALS"]);
+    sheet.addRow([t("excel.materials")]);
 
     const materialHeaders = [
-      "Material Id",
-      "Material Name",
-      "Category",
-      "Color",
-      "Shop",
-      "Quantity",
-      "Cost per unit",
-      "Total",
+      t("excel.materialHeaders.id"),
+      t("excel.materialHeaders.name"),
+      t("excel.materialHeaders.category"),
+      t("excel.materialHeaders.color"),
+      t("excel.materialHeaders.shop"),
+      t("excel.materialHeaders.quantity"),
+      t("excel.materialHeaders.costPerUnit"),
+      t("excel.materialHeaders.total"),
     ];
 
     sheet.addRow(materialHeaders);
@@ -303,15 +302,15 @@ export default function WelcomePage() {
   }, []);
 
   useEffect(() => {
-    document.title = "Monthly Report";
+    document.title = t("pageTitle.monthlyReport");
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 500);
+    }, 2000);
 
     return () => clearTimeout(timeout);
   }, []);
 
-  useEffect(() => { }, [currentMonth]);
+  useEffect(() => {}, [currentMonth]);
 
   // Fetch orders, products, materials
   useEffect(() => {
@@ -515,27 +514,28 @@ export default function WelcomePage() {
     const today = new Date();
 
     const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      t("date.months.jan"),
+      t("date.months.feb"),
+      t("date.months.mar"),
+      t("date.months.apr"),
+      t("date.months.may"),
+      t("date.months.jun"),
+      t("date.months.jul"),
+      t("date.months.aug"),
+      t("date.months.sep"),
+      t("date.months.oct"),
+      t("date.months.nov"),
+      t("date.months.dec"),
     ];
 
-    const formattedDate = `${monthNames[deadlineDate.getMonth()]
-      } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+    const formattedDate = `${
+      monthNames[deadlineDate.getMonth()]
+    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
 
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
-
     const daysLeft = diffTime > 0 ? diffTime : 0;
-    const daysStatus = diffTime > 0 ? `${diffTime} days` : "Due today";
+    const daysStatus =
+      diffTime > 0 ? `${diffTime} ${t("date.daysLeft")}` : t("date.dueToday");
 
     return [formattedDate, daysLeft, daysStatus];
   };
@@ -559,7 +559,7 @@ export default function WelcomePage() {
 
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Monthly Report" />
+        <Header title={t("pageTitle.monthlyReport")} />
 
         <div className="flex flex-col gap-4 pb-20">
           {/* toggle */}
@@ -581,8 +581,12 @@ export default function WelcomePage() {
             <div className="flex flex-col gap-2">
               {/* Finance text */}
               <div className="flex flex-row gap-2 text-xl">
-                <p>Income: {income}$</p>
-                <p>Expenses: {expenses}$</p>
+                <p>
+                  {t("finance.income")}: {income}$
+                </p>
+                <p>
+                  {t("finance.expenses")}: {expenses}$
+                </p>
               </div>
               {/* place for diagram */}
               <div className="flex justify-center px-4">
@@ -591,7 +595,7 @@ export default function WelcomePage() {
 
               <div className="pt-2">
                 <p>
-                  Popular product this month:{" "}
+                  {t("finance.popularProduct")}{" "}
                   <button
                     className="underline"
                     onClick={showOrdersWithPopularProduct}
@@ -603,7 +607,7 @@ export default function WelcomePage() {
                 </p>
 
                 <p>
-                  Popular material this month:{" "}
+                  {t("finance.popularMaterial")}{" "}
                   <button
                     className="underline"
                     onClick={showOrdersWithPopularMaterial}
@@ -615,7 +619,7 @@ export default function WelcomePage() {
                 </p>
 
                 <p>
-                  Regular client this month:{" "}
+                  {t("finance.regularClient")}{" "}
                   <button
                     className="underline"
                     onClick={showOrdersWithRegularClient}
@@ -628,34 +632,37 @@ export default function WelcomePage() {
 
             {/* view */}
             <div className="flex flex-col gap-2">
-              <p className="font-semibold">Show</p>
+              <p className="font-semibold">{t("view.show")}</p>
               <div className="flex flex-row gap-2 justify-between items-center">
                 <button
-                  className={`w-[33%] py-1 rounded-md ${stateShow === "orders"
-                    ? "bg-transparent border-2 border-green"
-                    : "bg-green"
-                    }`}
+                  className={`w-[33%] py-1 rounded-md ${
+                    stateShow === "orders"
+                      ? "bg-transparent border-2 border-green"
+                      : "bg-green"
+                  }`}
                   onClick={handleStateOrders}
                 >
-                  Orders
+                  {t("view.orders")}
                 </button>
                 <button
-                  className={`w-[33%] py-1 rounded-md ${stateShow === "products"
-                    ? "bg-transparent border-2 border-green"
-                    : "bg-green"
-                    }`}
+                  className={`w-[33%] py-1 rounded-md ${
+                    stateShow === "products"
+                      ? "bg-transparent border-2 border-green"
+                      : "bg-green"
+                  }`}
                   onClick={handleStateProducts}
                 >
-                  Products
+                  {t("view.products")}
                 </button>
                 <button
-                  className={`w-[33%] py-1 rounded-md ${stateShow === "materials"
-                    ? "bg-transparent border-2 border-red text-blackBeige"
-                    : "bg-red text-white"
-                    }`}
+                  className={`w-[33%] py-1 rounded-md ${
+                    stateShow === "materials"
+                      ? "bg-transparent border-2 border-red text-blackBeige"
+                      : "bg-red text-white"
+                  }`}
                   onClick={handleStateMaterials}
                 >
-                  Materials
+                  {t("view.materials")}
                 </button>
               </div>
 
@@ -671,17 +678,12 @@ export default function WelcomePage() {
                         }}
                         className="text-sm text-red underline"
                       >
-                        Clear filter
+                        {t("view.clearFilter")}
                       </button>
                     </div>
                   )}
 
-                  <div
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
-                    gap-4 sm:gap-6 lg:gap-8 
-                    auto-rows-[1fr] 
-                    justify-center items-stretch"
-                  >
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 auto-rows-[1fr] justify-center items-stretch">
                     {(filteredOrders.length > 0 ? filteredOrders : orders).map(
                       (order, index) => (
                         <Link
@@ -696,7 +698,11 @@ export default function WelcomePage() {
                             deadline={
                               order.deadline?.seconds
                                 ? formatDeadline(order.deadline.seconds)
-                                : ["No deadline", 0, "No deadline"]
+                                : [
+                                    t("view.noDeadline"),
+                                    0,
+                                    t("view.noDeadline"),
+                                  ]
                             }
                             currency={order.currency}
                             total={order.totalCost}
@@ -742,9 +748,9 @@ export default function WelcomePage() {
                 <div className="w-full px-4 pb-20">
                   <div
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
-                    gap-4 sm:gap-6 lg:gap-8 
-                    auto-rows-[1fr] 
-                    justify-center items-stretch"
+      gap-4 sm:gap-6 lg:gap-8 
+      auto-rows-[1fr] 
+      justify-center items-stretch"
                   >
                     {materials.map((material) => (
                       <Link
@@ -775,10 +781,10 @@ export default function WelcomePage() {
 
         <Menu
           type="TwoButtonsMenu"
-          firstTitle={"Go back"}
+          firstTitle={t("menu.goBack")}
           iconFirst={"/arrow-left.png"}
           onFirstFunction={() => (window.location.href = `/finances`)}
-          secondTitle={"Download"}
+          secondTitle={t("menu.download")}
           iconSecond={"/download.png"}
           onSecondFunction={() => {
             const yourData = {

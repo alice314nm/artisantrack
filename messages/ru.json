@@ -613,5 +613,133 @@
       "close": "Закрыть",
       "resend": "Отправить письмо повторно"
     }
+  },
+  "Finance": {
+    "pageTitle": "Финансы",
+    "allOrders": "Все заказы",
+    "setTax": "Установить налог",
+    "loading": "Загрузка...",
+    "inProgress": "В процессе",
+    "completed": "Завершено",
+    "buttons": {
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "changeTax": "Изменить налог"
+    },
+    "thisMonth": "В этом месяце ({month}):",
+    "thisYear": "В этом году ({year}):",
+    "income": "Доход",
+    "expenses": "Расходы",
+    "monthlyReport": "Месячный финансовый отчет",
+    "yearlyReport": "Годовой финансовый отчет"
+  },
+  "FinanceMonthly": {
+    "filters": {
+      "popularProduct": "Заказы с популярным товаром в этом месяце",
+      "popularMaterial": "Заказы с популярным материалом в этом месяце",
+      "regularClient": "Заказы от постоянного клиента в этом месяце"
+    },
+    "excel": {
+      "income": "ДОХОД:",
+      "expenses": "РАСХОДЫ:",
+      "popularProduct": "Популярный товар:",
+      "popularMaterial": "Популярный материал:",
+      "regularClient": "Постоянный клиент:",
+      "orders": "ЗАКАЗЫ",
+      "headers": {
+        "title": "Название заказа",
+        "customerName": "Имя клиента",
+        "productId": "ID товара",
+        "productCost": "Стоимость товара",
+        "materialId": "ID материала",
+        "quantity": "Количество",
+        "materialCost": "Стоимость материала",
+        "workCost": "Стоимость работы",
+        "totalCost": "Общая стоимость"
+      },
+      "products": "ТОВАРЫ",
+      "productHeaders": {
+        "id": "ID товара",
+        "name": "Название",
+        "category": "Категория",
+        "average": "Средняя стоимость"
+      },
+      "materials": "МАТЕРИАЛЫ",
+      "materialHeaders": {
+        "id": "ID материала",
+        "name": "Название материала",
+        "category": "Категория",
+        "color": "Цвет",
+        "shop": "Магазин",
+        "quantity": "Количество",
+        "costPerUnit": "Стоимость за единицу",
+        "total": "Итого"
+      }
+    },
+    "pageTitle": {
+      "monthlyReport": "Ежемесячный отчет"
+    },
+    "date": {
+      "months": {
+        "jan": "Янв",
+        "feb": "Фев",
+        "mar": "Мар",
+        "apr": "Апр",
+        "may": "Май",
+        "jun": "Июн",
+        "jul": "Июл",
+        "aug": "Авг",
+        "sep": "Сен",
+        "oct": "Окт",
+        "nov": "Ноя",
+        "dec": "Дек"
+      },
+      "daysLeft": "дней",
+      "dueToday": "Сегодня срок"
+    },
+    "finance": {
+      "income": "Доход",
+      "expenses": "Расходы",
+      "popularProduct": "Популярный продукт этого месяца",
+      "popularMaterial": "Популярный материал этого месяца",
+      "regularClient": "Регулярный клиент этого месяца"
+    },
+    "view": {
+      "show": "Показать",
+      "orders": "Заказы",
+      "products": "Продукты",
+      "materials": "Материалы",
+      "clearFilter": "Очистить фильтр",
+      "noDeadline": "Без срока"
+    },
+    "menu": {
+      "goBack": "Вернуться",
+      "download": "Скачать"
+    },
+    "products": {
+      "noProducts": "Продукты отсутствуют"
+    },
+    "materials": {
+      "noMaterials": "Материалы отсутствуют"
+    },
+    "months": {
+      "0": "Январь",
+      "1": "Февраль",
+      "2": "Март",
+      "3": "Апрель",
+      "4": "Май",
+      "5": "Июнь",
+      "6": "Июль",
+      "7": "Август",
+      "8": "Сентябрь",
+      "9": "Октябрь",
+      "10": "Ноябрь",
+      "11": "Декабрь"
+    }
+  },
+  "chart": {
+    "expenses": "Расходы",
+    "income": "Доходы",
+    "financial": "Финансовые"
   }
 }

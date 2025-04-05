@@ -741,5 +741,38 @@
     "expenses": "Расходы",
     "income": "Доходы",
     "financial": "Финансовые"
+  },
+  "financeYearly": {
+    "title": "Годовой отчет",
+    "income": "Доход",
+    "expenses": "Расходы",
+    "popularProduct": "Популярный продукт в этом году",
+    "popularMaterial": "Популярный материал в этом году",
+    "regularClient": "Постоянный клиент",
+    "amount": "кол-во",
+    "days": "дней",
+    "dueToday": "Срок сегодня",
+    "months": {
+      "jan": "Янв",
+      "feb": "Фев",
+      "mar": "Мар",
+      "apr": "Апр",
+      "may": "Май",
+      "jun": "Июн",
+      "jul": "Июл",
+      "aug": "Авг",
+      "sep": "Сен",
+      "oct": "Окт",
+      "nov": "Ноя",
+      "dec": "Дек"
+    },
+    "show": "Показать",
+    "clearFilter": "Очистить фильтр",
+    "noDeadline": "Без срока",
+    "orders": "Заказы",
+    "products": "Продукты",
+    "materials": "Материалы",
+    "goBack": "Назад",
+    "download": "Скачать"
   }
 }

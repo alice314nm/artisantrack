@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { app } from "@/app/[locale]/_utils/firebase";
 import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
@@ -17,6 +18,7 @@ import BlockHolder from "@/app/[locale]/components/block-holder";
 import { useEffect, useState } from "react";
 
 export default function WelcomePage() {
+  const t = useTranslations("financeYearly");
   const { user } = useUserAuth();
   const [loading, setLoading] = useState(true);
   const [stateShow, setStateShow] = useState("orders");
@@ -40,7 +42,7 @@ export default function WelcomePage() {
       (order) => order.productId === popularProduct?.id
     );
     setFilteredOrders(filtered);
-    setFilterLabel("Orders with popular product");
+    setFilterLabel(t("popularProduct"));
     setStateShow("orders");
   };
 
@@ -49,7 +51,7 @@ export default function WelcomePage() {
       order.materialIds?.includes(popularMaterial?.id)
     );
     setFilteredOrders(filtered);
-    setFilterLabel("Orders with popular material");
+    setFilterLabel(t("popularMaterial"));
     setStateShow("orders");
   };
 
@@ -58,12 +60,12 @@ export default function WelcomePage() {
       (order) => order.customerName === regularClient?.name
     );
     setFilteredOrders(filtered);
-    setFilterLabel("Orders from regular client");
+    setFilterLabel(t("regularClient"));
     setStateShow("orders");
   };
 
   useEffect(() => {
-    document.title = "Yearly Report";
+    document.title = t("title");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 2000);
@@ -82,18 +84,39 @@ export default function WelcomePage() {
       const fetchedOrders = await fetchOrders(user, currentYear);
       setOrders(fetchedOrders);
 
-      // Find the most popular client (the one with the most orders)
-      const clientCounts = fetchedOrders.reduce((acc, order) => {
-        const clientId = order.customerId;
-        acc[clientId] = (acc[clientId] || 0) + 1;
-        return acc;
-      }, {});
+      // Only try to find a popular client if there are orders
+      if (fetchedOrders.length > 0) {
+        const clientCounts = fetchedOrders.reduce((acc, order) => {
+          const clientId = order.customerId;
+          acc[clientId] = (acc[clientId] || 0) + 1;
+          return acc;
+        }, {});
 
-      const popularClientId = Object.keys(clientCounts).reduce((a, b) =>
-        clientCounts[a] > clientCounts[b] ? a : b
-      );
-      setRegularClient(popularClientId);
+        const clientIds = Object.keys(clientCounts);
+
+        if (clientIds.length > 0) {
+          const popularClientId = clientIds.reduce((a, b) =>
+            clientCounts[a] > clientCounts[b] ? a : b
+          );
+
+          // If you want to also get the full client object from the orders:
+          const regularClientData = fetchedOrders.find(
+            (order) => order.customerId === popularClientId
+          )?.customerName;
+
+          setRegularClient({
+            id: popularClientId,
+            name: regularClientData || "Unknown",
+            count: clientCounts[popularClientId],
+          });
+        } else {
+          setRegularClient(null);
+        }
+      } else {
+        setRegularClient(null);
+      }
     };
+
     loadOrders();
   }, [user, currentYear]);
 
@@ -104,20 +127,35 @@ export default function WelcomePage() {
       const fetchedProducts = await fetchProducts(user, currentYear);
       setProducts(fetchedProducts);
 
-      // Find the most popular product (based on the number of orders)
-      const productCounts = fetchedProducts.reduce((acc, product) => {
-        acc[product.productId] = (acc[product.productId] || 0) + 1;
-        return acc;
-      }, {});
+      if (fetchedProducts.length > 0) {
+        const productCounts = fetchedProducts.reduce((acc, product) => {
+          acc[product.productId] = (acc[product.productId] || 0) + 1;
+          return acc;
+        }, {});
 
-      const popularProductId = Object.keys(productCounts).reduce((a, b) =>
-        productCounts[a] > productCounts[b] ? a : b
-      );
-      const popularProductData = fetchedProducts.find(
-        (product) => product.productId === popularProductId
-      );
-      setPopularProduct(popularProductData || {});
+        const productIds = Object.keys(productCounts);
+
+        if (productIds.length > 0) {
+          const popularProductId = productIds.reduce((a, b) =>
+            productCounts[a] > productCounts[b] ? a : b
+          );
+
+          const popularProductData = fetchedProducts.find(
+            (product) => product.productId === popularProductId
+          );
+
+          setPopularProduct({
+            ...popularProductData,
+            count: productCounts[popularProductId],
+          });
+        } else {
+          setPopularProduct(null);
+        }
+      } else {
+        setPopularProduct(null);
+      }
     };
+
     loadProducts();
   }, [user, currentYear]);
 
@@ -128,20 +166,35 @@ export default function WelcomePage() {
       const fetchedMaterials = await fetchMaterials(user, currentYear);
       setMaterials(fetchedMaterials);
 
-      // Find the most popular material (based on the number of orders)
-      const materialCounts = fetchedMaterials.reduce((acc, material) => {
-        acc[material.materialId] = (acc[material.materialId] || 0) + 1;
-        return acc;
-      }, {});
+      if (fetchedMaterials.length > 0) {
+        const materialCounts = fetchedMaterials.reduce((acc, material) => {
+          acc[material.materialId] = (acc[material.materialId] || 0) + 1;
+          return acc;
+        }, {});
 
-      const popularMaterialId = Object.keys(materialCounts).reduce((a, b) =>
-        materialCounts[a] > materialCounts[b] ? a : b
-      );
-      const popularMaterialData = fetchedMaterials.find(
-        (material) => material.materialId === popularMaterialId
-      );
-      setPopularMaterial(popularMaterialData || {});
+        const materialIds = Object.keys(materialCounts);
+
+        if (materialIds.length > 0) {
+          const popularMaterialId = materialIds.reduce((a, b) =>
+            materialCounts[a] > materialCounts[b] ? a : b
+          );
+
+          const popularMaterialData = fetchedMaterials.find(
+            (material) => material.materialId === popularMaterialId
+          );
+
+          setPopularMaterial({
+            ...popularMaterialData,
+            count: materialCounts[popularMaterialId],
+          });
+        } else {
+          setPopularMaterial(null);
+        }
+      } else {
+        setPopularMaterial(null);
+      }
     };
+
     loadMaterials();
   }, [user, currentYear]);
 
@@ -291,18 +344,18 @@ export default function WelcomePage() {
     const today = new Date();
 
     const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      t("months.jan"),
+      t("months.feb"),
+      t("months.mar"),
+      t("months.apr"),
+      t("months.may"),
+      t("months.jun"),
+      t("months.jul"),
+      t("months.aug"),
+      t("months.sep"),
+      t("months.oct"),
+      t("months.nov"),
+      t("months.dec"),
     ];
 
     const formattedDate = `${
@@ -310,9 +363,9 @@ export default function WelcomePage() {
     } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
 
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
-
     const daysLeft = diffTime > 0 ? diffTime : 0;
-    const daysStatus = diffTime > 0 ? `${diffTime} days` : "Due today";
+    const daysStatus =
+      diffTime > 0 ? `${diffTime} ${t("days")}` : t("dueToday");
 
     return [formattedDate, daysLeft, daysStatus];
   };
@@ -332,7 +385,7 @@ export default function WelcomePage() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Yearly Report" />
+        <Header title={t("title")} />
 
         <div className="flex flex-col gap-4 pb-20">
           {/* Toggle */}
@@ -341,8 +394,7 @@ export default function WelcomePage() {
               <button onClick={goToPreviousYear}>
                 <img className="h-5" src="/arrowLeft.png" />
               </button>
-              <p className="text-xl font-semibold">{currentYear}</p>{" "}
-              {/* Display current year */}
+              <p className="text-xl font-semibold">{currentYear}</p>
               <button onClick={goToNextYear}>
                 <img className="h-5" src="/arrowRight.png" />
               </button>
@@ -355,46 +407,51 @@ export default function WelcomePage() {
             <div className="flex flex-col gap-2">
               {/* Finance text */}
               <div className="flex flex-row gap-2 text-xl">
-                <p>Income: {income}$</p>
-                <p>Expenses: {expenses}$</p>
+                <p>
+                  {t("income")}: {income}$
+                </p>
+                <p>
+                  {t("expenses")}: {expenses}$
+                </p>
               </div>
-              {/* Place for diagram */}
+
+              {/* Diagram */}
               <div className="flex justify-center px-4">
                 <PieChart income={income} expenses={expenses} />
               </div>
 
               <div className="pt-2">
                 <p>
-                  Popular product this year:{" "}
+                  {t("popularProduct")}:{" "}
                   <button
                     className="underline"
                     onClick={showOrdersWithPopularProduct}
                   >
                     {popularProduct?.productId || "N/A"} |{" "}
-                    {popularProduct?.name || "N/A"} | amount:{" "}
+                    {popularProduct?.name || "N/A"} | {t("amount")}:{" "}
                     {popularProduct?.count || 0}
                   </button>
                 </p>
 
                 <p>
-                  Popular material this year:{" "}
+                  {t("popularMaterial")}:{" "}
                   <button
                     className="underline"
                     onClick={showOrdersWithPopularMaterial}
                   >
                     {popularMaterial?.materialId || "N/A"} |{" "}
-                    {popularMaterial?.name || "N/A"} | amount:{" "}
+                    {popularMaterial?.name || "N/A"} | {t("amount")}:{" "}
                     {popularMaterial?.count || 0}
                   </button>
                 </p>
 
                 <p>
-                  Regular client:{" "}
+                  {t("regularClient")}:{" "}
                   <button
                     className="underline"
                     onClick={showOrdersWithRegularClient}
                   >
-                    {regularClient?.name || "N/A"} | amount:{" "}
+                    {regularClient?.name || "N/A"} | {t("amount")}:{" "}
                     {regularClient?.count || 0}
                   </button>
                 </p>
@@ -403,7 +460,8 @@ export default function WelcomePage() {
 
             {/* view */}
             <div className="flex flex-col gap-2">
-              <p className="font-semibold">Show</p>
+              <p className="font-semibold">{t("show")}</p>
+
               {filterLabel && (
                 <div>
                   <div className="flex justify-between items-center mb-2">
@@ -415,14 +473,15 @@ export default function WelcomePage() {
                       }}
                       className="rounded-md text-white bg-red py-y px-4"
                     >
-                      Clear filter
+                      {t("clearFilter")}
                     </button>
                   </div>
+
                   <div
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
-                        gap-4 sm:gap-6 lg:gap-8 
-                        auto-rows-[1fr] 
-                        justify-center items-stretch"
+            gap-4 sm:gap-6 lg:gap-8 
+            auto-rows-[1fr] 
+            justify-center items-stretch"
                   >
                     {filteredOrders.map((order, index) => (
                       <Link
@@ -437,7 +496,7 @@ export default function WelcomePage() {
                           deadline={
                             order.deadline?.seconds
                               ? formatDeadline(order.deadline.seconds)
-                              : ["No deadline", 0, "No deadline"]
+                              : [t("noDeadline"), 0, t("noDeadline")]
                           }
                           currency={order.currency}
                           total={order.totalCost}
@@ -459,7 +518,7 @@ export default function WelcomePage() {
                   }`}
                   onClick={handleStateOrders}
                 >
-                  Orders
+                  {t("orders")}
                 </button>
                 <button
                   className={`w-[33%] py-1 rounded-md ${
@@ -469,7 +528,7 @@ export default function WelcomePage() {
                   }`}
                   onClick={handleStateProducts}
                 >
-                  Products
+                  {t("products")}
                 </button>
                 <button
                   className={`w-[33%] py-1 rounded-md ${
@@ -479,7 +538,7 @@ export default function WelcomePage() {
                   }`}
                   onClick={handleStateMaterials}
                 >
-                  Materials
+                  {t("materials")}
                 </button>
               </div>
 
@@ -587,12 +646,113 @@ export default function WelcomePage() {
           </div>
         </div>
 
+        {stateShow === "orders" && (
+          <div className="w-full px-4 pb-20">
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+      gap-4 sm:gap-6 lg:gap-8 
+      auto-rows-[1fr] 
+      justify-center items-stretch"
+            >
+              {orders.map((order, index) => (
+                <Link
+                  href={`/orders/${order.id}`}
+                  key={order.id}
+                  data-id="order-block"
+                >
+                  <BlockHolder
+                    id={index + 1}
+                    title={order.nameOrder}
+                    imageSource={order.imageUrl || "/noImage.png"}
+                    deadline={
+                      order.deadline?.seconds
+                        ? formatDeadline(order.deadline.seconds)
+                        : [t("noDeadline"), 0, t("noDeadline")]
+                    }
+                    currency={order.currency}
+                    total={order.totalCost}
+                    customerId={order.customerId}
+                    type={"order"}
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {stateShow === "products" && (
+          <div className="w-full px-4 pb-20">
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+      gap-4 sm:gap-6 lg:gap-8 
+      auto-rows-[1fr] 
+      justify-center items-stretch"
+            >
+              {products.map((product) => (
+                <Link
+                  href={`/products/${product.id}`}
+                  key={product.id}
+                  data-id="product-block"
+                  className="transition-all duration-300 
+          rounded-lg 
+          overflow-hidden"
+                >
+                  <BlockHolder
+                    key={product.productId}
+                    id={product.productId}
+                    title={product.name}
+                    currency={product.currency}
+                    category={product.categories?.join(", ") || "—"}
+                    total={product.averageCost || "—"}
+                    imageSource={
+                      product.productImages?.[0]?.url || "/noImage.png"
+                    }
+                    type={"product"}
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {stateShow === "materials" && (
+          <div className="w-full px-4 pb-20">
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
+      gap-4 sm:gap-6 lg:gap-8 
+      auto-rows-[1fr] 
+      justify-center items-stretch"
+            >
+              {materials.map((material) => (
+                <Link
+                  href={`/materials/${material.id}`}
+                  key={material.materialId}
+                  data-id="material-block"
+                >
+                  <BlockHolder
+                    key={material.materialId}
+                    id={material.materialId}
+                    title={material.name}
+                    quantity={material.quantity || "—"}
+                    category={material.categories.join(", ") || "—"}
+                    total={material.total || "—"}
+                    currency={material.currency}
+                    color={material.color || "—"}
+                    imageSource={material.images[0].url || "/noImage.png"}
+                    type={"material"}
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <Menu
           type="TwoButtonsMenu"
-          firstTitle={"Go back"}
+          firstTitle={t("goBack")}
           iconFirst={"/arrow-left.png"}
           onFirstFunction={() => (window.location.href = `/finances`)}
-          secondTitle={"Download"}
+          secondTitle={t("download")}
           iconSecond={"/download.png"}
           onSecondFunction={() => console.log(0)}
         />

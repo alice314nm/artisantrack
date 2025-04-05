@@ -742,6 +742,39 @@
     "expenses": "Expenses",
     "income": "Income",
     "financial": "Financial"
+  },
+  "financeYearly": {
+    "title": "Yearly Report",
+    "income": "Income",
+    "expenses": "Expenses",
+    "popularProduct": "Popular product this year",
+    "popularMaterial": "Popular material this year",
+    "regularClient": "Regular client",
+    "amount": "amount",
+    "days": "days",
+    "dueToday": "Due today",
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    },
+    "show": "Show",
+    "clearFilter": "Clear filter",
+    "noDeadline": "No deadline",
+    "orders": "Orders",
+    "products": "Products",
+    "materials": "Materials",
+    "goBack": "Go back",
+    "download": "Download"
   }
 }
 

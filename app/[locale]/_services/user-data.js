@@ -9,7 +9,7 @@ import {
   where,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../_utils/firebase";
+import { db } from "@/app/[locale]/_utils/firebase";
 
 export const initializeUserData = async (user, db, displayName, tax) => {
   if (!user || !user.uid) {

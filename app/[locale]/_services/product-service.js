@@ -1,16 +1,17 @@
-import { 
-    addDoc, 
-    collection, 
-    doc, 
-    getDocs, 
-    query, 
-    where, 
-    setDoc, 
-    getDoc, 
-    deleteDoc, 
+import {
+    addDoc,
+    collection,
+    doc,
+    getDocs,
+    query,
+    where,
+    setDoc,
+    getDoc,
+    deleteDoc,
     updateDoc,
-    getFirestore} from "firebase/firestore";
-import { app, db, storage } from "../_utils/firebase";
+    getFirestore
+} from "firebase/firestore";
+import { app, db, storage } from "@/app/[locale]/_utils/firebase";
 import { deleteObject, ref } from "firebase/storage";
 
 
@@ -29,7 +30,7 @@ async function getOrAddCategory(userId, categoryName) {
 
 // Function to add a product and handle its relationships
 export async function dbAddProduct(userId, productObj) {
-  try {
+    try {
         const userRef = doc(db, "users", userId);
         const userDoc = await getDoc(userRef);
         if (!userDoc.exists()) {
@@ -73,24 +74,24 @@ export async function fetchProductById(userId, productId, productSetter) {
             return;
         }
 
-        let productData = 
-        { 
-            id: productDoc.id, 
-            ...productDoc.data() 
+        let productData =
+        {
+            id: productDoc.id,
+            ...productDoc.data()
         };
 
         productSetter(productData);
 
-        return(productData);
+        return (productData);
     } catch (error) {
         console.error("Error fetching product:", error);
     }
 }
 
 export async function dbDeleteProductById(userId, productId) {
-    try {     
+    try {
         const productRef = doc(db, "users", userId, "products", productId);
-        
+
         const productDoc = await getDoc(productRef);
         if (!productDoc.exists()) {
             throw new Error(`Product with ID ${productId} does not exist.`);
@@ -114,19 +115,19 @@ export async function dbDeleteProductById(userId, productId) {
             await Promise.all(deleteProductImagePromises);
         }
         if (productData.patternImages && Array.isArray(productData.patternImages)) {
-          const deletePatternImagePromises = productData.patternImages.map(async (image) => {
-              if (image.path) {
-                  const imageRef = ref(storage, image.path);
-                  try {
-                      await deleteObject(imageRef);
-                      console.log(`Deleted image: ${image.path}`);
-                  } catch (storageError) {
-                      console.warn(`Failed to delete image: ${image.path}`, storageError);
-                  }
-              }
-          });
-          await Promise.all(deletePatternImagePromises);
-      }
+            const deletePatternImagePromises = productData.patternImages.map(async (image) => {
+                if (image.path) {
+                    const imageRef = ref(storage, image.path);
+                    try {
+                        await deleteObject(imageRef);
+                        console.log(`Deleted image: ${image.path}`);
+                    } catch (storageError) {
+                        console.warn(`Failed to delete image: ${image.path}`, storageError);
+                    }
+                }
+            });
+            await Promise.all(deletePatternImagePromises);
+        }
 
 
         await deleteDoc(productRef);
@@ -154,11 +155,11 @@ export const updateProduct = async (userId, productId, updatedProductData) => {
 
 export async function fetchProductIds(userId, productIdsSetter) {
     try {
-        const productsRef = collection(db, "users", userId, "products"); 
+        const productsRef = collection(db, "users", userId, "products");
         const querySnapshot = await getDocs(productsRef);
 
         const productIds = querySnapshot.docs.map(product => product.data().productId);
-        
+
         productIdsSetter(productIds);
         return productIds;
 
@@ -169,15 +170,15 @@ export async function fetchProductIds(userId, productIdsSetter) {
 
 export async function fetchProductsForOrder(userId, productsSetter) {
     try {
-        const productsRef = collection(db, "users", userId, "products"); 
+        const productsRef = collection(db, "users", userId, "products");
         const querySnapshot = await getDocs(productsRef);
 
         const products = querySnapshot.docs.map(product => ({
             id: product.id,
-            productId: product.data().productId, 
+            productId: product.data().productId,
             name: product.data().name,
-            productImages: product.data().productImages || [], 
-            averageCost:product.data().averageCost,
+            productImages: product.data().productImages || [],
+            averageCost: product.data().averageCost,
             currency: product.data().currency,
         }));
 
@@ -189,9 +190,9 @@ export async function fetchProductsForOrder(userId, productsSetter) {
     }
 }
 
-export async function fetchProductCategories(userId, categoriesSetter){
+export async function fetchProductCategories(userId, categoriesSetter) {
     try {
-        const productCategoriesRef = collection(db, "users", userId, "productCategories"); 
+        const productCategoriesRef = collection(db, "users", userId, "productCategories");
         const querySnapshot = await getDocs(productCategoriesRef);
 
         const productCategories = querySnapshot.docs.map(categories => categories.data().name);

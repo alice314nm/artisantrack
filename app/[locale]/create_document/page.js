@@ -1,6 +1,6 @@
 'use client'
 
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";

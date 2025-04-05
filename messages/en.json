@@ -524,5 +524,96 @@
     "prompt": "Sign in to continue or create a new account to get started.",
     "login": "Log In",
     "createAccount": "Create Account"
+  },
+  "Profile": {
+    "title": "Profile",
+    "accountDeleted": "Account successfully deleted!",
+    "artisan": "Artisan:",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "edit": "Edit Profile",
+    "currentEmail": "Current email:",
+    "changePassword": "Change Password",
+    "inventory": "Inventory:",
+    "totalProducts": "Total products",
+    "totalMaterials": "Total materials",
+    "orders": "Orders:",
+    "inProgressOrders": "In progress",
+    "completedOrders": "Completed",
+    "setTax": "Set tax:",
+    "taxNotSet": "Tax not set",
+    "deleteAccount": "Delete Account",
+    "loading": "Loading..."
+  },
+  "ChangePassword": {
+    "resetTitle": "Reset Password",
+    "changeTitle": "Change Password",
+    "sendResetLink": "Send Reset Link",
+    "backToChange": "Back to Change Password",
+
+    "labels": {
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password"
+    },
+
+    "placeholders": {
+      "enterEmail": "Enter your email",
+      "currentPassword": "Enter current password",
+      "newPassword": "Enter new password",
+      "confirmNewPassword": "Confirm new password"
+    },
+
+    "messages": {
+      "passwordUpdated": "Password successfully updated!",
+      "resetLinkSent": "Password reset link sent! Check your email."
+    },
+
+    "errors": {
+      "passwordsDoNotMatch": "New passwords do not match.",
+      "passwordEmpty": "New password cannot be empty.",
+      "passwordTooShort": "Password should be at least 6 characters long.",
+      "noUser": "No user is signed in.",
+      "invalidCredential": "Current password is incorrect.",
+      "resetFailed": "Failed to send reset link."
+    },
+
+    "passwordStrength": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong"
+    },
+    "buttons": {
+      "change": "Change",
+      "cancel": "Cancel"
+    },
+    "forgotPassword": "Forgot Password?"
+  },
+  "PasswordConfirmation": {
+    "errors": {
+      "noUserSignedIn": "No user is signed in.",
+      "enterPassword": "Please enter your password.",
+      "incorrectPassword": "Current password is incorrect.",
+      "enterNewEmail": "Please enter a new email address.",
+      "sameEmail": "Your new email cannot be the same as the current email.",
+      "verificationFailed": "Failed to resend verification email: {{message}}"
+    },
+    "heading": "Confirm Your Password",
+    "placeholders": {
+      "password": "Enter your password"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close",
+      "resend": "Resend Verification Email"
+    },
+    "messages": {
+      "verificationSent": "A verification email has been sent to",
+      "checkAndRefresh": " Please verify your email address and then refresh this page.",
+      "resendIn": "You can resend the email in {{seconds}} seconds."
+    }
   }
 }
+

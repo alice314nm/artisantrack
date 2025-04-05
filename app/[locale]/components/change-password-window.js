@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import { useState } from "react";
 import {
   sendPasswordResetEmail,
@@ -7,9 +8,10 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { auth } from "/app/_utils/firebase";
+import { auth } from "@/app/[locale]/_utils/firebase";
 
 export default function ChangePasswordWindow({ windowVisibility, onClose }) {
+  const t = useTranslations('ChangePassword');
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -25,19 +27,17 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
   const handleSubmit = async () => {
     // Check if new password and confirm password match
     if (newPassword !== confirmNewPassword) {
-      setError("New passwords do not match.");
+      setError(t('errors.passwordsDoNotMatch'));
       return;
     }
 
-    // Check if new password is empty
     if (newPassword === "") {
-      setError("New password cannot be empty.");
+      setError(t('errors.passwordEmpty'));
       return;
     }
 
-    // Check if new password is at least 6 characters long
     if (newPassword.length < 6) {
-      setError("Password should be at least 6 characters long.");
+      setError(t('errors.passwordTooShort'));
       return;
     }
 
@@ -45,7 +45,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
       const user = auth.currentUser;
 
       if (!user) {
-        setError("No user is signed in.");
+        setError(t('errors.noUser'));
         return;
       }
 
@@ -60,7 +60,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
       await updatePassword(user, newPassword);
 
       // Success message
-      setMessage("Password successfully updated!");
+      setMessage(t('messages.passwordUpdated'));
       setError("");
 
       // Close the modal after a short delay
@@ -70,11 +70,11 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
     } catch (error) {
       // Handle specific Firebase errors
       if (error.code === "auth/invalid-credential") {
-        setError("Current password is incorrect.");
+        setError(t('errors.invalidCredential'));
       } else if (error.code === "auth/weak-password") {
-        setError("Password should be at least 6 characters long.");
+        setError(t('errors.passwordTooShort'));
       } else {
-        setError(error.message);
+        setError(error.message); // Or provide fallback
       }
       console.error("Error updating password:", error);
     }
@@ -84,7 +84,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
     e.preventDefault();
     try {
       await sendPasswordResetEmail(auth, email);
-      setMessage("Password reset link sent! Check your email.");
+      setMessage(t('messages.resetLinkSent'));
       setError("");
     } catch (err) {
       setError(err.message);
@@ -119,9 +119,8 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
-        windowVisibility ? "" : "hidden"
-      }`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${windowVisibility ? "" : "hidden"
+        }`}
       data-id="changing-password-window"
     >
       <div className="bg-beige border border-darkBeige rounded-md w-[400px]">
@@ -132,12 +131,12 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
               onSubmit={handleResetPassword}
               className="flex flex-col gap-3 items-center"
             >
-              <h2 className="text-2xl font-bold">Reset Password</h2>
+              <h2 className="text-2xl font-bold">{t('resetTitle')}</h2>
               {error && <p className="text-red-500">{error}</p>}
               {message && <p className="text-green-500">{message}</p>}
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('placeholders.enterEmail')}
                 className="border rounded-lg p-2 w-80 focus:ring-sky-500"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -146,13 +145,13 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                 type="submit"
                 className="bg-green px-6 py-2 rounded-lg font-bold"
               >
-                Send Reset Link
+                {t('sendResetLink')}
               </button>
               <p
                 className="text-sky-500 underline cursor-pointer"
                 onClick={() => setResetPasswordMode(false)}
               >
-                Back to Change Password
+                {t('backToChange')}
               </p>
             </form>
           </div>
@@ -164,7 +163,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                 className="py-8 px-4 text-center font-bold text-3xl"
                 data-id="changing-password-text"
               >
-                Change Password
+                {t('changeTitle')}
               </p>
             </div>
 
@@ -176,7 +175,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                   htmlFor="current-password"
                   className="block text-sm font-medium"
                 >
-                  Current Password
+                  {t('labels.currentPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -186,7 +185,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     className="w-full border border-gray-400 rounded p-2 mt-1"
-                    placeholder="Enter current password"
+                    placeholder={t('placeholders.currentPassword')}
                   />
                   <button
                     type="button"
@@ -210,7 +209,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                   htmlFor="new-password"
                   className="block text-sm font-medium"
                 >
-                  New Password
+                  {t('labels.newPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -223,7 +222,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                       handleProgress(e.target.value); // Update progress on every keystroke
                     }}
                     className="w-full border border-gray-400 rounded p-2 mt-1"
-                    placeholder="Enter new password"
+                    placeholder={t('placeholders.newPassword')}
                   />
                   <button
                     type="button"
@@ -246,7 +245,11 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                 </div>
                 {/* Progress Text */}
                 <p className="text-sm mt-1">
-                  {progress <= 1 ? "Weak" : progress <= 3 ? "Medium" : "Strong"}
+                  {progress <= 1
+                    ? t('passwordStrength.weak')
+                    : progress <= 3
+                      ? t('passwordStrength.medium')
+                      : t('passwordStrength.strong')}
                 </p>
               </div>
 
@@ -256,7 +259,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                   htmlFor="confirm-new-password"
                   className="block text-sm font-medium"
                 >
-                  Confirm New Password
+                  {t('labels.confirmNewPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -266,7 +269,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                     value={confirmNewPassword}
                     onChange={(e) => setConfirmNewPassword(e.target.value)}
                     className="w-full border border-gray-400 rounded p-2 mt-1"
-                    placeholder="Confirm new password"
+                    placeholder={t('placeholders.confirmNewPassword')}
                   />
                   <button
                     type="button"
@@ -308,13 +311,13 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                     className="flex-1 text-center text-red border-r border-darkBeige p-2 bg-green rounded-full hover:bg-darkGreen"
                     onClick={handleSubmit}
                   >
-                    Change
+                    {t('buttons.change')}
                   </button>
                   <button
                     className="flex-1 text-center p-2 bg-green rounded-full hover:bg-darkGreen"
                     onClick={onClose}
                   >
-                    Cancel
+                    {t('buttons.cancel')}
                   </button>
                 </div>
 
@@ -324,7 +327,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                   className="text-sm text-blue-500 underline"
                   onClick={() => setResetPasswordMode(true)}
                 >
-                  Forgot Password?
+                  {t('forgotPassword')}
                 </button>
               </div>
             </div>

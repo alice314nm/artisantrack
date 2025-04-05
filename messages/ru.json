@@ -524,5 +524,94 @@
     "prompt": "Войдите, чтобы продолжить, или создайте новый аккаунт, чтобы начать.",
     "login": "Войти",
     "createAccount": "Создать аккаунт"
+  },
+  "Profile": {
+    "title": "Профиль",
+    "accountDeleted": "Аккаунт успешно удалён!",
+    "artisan": "Мастер:",
+    "save": "Сохранить",
+    "saving": "Сохранение...",
+    "cancel": "Отмена",
+    "edit": "Редактировать профиль",
+    "currentEmail": "Текущий email:",
+    "changePassword": "Изменить пароль",
+    "inventory": "Инвентарь:",
+    "totalProducts": "Всего продуктов",
+    "totalMaterials": "Всего материалов",
+    "orders": "Заказы:",
+    "inProgressOrders": "В процессе",
+    "completedOrders": "Завершено",
+    "setTax": "Установить налог:",
+    "taxNotSet": "Налог не установлен",
+    "deleteAccount": "Удалить аккаунт",
+    "loading": "Загрузка..."
+  },
+  "ChangePassword": {
+    "resetTitle": "Сброс пароля",
+    "changeTitle": "Изменить пароль",
+    "sendResetLink": "Отправить ссылку для сброса",
+    "backToChange": "Назад к изменению пароля",
+
+    "labels": {
+      "currentPassword": "Текущий пароль",
+      "newPassword": "Новый пароль",
+      "confirmNewPassword": "Подтвердите новый пароль"
+    },
+
+    "placeholders": {
+      "currentPassword": "Введите текущий пароль",
+      "newPassword": "Введите новый пароль",
+      "confirmNewPassword": "Подтвердите новый пароль",
+      "enterEmail": "Введите вашу почту"
+    },
+
+    "messages": {
+      "passwordUpdated": "Пароль успешно обновлён!",
+      "resetLinkSent": "Ссылка для сброса отправлена! Проверьте почту."
+    },
+
+    "errors": {
+      "passwordsDoNotMatch": "Новые пароли не совпадают.",
+      "passwordEmpty": "Новый пароль не может быть пустым.",
+      "passwordTooShort": "Пароль должен содержать не менее 6 символов.",
+      "noUser": "Пользователь не вошел в систему.",
+      "invalidCredential": "Неверный текущий пароль.",
+      "resetFailed": "Не удалось отправить ссылку для сброса."
+    },
+    "passwordStrength": {
+      "weak": "Слабый",
+      "medium": "Средний",
+      "strong": "Сильный"
+    },
+    "buttons": {
+      "change": "Изменить",
+      "cancel": "Отмена"
+    },
+    "forgotPassword": "Забыли пароль?"
+  },
+  "PasswordConfirmation": {
+    "errors": {
+      "noUserSignedIn": "Пользователь не вошёл в систему.",
+      "enterPassword": "Пожалуйста, введите ваш пароль.",
+      "incorrectPassword": "Неверный текущий пароль.",
+      "enterNewEmail": "Пожалуйста, введите новый адрес электронной почты.",
+      "sameEmail": "Новый адрес электронной почты не должен совпадать с текущим.",
+      "verificationFailed": "Не удалось отправить письмо для подтверждения: {{message}}"
+    },
+    "messages": {
+      "verificationSent": "Письмо с подтверждением отправлено на",
+      "checkAndRefresh": " Пожалуйста, подтвердите ваш адрес электронной почты и обновите страницу.",
+      "resendIn": "Вы сможете повторно отправить письмо через {{seconds}} секунд."
+    },
+    "heading": "Подтвердите ваш пароль",
+    "placeholders": {
+      "password": "Введите ваш пароль"
+    },
+    "buttons": {
+      "cancel": "Отмена",
+      "confirm": "Подтвердить",
+      "close": "Закрыть",
+      "resend": "Отправить письмо повторно"
+    }
   }
 }

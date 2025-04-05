@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "use-intl";
 import { useState, useEffect } from "react";
 import {
   reauthenticateWithCredential,
@@ -8,8 +9,8 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { getFirestore, doc, deleteDoc } from "firebase/firestore";
-import { auth } from "/app/_utils/firebase";
-import { app } from "../_utils/firebase";
+import { auth } from "@/app/[locale]/_utils/firebase";
+import { app } from "@/app/[locale]/_utils/firebase";
 
 export default function PasswordConfirmationWindow({
   windowVisibility,
@@ -18,6 +19,7 @@ export default function PasswordConfirmationWindow({
   mode,
   newEmail,
 }) {
+  const t = useTranslations('PasswordConfirmation');
   const [currentPassword, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isVerificationSent, setIsVerificationSent] = useState(false);
@@ -37,7 +39,7 @@ export default function PasswordConfirmationWindow({
     try {
       const user = auth.currentUser;
       if (!user) {
-        setError("No user is signed in.");
+        setError(t('errors.noUserSignedIn'));
         return;
       }
 
@@ -45,23 +47,23 @@ export default function PasswordConfirmationWindow({
         url: "http://localhost:3000",
       });
 
-      setError(`A verification email has been resent to ${newEmail}.`);
+      setError(t('messages.verificationEmailSent', { email: newEmail }));
       setCountdown(10);
     } catch (error) {
-      setError(`Failed to resend verification email: ${error.message}`);
+      setError(t('errors.verificationFailed', { message: error.message }));
     }
   };
 
   const handleConfirm = async () => {
     if (!currentPassword) {
-      setError("Please enter your password.");
+      setError(t('errors.enterPassword'));
       return;
     }
 
     // Check if the new email is the same as the current email
     const user = auth.currentUser;
     if (!user) {
-      setError("No user is signed in.");
+      setError(t('errors.noUserSignedIn'));
       return;
     }
 
@@ -79,7 +81,7 @@ export default function PasswordConfirmationWindow({
         onConfirm();
       } catch (error) {
         if (error.code === "auth/invalid-credential") {
-          setError("Current password is incorrect.");
+          setError(t('errors.incorrectPassword'));
         } else {
           setError(error.message);
         }
@@ -88,12 +90,12 @@ export default function PasswordConfirmationWindow({
     }
 
     if (!newEmail) {
-      setError("Please enter a new email address.");
+      setError(t('errors.enterNewEmail'));
       return;
     }
 
     if (newEmail === user.email) {
-      setError("Your new email cannot be the same as the current email.");
+      setError(t('errors.sameEmail'));
       return;
     }
 
@@ -109,7 +111,7 @@ export default function PasswordConfirmationWindow({
           await resendVerificationEmail();
           setIsVerificationSent(true);
         } catch (error) {
-          setError(`Failed to send verification email: ${error.message}`);
+          setError(t('errors.verificationFailed', { message: error.message }));
         }
       }
     } catch (error) {
@@ -123,57 +125,57 @@ export default function PasswordConfirmationWindow({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${
-        windowVisibility ? "opacity-100 visible" : "opacity-0 invisible"
-      } transition-opacity duration-300 ease-in-out`}
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 ${windowVisibility ? "opacity-100 visible" : "opacity-0 invisible"
+        } transition-opacity duration-300 ease-in-out`}
     >
       <div className="bg-beige p-6 rounded-lg max-w-sm w-full">
-        <h2 className="text-xl font-semibold mb-4">Confirm Password</h2>
+        <h2 className="text-xl font-semibold mb-4">{t('heading')}</h2>
+
         {!isVerificationSent ? (
           <>
             <input
               data-id="confirm-password"
               type="password"
-              placeholder="Enter your password"
+              placeholder={t('placeholders.password')}
               value={currentPassword}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-400 rounded p-2 mt-1"
             />
             {error && <p className="text-red mb-4">{error}</p>}
+
             <div className="flex justify-end gap-4 mt-4">
               <button
                 className="bg-red py-2 px-4 rounded-md hover:bg-rose-800"
                 onClick={onClose}
               >
-                Cancel
+                {t('buttons.cancel')}
               </button>
               <button
                 data-id="confirm-button-email-delete/change"
                 className="bg-green py-2 px-4 rounded-md hover:bg-darkGreen"
                 onClick={handleConfirm}
               >
-                Confirm
+                {t('buttons.confirm')}
               </button>
             </div>
           </>
         ) : (
           <div>
             <p className="mb-4">
-              A verification email has been sent to <strong>{newEmail}</strong>.
-              Please verify your email address and then refresh this page.
+              {t('messages.verificationSent')} <strong>{newEmail}</strong>.
+              {t('messages.checkAndRefresh')}
             </p>
 
-            {/* Countdown Timer */}
             {countdown > 0 ? (
               <p className="text-gray-600 mb-2">
-                You can resend the email in {countdown} seconds.
+                {t('messages.resendIn', { seconds: countdown })}
               </p>
             ) : (
               <button
                 className="bg-green py-2 px-4 rounded-md hover:bg-darkGreen w-full mb-2"
                 onClick={resendVerificationEmail}
               >
-                Resend Verification Email
+                {t('buttons.resend')}
               </button>
             )}
 
@@ -181,7 +183,7 @@ export default function PasswordConfirmationWindow({
               className="bg-green py-2 px-4 rounded-md hover:bg-darkGreen w-full"
               onClick={onClose}
             >
-              Close
+              {t('buttons.close')}
             </button>
           </div>
         )}

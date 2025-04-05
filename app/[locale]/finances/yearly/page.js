@@ -1,8 +1,8 @@
 "use client";
 
 import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { app } from "../../_utils/firebase";
-import { useUserAuth } from "@/app/_utils/auth-context";
+import { app } from "@/app/[locale]/_utils/firebase";
+import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";

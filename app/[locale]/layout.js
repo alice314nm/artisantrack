@@ -6,13 +6,13 @@ export const metadata = {
   title: "Artisan Track",
 };
 
-export default async function LocaleLayout({ children, params: { locale } }) {
-  // Load the messages for the locale
+export default async function LocaleLayout({ children, params }) {
+  const { locale } = await params;
+
   let messages;
   try {
     messages = (await import(`../../messages/${locale}.json`)).default;
   } catch (error) {
-    // If the locale doesn't exist, fallback to the default locale
     messages = (await import(`../../messages/en.json`)).default;
   }
 

@@ -21,14 +21,20 @@ export default function LanguageSelector() {
   const handleLanguageChange = async (locale) => {
     const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "");
     const newPath = `/${locale}${pathWithoutLocale || ""}`;
-
+  
+    // Save to DB if user is logged in
     if (user) {
       await updateUserLanguage(user, locale);
     }
+  
+    // Save preferred locale to cookie
+    document.cookie = `NEXT_LOCALE=${locale}; path=/`;
+  
+    // Navigate to the new locale path
     router.push(newPath);
     setIsOpen(false);
   };
-
+  
   const currentLanguage =
     languages.find((lang) => lang.code === currentLocale) || languages[0];
 

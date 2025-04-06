@@ -6,7 +6,6 @@ export default createMiddleware({
   // locales and defaultLocale must match your routing setup
   locales: routing.locales,
   defaultLocale: routing.defaultLocale,
-  localePrefix: 'always' // or 'as-needed' depending on your use
 });
 export const config = {
   // Skip all paths that should not be internationalized.

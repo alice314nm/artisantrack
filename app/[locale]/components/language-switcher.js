@@ -19,7 +19,7 @@ export default function LanguageSelector() {
   ];
 
   const handleLanguageChange = async (locale) => {
-    const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "");
+    const pathWithoutLocale = pathname.replace(/^\/(en|ru)/, "");
     const newPath = `/${locale}${pathWithoutLocale || ""}`;
 
     if (user) {

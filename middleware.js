@@ -1,18 +1,21 @@
 // middleware.js
+import { NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-const middleware = createMiddleware(routing);
+export default function middleware(req) {
+  const preferredLanguage = req.cookies.get("preferredLanguage")?.value;
 
-export default function (request) {
-  const response = middleware(request);
-
-  // Add cache control headers
-  if (response) {
-    response.headers.set("Cache-Control", "no-store, max-age=0");
+  if (
+    preferredLanguage &&
+    !req.nextUrl.pathname.startsWith(`/${preferredLanguage}`)
+  ) {
+    const url = req.nextUrl.clone();
+    url.pathname = `/${preferredLanguage}${req.nextUrl.pathname}`;
+    return NextResponse.redirect(url);
   }
 
-  return response;
+  return createMiddleware(routing)(req);
 }
 
 export const config = {

@@ -21,10 +21,7 @@ export default function LanguageSelector() {
   const handleLanguageChange = async (locale) => {
     const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "");
     const newPath = `/${locale}${pathWithoutLocale || ""}`;
-  
-    // Store preference in cookie (expires in ~1 year)
-    document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000`;
-  
+
     if (user) {
       await updateUserLanguage(user, locale);
     }
@@ -58,10 +55,11 @@ export default function LanguageSelector() {
             <button
               key={language.code}
               onClick={() => handleLanguageChange(language.code)}
-              className={`block w-full text-left px-4 py-2 hover:bg-darkBeige ${currentLocale === language.code
-                ? "font-semibold bg-darkBeige/30"
-                : ""
-                }`}
+              className={`block w-full text-left px-4 py-2 hover:bg-darkBeige ${
+                currentLocale === language.code
+                  ? "font-semibold bg-darkBeige/30"
+                  : ""
+              }`}
             >
               <span className="mr-2">{language.flag}</span>
               {language.name}

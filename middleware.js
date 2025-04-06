@@ -1,14 +1,25 @@
 // middleware.js
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import { NextResponse } from "next/server";
 
-export default createMiddleware({
-  ...routing,
-  localeDetection: true, // enables detection from cookie
-  // `defaultLocale` will only be used if no match is found from cookie or URL
-});
+// Create a single middleware function that handles all logic
+export default function middleware(request) {
+  const acceptLanguage = request.headers.get("accept-language");
+  const preferredLocale = acceptLanguage?.split(",")[0]?.split(";")[0] || "en"; // Default to 'en' if no language is specified
+  const { pathname } = request.nextUrl;
+
+  // Redirect to the preferred locale if the user is on the root path
+  if (pathname === "/") {
+    const redirectUrl = new URL(`/${preferredLocale}`, request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Handle all other internationalized routes
+  return createMiddleware(routing)(request);
+}
+
 export const config = {
-  // Skip all paths that should not be internationalized.
-  // This skips the root route and all API routes
+  // Skip all paths that should not be internationalized
   matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
 };

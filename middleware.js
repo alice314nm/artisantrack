@@ -1,22 +1,19 @@
 // middleware.js
-import { NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-export default function middleware(req) {
-  const preferredLanguage = req.cookies.get("preferredLanguage")?.value;
-
-  if (
-    preferredLanguage &&
-    !req.nextUrl.pathname.startsWith(`/${preferredLanguage}`)
-  ) {
-    const url = req.nextUrl.clone();
-    url.pathname = `/${preferredLanguage}${req.nextUrl.pathname}`;
-    return NextResponse.redirect(url);
-  }
-
-  return createMiddleware(routing)(req);
-}
+export default createMiddleware({
+  // Add additional configuration
+  ...routing,
+  // Set a cookie duration for persistent language selection
+  localeDetection: true,
+  localePrefix: "always", // Force locale prefix in URL
+  defaultLocale: routing.defaultLocale,
+  locales: routing.locales,
+  // Use a cookie to store the locale
+  // This can help with persistence issues
+  localePrefix: "always",
+});
 
 export const config = {
   // Skip all paths that should not be internationalized.

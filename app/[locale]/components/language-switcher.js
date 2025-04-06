@@ -25,8 +25,7 @@ export default function LanguageSelector() {
     if (user) {
       await updateUserLanguage(user, locale);
     }
-    document.cookie = `preferredLanguage=${locale}; path=/; max-age=31536000`;
-    router.push(newPath);
+    window.location.href = newPath;
     setIsOpen(false);
   };
 

@@ -10,26 +10,26 @@
       "title": "Заказы",
       "inProgress": "В процессе",
       "completed": "Завершено",
-      "viewButton": "Посмотреть заказы"
+      "viewButton": "Перейти к заказам"
     },
     
     "materials": {
       "title": "Материалы",
       "total": "Всего материалов",
-      "viewButton": "Посмотреть материалы"
+      "viewButton": "Перейти к материалам"
     },
     
     "products": {
-      "title": "Продукты",
-      "total": "Всего продуктов",
-      "viewButton": "Посмотреть продукты"
+      "title": "Модели",
+      "total": "Всего моделей",
+      "viewButton": "Перейти к моделям"
     },
     
     "finance": {
       "title": "Финансы",
       "revenue": "Доход",
       "expenses": "Расходы",
-      "viewButton": "Посмотреть финансы"
+      "viewButton": "Перейти к финансам"
     },
     
     "inventory": {
@@ -42,15 +42,15 @@
     "trackOrders": {
       "imageAlt": "Иконка заказов",
       "title": "Отслеживайте свои заказы!",
-      "description1": "Добавляйте элементы в заказ из своего инвентаря.",
-      "description2": "Устанавливайте сроки и клиентов."
+      "description1": "Добавляйте модели и материалы в заказ из своего инвентаря.",
+      "description2": "Устанавливайте дедлайны и сроки и отслеживайте клиентов."
     },
     
     "trackFinances": {
       "imageAlt": "Иконка финансов",
       "title": "Отслеживайте свои финансы!",
       "description1": "Получайте ежемесячные и ежегодные отчеты о доходах и расходах.",
-      "description2": "Смотрите, какие продукты и материалы популярны среди ваших клиентов."
+      "description2": "Будьте в курсе какие модели и материалы популярны среди ваших клиентов."
     }
   },
   "loginPage": {
@@ -106,7 +106,7 @@
     "filterAlt": "Иконка фильтра"
   },
   "BlockHolder": {
-    "productId": "ID товара",
+    "productId": "ID модели",
     "orderId": "ID заказа",
     "materialId": "ID материала",
     "category": "Категория",
@@ -114,9 +114,9 @@
     "total": "Всего",
     "quantity": "Количество",
     "color": "Цвет",
-    "productImageAlt": "Изображение товара",
-    "orderImageAlt": "Изображение заказа",
-    "materialImageAlt": "Изображение материала"
+    "productImageAlt": "Фото товара",
+    "orderImageAlt": "Фото заказа",
+    "materialImageAlt": "Фото материала"
   },
   "SearchBar": {
     "placeholder": "Поиск...",
@@ -149,7 +149,7 @@
     "documents": "Документы",
     "finances": "Финансы",
     "inventory": "Инвентарь",
-    "products": "Продукты",
+    "products": "Модели",
     "materials": "Материалы",
     "orders": "Заказы",
     "expand": "Развернуть",
@@ -157,10 +157,10 @@
   },
   "OrderPageID": {
     "title": "Заказ",
-    "yourView": "Ваш просмотр",
-    "clientView": "Просмотр клиента:",
+    "yourView": "Ваш вид",
+    "clientView": "Вид клиента:",
     "back": "Назад",
-    "createReceipt": "Создать квитанцию",
+    "createReceipt": "Создать чек",
     "edit": "Редактировать",
     "deadline": "Срок:",
     "noDeadline": "Без срока",
@@ -170,17 +170,17 @@
     "noDescription": "Описание не указано.",
     "materials": "Материалы:",
     "materialCost": "Стоимость материалов: ${cost}",
-    "total": "Итого:",
-    "noTotal": "Итого не установлено.",
+    "total": "Сумма:",
+    "noTotal": "Сумма не установлена.",
     "delete": "Удалить",
-    "setPaid": "Отметить как оплачено",
-    "setUnpaid": "Отметить как неоплачено",
-    "setCompleted": "Отметить как завершено",
-    "setIncomplete": "Отметить как незавершено",
-    "copyForClient": "Копия для клиента",
-    "viewForClient": "Просмотр для клиента",
-    "defaultView": "Стандартный вид",
-    "artisanTrack": "Отслеживание мастера",
+    "setPaid": "Отметить как оплачен",
+    "setUnpaid": "Отметить как не оплачен",
+    "setCompleted": "Отметить как сделан",
+    "setIncomplete": "Отметить как не сделан",
+    "copyForClient": "Скопировать для клиента",
+    "viewForClient": "Вид для клиента",
+    "defaultView": "Ваш вид",
+    "artisanTrack": "Artisan Track",
     "prepayment": "Предоплата: {amount}$",
     "dueToday": "(Срок сегодня)",
     "daysLeft": "({days} дней)",
@@ -198,17 +198,17 @@
       "Nov": "Ноя",
       "Dec": "Дек"
     },
-    "orderID": "Номер заказа",
+    "orderID": "Id заказа",
     "material": "Материал",
     "quantity": "Количество",
     "price": "Цена",
-    "product": "Продукт",
+    "product": "Модель",
     "workCost": "Стоимость работы",
     "noQuantity": "Не указано",
     "noCost": "Не указано",
-    "noProduct": "Продукт не указан",
+    "noProduct": "Модель не указана",
     "totalCost": "Общая стоимость",
-    "receipt": "Квитанция"
+    "receipt": "Чек"
   },
   "confirmationWindow": {
     "message": "Вы уверены, что хотите",
@@ -228,11 +228,11 @@
     "description": "Описание",
     "enterDetails": "Введите детали заказа",
     "characters": "символов",
-    "productMaterials": "Продукты и Материалы",
-    "product": "Продукт",
-    "selectProduct": "Выбрать продукт",
-    "selectedProduct": "Выбранный продукт",
-    "costForSelectedProduct": "Стоимость выбранного продукта",
+    "productMaterials": "Модели и Материалы",
+    "product": "Модель",
+    "selectProduct": "Выбрать модель",
+    "selectedProduct": "Выбранная модель",
+    "costForSelectedProduct": "Стоимость выбранной модели",
     "materials": "Материалы",
     "selectMaterial": "Выбрать материал",
     "materialsCost": "Стоимость материалов",
@@ -240,7 +240,7 @@
     "totalCost": "Общая стоимость",
     "cancel": "Отмена",
     "create": "Создать",
-    "noProducts": "Нет товаров в инвентаре",
+    "noProducts": "Нет моделей в инвентаре",
     "noMaterials": "Нет материалов в инвентаре",
     "createTitle": "Создать заказ",
     "invalidDate": "Пожалуйста, убедитесь, что дата начала и срок завершения действительны.",
@@ -277,13 +277,13 @@
   },
   "IdMaterial": {
     "pageTitle": "Материал",
-    "yourView": "Ваш просмотр",
+    "yourView": "Ваш вид",
     "back": "Назад",
     "edit": "Редактировать",
     "categories": "Категории:",
-    "noCategories": "Категории не заданы",
+    "noCategories": "Категории не указан",
     "color": "Цвет:",
-    "noColor": "Цвет не задан",
+    "noColor": "Цвет не указан",
     "description": "Описание:",
     "noDescription": "Нет описания",
     "shop": "Магазин:",
@@ -291,12 +291,12 @@
     "quantity": "Количество:",
     "noQuantity": "Количество не задано",
     "costPerUnit": "Цена за единицу:",
-    "noCostPerUnit": "Цена за единицу не задана.",
+    "noCostPerUnit": "Цена за единицу не указана.",
     "total": "Итого:",
     "noTotal": "Стоимость не указана",
     "delete": "Удалить",
     "copyForClient": "Копировать для клиента",
-    "defaultView": "Вид по умолчанию",
+    "defaultView": "Стандартный вид",
     "title": "Вид клиента"
   },
   "editMaterial": {
@@ -304,25 +304,25 @@
     "uploadError": "Разрешены только файлы PNG и JPG.",
     "requiredFields": "Требуются Id и Название.",
     "idTooLong": "Id должен быть менее 12 символов.",
-    "duplicateId": "Продукт с Id '{id}' уже существует.",
+    "duplicateId": "Материал с Id '{id}' уже существует.",
     "updateSuccess": "Материал успешно обновлён!",
     "updateError": "Ошибка обновления материала:",
     "general": "Общее",
-    "productId": "Идентификатор продукта",
-    "productName": "Название продукта",
-    "productDescription": "Описание продукта",
+    "productId": "Id материала",
+    "productName": "Название материала",
+    "productDescription": "Описание материала",
     "details": "Детали",
-    "productColor": "Цвет продукта",
+    "productColor": "Цвет материала",
     "requiredField": "* Обязательное поле",
     "characterCount": "{count} / 1000 символов",
     "categories": "Категории",
-    "addCategory": "Добавлять",
-    "selectImages": "Выберите изображения",
+    "addCategory": "Добавить",
+    "selectImages": "Выберите Фото",
     "removeCategory": "Удалить",
-    "imagePreview": "Предпросмотр выбранных изображений",
+    "imagePreview": "Предпросмотр фото",
     "price": "Цена",
     "shop": "Магазин",
-    "enterShop": "Введите магазин",
+    "enterShop": "Введите название магазина",
     "quantity": "Количество",
     "total": "Общая сумма",
     "costPerUnit": "Стоимость за единицу",
@@ -339,26 +339,26 @@
   },
   "createMaterial": {
     "pageTitle": "Создать материал",
-    "id": "Идентификатор",
+    "id": "Id",
     "name": "Название",
     "description": "Описание",
     "color": "Цвет",
     "categories": "Категории",
     "shop": "Магазин",
     "quantity": "Количество",
-    "total": "Итого",
+    "total": "Сумма",
     "costPerUnit": "Цена за единицу",
-    "selectImages": "Выбрать изображения",
+    "selectImages": "Выбрать фото",
     "addCategory": "Добавить",
     "save": "Сохранить",
     "cancel": "Отмена",
-    "idRequired": "Идентификатор и название обязательны.",
-    "idTooLong": "Идентификатор должен содержать менее 12 символов.",
-    "idExists": "Продукт с идентификатором '{id}' уже существует.",
+    "idRequired": "Id и название обязательны.",
+    "idTooLong": "Id должен содержать менее 12 символов.",
+    "idExists": "Материал с Id '{id}' уже существует.",
     "invalidFiles": "Разрешены только файлы PNG и JPG.",
     "title": "Создать материал",
     "general": "Общее",
-    "idPlaceholder": "Введите id (2-16 символов)",
+    "idPlaceholder": "Введите Id (2-16 символов)",
     "namePlaceholder": "Введите название (2-64 символа)",
     "descriptionPlaceholder": "Введите описание",
     "characters": "символов",
@@ -366,7 +366,7 @@
     "colorPlaceholder": "Введите цвет",
     "categoriesPlaceholder": "Добавьте категорию для материала",
     "add": "Добавить",
-    "shopPlaceholder": "Введите магазин",
+    "shopPlaceholder": "Введите название магазина",
     "quantityPlaceholder": "0.00",
     "totalPlaceholder": "0.00",
     "remove": "Удалить",
@@ -383,15 +383,15 @@
     "days": "Дни",
     "customerName": "Имя клиента",
     "description": "Описание",
-    "productMaterials": "Продукт и материалы",
-    "selectProduct": "Выбрать продукт",
-    "product": "Продукт",
+    "productMaterials": "Модель и материалы",
+    "selectProduct": "Выбрать модель",
+    "product": "Модель",
     "deadlineError": "Срок должен быть после даты начала.",
     "invalidDateError": "Пожалуйста, убедитесь, что дата начала и срок действительны.",
     "orderSuccess": "Заказ успешно добавлен",
     "orderError": "Ошибка при добавлении заказа",
-    "selectedProduct": "Выбранный продукт",
-    "productCost": "Стоимость выбранного продукта",
+    "selectedProduct": "Выбранная модель",
+    "productCost": "Стоимость выбранной модели",
     "materials": "Материалы",
     "selectMaterial": "Выбрать материал",
     "materialCost": "Стоимость материалов",
@@ -400,46 +400,46 @@
     "currency": "Валюта",
     "cancel": "Отмена",
     "create": "Создать",
-    "noProducts": "Нет товаров в инвентаре",
+    "noProducts": "Нет моделей в инвентаре",
     "noMaterials": "Нет материалов в инвентаре"
   },
   "productPage": {
-    "title": "Продукты",
-    "noProducts": "Продукты еще не добавлены",
-    "copyForClient": "Копировать для клиента",
-    "createProduct": "Создать продукт +"
+    "title": "Модели",
+    "noProducts": "Модели еще не добавлены",
+    "copyForClient": "Скопировать для клиента",
+    "createProduct": "Создать модель +"
   },
   "productId": {
-    "title": "Продукт",
+    "title": "Модель",
     "viewTitle": "Ваш вид",
     "back": "Назад",
     "edit": "Редактировать",
     "loading": "Загрузка...",
-    "imageAlt": "Изображение продукта",
+    "imageAlt": "Фото модели",
     "categories": "Категории",
-    "noCategories": "Категории не заданы",
+    "noCategories": "Категории не указаны",
     "description": "Описание",
     "noDescription": "Нет описания",
     "averageTotal": "Средняя стоимость",
-    "costNotSet": "Стоимость не установлена",
+    "costNotSet": "Стоимость не указана",
     "delete": "Удалить",
     "copyForClient": "Скопировать для клиента",
-    "viewForClient": "Просмотр для клиента",
+    "viewForClient": "Вид для клиента",
     "clientView": "Вид клиента",
-    "products": "Продукты",
-    "productId": "ID продукта",
-    "defaultView": "Обычный вид"
+    "products": "Модели",
+    "productId": "ID модели",
+    "defaultView": "Стандартный вид"
   },
   "editProduct": {
-    "pageTitle": "Редактировать продукт",
+    "pageTitle": "Редактировать модель",
     "onlyPngJpgAllowed": "Разрешены только файлы PNG и JPG.",
-    "imageUploadError": "Ошибка загрузки изображения:",
-    "idNameRequired": "Требуются идентификатор и название.",
-    "idTooLong": "Идентификатор должен содержать менее 12 символов.",
-    "idAlreadyExists": "Продукт с идентификатором '{id}' уже существует.",
-    "updateError": "Ошибка обновления продукта:",
-    "general": "Общие сведения",
-    "id": "Идентификатор",
+    "imageUploadError": "Ошибка загрузки фото:",
+    "idNameRequired": "Требуются Id и название.",
+    "idTooLong": "Id должен содержать менее 12 символов.",
+    "idAlreadyExists": "Модель с Id '{id}' уже существует.",
+    "updateError": "Ошибка при обновлении модели:",
+    "general": "Общee",
+    "id": "Id",
     "name": "Название",
     "description": "Описание",
     "characters": "символов",
@@ -447,9 +447,9 @@
     "category": "Категория",
     "add": "Добавить",
     "categoryList": "Список категорий",
-    "productImages": "Изображения продукта",
-    "patternImages": "Шаблонные изображения",
-    "selectImages": "Выбрать изображения",
+    "productImages": "Фото модели",
+    "patternImages": "Шаблонные фото",
+    "selectImages": "Выбрать фото",
     "previewPatternImage": "Предварительный просмотр шаблона",
     "price": "Цена",
     "averageCost": "Средняя стоимость",
@@ -457,15 +457,15 @@
     "save": "Сохранить"
   },
   "createProduct": {
-    "pageTitle": "Создать продукт",
+    "pageTitle": "Создать модель",
     "invalidImageFormat": "Разрешены только файлы PNG и JPG.",
     "requiredFields": "Требуются Id и Name.",
     "idTooLong": "Id должен быть короче 12 символов.",
-    "productExists": "Продукт с Id '{id}' уже существует.",
-    "productAdded": "Продукт успешно добавлен.",
-    "submit": "Создать продукт",
+    "productExists": "Модель с Id '{id}' уже существует.",
+    "productAdded": "Модель успешно добавлен.",
+    "submit": "Создать модель",
     "general": "Общее",
-    "id": "Идентификатор",
+    "id": "Id",
     "idPlaceholder": "Введите id (2-16 символов)",
     "name": "Название",
     "namePlaceholder": "Введите название (2-64 символов)",
@@ -474,13 +474,13 @@
     "characters": "символов",
     "details": "Детали",
     "category": "Категория",
-    "categoryPlaceholder": "Добавьте категорию для материала",
+    "categoryPlaceholder": "Добавьте категорию для модели",
     "add": "Добавить",
     "categoryList": "Список категорий",
-    "productImages": "Изображения продукта",
-    "patternImages": "Изображения шаблона",
-    "selectImages": "Выбрать изображения",
-    "previewPatternImage": "Предпросмотр шаблона",
+    "productImages": "Фото модели",
+    "patternImages": "Фото схемы",
+    "selectImages": "Выбрать Фото",
+    "previewPatternImage": "Предпросмотр схемы",
     "price": "Цена",
     "cost": "Стоимость",
     "currency": {
@@ -512,7 +512,7 @@
     },
     "placeholders": {
       "email": "напр. example@mail.com",
-      "name": "напр. Алекс Смит",
+      "name": "напр. Иван Иванов",
       "tax": "напр. 4%",
       "password": "******",
       "repeatPassword": "*******"
@@ -520,8 +520,8 @@
   },
   "notLogged": {
     "welcome": "Добро пожаловать в",
-    "description": " Управляйте своими продуктами, заказами, материалами и финансами.",
-    "prompt": "Войдите, чтобы продолжить, или создайте новый аккаунт, чтобы начать.",
+    "description": " Управляйте своими моделями, материалами, заказами и финансами.",
+    "prompt": "Войдите, чтобы продолжить, или создайте аккаунт, чтобы начать.",
     "login": "Войти",
     "createAccount": "Создать аккаунт"
   },
@@ -536,7 +536,7 @@
     "currentEmail": "Текущий email:",
     "changePassword": "Изменить пароль",
     "inventory": "Инвентарь:",
-    "totalProducts": "Всего продуктов",
+    "totalProducts": "Всего моделей",
     "totalMaterials": "Всего материалов",
     "orders": "Заказы:",
     "inProgressOrders": "В процессе",
@@ -549,7 +549,7 @@
   "ChangePassword": {
     "resetTitle": "Сброс пароля",
     "changeTitle": "Изменить пароль",
-    "sendResetLink": "Отправить ссылку для сброса",
+    "sendResetLink": "Отправить ссылку для сброса пароля",
     "backToChange": "Назад к изменению пароля",
 
     "labels": {
@@ -599,7 +599,7 @@
       "verificationFailed": "Не удалось отправить письмо для подтверждения: {{message}}"
     },
     "messages": {
-      "verificationSent": "Письмо с подтверждением отправлено на",
+      "verificationSent": "Письмо с подтверждением отправлено на ",
       "checkAndRefresh": " Пожалуйста, подтвердите ваш адрес электронной почты и обновите страницу.",
       "resendIn": "Вы сможете повторно отправить письмо через {{seconds}} секунд."
     },
@@ -611,7 +611,7 @@
       "cancel": "Отмена",
       "confirm": "Подтвердить",
       "close": "Закрыть",
-      "resend": "Отправить письмо повторно"
+      "resend": "Отправить письмо еще раз"
     }
   },
   "Finance": {
@@ -635,36 +635,36 @@
   },
   "FinanceMonthly": {
     "filters": {
-      "popularProduct": "Заказы с популярным товаром в этом месяце",
+      "popularProduct": "Заказы с популярной моделью в этом месяце",
       "popularMaterial": "Заказы с популярным материалом в этом месяце",
       "regularClient": "Заказы от постоянного клиента в этом месяце"
     },
     "excel": {
-      "income": "ДОХОД:",
-      "expenses": "РАСХОДЫ:",
-      "popularProduct": "Популярный товар:",
+      "income": "Доход:",
+      "expenses": "Расход:",
+      "popularProduct": "Популярная модель:",
       "popularMaterial": "Популярный материал:",
       "regularClient": "Постоянный клиент:",
-      "orders": "ЗАКАЗЫ",
+      "orders": "Заказы",
       "headers": {
         "title": "Название заказа",
         "customerName": "Имя клиента",
-        "productId": "ID товара",
-        "productCost": "Стоимость товара",
+        "productId": "ID модели",
+        "productCost": "Стоимость модели",
         "materialId": "ID материала",
         "quantity": "Количество",
         "materialCost": "Стоимость материала",
         "workCost": "Стоимость работы",
         "totalCost": "Общая стоимость"
       },
-      "products": "ТОВАРЫ",
+      "products": "Модели",
       "productHeaders": {
-        "id": "ID товара",
+        "id": "ID модели",
         "name": "Название",
         "category": "Категория",
         "average": "Средняя стоимость"
       },
-      "materials": "МАТЕРИАЛЫ",
+      "materials": "Материалы",
       "materialHeaders": {
         "id": "ID материала",
         "name": "Название материала",
@@ -673,7 +673,7 @@
         "shop": "Магазин",
         "quantity": "Количество",
         "costPerUnit": "Стоимость за единицу",
-        "total": "Итого"
+        "total": "Итог"
       }
     },
     "pageTitle": {
@@ -700,14 +700,14 @@
     "finance": {
       "income": "Доход",
       "expenses": "Расходы",
-      "popularProduct": "Популярный продукт этого месяца",
+      "popularProduct": "Популярная модель этого месяца",
       "popularMaterial": "Популярный материал этого месяца",
       "regularClient": "Регулярный клиент этого месяца"
     },
     "view": {
       "show": "Показать",
       "orders": "Заказы",
-      "products": "Продукты",
+      "products": "Модели",
       "materials": "Материалы",
       "clearFilter": "Очистить фильтр",
       "noDeadline": "Без срока"
@@ -717,7 +717,7 @@
       "download": "Скачать"
     },
     "products": {
-      "noProducts": "Продукты отсутствуют"
+      "noProducts": "Модели отсутствуют"
     },
     "materials": {
       "noMaterials": "Материалы отсутствуют"
@@ -746,7 +746,7 @@
     "title": "Годовой отчет",
     "income": "Доход",
     "expenses": "Расходы",
-    "popularProduct": "Популярный продукт в этом году",
+    "popularProduct": "Популярная модель в этом году",
     "popularMaterial": "Популярный материал в этом году",
     "regularClient": "Постоянный клиент",
     "amount": "кол-во",
@@ -770,7 +770,7 @@
     "clearFilter": "Очистить фильтр",
     "noDeadline": "Без срока",
     "orders": "Заказы",
-    "products": "Продукты",
+    "products": "Модели",
     "materials": "Материалы",
     "goBack": "Назад",
     "download": "Скачать"

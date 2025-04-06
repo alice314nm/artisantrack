@@ -111,17 +111,19 @@ export default function Page() {
     setCustomerName(selectedOrder.customerName || "");
     setDesc(selectedOrder.description || "");
     setSelectedProduct(selectedOrder.productForOrderData || null);
+    console.log(0,selectedOrder.materialsForOrderData )
     setSelectedMaterials(selectedOrder.materialsForOrderData || []);
 
     if (selectedOrder.quantities && Array.isArray(selectedOrder.quantities)) {
       const quantitiesObj = {};
       selectedOrder.quantities.forEach((item) => {
         if (item && item.id) {
+          console.log(1,item.quantity)
           quantitiesObj[item.id] = item.quantity;
         }
       });
       setMaterialQuantities(quantitiesObj);
-    }
+    } 
 
     setProductCost(selectedOrder.productCost || 0);
     setMaterialCost(selectedOrder.materialsCost || 0);
@@ -131,25 +133,25 @@ export default function Page() {
     setLoading(false);
   }, [selectedOrder]);
 
-  useEffect(() => {
-    if (!selectedMaterials || selectedMaterials.length === 0) {
-      setMaterialCost(0);
-      return;
-    }
+  // useEffect(() => {
+  //   if (!selectedMaterials || selectedMaterials.length === 0) {
+  //     setMaterialCost(0);
+  //     return;
+  //   }
 
-    let totalCost = 0;
+  //   let totalCost = 0;
 
-    selectedMaterials.forEach((material) => {
-      const quantity = parseFloat(materialQuantities[material.materialId] || 0);
-      const cost = parseFloat(material.costPerUnit || 0);
+  //   selectedMaterials.forEach((material) => {
+  //     const quantity = parseFloat(materialQuantities[material.materialId] || 0);
+  //     const cost = parseFloat(material.costPerUnit || 0);
 
-      if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
-        totalCost += quantity * cost;
-      }
-    });
+  //     if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
+  //       totalCost += quantity * cost;
+  //     }
+  //   });
 
-    setMaterialCost(Number(totalCost.toFixed(2)));
-  }, [selectedMaterials, materialQuantities]);
+  //   setMaterialCost(Number(totalCost.toFixed(2)));
+  // }, [selectedMaterials, materialQuantities]);
 
   const handleSelectProductForm = () => {
     setState("products");
@@ -232,32 +234,32 @@ export default function Page() {
     delete updatedQuantities[material.materialId];
 
     setMaterialQuantities(updatedQuantities);
-    calculateMaterialsCost();
+    //calculateMaterialsCost();
   };
 
-  useEffect(() => {
-    calculateMaterialsCost();
-  }, [selectedMaterials, materialQuantities]);
+  // useEffect(() => {
+  //   calculateMaterialsCost();
+  // }, [selectedMaterials, materialQuantities]);
 
-  const calculateMaterialsCost = () => {
-    if (!selectedMaterials || selectedMaterials.length === 0) {
-      setMaterialCost(0);
-      return;
-    }
+  // const calculateMaterialsCost = () => {
+  //   if (!selectedMaterials || selectedMaterials.length === 0) {
+  //     setMaterialCost(0);
+  //     return;
+  //   }
 
-    let totalCost = 0;
+  //   let totalCost = 0;
 
-    selectedMaterials.forEach((material) => {
-      const quantity = parseFloat(materialQuantities[material.materialId] || 0);
-      const cost = parseFloat(material.costPerUnit || 0);
+  //   selectedMaterials.forEach((material) => {
+  //     const quantity = parseFloat(materialQuantities[material.materialId] || 0);
+  //     const cost = parseFloat(material.costPerUnit || 0);
 
-      if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
-        totalCost += quantity * cost;
-      }
-    });
+  //     if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
+  //       totalCost += quantity * cost;
+  //     }
+  //   });
 
-    setMaterialCost(Number(totalCost.toFixed(2)));
-  };
+  //   setMaterialCost(Number(totalCost.toFixed(2)));
+  // };
 
   const handleResetSelectedMaterial = () => {
     setSelectedMaterials([]);
@@ -592,8 +594,8 @@ export default function Page() {
                     key={material.materialId || index}
                     type="material"
                     imageSrc={
-                      material.images && material.images.length > 0
-                        ? material.images[0].url
+                      material.images && material.images.length > 0 || material.materialImage.url
+                        ? material.materialImage.url
                         : "/noImage.png"
                     }
                     name={material.name}

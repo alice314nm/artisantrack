@@ -308,7 +308,6 @@ export default function Page() {
 
         <Menu
           type="OneButtonMenu"
-          iconFirst="/link.png"
           firstTitle={t("createOrderButton")}
           onFirstFunction={handleNavigateToCreatePage}
         />

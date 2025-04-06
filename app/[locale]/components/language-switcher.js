@@ -22,19 +22,16 @@ export default function LanguageSelector() {
     const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "");
     const newPath = `/${locale}${pathWithoutLocale || ""}`;
   
-    // Save to DB if user is logged in
+    // Store preference in cookie (expires in ~1 year)
+    document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000`;
+  
     if (user) {
       await updateUserLanguage(user, locale);
     }
-  
-    // Save preferred locale to cookie
-    document.cookie = `NEXT_LOCALE=${locale}; path=/`;
-  
-    // Navigate to the new locale path
     router.push(newPath);
     setIsOpen(false);
   };
-  
+
   const currentLanguage =
     languages.find((lang) => lang.code === currentLocale) || languages[0];
 

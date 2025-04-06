@@ -775,6 +775,12 @@
     "materials": "Materials",
     "goBack": "Go back",
     "download": "Download"
+  },
+  "layout": {
+    "sessionExpired": "Session expired. Please log in again.",
+    "areYouStillHere": "Are you still here?",
+    "imHere": "Yes, I'm here",
+    "logOut": "No, log out"
   }
 }
 

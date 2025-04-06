@@ -19,13 +19,13 @@ export default function LanguageSelector() {
   ];
 
   const handleLanguageChange = async (locale) => {
-    const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "");
+    const pathWithoutLocale = pathname.replace(/^\/(en|ru)/, "");
     const newPath = `/${locale}${pathWithoutLocale || ""}`;
 
     if (user) {
       await updateUserLanguage(user, locale);
     }
-    router.push(newPath);
+    window.location.href = newPath;
     setIsOpen(false);
   };
 
@@ -55,10 +55,11 @@ export default function LanguageSelector() {
             <button
               key={language.code}
               onClick={() => handleLanguageChange(language.code)}
-              className={`block w-full text-left px-4 py-2 hover:bg-darkBeige ${currentLocale === language.code
-                ? "font-semibold bg-darkBeige/30"
-                : ""
-                }`}
+              className={`block w-full text-left px-4 py-2 hover:bg-darkBeige ${
+                currentLocale === language.code
+                  ? "font-semibold bg-darkBeige/30"
+                  : ""
+              }`}
             >
               <span className="mr-2">{language.flag}</span>
               {language.name}

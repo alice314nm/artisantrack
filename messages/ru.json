@@ -774,5 +774,11 @@
     "materials": "Материалы",
     "goBack": "Назад",
     "download": "Скачать"
+  },
+  "layout": {
+    "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова.",
+    "areYouStillHere": "Вы все еще здесь?",
+    "imHere": "Да, я здесь",
+    "logOut": "Нет, выйти"
   }
 }

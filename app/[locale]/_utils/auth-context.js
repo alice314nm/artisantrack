@@ -11,11 +11,13 @@ import {
 } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { initializeUserData } from "@/app/[locale]/_services/user-data";
+import { useTranslations } from "next-intl";
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const t = useTranslations("auth");
 
   const doCreateUserWithEmailAndPassword = async (
     email,
@@ -40,9 +42,8 @@ export const AuthContextProvider = ({ children }) => {
       return user;
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        throw new Error(
-          "This email address is already associated with an account."
-        );
+        // Use the translation key directly
+        throw new Error(t("errors.emailInUse"));
       }
       throw new Error(error.message);
     }
@@ -54,12 +55,12 @@ export const AuthContextProvider = ({ children }) => {
 
   const resetPassword = async (email) => {
     if (!email) {
-      throw new Error("Please enter a valid email address.");
+      throw new Error(t("errors.invalidEmail"));
     }
     try {
       await sendPasswordResetEmail(auth, email);
     } catch (error) {
-      console.error("Error resetting password: ", error.message);
+      console.error(`${t("passwordReset.error")} ${error.message}`);
     }
   };
 

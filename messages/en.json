@@ -781,6 +781,32 @@
     "areYouStillHere": "Are you still here?",
     "imHere": "Yes, I'm here",
     "logOut": "No, log out"
+  },
+  "SignInOutWindow": {
+    "alreadySignedIn": "You're already signed in.",
+    "wantToSignOut": "Do you want to sign out?",
+    "signOut": "Sign out",
+    "pleaseSignIn": "Please sign in to {text}",
+    "goToSignIn": "Go to sign in page"
+  },
+  "MaterialOrderDisplay": {
+    "quantity": "Quantity"
+  },
+  "auth": {
+    "errors": {
+      "emailInUse": "This email address is already associated with an account.",
+      "invalidEmail": "Please enter a valid email address."
+    },
+    "actions": {
+      "signOut": "Sign Out",
+      "signIn": "Sign In",
+      "createAccount": "Create Account",
+      "resetPassword": "Reset Password"
+    },
+    "passwordReset": {
+      "success": "Password reset email has been sent.",
+      "error": "Error resetting password: "
+    }
   }
 }
 

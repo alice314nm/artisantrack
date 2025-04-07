@@ -780,5 +780,31 @@
     "areYouStillHere": "Вы все еще здесь?",
     "imHere": "Да, я здесь",
     "logOut": "Нет, выйти"
+  },
+  "SignInOutWindow": {
+    "alreadySignedIn": "Вы уже вошли в систему.",
+    "wantToSignOut": "Вы хотите выйти из системы?",
+    "signOut": "Выйти",
+    "pleaseSignIn": "Пожалуйста, войдите, чтобы {text}",
+    "goToSignIn": "Перейти на страницу входа"
+  },
+  "MaterialOrderDisplay": {
+    "quantity": "Количество"
+  },
+  "auth": {
+    "errors": {
+      "emailInUse": "Этот адрес электронной почты уже связан с учетной записью.",
+      "invalidEmail": "Пожалуйста, введите действительный адрес электронной почты."
+    },
+    "actions": {
+      "signOut": "Выйти",
+      "signIn": "Войти",
+      "createAccount": "Создать аккаунт",
+      "resetPassword": "Сбросить пароль"
+    },
+    "passwordReset": {
+      "success": "Письмо для сброса пароля отправлено.",
+      "error": "Ошибка при сбросе пароля: "
+    }
   }
 }

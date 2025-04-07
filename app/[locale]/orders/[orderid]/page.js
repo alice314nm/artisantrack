@@ -285,12 +285,6 @@ export default function OrderPageID() {
 
           <div className="mx-4 flex flex-col gap-4 pb-24">
             <div className="flex flex-row justify-between items-center">
-              <p
-                className="font-bold text-xl text-blackBeige"
-                data-id="Your view"
-              >
-                {t("yourView")}
-              </p>
               <Link href="/orders">
                 <button className={commonClasses.headerButton}>
                   <img src="/arrow-left.png" width={20} alt="Back" />
@@ -349,19 +343,6 @@ export default function OrderPageID() {
                     <p>{t("createReceipt")}</p>
                     <img src="/receipt.png" alt="Pencil" className="w-5" />
                   </button>
-                  <button
-                    className="relative bg-green rounded-md w-[40%] py-1 font-bold flex flex-row items-center justify-center gap-2 flex-shrink-0"
-                    onClick={() =>
-                      (window.location.href = `/orders/${id}/edit`)
-                    }
-                  >
-                    <p>{t("edit")}</p>
-                    <img
-                      src="/Pencil.png"
-                      alt="Pencil"
-                      className="w-4 h-4 mr-1"
-                    />
-                  </button>
                 </div>
 
                 <p className="text-2xl font-bold text-blackBeige">
@@ -418,16 +399,9 @@ export default function OrderPageID() {
 
                 <div className="flex flex-row float-right gap-1 justify-between font-bold">
                   <button
-                    data-id="delete-button"
-                    className="hover:arrow text-sm bg-red w-[25%] h text-white rounded-md"
-                    onClick={openCloseConfirmation}
-                  >
-                    {t("delete")}
-                  </button>
-                  <button
                     className={`${
                       paid ? "bg-darkYellow text-white" : "bg-yellow"
-                    } text-sm py-1 rounded-md w-[60%]`}
+                    } text-sm py-1 rounded-md w-[50%]`}
                     onClick={togglePaid}
                   >
                     {paid ? t("setUnpaid") : t("setPaid")}
@@ -435,7 +409,7 @@ export default function OrderPageID() {
                   <button
                     className={`${
                       completed ? "bg-darkYellow text-white" : "bg-yellow"
-                    } text-sm py-1 rounded-md w-[60%]`}
+                    } text-sm py-1 rounded-md w-[50%]`}
                     onClick={toggleCompleted}
                   >
                     {completed ? t("setIncomplete") : t("setCompleted")}
@@ -453,132 +427,92 @@ export default function OrderPageID() {
           />
 
           <Menu
-            type="TwoButtonsMenu"
-            iconFirst="/link.png"
-            iconSecond="/eye.png"
-            firstTitle={t("copyForClient")}
-            secondTitle={t("viewForClient")}
-            onSecondFunction={changeView}
+            type="TwoButtonsMenuId"
+            iconSecond="/Pencil.png"
+            firstTitle={t("delete")}
+            secondTitle={t("edit")}
+            onFirstFunction={openCloseConfirmation}
+            onSecondFunction={() => (window.location.href = `/orders/${id}/edit`)}
           />
         </div>
       );
     }
 
     // View for unlogged users
-    else {
-      return (
-        <div className="flex flex-col min-h-screen gap-4">
-          <Header title={t("title")} showUserName={true} />
+    // else {
+    //   return (
+    //     <div className="flex flex-col min-h-screen gap-4">
+    //       <Header title={t("title")} showUserName={true} />
 
-          <div className="mx-4 flex flex-col gap-4 pb-24">
-            <div className="flex flex-row justify-between">
-              <p className="font-bold" data-id="Client view">
-                {t("clientView")}
-              </p>
-              <Link href="/orders">
-                <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
-                  <img src="/arrow-left.png" width={20} />
-                  <p>{t("back")}</p>
-                </button>
-              </Link>
-            </div>
+    //       <div className="mx-4 flex flex-col gap-4 pb-24">
+    //         <div className="flex flex-row justify-between">
+    //           <p className="font-bold" data-id="Client view">
+    //             {t("clientView")}
+    //           </p>
+    //           <Link href="/orders">
+    //             <button className="font-bold bg-green rounded-2xl px-4 flex gap-1 flex-row justify-center items-center">
+    //               <img src="/arrow-left.png" width={20} />
+    //               <p>{t("back")}</p>
+    //             </button>
+    //           </Link>
+    //         </div>
 
-            <div className="flex flex-col gap-2">
-              <img src="/wool.png" alt="Sweater" className="rounded-xl" />
+    //         <div className="flex flex-col gap-2">
+    //           <img src="/wool.png" alt="Sweater" className="rounded-xl" />
 
-              <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-                <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-              </div>
-            </div>
+    //           <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
+    //             <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
+    //             <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
+    //             <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
+    //             <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
+    //           </div>
+    //         </div>
 
-            <div className="flex flex-col gap-2">
-              <p className="text-xl">
-                testNameOrder | {t("deadline")} 1 Jan, 2025
-              </p>
+    //         <div className="flex flex-col gap-2">
+    //           <p className="text-xl">
+    //             testNameOrder | {t("deadline")} 1 Jan, 2025
+    //           </p>
 
-              <div>
-                <p>{t("client")}</p>
-                <p>Alex Smith</p>
-              </div>
+    //           <div>
+    //             <p>{t("client")}</p>
+    //             <p>Alex Smith</p>
+    //           </div>
 
-              <div>
-                <p>{t("description")}</p>
-                <p>Address, phone, measurements shoulder shoulder</p>
-              </div>
+    //           <div>
+    //             <p>{t("description")}</p>
+    //             <p>Address, phone, measurements shoulder shoulder</p>
+    //           </div>
 
-              <div>
-                <p>{t("materials")}</p>
-                <ul className="list-decimal px-6">
-                  <li>wool id123456 - 400g</li>
-                  <li>wool id123456 - 100g</li>
-                </ul>
-              </div>
+    //           <div>
+    //             <p>{t("materials")}</p>
+    //             <ul className="list-decimal px-6">
+    //               <li>wool id123456 - 400g</li>
+    //               <li>wool id123456 - 100g</li>
+    //             </ul>
+    //           </div>
 
-              <p>{t("total")} 140$</p>
+    //           <p>{t("total")} 140$</p>
 
-              <p>{t("prepayment", { amount: 70 })}</p>
-            </div>
-          </div>
+    //           <p>{t("prepayment", { amount: 70 })}</p>
+    //         </div>
+    //       </div>
 
-          <Menu
-            type="TwoButtonsMenu"
-            iconFirst="/link.png"
-            iconSecond="/eye-crossed.png"
-            firstTitle={t("copyForClient")}
-            secondTitle={t("defaultView")}
-            onSecondFunction={changeView}
-          />
-        </div>
-      );
-    }
+    //       <Menu
+    //         type="TwoButtonsMenu"
+    //         iconFirst="/link.png"
+    //         iconSecond="/eye-crossed.png"
+    //         firstTitle={t("copyForClient")}
+    //         secondTitle={t("defaultView")}
+    //         onSecondFunction={changeView}
+    //       />
+    //     </div>
+    //   );
+    // }
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title={t("artisanTrack")} />
-
-        <div className="mx-4 flex flex-col gap-4 pb-24">
-          <div className="flex flex-col gap-2">
-            <img src="/wool.png" alt="Sweater" className="rounded-xl" />
-
-            <div className="flex flex-row gap-2 overflow-x-auto whitespace-nowrap scrollbar scrollbar-thin">
-              <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-              <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-              <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-              <SmallBlockHolder type="plainPicture" imageSource="/wool.png" />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p className="text-xl">
-              testNameOrder | {t("deadline")} 1 Jan, 2025
-            </p>
-
-            <div>
-              <p>{t("client")}</p>
-              <p>Alex Smith</p>
-            </div>
-
-            <div>
-              <p>{t("description")}</p>
-              <p>Address, phone, measurements shoulder shoulder</p>
-            </div>
-
-            <div>
-              <p>{t("materials")}</p>
-              <ul className="list-decimal px-6">
-                <li>wool id123456 - 400g</li>
-                <li>wool id123456 - 100g</li>
-              </ul>
-            </div>
-
-            <p>{t("total")} 140$</p>
-
-            <p>{t("prepayment", { amount: 70 })}</p>
-          </div>
-        </div>
+        <Header title="Artisan Track" />
+        <NotLoggedWindow />
       </div>
     );
   }

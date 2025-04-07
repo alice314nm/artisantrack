@@ -14,6 +14,7 @@ import {
   fetchMaterialById,
   fetchMaterials,
 } from "@/app/[locale]/_services/material-service";
+import NotLoggedWindow from "../../components/not-logged-window";
 
 export default function MaterialPage() {
   const t = useTranslations("IdMaterial");
@@ -118,12 +119,6 @@ export default function MaterialPage() {
           <div className="mx-4 flex flex-col gap-4 pb-24">
             {/* Back Button and View Title */}
             <div className="flex flex-row justify-between items-center">
-              <p
-                className="font-bold text-xl text-blackBeige"
-                data-id="Your view"
-              >
-                {t("yourView")}
-              </p>
               <Link href="/materials">
                 <button className={commonClasses.headerButton}>
                   <img src="/arrow-left.png" width={20} alt="Back" />
@@ -162,18 +157,6 @@ export default function MaterialPage() {
               </div>
 
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                <div className="relative bg-green rounded-md w-40">
-                  <Link href={`./${id}/edit`}>
-                    <button
-                      data-id="edit-button"
-                      className={commonClasses.editButton}
-                    >
-                      <p>{t("edit")}</p>
-                      <img src="/Pencil.png" alt="Pencil" className="w-4 h-4" />
-                    </button>
-                  </Link>
-                </div>
-
                 <p className="text-2xl font-bold text-blackBeige">
                   #{selectedMaterial.materialId} | {selectedMaterial.name}
                 </p>
@@ -237,14 +220,6 @@ export default function MaterialPage() {
                     {selectedMaterial.currency}
                   </p>
                 </div>
-
-                <button
-                  className={commonClasses.deleteButton}
-                  onClick={openCloseConfirmation}
-                  data-id="delete-button"
-                >
-                  {t("delete")}
-                </button>
               </div>
             </div>
           </div>
@@ -256,183 +231,123 @@ export default function MaterialPage() {
             onDelete={handleDeleteMaterial}
           />
 
+            
           <Menu
-            type="TwoButtonsMenu"
-            iconFirst="/link.png"
-            iconSecond="/eye-crossed.png"
-            firstTitle={t("copyForClient")}
-            secondTitle={t("defaultView")}
-            onSecondFunction={changeView}
+            type="TwoButtonsMenuId"
+            iconSecond="/Pencil.png"
+            firstTitle={t("delete")}
+            secondTitle={t("edit")}
+            onFirstFunction={openCloseConfirmation}
+            onSecondFunction={() => (window.location.href = `./${id}/edit`)}
           />
         </div>
       );
     }
 
     // View for unlogged users
-    else {
-      return (
-        <div className="flex flex-col min-h-screen gap-4">
-          <Header title={t("pageTitle")} showUserName={true} />
+    // else {
+    //   return (
+    //     <div className="flex flex-col min-h-screen gap-4">
+    //       <Header title={t("pageTitle")} showUserName={true} />
 
-          <div className="mx-4 flex flex-col gap-4 pb-24">
-            {/* Back Button and View Title */}
-            <div className="flex flex-row justify-between items-center">
-              <p
-                className="font-bold text-xl text-blackBeige"
-                data-id="Client view"
-              >
-                {t("title")}
-              </p>
-              <Link href="/materials">
-                <button className={commonClasses.headerButton}>
-                  <img src="/arrow-left.png" width={20} alt="Back" />
-                  <p>{t("back")}</p>
-                </button>
-              </Link>
-            </div>
+    //       <div className="mx-4 flex flex-col gap-4 pb-24">
+    //         {/* Back Button and View Title */}
+    //         <div className="flex flex-row justify-between items-center">
+    //           <p
+    //             className="font-bold text-xl text-blackBeige"
+    //             data-id="Client view"
+    //           >
+    //             {t("title")}
+    //           </p>
+    //           <Link href="/materials">
+    //             <button className={commonClasses.headerButton}>
+    //               <img src="/arrow-left.png" width={20} alt="Back" />
+    //               <p>{t("back")}</p>
+    //             </button>
+    //           </Link>
+    //         </div>
 
-            {/* Main Content */}
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Images Section (Left Side on Non-Mobile) */}
-              <div className="flex flex-col gap-4 md:w-1/2">
-                <img
-                  src={mainImage || "/noImage.png"}
-                  alt="Product Image"
-                  className={`${commonClasses.mainImage} ${
-                    transitioning
-                      ? "opacity-0 translate-y-1"
-                      : "opacity-100 translate-y-0"
-                  }`}
-                />
+    //         {/* Main Content */}
+    //         <div className="flex flex-col md:flex-row gap-6">
+    //           {/* Images Section (Left Side on Non-Mobile) */}
+    //           <div className="flex flex-col gap-4 md:w-1/2">
+    //             <img
+    //               src={mainImage || "/noImage.png"}
+    //               alt="Product Image"
+    //               className={`${commonClasses.mainImage} ${
+    //                 transitioning
+    //                   ? "opacity-0 translate-y-1"
+    //                   : "opacity-100 translate-y-0"
+    //               }`}
+    //             />
 
-                {selectedMaterial?.images?.length > 0 && (
-                  <div className={commonClasses.thumbnailContainer}>
-                    {selectedMaterial.images.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+    //             {selectedMaterial?.images?.length > 0 && (
+    //               <div className={commonClasses.thumbnailContainer}>
+    //                 {selectedMaterial.images.map((image, index) => (
+    //                   <SmallBlockHolder
+    //                     key={index}
+    //                     type="plainPicture"
+    //                     imageSource={image.url}
+    //                     onButtonFunction={() => handleImageChange(image)}
+    //                     mainStatus={mainImage === image.url}
+    //                   />
+    //                 ))}
+    //               </div>
+    //             )}
+    //           </div>
 
-              <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                <p className="text-2xl font-bold text-blackBeige">
-                  {selectedMaterial.name}
-                </p>
+    //           <div className={`${commonClasses.productDetails} md:w-1/2`}>
+    //             <p className="text-2xl font-bold text-blackBeige">
+    //               {selectedMaterial.name}
+    //             </p>
 
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>
-                    {t("categories")}
-                  </p>
-                  <p className={commonClasses.sectionText}>
-                    {Array.isArray(selectedMaterial?.categories) &&
-                    selectedMaterial.categories.length > 0
-                      ? selectedMaterial.categories.join(", ")
-                      : t("noCategories")}
-                  </p>
-                </div>
+    //             <div className="flex flex-col gap-2">
+    //               <p className={commonClasses.sectionTitle}>
+    //                 {t("categories")}
+    //               </p>
+    //               <p className={commonClasses.sectionText}>
+    //                 {Array.isArray(selectedMaterial?.categories) &&
+    //                 selectedMaterial.categories.length > 0
+    //                   ? selectedMaterial.categories.join(", ")
+    //                   : t("noCategories")}
+    //               </p>
+    //             </div>
 
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>{t("color")}</p>
-                  <p className={commonClasses.sectionText}>
-                    {selectedMaterial.color || t("noColor")}
-                  </p>
-                </div>
+    //             <div className="flex flex-col gap-2">
+    //               <p className={commonClasses.sectionTitle}>{t("color")}</p>
+    //               <p className={commonClasses.sectionText}>
+    //                 {selectedMaterial.color || t("noColor")}
+    //               </p>
+    //             </div>
 
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>
-                    {t("description")}
-                  </p>
-                  <p className={commonClasses.sectionText}>
-                    {selectedMaterial.description || t("noDescription")}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+    //             <div className="flex flex-col gap-2">
+    //               <p className={commonClasses.sectionTitle}>
+    //                 {t("description")}
+    //               </p>
+    //               <p className={commonClasses.sectionText}>
+    //                 {selectedMaterial.description || t("noDescription")}
+    //               </p>
+    //             </div>
+    //           </div>
+    //         </div>
+    //       </div>
 
-          <Menu
-            type="TwoButtonsMenu"
-            iconFirst="/link.png"
-            iconSecond="/eye-crossed.png"
-            firstTitle={t("copyForClient")}
-            secondTitle={t("defaultView")}
-            onSecondFunction={changeView}
-          />
-        </div>
-      );
-    }
+    //       <Menu
+    //         type="TwoButtonsMenu"
+    //         iconFirst="/link.png"
+    //         iconSecond="/eye-crossed.png"
+    //         firstTitle={t("copyForClient")}
+    //         secondTitle={t("defaultView")}
+    //         onSecondFunction={changeView}
+    //       />
+    //     </div>
+    //   );
+    // }
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
         <Header title="Artisan Track" />
-
-        <div className="mx-4 flex flex-col gap-4 pb-24">
-          {/* Main Content */}
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Images Section (Left Side on Non-Mobile) */}
-            <div className="flex flex-col gap-4 md:w-1/2">
-              <img
-                src={mainImage || "/noImage.png"}
-                alt="Product Image"
-                className={`${commonClasses.mainImage} ${
-                  transitioning
-                    ? "opacity-0 translate-y-1"
-                    : "opacity-100 translate-y-0"
-                }`}
-              />
-
-              {selectedMaterial?.images?.length > 0 && (
-                <div className={commonClasses.thumbnailContainer}>
-                  {selectedMaterial.images.map((image, index) => (
-                    <SmallBlockHolder
-                      key={index}
-                      type="plainPicture"
-                      imageSource={image.url}
-                      onButtonFunction={() => handleImageChange(image)}
-                      mainStatus={mainImage === image.url}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className={`${commonClasses.productDetails} md:w-1/2`}>
-              <p className="text-2xl font-bold text-blackBeige">
-                {selectedMaterial.name}
-              </p>
-
-              <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>{t("categories")}</p>
-                <p className={commonClasses.sectionText}>
-                  {Array.isArray(selectedMaterial?.categories) &&
-                  selectedMaterial.categories.length > 0
-                    ? selectedMaterial.categories.join(", ")
-                    : t("noCategories")}
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>{t("color")}</p>
-                <p className={commonClasses.sectionText}>
-                  {selectedMaterial.color || t("noColor")}
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>{t("description")}</p>
-                <p className={commonClasses.sectionText}>
-                  {selectedMaterial.description || t("noDescription")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <NotLoggedWindow />
       </div>
     );
   }

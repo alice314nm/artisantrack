@@ -206,11 +206,9 @@ export default function Home() {
         />
 
         <Menu
-          type="TwoButtonsMenu"
-          iconFirst="/link.png"
-          firstTitle={t("copyForClient")}
-          secondTitle={t("createProduct")}
-          onSecondFunction={handleNavigateToCreatePage}
+          type="OneButtonMenu" 
+          firstTitle={t("createProduct")}
+          onFirstFunction={handleNavigateToCreatePage}
           data-id="menu-button"
         />
       </div>

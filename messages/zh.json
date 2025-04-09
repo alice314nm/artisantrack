@@ -1,0 +1,811 @@
+{
+    "WelcomePage": {
+      "pageTitle": "首页 - Artisan Track",
+      "headerTitle": "Artisan Track",
+      "loadingAlt": "加载中",
+      "welcomeBack": "欢迎回来，{name}！",
+      "loading": "加载中...",
+  
+      "orders": {
+        "title": "订单",
+        "inProgress": "进行中",
+        "completed": "已完成",
+        "viewButton": "查看订单"
+      },
+  
+      "materials": {
+        "title": "材料",
+        "total": "材料总数",
+        "viewButton": "查看材料"
+      },
+  
+      "products": {
+        "title": "产品",
+        "total": "产品总数",
+        "viewButton": "查看产品"
+      },
+  
+      "finance": {
+        "title": "财务",
+        "revenue": "收入",
+        "expenses": "支出",
+        "viewButton": "查看财务"
+      },
+  
+      "inventory": {
+        "imageAlt": "库存图标",
+        "title": "跟踪您的库存！",
+        "description1": "添加图案、材料、模型等。",
+        "description2": "关注您的类别。"
+      },
+  
+      "trackOrders": {
+        "imageAlt": "订单图标",
+        "title": "跟踪您的订单！",
+        "description1": "从库存中添加产品到订单。",
+        "description2": "设置截止日期并分配客户。"
+      },
+  
+      "trackFinances": {
+        "imageAlt": "财务图标",
+        "title": "跟踪您的财务！",
+        "description1": "获取月度和年度收支报告。",
+        "description2": "了解哪些产品和材料在客户中受欢迎。"
+      }
+    },
+    "loginPage": {
+      "pageTitle": "登录",
+      "resetPasswordTitle": "重置密码",
+      "loginTitle": "登录",
+      "enterEmail": "输入您的邮箱",
+      "enterPassword": "密码",
+      "sendResetLink": "发送重置链接",
+      "backToLogin": "返回登录",
+      "forgotPassword": "忘记密码？",
+      "signUpPrompt": "还没有账户？",
+      "signUpLink": "注册",
+      "errorNoAccount": "未找到使用此邮箱的账户。",
+      "errorInvalidPassword": "密码不正确。请重试。",
+      "errorMissingPassword": "请输入密码以登录。",
+      "errorInvalidEmail": "请输入有效的邮箱以登录。",
+      "resetPasswordMessage": "密码重置链接已发送！请检查您的邮箱。",
+      "successMessage": "密码重置链接发送成功！"
+    },
+    "OrdersPage": {
+      "pageTitle": "订单",
+      "appTitle": "Artisan Track",
+      "unknown": "未知",
+      "nameAscending": "名称升序",
+      "nameDescending": "名称降序",
+      "category": "类别",
+      "earliestDeadline": "最早截止日期",
+      "latestDeadline": "最晚截止日期",
+      "days": "天",
+      "dueToday": "今日到期",
+      "noOrdersFound": "未找到订单",
+      "noDeadline": "无截止日期",
+      "createOrderButton": "创建订单 +",
+      "months": {
+        "jan": "一月",
+        "feb": "二月",
+        "mar": "三月",
+        "apr": "四月",
+        "may": "五月",
+        "jun": "六月",
+        "jul": "七月",
+        "aug": "八月",
+        "sep": "九月",
+        "oct": "十月",
+        "nov": "十一月",
+        "dec": "十二月"
+      }
+    },
+    "FilterTotal": {
+      "total": "总计",
+      "filterAndSort": "筛选和排序",
+      "filterAlt": "筛选图标"
+    },
+    "BlockHolder": {
+      "productId": "产品ID",
+      "orderId": "订单ID",
+      "materialId": "材料ID",
+      "category": "类别",
+      "deadline": "截止日期",
+      "total": "总计",
+      "quantity": "数量",
+      "color": "颜色",
+      "productImageAlt": "产品图片",
+      "orderImageAlt": "订单图片",
+      "materialImageAlt": "材料图片"
+    },
+    "SearchBar": {
+      "placeholder": "搜索...",
+      "searchAlt": "搜索图标"
+    },
+    "FilterWindow": {
+      "title": "筛选",
+      "toggleDropdown": "切换下拉菜单",
+      "apply": "应用筛选",
+      "categories": {
+        "Sort by": "排序方式",
+        "Categories": "类别",
+        "Colors": "颜色",
+        "Clients": "客户"
+      },
+      "sort": {
+        "category": "类别",
+        "nameDesc": "名称降序",
+        "nameAsc": "名称升序",
+        "idAsc": "ID升序",
+        "idDesc": "ID降序",
+        "earliestDeadline": "最早截止日期",
+        "latestDeadline": "最晚截止日期"
+      }
+    },
+    "SlideMenu": {
+      "logout": "退出登录",
+      "home": "首页",
+      "profile": "个人资料",
+      "documents": "文档",
+      "finances": "财务",
+      "inventory": "库存",
+      "products": "产品",
+      "materials": "材料",
+      "orders": "订单",
+      "expand": "展开",
+      "collapse": "收起"
+    },
+    "OrderPageID": {
+      "title": "订单",
+      "yourView": "您的视图",
+      "clientView": "客户视图：",
+      "back": "返回",
+      "createReceipt": "创建收据",
+      "edit": "编辑",
+      "deadline": "截止日期：",
+      "noDeadline": "无截止日期",
+      "client": "客户：",
+      "noClient": "未设置客户。",
+      "description": "描述：",
+      "noDescription": "未设置描述。",
+      "materials": "材料：",
+      "materialCost": "材料成本: ${cost}",
+      "total": "总计：",
+      "noTotal": "未设置总计。",
+      "delete": "删除",
+      "setPaid": "标记为已付款",
+      "setUnpaid": "标记为未付款",
+      "setCompleted": "标记为已完成",
+      "setIncomplete": "标记为未完成",
+      "copyForClient": "复制给客户",
+      "viewForClient": "客户视图",
+      "defaultView": "默认视图",
+      "artisanTrack": "Artisan Track",
+      "prepayment": "预付款：{amount}$",
+      "dueToday": "（今日到期）",
+      "daysLeft": "（还剩{days}天）",
+      "months": {
+        "Jan": "一月",
+        "Feb": "二月",
+        "Mar": "三月",
+        "Apr": "四月",
+        "May": "五月",
+        "Jun": "六月",
+        "Jul": "七月",
+        "Aug": "八月",
+        "Sep": "九月",
+        "Oct": "十月",
+        "Nov": "十一月",
+        "Dec": "十二月"
+      },
+      "orderID": "订单ID",
+      "material": "材料",
+      "quantity": "数量",
+      "price": "价格",
+      "product": "产品",
+      "workCost": "工作成本",
+      "noQuantity": "未指定",
+      "noCost": "未指定",
+      "noProduct": "未指定产品",
+      "totalCost": "总成本",
+      "receipt": "收据"
+    },
+    "confirmationWindow": {
+      "message": "您确定要",
+      "delete": "删除",
+      "cancel": "取消"
+    },
+    "EditOrder": {
+      "createOrderTitle": "创建订单",
+      "general": "一般信息",
+      "titleOfOrder": "订单标题",
+      "enterTitle": "输入订单标题",
+      "deadline": "截止日期",
+      "startDate": "开始日期",
+      "days": "天数",
+      "customerName": "客户名称",
+      "enterCustomerName": "输入客户名称",
+      "description": "描述",
+      "enterDetails": "输入订单详情",
+      "characters": "字符",
+      "productMaterials": "产品和材料",
+      "product": "产品",
+      "selectProduct": "选择产品",
+      "selectedProduct": "已选产品",
+      "costForSelectedProduct": "已选产品成本",
+      "materials": "材料",
+      "selectMaterial": "选择材料",
+      "materialsCost": "材料成本",
+      "workCost": "工作成本",
+      "totalCost": "总成本",
+      "cancel": "取消",
+      "create": "创建",
+      "noProducts": "库存中没有产品",
+      "noMaterials": "库存中没有材料",
+      "createTitle": "创建订单",
+      "invalidDate": "请确保起始日期和截止日期有效。",
+      "deadlineError": "截止日期必须晚于起始日期。",
+      "errorAdding": "添加订单错误："
+    },
+    "SelectHolder": {
+      "select": "选择",
+      "selected": "已选择",
+      "averageCost": "平均成本",
+      "totalCost": "总成本",
+      "quantity": "数量"
+    },
+    "SelectedHolder": {
+      "select": "选择",
+      "selected": "已选择",
+      "averageCost": "平均成本",
+      "totalCost": "总成本",
+      "quantity": "数量",
+      "remove": "移除"
+    },
+    "menu": {
+      "goBack": "返回",
+      "reset": "重置",
+      "confirm": "确认",
+      "cancel": "取消",
+      "create": "创建"
+    },
+    "materials": {
+      "pageTitle": "材料",
+      "noMaterials": "暂无材料",
+      "copyForClient": "复制给客户",
+      "createMaterial": "创建材料 +"
+    },
+    "IdMaterial": {
+      "pageTitle": "材料",
+      "yourView": "您的视图",
+      "back": "返回",
+      "edit": "编辑",
+      "categories": "类别：",
+      "noCategories": "未设置类别",
+      "color": "颜色：",
+      "noColor": "未设置颜色",
+      "description": "描述：",
+      "noDescription": "无描述",
+      "shop": "商店：",
+      "noShop": "无描述",
+      "quantity": "数量：",
+      "noQuantity": "未设置数量",
+      "costPerUnit": "单位成本：",
+      "noCostPerUnit": "未设置单位成本。",
+      "total": "总计：",
+      "noTotal": "未设置成本",
+      "delete": "删除",
+      "copyForClient": "复制给客户",
+      "defaultView": "默认视图",
+      "title": "客户视图"
+    },
+    "editMaterial": {
+      "title": "编辑材料",
+      "uploadError": "只允许PNG和JPG文件。",
+      "requiredFields": "ID和名称为必填项。",
+      "idTooLong": "ID应少于12个字符。",
+      "duplicateId": "已存在ID为'{id}'的产品。",
+      "updateSuccess": "材料更新成功！",
+      "updateError": "更新材料错误：",
+      "general": "一般信息",
+      "productId": "产品ID",
+      "productName": "产品名称",
+      "productDescription": "产品描述",
+      "details": "详情",
+      "productColor": "产品颜色",
+      "categories": "类别",
+      "addCategory": "添加",
+      "selectImages": "选择图片",
+      "requiredField": "* 必填",
+      "characterCount": "{count} / 1000 字符",
+      "removeCategory": "移除",
+      "imagePreview": "预览已选图片",
+      "price": "价格",
+      "shop": "商店",
+      "enterShop": "输入商店",
+      "quantity": "数量",
+      "total": "总计",
+      "costPerUnit": "单位成本",
+      "currency": "货币",
+      "usd": "美元 ($)",
+      "eur": "欧元 (€)",
+      "cad": "加元 (C$)",
+      "rub": "卢布 (₽)",
+      "cancel": "取消",
+      "save": "保存"
+    },
+    "smallBlockHolder": {
+      "delete": "删除"
+    },
+    "createMaterial": {
+      "pageTitle": "创建材料",
+      "id": "ID",
+      "name": "名称",
+      "description": "描述",
+      "color": "颜色",
+      "categories": "类别",
+      "shop": "商店",
+      "quantity": "数量",
+      "total": "总计",
+      "costPerUnit": "单位成本",
+      "selectImages": "选择图片",
+      "addCategory": "添加",
+      "save": "保存",
+      "cancel": "取消",
+      "idRequired": "ID和名称为必填项。",
+      "idTooLong": "ID应少于12个字符。",
+      "idExists": "已存在ID为'{id}'的产品。",
+      "invalidFiles": "只允许PNG和JPG文件。",
+      "title": "创建材料",
+      "general": "一般信息",
+      "idPlaceholder": "输入ID（2-16个字符）",
+      "namePlaceholder": "输入名称（2-64个字符）",
+      "descriptionPlaceholder": "输入描述",
+      "characters": "字符",
+      "details": "详情",
+      "colorPlaceholder": "输入颜色",
+      "categoriesPlaceholder": "为材料添加类别",
+      "add": "添加",
+      "shopPlaceholder": "输入商店",
+      "quantityPlaceholder": "0.00",
+      "totalPlaceholder": "0.00",
+      "remove": "移除",
+      "create": "创建",
+      "price": "价格"
+    },
+    "createOrder": {
+      "title": "创建订单",
+      "general": "一般信息",
+      "orderTitle": "订单标题",
+      "required": "*",
+      "deadline": "截止日期",
+      "startDate": "开始日期",
+      "days": "天数",
+      "customerName": "客户名称",
+      "description": "描述",
+      "productMaterials": "产品和材料",
+      "selectProduct": "选择产品",
+      "product": "产品",
+      "deadlineError": "截止日期必须晚于开始日期。",
+      "invalidDateError": "请确保开始日期和截止日期有效。",
+      "orderSuccess": "订单添加成功",
+      "orderError": "添加订单错误",
+      "selectedProduct": "已选产品",
+      "productCost": "已选产品成本",
+      "materials": "材料",
+      "selectMaterial": "选择材料",
+      "materialCost": "材料成本",
+      "workCost": "工作成本",
+      "totalCost": "总成本",
+      "currency": "货币",
+      "cancel": "取消",
+      "create": "创建",
+      "noProducts": "库存中没有产品",
+      "noMaterials": "库存中没有材料"
+    },
+    "productPage": {
+      "title": "产品",
+      "noProducts": "暂无产品",
+      "copyForClient": "复制给客户",
+      "createProduct": "创建产品 +"
+    },
+    "productId": {
+      "title": "产品",
+      "viewTitle": "您的视图",
+      "back": "返回",
+      "edit": "编辑",
+      "loading": "加载中...",
+      "imageAlt": "产品图片",
+      "categories": "类别",
+      "noCategories": "未设置类别",
+      "description": "描述",
+      "noDescription": "无描述",
+      "averageTotal": "平均总计",
+      "costNotSet": "未设置成本",
+      "delete": "删除",
+      "copyForClient": "复制给客户",
+      "viewForClient": "客户视图",
+      "clientView": "客户视图",
+      "products": "产品",
+      "productId": "产品ID",
+      "defaultView": "默认视图"
+    },
+    "editProduct": {
+      "pageTitle": "编辑产品",
+      "onlyPngJpgAllowed": "只允许PNG和JPG文件。",
+      "imageUploadError": "处理图片上传失败：",
+      "idNameRequired": "ID和名称为必填项。",
+      "idTooLong": "ID应少于12个字符。",
+      "idAlreadyExists": "已存在ID为'{id}'的产品。",
+      "updateError": "更新产品错误：",
+      "general": "一般信息",
+      "id": "ID",
+      "name": "名称",
+      "description": "描述",
+      "characters": "字符",
+      "details": "详情",
+      "category": "类别",
+      "add": "添加",
+      "categoryList": "类别列表",
+      "productImages": "产品图片",
+      "patternImages": "图案图片",
+      "selectImages": "选择图片",
+      "previewPatternImage": "预览图案图片",
+      "price": "价格",
+      "averageCost": "平均成本",
+      "cancel": "取消",
+      "save": "保存"
+    },
+    "createProduct": {
+      "pageTitle": "创建产品",
+      "invalidImageFormat": "只允许PNG和JPG文件。",
+      "requiredFields": "ID和名称为必填项。",
+      "idTooLong": "ID应少于12个字符。",
+      "productExists": "已存在ID为'{id}'的产品。",
+      "productAdded": "产品添加成功。",
+      "submit": "创建产品",
+      "general": "一般信息",
+      "id": "ID",
+      "idPlaceholder": "输入ID（2-16个字符）",
+      "name": "名称",
+      "namePlaceholder": "输入名称（2-64个字符）",
+      "description": "描述",
+      "descriptionPlaceholder": "输入描述",
+      "characters": "字符",
+      "details": "详情",
+      "category": "类别",
+      "categoryPlaceholder": "为材料添加类别",
+      "add": "添加",
+      "categoryList": "类别列表",
+      "productImages": "产品图片",
+      "patternImages": "图案图片",
+      "selectImages": "选择图片",
+      "previewPatternImage": "预览图案图片",
+      "price": "价格",
+      "cost": "成本",
+      "currency": {
+        "usd": "美元 ($)",
+        "eur": "欧元 (€)",
+        "cad": "加元 (C$)",
+        "rub": "卢布 (₽)"
+      },
+      "cancel": "取消",
+      "create": "创建"
+    },
+    "signup": {
+      "title": "注册",
+      "email": "邮箱",
+      "name": "姓名",
+      "tax": "税率",
+      "password": "密码",
+      "repeatPassword": "重复密码",
+      "signUp": "注册",
+      "signingUp": "注册中...",
+      "success": "账户创建成功！",
+      "alreadyHaveAccount": "已有账户？",
+      "login": "登录",
+      "errors": {
+        "requiredFields": "所有带*的字段都是必填项。",
+        "invalidEmail": "邮箱格式无效。请重试。",
+        "passwordMismatch": "密码不匹配。",
+        "passwordLength": "密码应至少包含6个字符。"
+      },
+      "placeholders": {
+        "email": "例如：example@mail.com",
+        "name": "例如：张三",
+        "tax": "例如：4%",
+        "password": "******",
+        "repeatPassword": "*******"
+      }
+    },
+    "notLogged": {
+      "welcome": "欢迎来到",
+      "description": " 管理您的产品、订单、材料和财务。",
+      "prompt": "登录以继续或创建新账户以开始使用。",
+      "login": "登录",
+      "createAccount": "创建账户"
+    },
+    "Profile": {
+      "title": "个人资料",
+      "accountDeleted": "账户已成功删除！",
+      "artisan": "工匠：",
+      "save": "保存",
+      "saving": "保存中...",
+      "cancel": "取消",
+      "edit": "编辑个人资料",
+      "currentEmail": "当前邮箱：",
+      "changePassword": "修改密码",
+      "inventory": "库存：",
+      "totalProducts": "产品总数",
+      "totalMaterials": "材料总数",
+      "orders": "订单：",
+      "inProgressOrders": "进行中",
+      "completedOrders": "已完成",
+      "setTax": "设置税率：",
+      "taxNotSet": "未设置税率",
+      "deleteAccount": "删除账户",
+      "loading": "加载中..."
+    },
+    "ChangePassword": {
+      "resetTitle": "重置密码",
+      "changeTitle": "修改密码",
+      "sendResetLink": "发送重置链接",
+      "backToChange": "返回修改密码",
+  
+      "labels": {
+        "currentPassword": "当前密码",
+        "newPassword": "新密码",
+        "confirmNewPassword": "确认新密码"
+      },
+  
+      "placeholders": {
+        "enterEmail": "输入您的邮箱",
+        "currentPassword": "输入当前密码",
+        "newPassword": "输入新密码",
+        "confirmNewPassword": "确认新密码"
+      },
+  
+      "messages": {
+        "passwordUpdated": "密码更新成功！",
+        "resetLinkSent": "密码重置链接已发送！请检查您的邮箱。"
+      },
+  
+      "errors": {
+        "passwordsDoNotMatch": "新密码不匹配。",
+        "passwordEmpty": "新密码不能为空。",
+        "passwordTooShort": "密码长度应至少为6个字符。",
+        "noUser": "没有已登录用户。",
+        "invalidCredential": "当前密码不正确。",
+        "resetFailed": "发送重置链接失败。"
+      },
+  
+      "passwordStrength": {
+        "weak": "弱",
+        "medium": "中",
+        "strong": "强"
+      },
+      "buttons": {
+        "change": "修改",
+        "cancel": "取消"
+      },
+      "forgotPassword": "忘记密码？"
+    },
+    "PasswordConfirmation": {
+      "errors": {
+        "noUserSignedIn": "没有已登录用户。",
+        "enterPassword": "请输入您的密码。",
+        "incorrectPassword": "当前密码不正确。",
+        "enterNewEmail": "请输入新的邮箱地址。",
+        "sameEmail": "新邮箱不能与当前邮箱相同。",
+        "verificationFailed": "重新发送验证邮件失败：{{message}}"
+      },
+      "heading": "确认您的密码",
+      "placeholders": {
+        "password": "输入您的密码"
+      },
+      "buttons": {
+        "cancel": "取消",
+        "confirm": "确认",
+        "close": "关闭",
+        "resend": "重新发送验证邮件"
+      },
+      "messages": {
+        "verificationSent": "验证邮件已发送至",
+        "checkAndRefresh": " 请验证您的邮箱地址，然后刷新此页面。",
+        "resendIn": "您可以在{{seconds}}秒后重新发送邮件。"
+      }
+    },
+    "Finance": {
+      "pageTitle": "财务",
+      "allOrders": "所有订单",
+      "setTax": "设置税率",
+      "loading": "加载中...",
+      "inProgress": "进行中",
+      "completed": "已完成",
+      "buttons": {
+        "save": "保存",
+        "cancel": "取消",
+        "changeTax": "修改税率"
+      },
+      "thisMonth": "本月（{month}）：",
+      "thisYear": "今年（{year}）：",
+      "income": "收入",
+      "expenses": "支出",
+      "monthlyReport": "月度财务报告",
+      "yearlyReport": "年度财务报告"
+    },
+    "FinanceMonthly": {
+      "filters": {
+        "popularProduct": "本月包含热门产品的订单",
+        "popularMaterial": "本月包含热门材料的订单",
+        "regularClient": "本月来自常客的订单"
+      },
+      "excel": {
+        "income": "收入：",
+        "expenses": "支出：",
+        "popularProduct": "热门产品：",
+        "popularMaterial": "热门材料：",
+        "regularClient": "常客：",
+        "orders": "订单",
+        "headers": {
+          "title": "订单标题",
+          "customerName": "客户名称",
+          "productId": "产品ID",
+          "productCost": "产品成本",
+          "materialId": "材料ID",
+          "quantity": "数量",
+          "materialCost": "材料成本",
+          "workCost": "工作成本",
+          "totalCost": "总成本"
+        },
+        "products": "产品",
+        "productHeaders": {
+          "id": "产品ID",
+          "name": "产品名称",
+          "category": "类别",
+          "average": "平均总计"
+        },
+        "materials": "材料",
+        "materialHeaders": {
+          "id": "材料ID",
+          "name": "材料名称",
+          "category": "类别",
+          "color": "颜色",
+          "shop": "商店",
+          "quantity": "数量",
+          "costPerUnit": "单位成本",
+          "total": "总计"
+        }
+      },
+      "pageTitle": {
+        "monthlyReport": "月度报告"
+      },
+      "date": {
+        "months": {
+          "jan": "一月",
+          "feb": "二月",
+          "mar": "三月",
+          "apr": "四月",
+          "may": "五月",
+          "jun": "六月",
+          "jul": "七月",
+          "aug": "八月",
+          "sep": "九月",
+          "oct": "十月",
+          "nov": "十一月",
+          "dec": "十二月"
+        },
+        "daysLeft": "天",
+        "dueToday": "今日到期"
+      },
+      "finance": {
+        "income": "收入",
+        "expenses": "支出",
+        "popularProduct": "本月热门产品",
+        "popularMaterial": "本月热门材料",
+        "regularClient": "本月常客"
+      },
+      "view": {
+        "show": "显示",
+        "orders": "订单",
+        "products": "产品",
+        "materials": "材料",
+        "clearFilter": "清除筛选",
+        "noDeadline": "无截止日期"
+      },
+      "menu": {
+        "goBack": "返回",
+        "download": "下载"
+      },
+      "products": {
+        "noProducts": "无可用产品"
+      },
+      "materials": {
+        "noMaterials": "无可用材料"
+      },
+      "months": {
+        "0": "一月",
+        "1": "二月",
+        "2": "三月",
+        "3": "四月",
+        "4": "五月",
+        "5": "六月",
+        "6": "七月",
+        "7": "八月",
+        "8": "九月",
+        "9": "十月",
+        "10": "十一月",
+        "11": "十二月"
+      }
+    },
+    "chart": {
+      "expenses": "支出",
+      "income": "收入",
+      "financial": "财务"
+    },
+    "financeYearly": {
+      "title": "年度报告",
+      "income": "收入",
+      "expenses": "支出",
+      "popularProduct": "今年热门产品",
+      "popularMaterial": "今年热门材料",
+      "regularClient": "常客",
+      "amount": "金额",
+      "days": "天",
+      "dueToday": "今日到期",
+      "months": {
+        "jan": "一月",
+        "feb": "二月",
+        "mar": "三月",
+        "apr": "四月",
+        "may": "五月",
+        "jun": "六月",
+        "jul": "七月",
+        "aug": "八月",
+        "sep": "九月",
+        "oct": "十月",
+        "nov": "十一月",
+        "dec": "十二月"
+      },
+      "show": "显示",
+      "clearFilter": "清除筛选",
+      "noDeadline": "无截止日期",
+      "orders": "订单",
+      "products": "产品",
+      "materials": "材料",
+      "goBack": "返回",
+      "download": "下载"
+    },
+    "layout": {
+      "sessionExpired": "会话已过期。请重新登录。",
+      "areYouStillHere": "您还在吗？",
+      "imHere": "是的，我在这里",
+      "logOut": "否，退出登录"
+    },
+    "SignInOutWindow": {
+      "alreadySignedIn": "您已经登录。",
+      "wantToSignOut": "您想要退出登录吗？",
+      "signOut": "退出登录",
+      "pleaseSignIn": "请登录以{text}",
+      "goToSignIn": "转到登录页面"
+    },
+    "MaterialOrderDisplay": {
+      "quantity": "数量"
+    },
+    "auth": {
+      "errors": {
+        "emailInUse": "此邮箱地址已关联到一个账户。",
+        "invalidEmail": "请输入有效的邮箱地址。"
+      },
+      "actions": {
+        "signOut": "退出登录",
+        "signIn": "登录",
+        "createAccount": "创建账户",
+        "resetPassword": "重置密码"
+      },
+      "passwordReset": {
+        "success": "密码重置邮件已发送。",
+        "error": "重置密码错误："
+      }
+    }
+  }

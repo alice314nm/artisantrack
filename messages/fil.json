@@ -1,0 +1,811 @@
+{
+    "WelcomePage": {
+      "pageTitle": "Home - Artisan Track",
+      "headerTitle": "Artisan Track",
+      "loadingAlt": "Naglo-load",
+      "welcomeBack": "Maligayang pagbabalik, {name}!",
+      "loading": "Naglo-load...",
+  
+      "orders": {
+        "title": "Mga Order",
+        "inProgress": "Ginagawa",
+        "completed": "Tapos na",
+        "viewButton": "Tingnan ang Mga Order"
+      },
+  
+      "materials": {
+        "title": "Mga Materyales",
+        "total": "Kabuuang Materyales",
+        "viewButton": "Tingnan ang Mga Materyales"
+      },
+  
+      "products": {
+        "title": "Mga Produkto",
+        "total": "Kabuuang Produkto",
+        "viewButton": "Tingnan ang Mga Produkto"
+      },
+  
+      "finance": {
+        "title": "Pananalapi",
+        "revenue": "Kita",
+        "expenses": "Gastos",
+        "viewButton": "Tingnan ang Pananalapi"
+      },
+  
+      "inventory": {
+        "imageAlt": "Icon ng Imbentaryo",
+        "title": "I-track ang Iyong Imbentaryo!",
+        "description1": "Magdagdag ng mga pattern, materyales, modelo, at iba pa.",
+        "description2": "Bantayan ang iyong mga kategorya."
+      },
+  
+      "trackOrders": {
+        "imageAlt": "Icon ng Mga Order",
+        "title": "I-track ang Iyong Mga Order!",
+        "description1": "Magdagdag ng mga produkto mula sa imbentaryo sa isang order.",
+        "description2": "Mag-set ng mga deadline at mag-assign ng mga kliyente."
+      },
+  
+      "trackFinances": {
+        "imageAlt": "Icon ng Pananalapi",
+        "title": "I-track ang Iyong Pananalapi!",
+        "description1": "Kumuha ng mga buwanang at taunang ulat sa kita at gastos.",
+        "description2": "Alamin kung aling mga produkto at materyales ang popular sa iyong mga kliyente."
+      }
+    },
+    "loginPage": {
+      "pageTitle": "Mag-login",
+      "resetPasswordTitle": "I-reset ang Password",
+      "loginTitle": "Mag-log In",
+      "enterEmail": "Ilagay ang iyong email",
+      "enterPassword": "Password",
+      "sendResetLink": "Ipadala ang Link para I-reset",
+      "backToLogin": "Bumalik sa Pag-log In",
+      "forgotPassword": "Nakalimutan ang Password?",
+      "signUpPrompt": "Wala ka pang account?",
+      "signUpLink": "Mag-sign Up",
+      "errorNoAccount": "Walang account na natagpuan gamit ang email na ito.",
+      "errorInvalidPassword": "Maling password. Pakiulit.",
+      "errorMissingPassword": "Pakilagay ang password para mag-log in.",
+      "errorInvalidEmail": "Pakilagay ang tamang email para mag-log in.",
+      "resetPasswordMessage": "Isang link para i-reset ang password ay ipinadala! Suriin ang iyong email.",
+      "successMessage": "Matagumpay na ipinadala ang link para i-reset ang password!"
+    },
+    "OrdersPage": {
+      "pageTitle": "Mga Order",
+      "appTitle": "Artisan Track",
+      "unknown": "Hindi kilala",
+      "nameAscending": "Pangalan Pataas",
+      "nameDescending": "Pangalan Pababa",
+      "category": "Kategorya",
+      "earliestDeadline": "Pinakamaagang Deadline",
+      "latestDeadline": "Pinakahuling Deadline",
+      "days": "araw",
+      "dueToday": "Due ngayong araw",
+      "noOrdersFound": "Walang natagpuang mga order",
+      "noDeadline": "Walang deadline",
+      "createOrderButton": "Gumawa ng Order +",
+      "months": {
+        "jan": "Ene",
+        "feb": "Peb",
+        "mar": "Mar",
+        "apr": "Abr",
+        "may": "May",
+        "jun": "Hun",
+        "jul": "Hul",
+        "aug": "Ago",
+        "sep": "Set",
+        "oct": "Okt",
+        "nov": "Nob",
+        "dec": "Dis"
+      }
+    },
+    "FilterTotal": {
+      "total": "Kabuuan",
+      "filterAndSort": "I-filter at I-sort",
+      "filterAlt": "Icon ng Filter"
+    },
+    "BlockHolder": {
+      "productId": "ID ng Produkto",
+      "orderId": "ID ng Order",
+      "materialId": "ID ng Materyal",
+      "category": "Kategorya",
+      "deadline": "Deadline",
+      "total": "Kabuuan",
+      "quantity": "Dami",
+      "color": "Kulay",
+      "productImageAlt": "Larawan ng Produkto",
+      "orderImageAlt": "Larawan ng Order",
+      "materialImageAlt": "Larawan ng Materyal"
+    },
+    "SearchBar": {
+      "placeholder": "Maghanap...",
+      "searchAlt": "Icon ng Paghahanap"
+    },
+    "FilterWindow": {
+      "title": "Mga Filter",
+      "toggleDropdown": "I-toggle ang dropdown",
+      "apply": "Ilapat ang Mga Filter",
+      "categories": {
+        "Sort by": "I-sort ayon sa",
+        "Categories": "Mga Kategorya",
+        "Colors": "Mga Kulay",
+        "Clients": "Mga Kliyente"
+      },
+      "sort": {
+        "category": "Kategorya",
+        "nameDesc": "Pangalan Pababa",
+        "nameAsc": "Pangalan Pataas",
+        "idAsc": "ID Pataas",
+        "idDesc": "ID Pababa",
+        "earliestDeadline": "Pinakamaagang Deadline",
+        "latestDeadline": "Pinakahuling Deadline"
+      }
+    },
+    "SlideMenu": {
+      "logout": "Mag-log out",
+      "home": "Home",
+      "profile": "Profile",
+      "documents": "Mga Dokumento",
+      "finances": "Pananalapi",
+      "inventory": "Imbentaryo",
+      "products": "Mga Produkto",
+      "materials": "Mga Materyales",
+      "orders": "Mga Order",
+      "expand": "Palawakin",
+      "collapse": "I-collapse"
+    },
+    "OrderPageID": {
+      "title": "Order",
+      "yourView": "Ang Iyong Tingin",
+      "clientView": "Tingin ng kliyente:",
+      "back": "Bumalik",
+      "createReceipt": "Gumawa ng resibo",
+      "edit": "I-edit",
+      "deadline": "Deadline:",
+      "noDeadline": "Walang deadline",
+      "client": "Kliyente:",
+      "noClient": "Walang nakatakdang kliyente.",
+      "description": "Paglalarawan:",
+      "noDescription": "Walang nakatakdang paglalarawan.",
+      "materials": "Mga Materyales:",
+      "materialCost": "Gastos sa materyal: ${cost}",
+      "total": "Kabuuan:",
+      "noTotal": "Walang nakatakdang kabuuan.",
+      "delete": "Tanggalin",
+      "setPaid": "Itakda bilang Bayad",
+      "setUnpaid": "Itakda bilang hindi bayad",
+      "setCompleted": "Itakda bilang Tapos",
+      "setIncomplete": "Itakda bilang Hindi tapos",
+      "copyForClient": "Kopya para sa kliyente",
+      "viewForClient": "Tingin para sa kliyente",
+      "defaultView": "Default na Tingin",
+      "artisanTrack": "Artisan Track",
+      "prepayment": "Paunang bayad: {amount}$",
+      "dueToday": "(Due ngayong araw)",
+      "daysLeft": "({days} araw)",
+      "months": {
+        "Jan": "Ene",
+        "Feb": "Peb",
+        "Mar": "Mar",
+        "Apr": "Abr",
+        "May": "May",
+        "Jun": "Hun",
+        "Jul": "Hul",
+        "Aug": "Ago",
+        "Sep": "Set",
+        "Oct": "Okt",
+        "Nov": "Nob",
+        "Dec": "Dis"
+      },
+      "orderID": "ID ng Order",
+      "material": "Materyal",
+      "quantity": "Dami",
+      "price": "Presyo",
+      "product": "Produkto",
+      "workCost": "Gastos sa trabaho",
+      "noQuantity": "Hindi nakatakda",
+      "noCost": "Hindi nakatakda",
+      "noProduct": "Hindi nakatakdang produkto",
+      "totalCost": "Kabuuang gastos",
+      "receipt": "Resibo"
+    },
+    "confirmationWindow": {
+      "message": "Sigurado ka bang gusto mong",
+      "delete": "tanggalin",
+      "cancel": "Kanselahin"
+    },
+    "EditOrder": {
+      "createOrderTitle": "Gumawa ng Order",
+      "general": "Pangkalahatan",
+      "titleOfOrder": "Pamagat ng order",
+      "enterTitle": "Ilagay ang pamagat para sa order",
+      "deadline": "Deadline",
+      "startDate": "Petsa ng Pagsisimula",
+      "days": "Mga araw",
+      "customerName": "Pangalan ng kustomer",
+      "enterCustomerName": "Ilagay ang pangalan ng kustomer",
+      "description": "Paglalarawan",
+      "enterDetails": "Ilagay ang mga detalye tungkol sa order",
+      "characters": "mga karakter",
+      "productMaterials": "Produkto at Materyales",
+      "product": "Produkto",
+      "selectProduct": "Piliin ang produkto",
+      "selectedProduct": "Napiling Produkto",
+      "costForSelectedProduct": "Gastos para sa napiling produkto",
+      "materials": "Mga Materyales",
+      "selectMaterial": "Piliin ang materyal",
+      "materialsCost": "Gastos sa materyales",
+      "workCost": "Gastos sa trabaho",
+      "totalCost": "Kabuuang gastos",
+      "cancel": "Kanselahin",
+      "create": "Gumawa",
+      "noProducts": "Walang produkto sa imbentaryo",
+      "noMaterials": "Walang materyales sa imbentaryo",
+      "createTitle": "Gumawa ng Order",
+      "invalidDate": "Pakisiguro na ang petsa ng pagsisimula at deadline ay wasto.",
+      "deadlineError": "Ang deadline ay dapat pagkatapos ng petsa ng pagsisimula.",
+      "errorAdding": "Error sa pagdaragdag ng order:"
+    },
+    "SelectHolder": {
+      "select": "Piliin",
+      "selected": "Napili",
+      "averageCost": "Karaniwang gastos",
+      "totalCost": "Kabuuang gastos",
+      "quantity": "Dami"
+    },
+    "SelectedHolder": {
+      "select": "Piliin",
+      "selected": "Napili",
+      "averageCost": "Karaniwang gastos",
+      "totalCost": "Kabuuang gastos",
+      "quantity": "Dami",
+      "remove": "Alisin"
+    },
+    "menu": {
+      "goBack": "Bumalik",
+      "reset": "I-reset",
+      "confirm": "Kumpirmahin",
+      "cancel": "Kanselahin",
+      "create": "Gumawa"
+    },
+    "materials": {
+      "pageTitle": "Mga Materyales",
+      "noMaterials": "Walang materyales pa",
+      "copyForClient": "Kopya para sa kliyente",
+      "createMaterial": "Gumawa ng materyal +"
+    },
+    "IdMaterial": {
+      "pageTitle": "Materyal",
+      "yourView": "Ang Iyong Tingin",
+      "back": "Bumalik",
+      "edit": "I-edit",
+      "categories": "Mga Kategorya:",
+      "noCategories": "Walang nakatakdang mga kategorya",
+      "color": "Kulay:",
+      "noColor": "Walang nakatakdang mga kulay",
+      "description": "Paglalarawan:",
+      "noDescription": "Walang Paglalarawan",
+      "shop": "Tindahan:",
+      "noShop": "Walang Paglalarawan",
+      "quantity": "Dami:",
+      "noQuantity": "Walang nakatakdang dami",
+      "costPerUnit": "Gastos kada Yunit:",
+      "noCostPerUnit": "Walang nakatakdang gastos kada yunit.",
+      "total": "Kabuuan:",
+      "noTotal": "Hindi nakatakda ang gastos",
+      "delete": "Tanggalin",
+      "copyForClient": "Kopya para sa kliyente",
+      "defaultView": "Default na Tingin",
+      "title": "Tingin ng kliyente"
+    },
+    "editMaterial": {
+      "title": "I-edit ang Materyal",
+      "uploadError": "Tanging PNG at JPG na mga file lang ang pinapayagan.",
+      "requiredFields": "Id at Pangalan ay kinakailangan.",
+      "idTooLong": "Ang Id ay dapat mas mababa sa 12 na karakter.",
+      "duplicateId": "Ang produkto na may Id na '{id}' ay umiiral na.",
+      "updateSuccess": "Matagumpay na na-update ang materyal!",
+      "updateError": "Error sa pag-update ng materyal:",
+      "general": "Pangkalahatan",
+      "productId": "Id ng Produkto",
+      "productName": "Pangalan ng Produkto",
+      "productDescription": "Paglalarawan ng Produkto",
+      "details": "Mga Detalye",
+      "productColor": "Kulay ng Produkto",
+      "categories": "Mga Kategorya",
+      "addCategory": "Idagdag",
+      "selectImages": "Piliin ang mga larawan",
+      "requiredField": "* Kinakailangan",
+      "characterCount": "{count} / 1000 na mga karakter",
+      "removeCategory": "Alisin",
+      "imagePreview": "I-preview ang Napiling Mga Larawan",
+      "price": "Presyo",
+      "shop": "Tindahan",
+      "enterShop": "Ilagay ang isang tindahan",
+      "quantity": "Dami",
+      "total": "Kabuuan",
+      "costPerUnit": "Gastos kada yunit",
+      "currency": "Pera",
+      "usd": "USD ($)",
+      "eur": "EUR (€)",
+      "cad": "CAD (C$)",
+      "rub": "RUB (₽)",
+      "cancel": "Kanselahin",
+      "save": "I-save"
+    },
+    "smallBlockHolder": {
+      "delete": "Tanggalin"
+    },
+    "createMaterial": {
+      "pageTitle": "Gumawa ng Materyal",
+      "id": "Id",
+      "name": "Pangalan",
+      "description": "Paglalarawan",
+      "color": "Kulay",
+      "categories": "Mga Kategorya",
+      "shop": "Tindahan",
+      "quantity": "Dami",
+      "total": "Kabuuan",
+      "costPerUnit": "Gastos kada yunit",
+      "selectImages": "Piliin ang mga larawan",
+      "addCategory": "Idagdag",
+      "save": "I-save",
+      "cancel": "Kanselahin",
+      "idRequired": "Id at Pangalan ay kinakailangan.",
+      "idTooLong": "Ang Id ay dapat mas mababa sa 12 na karakter.",
+      "idExists": "Ang produkto na may Id na '{id}' ay umiiral na.",
+      "invalidFiles": "Tanging PNG at JPG na mga file lang ang pinapayagan.",
+      "title": "Gumawa ng materyal",
+      "general": "Pangkalahatan",
+      "idPlaceholder": "Ilagay ang id (2-16 na karakter)",
+      "namePlaceholder": "Ilagay ang pangalan (2-64 na karakter)",
+      "descriptionPlaceholder": "Ilagay ang paglalarawan",
+      "characters": "mga karakter",
+      "details": "Mga Detalye",
+      "colorPlaceholder": "Ilagay ang kulay",
+      "categoriesPlaceholder": "Idagdag ang kategorya para sa materyal",
+      "add": "Idagdag",
+      "shopPlaceholder": "Ilagay ang tindahan",
+      "quantityPlaceholder": "0.00",
+      "totalPlaceholder": "0.00",
+      "remove": "Alisin",
+      "create": "Gumawa",
+      "price": "Presyo"
+    },
+    "createOrder": {
+        "title": "Gumawa ng Order",
+        "general": "Pangkalahatan",
+        "orderTitle": "Pamagat ng order",
+        "required": "*",
+        "deadline": "Deadline",
+        "startDate": "Petsa ng Pagsisimula",
+        "days": "Mga araw",
+        "customerName": "Pangalan ng kustomer",
+        "description": "Paglalarawan",
+        "productMaterials": "Produkto at Materyales",
+        "selectProduct": "Piliin ang produkto",
+        "product": "Produkto",
+        "deadlineError": "Ang deadline ay dapat pagkatapos ng petsa ng pagsisimula.",
+        "invalidDateError": "Pakisiguro na ang petsa ng pagsisimula at deadline ay wasto.",
+        "orderSuccess": "Matagumpay na nadagdag ang order",
+        "orderError": "Error sa pagdaragdag ng order",
+        "selectedProduct": "Napiling Produkto",
+        "productCost": "Gastos para sa napiling produkto",
+        "materials": "Mga Materyales",
+        "selectMaterial": "Piliin ang materyal",
+        "materialCost": "Gastos sa materyales",
+        "workCost": "Gastos sa trabaho",
+        "totalCost": "Kabuuang gastos",
+        "currency": "Pera",
+        "cancel": "Kanselahin",
+        "create": "Gumawa",
+        "noProducts": "Walang produkto sa imbentaryo",
+        "noMaterials": "Walang materyales sa imbentaryo"
+      },
+      "productPage": {
+        "title": "Mga Produkto",
+        "noProducts": "Walang produkto pa",
+        "copyForClient": "Kopya para sa kliyente",
+        "createProduct": "Gumawa ng produkto +"
+      },
+      "productId": {
+        "title": "Produkto",
+        "viewTitle": "Ang Iyong Tingin",
+        "back": "Bumalik",
+        "edit": "I-edit",
+        "loading": "Naglo-load...",
+        "imageAlt": "Larawan ng Produkto",
+        "categories": "Mga Kategorya",
+        "noCategories": "Walang nakatakdang mga kategorya",
+        "description": "Paglalarawan",
+        "noDescription": "Walang paglalarawan",
+        "averageTotal": "Karaniwang Kabuuan",
+        "costNotSet": "Hindi nakatakda ang gastos",
+        "delete": "Tanggalin",
+        "copyForClient": "Kopya para sa kliyente",
+        "viewForClient": "Tingin para sa kliyente",
+        "clientView": "Tingin ng kliyente",
+        "products": "Mga Produkto",
+        "productId": "ID ng Produkto",
+        "defaultView": "Default na Tingin"
+      },
+      "editProduct": {
+        "pageTitle": "I-edit ang Produkto",
+        "onlyPngJpgAllowed": "Tanging PNG at JPG na mga file lang ang pinapayagan.",
+        "imageUploadError": "Nabigo sa pag-upload ng larawan:",
+        "idNameRequired": "Id at Pangalan ay kinakailangan.",
+        "idTooLong": "Ang Id ay dapat mas mababa sa 12 na karakter.",
+        "idAlreadyExists": "Ang produkto na may Id na '{id}' ay umiiral na.",
+        "updateError": "Error sa pag-update ng produkto:",
+        "general": "Pangkalahatan",
+        "id": "Id",
+        "name": "Pangalan",
+        "description": "Paglalarawan",
+        "characters": "mga karakter",
+        "details": "Mga Detalye",
+        "category": "Kategorya",
+        "add": "Idagdag",
+        "categoryList": "Listahan ng Kategorya",
+        "productImages": "Mga Larawan ng Produkto",
+        "patternImages": "Mga Larawan ng Pattern",
+        "selectImages": "Piliin ang mga larawan",
+        "previewPatternImage": "I-preview ang Larawan ng Pattern",
+        "price": "Presyo",
+        "averageCost": "Karaniwang Gastos",
+        "cancel": "Kanselahin",
+        "save": "I-save"
+      },
+      "createProduct": {
+        "pageTitle": "Gumawa ng Produkto",
+        "invalidImageFormat": "Tanging PNG at JPG na mga file lang ang pinapayagan.",
+        "requiredFields": "Id at Pangalan ay kinakailangan.",
+        "idTooLong": "Ang Id ay dapat mas mababa sa 12 na karakter.",
+        "productExists": "Ang produkto na may Id na '{id}' ay umiiral na.",
+        "productAdded": "Matagumpay na nadagdag ang produkto.",
+        "submit": "Gumawa ng Produkto",
+        "general": "Pangkalahatan",
+        "id": "Id",
+        "idPlaceholder": "Ilagay ang id (2-16 na karakter)",
+        "name": "Pangalan",
+        "namePlaceholder": "Ilagay ang pangalan (2-64 na karakter)",
+        "description": "Paglalarawan",
+        "descriptionPlaceholder": "Ilagay ang paglalarawan",
+        "characters": "mga karakter",
+        "details": "Mga Detalye",
+        "category": "Kategorya",
+        "categoryPlaceholder": "Idagdag ang kategorya para sa materyal",
+        "add": "Idagdag",
+        "categoryList": "Listahan ng Kategorya",
+        "productImages": "Mga Larawan ng Produkto",
+        "patternImages": "Mga Larawan ng Pattern",
+        "selectImages": "Piliin ang mga larawan",
+        "previewPatternImage": "I-preview ang Larawan ng Pattern",
+        "price": "Presyo",
+        "cost": "Gastos",
+        "currency": {
+          "usd": "USD ($)",
+          "eur": "EUR (€)",
+          "cad": "CAD (C$)",
+          "rub": "RUB (₽)"
+        },
+        "cancel": "Kanselahin",
+        "create": "Gumawa"
+      },
+      "signup": {
+        "title": "Mag-sign Up",
+        "email": "Email",
+        "name": "Pangalan",
+        "tax": "Buwis",
+        "password": "Password",
+        "repeatPassword": "Ulitin ang Password",
+        "signUp": "Mag-sign Up",
+        "signingUp": "Nag-sign Up...",
+        "success": "Matagumpay na nagawa ang account!",
+        "alreadyHaveAccount": "May account na?",
+        "login": "Mag-log in",
+        "errors": {
+          "requiredFields": "Lahat ng mga field na may markang * ay kinakailangan.",
+          "invalidEmail": "Di-wastong format ng email. Pakiulit.",
+          "passwordMismatch": "Ang mga password ay hindi magkatugma.",
+          "passwordLength": "Ang password ay dapat hindi bababa sa 6 na karakter."
+        },
+        "placeholders": {
+          "email": "hal. example@mail.com",
+          "name": "hal. Alex Smith",
+          "tax": "hal. 4%",
+          "password": "******",
+          "repeatPassword": "*******"
+        }
+      },
+      "notLogged": {
+        "welcome": "Maligayang pagdating sa",
+        "description": " Pamahalaan ang iyong mga produkto, order, materyales, at pananalapi.",
+        "prompt": "Mag-sign in upang magpatuloy o gumawa ng bagong account upang makapagsimula.",
+        "login": "Mag-log In",
+        "createAccount": "Gumawa ng Account"
+      },
+      "Profile": {
+        "title": "Profile",
+        "accountDeleted": "Matagumpay na natanggal ang account!",
+        "artisan": "Artisan:",
+        "save": "I-save",
+        "saving": "Nagsa-save...",
+        "cancel": "Kanselahin",
+        "edit": "I-edit ang Profile",
+        "currentEmail": "Kasalukuyang email:",
+        "changePassword": "Palitan ang Password",
+        "inventory": "Imbentaryo:",
+        "totalProducts": "Kabuuang produkto",
+        "totalMaterials": "Kabuuang materyales",
+        "orders": "Mga Order:",
+        "inProgressOrders": "Ginagawa",
+        "completedOrders": "Tapos na",
+        "setTax": "Itakda ang buwis:",
+        "taxNotSet": "Hindi nakatakda ang buwis",
+        "deleteAccount": "Tanggalin ang Account",
+        "loading": "Naglo-load..."
+      },
+      "ChangePassword": {
+        "resetTitle": "I-reset ang Password",
+        "changeTitle": "Palitan ang Password",
+        "sendResetLink": "Ipadala ang Link para I-reset",
+        "backToChange": "Bumalik sa Pagpalit ng Password",
+    
+        "labels": {
+          "currentPassword": "Kasalukuyang Password",
+          "newPassword": "Bagong Password",
+          "confirmNewPassword": "Kumpirmahin ang Bagong Password"
+        },
+    
+        "placeholders": {
+          "enterEmail": "Ilagay ang iyong email",
+          "currentPassword": "Ilagay ang kasalukuyang password",
+          "newPassword": "Ilagay ang bagong password",
+          "confirmNewPassword": "Kumpirmahin ang bagong password"
+        },
+    
+        "messages": {
+          "passwordUpdated": "Matagumpay na na-update ang password!",
+          "resetLinkSent": "Password reset link na ipinadala! Suriin ang iyong email."
+        },
+    
+        "errors": {
+          "passwordsDoNotMatch": "Ang mga bagong password ay hindi magkatugma.",
+          "passwordEmpty": "Ang bagong password ay hindi maaaring walang laman.",
+          "passwordTooShort": "Ang password ay dapat hindi bababa sa 6 na karakter ang haba.",
+          "noUser": "Walang user na naka-sign in.",
+          "invalidCredential": "Mali ang kasalukuyang password.",
+          "resetFailed": "Nabigo sa pagpapadala ng link para i-reset."
+        },
+    
+        "passwordStrength": {
+          "weak": "Mahina",
+          "medium": "Katamtaman",
+          "strong": "Malakas"
+        },
+        "buttons": {
+          "change": "Palitan",
+          "cancel": "Kanselahin"
+        },
+        "forgotPassword": "Nakalimutan ang Password?"
+      },
+      "PasswordConfirmation": {
+        "errors": {
+          "noUserSignedIn": "Walang user na naka-sign in.",
+          "enterPassword": "Pakilagay ang iyong password.",
+          "incorrectPassword": "Mali ang kasalukuyang password.",
+          "enterNewEmail": "Pakilagay ang bagong email address.",
+          "sameEmail": "Ang iyong bagong email ay hindi maaaring magkapareho sa kasalukuyang email.",
+          "verificationFailed": "Nabigo sa pag-ulit ng verification email: {{message}}"
+        },
+        "heading": "Kumpirmahin ang Iyong Password",
+        "placeholders": {
+          "password": "Ilagay ang iyong password"
+        },
+        "buttons": {
+          "cancel": "Kanselahin",
+          "confirm": "Kumpirmahin",
+          "close": "Isara",
+          "resend": "Ulitin ang Verification Email"
+        },
+        "messages": {
+          "verificationSent": "Isang verification email ay ipinadala sa",
+          "checkAndRefresh": " Pakisuri ang iyong email address at pagkatapos ay i-refresh ang pahinang ito.",
+          "resendIn": "Maaari mong ulitin ang email sa loob ng {{seconds}} segundo."
+        }
+      },
+      "Finance": {
+        "pageTitle": "Pananalapi",
+        "allOrders": "Lahat ng order",
+        "setTax": "Itakda ang Buwis",
+        "loading": "Naglo-load...",
+        "inProgress": "Ginagawa",
+        "completed": "Tapos na",
+        "buttons": {
+          "save": "I-save",
+          "cancel": "Kanselahin",
+          "changeTax": "Palitan ang Buwis"
+        },
+        "thisMonth": "Ngayong buwan ({month}):",
+        "thisYear": "Ngayong taon ({year}):",
+        "income": "Kita",
+        "expenses": "Gastos",
+        "monthlyReport": "Buwanang Ulat Pinansyal",
+        "yearlyReport": "Taunang Ulat Pinansyal"
+      },
+      "FinanceMonthly": {
+        "filters": {
+          "popularProduct": "Mga order na may popular na produkto ngayong buwan",
+          "popularMaterial": "Mga order na may popular na materyales ngayong buwan",
+          "regularClient": "Mga order mula sa regular na kliyente ngayong buwan"
+        },
+        "excel": {
+          "income": "KITA:",
+          "expenses": "GASTOS:",
+          "popularProduct": "Popular na Produkto:",
+          "popularMaterial": "Popular na Materyales:",
+          "regularClient": "Regular na Kliyente:",
+          "orders": "MGA ORDER",
+          "headers": {
+            "title": "Pamagat ng order",
+            "customerName": "Pangalan ng kustomer",
+            "productId": "Product Id",
+            "productCost": "Gastos sa produkto",
+            "materialId": "Material Id",
+            "quantity": "Dami",
+            "materialCost": "Gastos sa Materyales",
+            "workCost": "Gastos sa trabaho",
+            "totalCost": "Kabuuang Gastos"
+          },
+          "products": "MGA PRODUKTO",
+          "productHeaders": {
+            "id": "ID ng Produkto",
+            "name": "Pangalan ng Produkto",
+            "category": "Kategorya",
+            "average": "Karaniwang Kabuuan"
+          },
+          "materials": "MGA MATERYALES",
+          "materialHeaders": {
+            "id": "Material Id",
+            "name": "Pangalan ng Materyal",
+            "category": "Kategorya",
+            "color": "Kulay",
+            "shop": "Tindahan",
+            "quantity": "Dami",
+            "costPerUnit": "Gastos kada yunit",
+            "total": "Kabuuan"
+          }
+        },
+        "pageTitle": {
+          "monthlyReport": "Buwanang Ulat"
+        },
+        "date": {
+          "months": {
+            "jan": "Ene",
+            "feb": "Peb",
+            "mar": "Mar",
+            "apr": "Abr",
+            "may": "May",
+            "jun": "Hun",
+            "jul": "Hul",
+            "aug": "Ago",
+            "sep": "Set",
+            "oct": "Okt",
+            "nov": "Nob",
+            "dec": "Dis"
+          },
+          "daysLeft": "araw",
+          "dueToday": "Due ngayong araw"
+        },
+        "finance": {
+          "income": "Kita",
+          "expenses": "Gastos",
+          "popularProduct": "Popular na produkto ngayong buwan",
+          "popularMaterial": "Popular na materyales ngayong buwan",
+          "regularClient": "Regular na kliyente ngayong buwan"
+        },
+        "view": {
+          "show": "Ipakita",
+          "orders": "Mga Order",
+          "products": "Mga Produkto",
+          "materials": "Mga Materyales",
+          "clearFilter": "Tanggalin ang filter",
+          "noDeadline": "Walang deadline"
+        },
+        "menu": {
+          "goBack": "Bumalik",
+          "download": "I-download"
+        },
+        "products": {
+          "noProducts": "Walang produktong magagamit"
+        },
+        "materials": {
+          "noMaterials": "Walang materyales na magagamit"
+        },
+        "months": {
+          "0": "Enero",
+          "1": "Pebrero",
+          "2": "Marso",
+          "3": "Abril",
+          "4": "Mayo",
+          "5": "Hunyo",
+          "6": "Hulyo",
+          "7": "Agosto",
+          "8": "Setyembre",
+          "9": "Oktubre",
+          "10": "Nobyembre",
+          "11": "Disyembre"
+        }
+      },
+      "chart": {
+        "expenses": "Gastos",
+        "income": "Kita",
+        "financial": "Pinansyal"
+      },
+      "financeYearly": {
+        "title": "Taunang Ulat",
+        "income": "Kita",
+        "expenses": "Gastos",
+        "popularProduct": "Popular na produkto ngayong taon",
+        "popularMaterial": "Popular na materyales ngayong taon",
+        "regularClient": "Regular na kliyente",
+        "amount": "halaga",
+        "days": "araw",
+        "dueToday": "Due ngayong araw",
+        "months": {
+          "jan": "Ene",
+          "feb": "Peb",
+          "mar": "Mar",
+          "apr": "Abr",
+          "may": "May",
+          "jun": "Hun",
+          "jul": "Hul",
+          "aug": "Ago",
+          "sep": "Set",
+          "oct": "Okt",
+          "nov": "Nob",
+          "dec": "Dis"
+        },
+        "show": "Ipakita",
+        "clearFilter": "Tanggalin ang filter",
+        "noDeadline": "Walang deadline",
+        "orders": "Mga Order",
+        "products": "Mga Produkto",
+        "materials": "Mga Materyales",
+        "goBack": "Bumalik",
+        "download": "I-download"
+      },
+      "layout": {
+        "sessionExpired": "Nag-expire na ang session. Paki-log in muli.",
+        "areYouStillHere": "Nandito ka pa ba?",
+        "imHere": "Oo, nandito ako",
+        "logOut": "Hindi, mag-log out"
+      },
+      "SignInOutWindow": {
+        "alreadySignedIn": "Naka-sign in ka na.",
+        "wantToSignOut": "Gusto mo bang mag-sign out?",
+        "signOut": "Mag-sign out",
+        "pleaseSignIn": "Paki-sign in upang {text}",
+        "goToSignIn": "Pumunta sa pahina ng pag-sign in"
+      },
+      "MaterialOrderDisplay": {
+        "quantity": "Dami"
+      },
+      "auth": {
+        "errors": {
+          "emailInUse": "Ang email address na ito ay nauugnay na sa isang account.",
+          "invalidEmail": "Pakilagay ang wastong email address."
+        },
+        "actions": {
+          "signOut": "Mag-sign Out",
+          "signIn": "Mag-sign In",
+          "createAccount": "Gumawa ng Account",
+          "resetPassword": "I-reset ang Password"
+        },
+        "passwordReset": {
+          "success": "Ang password reset email ay ipinadala na.",
+          "error": "Error sa pag-reset ng password: "
+        }
+      }
+  }

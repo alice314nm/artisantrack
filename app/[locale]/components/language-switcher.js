@@ -16,10 +16,13 @@ export default function LanguageSelector() {
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "ru", name: "Русский", flag: "🇷🇺" },
+    { code: "fil", name: "Filipino", flag: "🇵🇭" },
+    { code: "zh", name: "中文", flag: "🇨🇳" },
+    { code: "hi", name: "हिन्दी", flag: "🇮🇳" }
   ];
 
   const handleLanguageChange = async (locale) => {
-    const pathWithoutLocale = pathname.replace(/^\/(en|ru)/, "");
+    const pathWithoutLocale = pathname.replace(/^\/(en|ru|fil|zh|hi)/, "");
     const newPath = `/${locale}${pathWithoutLocale || ""}`;
 
     if (user) {
@@ -55,11 +58,10 @@ export default function LanguageSelector() {
             <button
               key={language.code}
               onClick={() => handleLanguageChange(language.code)}
-              className={`block w-full text-left px-4 py-2 hover:bg-darkBeige ${
-                currentLocale === language.code
-                  ? "font-semibold bg-darkBeige/30"
-                  : ""
-              }`}
+              className={`block w-full text-left px-4 py-2 hover:bg-darkBeige ${currentLocale === language.code
+                ? "font-semibold bg-darkBeige/30"
+                : ""
+                }`}
             >
               <span className="mr-2">{language.flag}</span>
               {language.name}

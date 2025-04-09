@@ -330,7 +330,8 @@ export default function Page() {
                     dateFormat="dd-MM-yyyy"
                     className={`${inputStyle} w-full`}
                     placeholderText="dd-mm-yyyy"
-                  />
+                    popperPlacement="bottom-start"                  
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1 w-3/4">
@@ -341,7 +342,8 @@ export default function Page() {
                     dateFormat="dd-MM-yyyy"
                     className={`${inputStyle} w-full`}
                     placeholderText="dd-mm-yyyy"
-                  />
+                    popperPlacement="bottom-start"                  
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1 w-1/4">

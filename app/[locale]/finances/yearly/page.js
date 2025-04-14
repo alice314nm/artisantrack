@@ -16,6 +16,8 @@ import {
 import Link from "next/link";
 import BlockHolder from "@/app/[locale]/components/block-holder";
 import { useEffect, useState } from "react";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 export default function WelcomePage() {
   const t = useTranslations("financeYearly");
@@ -368,6 +370,52 @@ export default function WelcomePage() {
       diffTime > 0 ? `${diffTime} ${t("days")}` : t("dueToday");
 
     return [formattedDate, daysLeft, daysStatus];
+  };
+
+  const exportYearlyReportWithExcelJS = async ({
+    year,
+    income,
+    expenses,
+    popularProduct,
+    popularMaterial,
+    regularClient,
+  }) => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet(`Yearly Report ${year}`);
+
+    sheet.columns = [
+      { header: "Title", key: "title", width: 30 },
+      { header: "Value", key: "value", width: 50 },
+    ];
+
+    const rows = [
+      { title: "Year", value: year },
+      { title: "Income ($)", value: income },
+      { title: "Expenses ($)", value: expenses },
+      {},
+      { title: "Most Popular Product", value: popularProduct?.name || "N/A" },
+      { title: "Product ID", value: popularProduct?.productId || "N/A" },
+      { title: "Product Count", value: popularProduct?.count || 0 },
+      {},
+      { title: "Most Used Material", value: popularMaterial?.name || "N/A" },
+      { title: "Material ID", value: popularMaterial?.materialId || "N/A" },
+      { title: "Material Count", value: popularMaterial?.count || 0 },
+      {},
+      { title: "Most Frequent Client", value: regularClient?.name || "N/A" },
+      { title: "Client Order Count", value: regularClient?.count || 0 },
+    ];
+
+    rows.forEach((row) => sheet.addRow(row));
+
+    // Optional: Make headers bold
+    sheet.getRow(1).font = { bold: true };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(blob, `Yearly_Report_${year}.xlsx`);
   };
 
   if (loading) {
@@ -754,7 +802,16 @@ export default function WelcomePage() {
           onFirstFunction={() => (window.location.href = `/finances`)}
           secondTitle={t("download")}
           iconSecond={"/download.png"}
-          onSecondFunction={() => console.log(0)}
+          onSecondFunction={() =>
+            exportYearlyReportWithExcelJS({
+              year: currentYear,
+              income,
+              expenses,
+              popularProduct,
+              popularMaterial,
+              regularClient,
+            })
+          }
         />
       </div>
     );

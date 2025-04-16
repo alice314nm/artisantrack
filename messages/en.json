@@ -26,7 +26,7 @@
     },
 
     "finance": {
-      "title": "Finance",
+      "title": "Finance this month",
       "revenue": "Revenue",
       "expenses": "Expenses",
       "viewButton": "View Finance"
@@ -250,9 +250,10 @@
   "SelectHolder": {
     "select": "Select",
     "selected": "Selected",
-    "averageCost": "Average cost",
+    "averageCost": "Cost",
     "totalCost": "Total cost",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "qty": "qty:"
   },
   "SelectedHolder": {
     "select": "Select",

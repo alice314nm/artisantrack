@@ -59,6 +59,34 @@ export async function dbAddOrder(userId, orderObj) {
         });
 
         console.log("Order created successfully with ID:", newOrderRef.id);
+
+        // Subtract materials used from their quantities
+        const materialsCollection = collection(userRef, "materials");
+
+        for (let i = 0; i < orderObj.quantities.length; i++) {
+            const materialId = orderObj.quantities[i].id;
+            const quantityUsed = orderObj.quantities[i].quantity;
+
+            const materialDocRef = doc(materialsCollection, materialId);
+            const materialSnapshot = await getDoc(materialDocRef);
+
+            if (materialSnapshot.exists()) {
+                const materialData = materialSnapshot.data();
+                const currentQty = materialData.quantity || 0;
+
+                const updatedQty = currentQty - quantityUsed;
+                if (updatedQty < 0) {
+                    console.warn(`Material "${materialId}" has insufficient quantity.`);
+                }
+
+                await updateDoc(materialDocRef, {
+                    quantity: updatedQty >= 0 ? updatedQty : 0
+                    
+                })
+            } else {
+                console.warn(`Material with ID "${materialId}" not found.`);
+            }
+        }
         return newOrderRef.id;
     } catch (error) {
         console.error("Error creating order:", error.message);
@@ -69,19 +97,46 @@ export async function dbAddOrder(userId, orderObj) {
 
 export async function dbDeleteOrderById(userId, orderId) {
     try {
-        const productRef = doc(db, "users", userId, "orders", orderId);
+        const userRef = doc(db, "users", userId); // Define userRef
+        const orderRef = doc(db, "users", userId, "orders", orderId);
 
-        const productDoc = await getDoc(productRef);
-        if (!productDoc.exists()) {
+        const orderDoc = await getDoc(orderRef);
+        if (!orderDoc.exists()) {
             throw new Error(`Order with ID ${orderId} does not exist.`);
         }
 
-        await deleteDoc(productRef);
+        const orderData = orderDoc.data(); // Extract order data
+        const materialsCollection = collection(userRef, "materials");
+
+        for (let i = 0; i < orderData.quantities.length; i++) {
+            const materialId = orderData.quantities[i].id;
+            const quantityUsed = orderData.quantities[i].quantity;
+
+            const materialDocRef = doc(materialsCollection, materialId);
+            const materialSnapshot = await getDoc(materialDocRef);
+
+            if (materialSnapshot.exists()) {
+                const materialData = materialSnapshot.data();
+                const currentQty = materialData.quantity || 0;
+
+                const updatedQty = currentQty + quantityUsed;
+
+                await updateDoc(materialDocRef, {
+                    quantity: updatedQty
+                });
+            } else {
+                console.warn(`Material with ID "${materialId}" not found.`);
+            }
+        }
+
+        await deleteDoc(orderRef);
         console.log(`Order with ID ${orderId} and its associated data were deleted.`);
     } catch (error) {
-        console.error("Error deleting product:", error.message);
+        console.error("Error deleting order:", error.message);
+        throw error;
     }
 }
+
 
 
 export async function dbGetOrderById(userId, orderId, orderSetter) {

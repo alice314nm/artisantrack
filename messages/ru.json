@@ -26,7 +26,7 @@
     },
     
     "finance": {
-      "title": "Финансы",
+      "title": "Финансы этого месяца",
       "revenue": "Доход",
       "expenses": "Расходы",
       "viewButton": "Перейти к финансам"
@@ -250,9 +250,10 @@
   "SelectHolder": {
     "select": "Выбрать",
     "selected": "Выбрано",
-    "averageCost": "Средняя стоимость",
+    "averageCost": "Cтоимость",
     "totalCost": "Общая стоимость",
-    "quantity": "Количество"
+    "quantity": "Количество",
+    "qty": "кол-во:"
   },
   "SelectedHolder": {
     "select": "Выбрать",

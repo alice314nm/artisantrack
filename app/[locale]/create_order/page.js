@@ -235,7 +235,8 @@ export default function Page() {
         ? selectedMaterials.map((mat) => mat.id)
         : [],
       quantities: selectedMaterials.map((material) => ({
-        id: material.materialId,
+        id: material.id,
+        materialId: material.materialId,
         quantity: materialQuantities[material.materialId],
       })),
       materialsCost: isNaN(parseFloat(materialCost))

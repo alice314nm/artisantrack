@@ -73,16 +73,21 @@ export async function dbAddOrder(userId, orderObj) {
             if (materialSnapshot.exists()) {
                 const materialData = materialSnapshot.data();
                 const currentQty = materialData.quantity || 0;
-
+                const costPerUnit = materialData.costPerUnit || 0;
+                const currentTotal = materialData.total || 0;
+        
                 const updatedQty = currentQty - quantityUsed;
+                const costToSubtract = quantityUsed * costPerUnit;
+                const updatedTotal = currentTotal - costToSubtract;
+        
                 if (updatedQty < 0) {
                     console.warn(`Material "${materialId}" has insufficient quantity.`);
                 }
-
+        
                 await updateDoc(materialDocRef, {
-                    quantity: updatedQty >= 0 ? updatedQty : 0
-                    
-                })
+                    quantity: updatedQty >= 0 ? updatedQty : 0,
+                    total: updatedTotal >= 0 ? updatedTotal : 0,
+                });
             } else {
                 console.warn(`Material with ID "${materialId}" not found.`);
             }
@@ -118,11 +123,16 @@ export async function dbDeleteOrderById(userId, orderId) {
             if (materialSnapshot.exists()) {
                 const materialData = materialSnapshot.data();
                 const currentQty = materialData.quantity || 0;
-
+                const costPerUnit = materialData.costPerUnit || 0;
+                const currentTotal = materialData.total || 0;
+        
                 const updatedQty = currentQty + quantityUsed;
+                const costToSubtract = quantityUsed * costPerUnit;
+                const updatedTotal = currentTotal + costToSubtract;
 
                 await updateDoc(materialDocRef, {
-                    quantity: updatedQty
+                    quantity: updatedQty,
+                    total: updatedTotal >= 0 ? updatedTotal : 0,
                 });
             } else {
                 console.warn(`Material with ID "${materialId}" not found.`);

@@ -37,80 +37,81 @@ export default function Page() {
     document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 800);
 
     return () => clearTimeout(timeout);
   }, [t]);
 
-  // Fetch orders
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchData = async () => {
       if (!user) return;
-      try {
-        const db = getFirestore(app);
-        const ordersCollection = collection(db, `users/${user.uid}/orders`);
-        const ordersSnapshot = await getDocs(ordersCollection);
-        const ordersData = ordersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        console.log("Orders: ", ordersData);
-
-        for (let order of ordersData) {
-          if (order.orderImages && order.orderImages.length > 0) {
-            const productImages = await Promise.all(
-              order.orderImages.map(async (productId) => {
-                const productRef = doc(
-                  db,
-                  `users/${user.uid}/products/${productId}`
+  
+      const db = getFirestore(app);
+  
+      // Fetch orders and related product data
+      const fetchOrders = async () => {
+        try {
+          const ordersCollection = collection(db, `users/${user.uid}/orders`);
+          const ordersSnapshot = await getDocs(ordersCollection);
+  
+          const ordersData = await Promise.all(
+            ordersSnapshot.docs.map(async (docSnap) => {
+              const order = { id: docSnap.id, ...docSnap.data() };
+  
+              if (order.orderImages?.length > 0) {
+                const productSnapshots = await Promise.all(
+                  order.orderImages.map((productId) =>
+                    getDoc(doc(db, `users/${user.uid}/products/${productId}`))
+                  )
                 );
-
-                const productSnapshot = await getDoc(productRef);
-                const productData = productSnapshot.data();
-                order.orderId = productData?.productId;
-                order.categories = productData?.categories || [t("unknown")];
-                return productData?.productImages?.[0]?.url || "/noImage.png";
-              })
-            );
-            order.imageUrl = productImages[0];
-          } else {
-            order.imageUrl = "/noImage.png";
-          }
+  
+                const productDataList = productSnapshots.map((snap) => snap.data());
+  
+                const firstProduct = productDataList[0];
+  
+                order.imageUrl = firstProduct?.productImages?.[0]?.url || "/noImage.png";
+                order.orderId = firstProduct?.productId || order.id;
+                order.categories = firstProduct?.categories || [t("unknown")];
+              } else {
+                order.imageUrl = "/noImage.png";
+                order.categories = [t("unknown")];
+              }
+  
+              return order;
+            })
+          );
+  
+          setOrders(ordersData);
+          setFilteredOrders(ordersData);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
         }
-
-        setOrders(ordersData);
-        setFilteredOrders(ordersData); // Initialize filteredOrders with all orders
-      } catch (error) {
-        console.error("Error fetching orders: ", error);
-      }
+      };
+  
+      // Fetch categories
+      const fetchCategories = async () => {
+        try {
+          const categoriesCollection = collection(
+            db,
+            `users/${user.uid}/productCategories`
+          );
+          const categoriesSnapshot = await getDocs(categoriesCollection);
+          const categoriesData = categoriesSnapshot.docs.map(
+            (doc) => doc.data().name
+          );
+          setCategories(categoriesData);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+  
+      // Run both in parallel
+      await Promise.all([fetchOrders(), fetchCategories()]);
     };
-    fetchOrders();
+  
+    fetchData();
   }, [user, t]);
-
-  // Fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      if (!user) return;
-      try {
-        const db = getFirestore(app);
-        const categoriesCollection = collection(
-          db,
-          `users/${user.uid}/productCategories`
-        );
-        const categoriesSnapshot = await getDocs(categoriesCollection);
-        const categoriesData = categoriesSnapshot.docs.map(
-          (doc) => doc.data().name
-        );
-        setCategories(categoriesData);
-      } catch (error) {
-        console.error("Error fetching categories: ", error);
-      }
-    };
-
-    if (user) {
-      fetchCategories();
-    }
-  }, [user]);
+  
 
   // Apply filters and sorting
   useEffect(() => {

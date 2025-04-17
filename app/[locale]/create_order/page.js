@@ -27,7 +27,7 @@ export default function Page() {
   const [materials, setMaterials] = useState([]);
 
   const inputStyle =
-    "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
+    "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green focus:bg-white";
   const [errorMessage, setErrorMessage] = useState("");
 
   const [state, setState] = useState("form");
@@ -421,7 +421,8 @@ export default function Page() {
                   onClick={handleSelectProductForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  {t("selectProduct")}
+                  {selectedProduct ? (<p>{t("changeProduct")}</p>) : (<p>{t("selectProduct")}</p>)}
+                                   
                 </button>
               </div>
             </div>
@@ -478,7 +479,8 @@ export default function Page() {
                   onClick={handleSelectMaterialForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  {t("selectMaterial")}
+                  {selectedMaterials && selectedMaterials.length > 0 ? (<p>{t("changeMaterial")}</p>) : (<p>{t("selectMaterial")}</p>)}
+                
                 </button>
               </div>
             </div>

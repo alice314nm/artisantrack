@@ -235,7 +235,8 @@ export default function Page() {
         ? selectedMaterials.map((mat) => mat.id)
         : [],
       quantities: selectedMaterials.map((material) => ({
-        id: material.materialId,
+        id: material.id,
+        materialId: material.materialId,
         quantity: materialQuantities[material.materialId],
       })),
       materialsCost: isNaN(parseFloat(materialCost))
@@ -330,7 +331,8 @@ export default function Page() {
                     dateFormat="dd-MM-yyyy"
                     className={`${inputStyle} w-full`}
                     placeholderText="dd-mm-yyyy"
-                  />
+                    popperPlacement="bottom-start"                  
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1 w-3/4">
@@ -341,7 +343,8 @@ export default function Page() {
                     dateFormat="dd-MM-yyyy"
                     className={`${inputStyle} w-full`}
                     placeholderText="dd-mm-yyyy"
-                  />
+                    popperPlacement="bottom-start"                  
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1 w-1/4">

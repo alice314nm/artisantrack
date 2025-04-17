@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useTranslation } from "react-i18next";
 
 export default function MaterialOrderDisplay({
@@ -8,6 +9,7 @@ export default function MaterialOrderDisplay({
   quantity,
 }) {
   const t = useTranslations("MaterialOrderDisplay");
+  
   return (
     <div className="flex flex-row w-full items-center gap-2 justify-between">
       <div className="flex flex-row gap-2 items-center">

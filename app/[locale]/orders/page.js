@@ -69,12 +69,12 @@ export default function Page() {
                 const productData = productSnapshot.data();
                 order.orderId = productData?.productId;
                 order.categories = productData?.categories || [t("unknown")];
-                return productData?.productImages?.[0]?.url || t("unknown");
+                return productData?.productImages?.[0]?.url || "/noImage.png";
               })
             );
             order.imageUrl = productImages[0];
           } else {
-            order.imageUrl = t("unknown");
+            order.imageUrl = "/noImage.png";
           }
         }
 

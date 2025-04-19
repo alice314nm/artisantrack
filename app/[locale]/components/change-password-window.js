@@ -24,6 +24,10 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
   const [resetPasswordMode, setResetPasswordMode] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const inputStyle =
+  "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
+
+
   const handleSubmit = async () => {
     // Check if new password and confirm password match
     if (newPassword !== confirmNewPassword) {
@@ -137,7 +141,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
               <input
                 type="email"
                 placeholder={t('placeholders.enterEmail')}
-                className="border rounded-lg p-2 w-80 focus:ring-sky-500"
+                className={inputStyle}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -160,7 +164,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
             {/* Header */}
             <div className="border-b border-b-darkBeige">
               <p
-                className="py-8 px-4 text-center font-bold text-3xl"
+                className="py-4 px-4 text-center font-bold text-2xl"
                 data-id="changing-password-text"
               >
                 {t('changeTitle')}
@@ -170,7 +174,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
             {/* Password Change Form */}
             <div className="px-4 py-4">
               {/* Current Password */}
-              <div className="mb-4">
+              <div className="mb-4 flex flex-col gap-1">
                 <label
                   htmlFor="current-password"
                   className="block text-sm font-medium"
@@ -184,7 +188,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                     type={showCurrentPassword ? "text" : "password"}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full border border-gray-400 rounded p-2 mt-1"
+                    className={inputStyle}
                     placeholder={t('placeholders.currentPassword')}
                   />
                   <button
@@ -204,7 +208,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
               </div>
 
               {/* New Password */}
-              <div className="mb-4">
+              <div className="mb-4 flex flex-col gap-1">
                 <label
                   htmlFor="new-password"
                   className="block text-sm font-medium"
@@ -221,7 +225,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                       setNewPassword(e.target.value);
                       handleProgress(e.target.value); // Update progress on every keystroke
                     }}
-                    className="w-full border border-gray-400 rounded p-2 mt-1"
+                    className={inputStyle}
                     placeholder={t('placeholders.newPassword')}
                   />
                   <button
@@ -254,7 +258,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
               </div>
 
               {/* Confirm New Password */}
-              <div className="mb-4">
+              <div className="mb-4 flex flex-col gap-1">
                 <label
                   htmlFor="confirm-new-password"
                   className="block text-sm font-medium"
@@ -268,7 +272,7 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
                     type={showConfirmNewPassword ? "text" : "password"}
                     value={confirmNewPassword}
                     onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    className="w-full border border-gray-400 rounded p-2 mt-1"
+                    className={inputStyle}
                     placeholder={t('placeholders.confirmNewPassword')}
                   />
                   <button
@@ -307,18 +311,19 @@ export default function ChangePasswordWindow({ windowVisibility, onClose }) {
               <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between font-bold gap-3">
                   <button
-                    data-id="change-button"
-                    className="flex-1 text-center text-red border-r border-darkBeige p-2 bg-green rounded-full hover:bg-darkGreen"
-                    onClick={handleSubmit}
-                  >
-                    {t('buttons.change')}
-                  </button>
-                  <button
-                    className="flex-1 text-center p-2 bg-green rounded-full hover:bg-darkGreen"
+                    className="flex-1 text-center p-2 bg-red text-white rounded-lg"
                     onClick={onClose}
                   >
                     {t('buttons.cancel')}
                   </button>
+                  <button
+                    data-id="change-button"
+                    className="flex-1 text-center border-r border-darkBeige p-2 bg-green rounded-lg hover:bg-darkGreen"
+                    onClick={handleSubmit}
+                  >
+                    {t('buttons.change')}
+                  </button>
+                
                 </div>
 
                 {/* Forgot Password Link */}

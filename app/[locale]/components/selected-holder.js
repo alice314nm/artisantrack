@@ -24,7 +24,7 @@ export default function SelectedHolder({
         <button
           type="button"
           onClick={onRemove}
-          className="bg-red text-white h-8 rounded-full px-2 ml-auto"
+          className="bg-red text-white h-8 rounded-lg px-3 ml-auto"
         >
           {t("remove")}
         </button>
@@ -45,18 +45,13 @@ export default function SelectedHolder({
             <p>
               #{id} | {name}
             </p>
-            <p>{t("quantity")}:</p>
-            <input
-              readOnly
-              value={quantity}
-              className="h-6 w-24 rounded-lg border p-2"
-            />
+            <p>{t("quantity")}: {quantity}</p>
           </div>
         </div>
         <button
           type="button"
           onClick={onRemove}
-          className="bg-red text-white h-8 rounded-full px-2"
+          className="bg-red text-white h-8 rounded-lg px-3"
         >
           {t("remove")}
         </button>

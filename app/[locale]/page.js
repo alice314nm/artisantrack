@@ -23,7 +23,7 @@ export default function WelcomePage() {
   const titleStyle = "text-lg font-bold";
   const infoStyle = "text text-blackBeige";
   const LinkStyle =
-    "w-44 text-center bg-green px-4 font-semibold rounded-lg py-2 hover:bg-darkGreen transition-all duration-300";
+    "w-full text-center bg-green px-4 font-semibold rounded-lg py-2 hover:bg-darkGreen transition-all duration-300";
 
   useEffect(() => {
     document.title = t("pageTitle");

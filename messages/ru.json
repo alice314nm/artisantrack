@@ -59,7 +59,7 @@
     "loginTitle": "Вход",
     "enterEmail": "Введите ваш email",
     "enterPassword": "Пароль",
-    "sendResetLink": "Отправить ссылку для сброса пароля",
+    "sendResetLink": "Отправить ссылку",
     "backToLogin": "Назад к входу",
     "forgotPassword": "Забыли пароль?",
     "signUpPrompt": "Нет аккаунта?",
@@ -231,10 +231,12 @@
     "productMaterials": "Модели и Материалы",
     "product": "Модель",
     "selectProduct": "Выбрать модель",
+    "changeProduct": "Изменить модель",
     "selectedProduct": "Выбранная модель",
     "costForSelectedProduct": "Стоимость выбранной модели",
     "materials": "Материалы",
     "selectMaterial": "Выбрать материал",
+    "changeMaterial": "Изменить материал",
     "materialsCost": "Стоимость материалов",
     "workCost": "Стоимость работы",
     "totalCost": "Общая стоимость",
@@ -386,6 +388,7 @@
     "description": "Описание",
     "productMaterials": "Модель и материалы",
     "selectProduct": "Выбрать модель",
+    "changeProduct": "Изменить модель",
     "product": "Модель",
     "deadlineError": "Срок должен быть после даты начала.",
     "invalidDateError": "Пожалуйста, убедитесь, что дата начала и срок действительны.",
@@ -395,6 +398,7 @@
     "productCost": "Стоимость выбранной модели",
     "materials": "Материалы",
     "selectMaterial": "Выбрать материал",
+    "changeMaterial": "Изменить материал",
     "materialCost": "Стоимость материалов",
     "workCost": "Стоимость работы",
     "totalCost": "Общая стоимость",
@@ -533,7 +537,7 @@
     "save": "Сохранить",
     "saving": "Сохранение...",
     "cancel": "Отмена",
-    "edit": "Редактировать профиль",
+    "edit": "Редактировать",
     "currentEmail": "Текущий email:",
     "changePassword": "Изменить пароль",
     "inventory": "Инвентарь:",
@@ -542,7 +546,7 @@
     "orders": "Заказы:",
     "inProgressOrders": "В процессе",
     "completedOrders": "Завершено",
-    "setTax": "Установить налог:",
+    "setTax": "Установленный налог:",
     "taxNotSet": "Налог не установлен",
     "deleteAccount": "Удалить аккаунт",
     "loading": "Загрузка..."
@@ -550,7 +554,7 @@
   "ChangePassword": {
     "resetTitle": "Сброс пароля",
     "changeTitle": "Изменить пароль",
-    "sendResetLink": "Отправить ссылку для сброса пароля",
+    "sendResetLink": "Отправить ссылку",
     "backToChange": "Назад к изменению пароля",
 
     "labels": {
@@ -612,7 +616,7 @@
       "cancel": "Отмена",
       "confirm": "Подтвердить",
       "close": "Закрыть",
-      "resend": "Отправить письмо еще раз"
+      "resend": "Отправить еще раз"
     }
   },
   "Finance": {

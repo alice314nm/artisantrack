@@ -76,7 +76,7 @@ export default function WelcomePage() {
   }, []);
 
   //Function where to set/change variables for popular entities, incomes, expense when the chosen year is changing
-  useEffect(() => {}, [currentYear]);
+  useEffect(() => { }, [currentYear]);
 
   // Fetch orders, products, materials
   useEffect(() => {
@@ -360,9 +360,8 @@ export default function WelcomePage() {
       t("months.dec"),
     ];
 
-    const formattedDate = `${
-      monthNames[deadlineDate.getMonth()]
-    } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
+    const formattedDate = `${monthNames[deadlineDate.getMonth()]
+      } ${deadlineDate.getDate()}, ${deadlineDate.getFullYear()}`;
 
     const diffTime = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
     const daysLeft = diffTime > 0 ? diffTime : 0;
@@ -465,10 +464,10 @@ export default function WelcomePage() {
 
               {/* Diagram */}
               <div className="flex justify-center px-4">
-              {(income === 0 && expenses === 0) ? 
-                (<p className="py-36">No data for finances yet</p>) : 
-                (<PieChart income={income} expenses={expenses} />)
-              }
+                {(income === 0 && expenses === 0) ?
+                  (<p className="py-36">No data for finances yet</p>) :
+                  (<PieChart income={income} expenses={expenses} />)
+                }
               </div>
 
               <div className="pt-2">
@@ -562,38 +561,35 @@ export default function WelcomePage() {
 
               <div className="flex flex-row gap-2 justify-between items-center">
                 <button
-                  className={`w-[33%] py-1 rounded-md ${
-                    stateShow === "orders"
+                  className={`w-[33%] py-1 rounded-md ${stateShow === "orders"
                       ? "bg-transparent border-2 border-green"
                       : "bg-green"
-                  }`}
+                    }`}
                   onClick={handleStateOrders}
                 >
                   {t("orders")}
                 </button>
                 <button
-                  className={`w-[33%] py-1 rounded-md ${
-                    stateShow === "products"
+                  className={`w-[33%] py-1 rounded-md ${stateShow === "products"
                       ? "bg-transparent border-2 border-green"
                       : "bg-green"
-                  }`}
+                    }`}
                   onClick={handleStateProducts}
                 >
                   {t("products")}
                 </button>
                 <button
-                  className={`w-[33%] py-1 rounded-md ${
-                    stateShow === "materials"
+                  className={`w-[33%] py-1 rounded-md ${stateShow === "materials"
                       ? "bg-transparent border-2 border-red text-blackBeige"
                       : "bg-red text-white"
-                  }`}
+                    }`}
                   onClick={handleStateMaterials}
                 >
                   {t("materials")}
                 </button>
               </div>
 
-              {stateShow === "orders" && (
+              {/* {stateShow === "orders" && (
                 <div className="w-full px-4 pb-20">
                   <div
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
@@ -625,9 +621,9 @@ export default function WelcomePage() {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
 
-              {stateShow === "products" && (
+              {/* {stateShow === "products" && (
                 <div className="w-full px-4 pb-20">
                   <div
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
@@ -660,9 +656,9 @@ export default function WelcomePage() {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
 
-              {stateShow === "materials" && (
+              {/* {stateShow === "materials" && (
                 <div className="w-full px-4 pb-20">
                   <div
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 
@@ -689,10 +685,10 @@ export default function WelcomePage() {
                           type={"material"}
                         />
                       </Link>
-                    ))}
-                  </div>
+                    ))} */}
+              {/* </div>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>

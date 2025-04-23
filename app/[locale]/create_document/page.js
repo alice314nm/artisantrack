@@ -17,8 +17,10 @@ import {
   query,
   getDocs,
 } from "firebase/firestore";
+import { useTranslations } from "next-intl";
 
 export default function Page() {
+  const t = useTranslations("CreateDocument");
   const { user } = useUserAuth();
   const [orderFilterCategory, setOrderFilterCategory] = useState("cost");
   const [orderCostFilter, setOrderCostFilter] = useState("highest");
@@ -52,6 +54,7 @@ export default function Page() {
   );
   const [materialName, setMaterialName] = useState("");
 
+  // Use English month names for storing in database to maintain compatibility
   const months = [
     "January",
     "February",
@@ -66,6 +69,10 @@ export default function Page() {
     "November",
     "December",
   ];
+
+  // Translated month options for display
+  const translatedMonths = months.map((_, index) => t(`months.${index}`));
+
   const [loading, setLoading] = useState(true);
   const years = Array.from(
     { length: 21 },
@@ -75,13 +82,13 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    document.title = "Create Document";
+    document.title = t("pageTitle");
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [t]);
 
   const isFirestoreDocumentNameUnique = async (userId, documentName) => {
     if (!userId || !documentName) {
@@ -102,26 +109,20 @@ export default function Page() {
         "documents"
       );
       const docRef = await addDoc(documentsCollectionRef, documentData);
-      console.log(
-        "Document written to documents subcollection with ID: ",
-        docRef.id
-      );
+      console.log(t("console.documentCreated"), docRef.id);
     } catch (error) {
-      console.error(
-        "Error adding document to documents subcollection: ",
-        error
-      );
+      console.error(t("console.documentError"), error);
     }
   };
 
   const handleCreateOrderReport = async () => {
     if (!orderName) {
-      setErrorMessage("Document name cannot be empty.");
+      setErrorMessage(t("errors.emptyName"));
       return;
     }
 
     if (!user?.uid) {
-      setErrorMessage("User not logged in.");
+      setErrorMessage(t("errors.notLoggedIn"));
       return;
     }
 
@@ -129,16 +130,14 @@ export default function Page() {
       const startMonthIndex = months.indexOf(orderStartMonth);
       const endMonthIndex = months.indexOf(orderEndMonth);
       if (startMonthIndex > endMonthIndex) {
-        setErrorMessage(
-          "Invalid month range: 'From Month' cannot be after 'To Month'"
-        );
+        setErrorMessage(t("errors.invalidDateRange"));
         return;
       }
     }
 
     const isUnique = await isFirestoreDocumentNameUnique(user.uid, orderName);
     if (!isUnique) {
-      setErrorMessage("A document with this name already exists.");
+      setErrorMessage(t("errors.duplicateName"));
       return;
     }
 
@@ -185,22 +184,22 @@ export default function Page() {
       userId: user.uid,
     };
 
-    console.log("Order documentData before save:", documentData);
+    console.log(t("console.orderDocBeforeSave"), documentData);
 
     try {
-      console.log("Before calling createUserDocument for order");
+      console.log(t("console.beforeCreateOrder"));
       await createUserDocument(user.uid, documentData);
-      console.log("After calling createUserDocument for order");
+      console.log(t("console.afterCreateOrder"));
       router.push("/documents");
     } catch (error) {
-      console.error("Error adding order document: ", error);
-      setErrorMessage("Failed to create order document.");
+      console.error(t("console.orderError"), error);
+      setErrorMessage(t("errors.createOrderFailed"));
     }
   };
 
   const handleCreateProductReport = async () => {
     if (!productName) {
-      setErrorMessage("Document name cannot be empty.");
+      setErrorMessage(t("errors.emptyName"));
       return;
     }
 
@@ -208,16 +207,14 @@ export default function Page() {
       const startMonthIndex = months.indexOf(productStartMonth);
       const endMonthIndex = months.indexOf(productEndMonth);
       if (startMonthIndex > endMonthIndex) {
-        setErrorMessage(
-          "Invalid month range: 'From Month' cannot be after 'To Month'"
-        );
+        setErrorMessage(t("errors.invalidDateRange"));
         return;
       }
     }
 
     const isUnique = await isFirestoreDocumentNameUnique(user.uid, productName);
     if (!isUnique) {
-      setErrorMessage("A document with this name already exists.");
+      setErrorMessage(t("errors.duplicateName"));
       return;
     }
 
@@ -269,18 +266,18 @@ export default function Page() {
     };
 
     if (user?.uid) {
-      console.log("Before calling createUserDocument for product");
+      console.log(t("console.beforeCreateProduct"));
       await createUserDocument(user.uid, documentData);
-      console.log("After calling createUserDocument for product");
+      console.log(t("console.afterCreateProduct"));
       router.push("/documents");
     } else {
-      setErrorMessage("User not logged in.");
+      setErrorMessage(t("errors.notLoggedIn"));
     }
   };
 
   const handleCreateMaterialReport = async () => {
     if (!materialName) {
-      setErrorMessage("Document name cannot be empty.");
+      setErrorMessage(t("errors.emptyName"));
       return;
     }
 
@@ -288,9 +285,7 @@ export default function Page() {
       const startMonthIndex = months.indexOf(materialStartMonth);
       const endMonthIndex = months.indexOf(materialEndMonth);
       if (startMonthIndex > endMonthIndex) {
-        setErrorMessage(
-          "Invalid month range: 'From Month' cannot be after 'To Month'"
-        );
+        setErrorMessage(t("errors.invalidDateRange"));
         return;
       }
     }
@@ -300,7 +295,7 @@ export default function Page() {
       materialName
     );
     if (!isUnique) {
-      setErrorMessage("A document with this name already exists.");
+      setErrorMessage(t("errors.duplicateName"));
       return;
     }
 
@@ -356,12 +351,12 @@ export default function Page() {
     };
 
     if (user?.uid) {
-      console.log("Before calling createUserDocument for material");
+      console.log(t("console.beforeCreateMaterial"));
       await createUserDocument(user.uid, documentData);
-      console.log("After calling createUserDocument for material");
+      console.log(t("console.afterCreateMaterial"));
       router.push("/documents");
     } else {
-      setErrorMessage("User not logged in.");
+      setErrorMessage(t("errors.notLoggedIn"));
     }
   };
 
@@ -377,14 +372,14 @@ export default function Page() {
         handleCreateMaterialReport();
         break;
       default:
-        setErrorMessage("Please select a document type");
+        setErrorMessage(t("errors.selectDocType"));
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <img src="/loading-gif.gif" className="h-10" />
+        <img src="/loading-gif.gif" className="h-10" alt={t("loading")} />
       </div>
     );
   }
@@ -392,7 +387,7 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Create a Document" />
+        <Header title={t("pageTitle")} />
         <form className="mx-auto w-full max-w-4xl flex flex-col gap-4 px-4">
           {errorMessage.length === 0 ? null : (
             <p className="text-red">{errorMessage}</p>
@@ -400,7 +395,7 @@ export default function Page() {
 
           {/* Document Type Selection Buttons */}
           <div className="mb-4">
-            <p className="font-bold text-lg mb-2">Select Document Type</p>
+            <p className="font-bold text-lg mb-2">{t("selectType")}</p>
             <div className="flex justify-between gap-2 w-full">
               <button
                 type="button"
@@ -411,7 +406,7 @@ export default function Page() {
                 }`}
                 onClick={() => setDocumentType("order")}
               >
-                Orders
+                {t("docTypes.order")}
               </button>
               <button
                 type="button"
@@ -422,7 +417,7 @@ export default function Page() {
                 }`}
                 onClick={() => setDocumentType("product")}
               >
-                Products
+                {t("docTypes.product")}
               </button>
               <button
                 type="button"
@@ -433,7 +428,7 @@ export default function Page() {
                 }`}
                 onClick={() => setDocumentType("material")}
               >
-                Materials
+                {t("docTypes.material")}
               </button>
             </div>
           </div>
@@ -441,69 +436,72 @@ export default function Page() {
           {/* Order Section */}
           {documentType === "order" && (
             <div>
-              <p className="font-bold text-lg mb-2">Orders</p>
-              <p>Document Name</p>
+              <p className="font-bold text-lg mb-2">{t("orders.title")}</p>
+              <p>{t("documentName")}</p>
               <input
                 type="text"
                 className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green mb-2 w-full"
                 value={orderName}
                 onChange={(e) => setOrderName(e.target.value)}
+                placeholder={t("orders.namePlaceholder")}
               />
-              <p>Select Category</p>
+              <p>{t("selectCategory")}</p>
               <select
                 className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                 value={orderFilterCategory}
                 onChange={(e) => setOrderFilterCategory(e.target.value)}
               >
-                <option value="cost">By Cost</option>
-                <option value="deadline">By Deadline</option>
-                <option value="time">By Period of Time</option>
+                <option value="cost">{t("orders.categories.byCost")}</option>
+                <option value="deadline">
+                  {t("orders.categories.byDeadline")}
+                </option>
+                <option value="time">{t("orders.categories.byPeriod")}</option>
               </select>
 
               {orderFilterCategory === "cost" && (
                 <div className="mt-2">
-                  <p>Filter by Cost</p>
+                  <p>{t("orders.filterByCost")}</p>
                   <select
                     className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                     value={orderCostFilter}
                     onChange={(e) => setOrderCostFilter(e.target.value)}
                   >
-                    <option value="highest">Highest to Lowest Price</option>
-                    <option value="lowest">Lowest to Highest Price</option>
+                    <option value="highest">{t("highestToLowest")}</option>
+                    <option value="lowest">{t("lowestToHighest")}</option>
                   </select>
                   <div className="mt-2">
-                    <p>Select Time Period</p>
+                    <p>{t("selectTimePeriod")}</p>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <p>From Month</p>
+                        <p>{t("fromMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={orderStartMonth}
                           onChange={(e) => setOrderStartMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>To Month</p>
+                        <p>{t("toMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={orderEndMonth}
                           onChange={(e) => setOrderEndMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>Year</p>
+                        <p>{t("year")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={orderTimeFilterYear}
@@ -525,48 +523,48 @@ export default function Page() {
 
               {orderFilterCategory === "deadline" && (
                 <div className="mt-2">
-                  <p>Filter by Deadline</p>
+                  <p>{t("orders.filterByDeadline")}</p>
                   <select
                     className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                     value={orderDeadlineFilter}
                     onChange={(e) => setOrderDeadlineFilter(e.target.value)}
                   >
-                    <option value="past">Past Due Deadline</option>
-                    <option value="upcoming">Upcoming Deadline</option>
+                    <option value="past">{t("pastDueDeadline")}</option>
+                    <option value="upcoming">{t("upcomingDeadline")}</option>
                   </select>
                   <div className="mt-2">
-                    <p>Select Time Period</p>
+                    <p>{t("selectTimePeriod")}</p>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <p>From Month</p>
+                        <p>{t("fromMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={orderStartMonth}
                           onChange={(e) => setOrderStartMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>To Month</p>
+                        <p>{t("toMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={orderEndMonth}
                           onChange={(e) => setOrderEndMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>Year</p>
+                        <p>{t("year")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={orderTimeFilterYear}
@@ -588,38 +586,38 @@ export default function Page() {
 
               {orderFilterCategory === "time" && (
                 <div className="mt-2">
-                  <p>Select Time Period</p>
+                  <p>{t("selectTimePeriod")}</p>
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <p>From Month</p>
+                      <p>{t("fromMonth")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={orderStartMonth}
                         onChange={(e) => setOrderStartMonth(e.target.value)}
                       >
-                        {months.map((month) => (
+                        {months.map((month, index) => (
                           <option key={month} value={month}>
-                            {month}
+                            {t(`months.${index}`)}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="flex-1">
-                      <p>To Month</p>
+                      <p>{t("toMonth")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={orderEndMonth}
                         onChange={(e) => setOrderEndMonth(e.target.value)}
                       >
-                        {months.map((month) => (
+                        {months.map((month, index) => (
                           <option key={month} value={month}>
-                            {month}
+                            {t(`months.${index}`)}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="flex-1">
-                      <p>Year</p>
+                      <p>{t("year")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={orderTimeFilterYear}
@@ -643,62 +641,67 @@ export default function Page() {
           {/* Product Section */}
           {documentType === "product" && (
             <div>
-              <p className="font-bold text-lg mb-2">Products</p>
-              <p>Document Name</p>
+              <p className="font-bold text-lg mb-2">{t("products.title")}</p>
+              <p>{t("documentName")}</p>
               <input
                 type="text"
                 className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green mb-2 w-full"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
+                placeholder={t("products.namePlaceholder")}
               />
-              <p>Select Category</p>
+              <p>{t("selectCategory")}</p>
               <select
                 className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                 value={productFilterCategory}
                 onChange={(e) => setProductFilterCategory(e.target.value)}
               >
-                <option value="popularity">By Popularity in Orders</option>
-                <option value="cost">By Cost</option>
-                <option value="id">By ID</option>
-                <option value="category">By Category</option>
-                <option value="name">By Name</option>
+                <option value="popularity">
+                  {t("products.categories.byPopularity")}
+                </option>
+                <option value="cost">{t("products.categories.byCost")}</option>
+                <option value="id">{t("products.categories.byId")}</option>
+                <option value="category">
+                  {t("products.categories.byCategory")}
+                </option>
+                <option value="name">{t("products.categories.byName")}</option>
               </select>
 
               {/* Product Time Filter */}
               {productFilterCategory === "popularity" && (
                 <div className="mt-2">
-                  <p>Select Time Period</p>
+                  <p>{t("selectTimePeriod")}</p>
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <p>From Month</p>
+                      <p>{t("fromMonth")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={productStartMonth}
                         onChange={(e) => setProductStartMonth(e.target.value)}
                       >
-                        {months.map((month) => (
+                        {months.map((month, index) => (
                           <option key={month} value={month}>
-                            {month}
+                            {t(`months.${index}`)}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="flex-1">
-                      <p>To Month</p>
+                      <p>{t("toMonth")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={productEndMonth}
                         onChange={(e) => setProductEndMonth(e.target.value)}
                       >
-                        {months.map((month) => (
+                        {months.map((month, index) => (
                           <option key={month} value={month}>
-                            {month}
+                            {t(`months.${index}`)}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="flex-1">
-                      <p>Year</p>
+                      <p>{t("year")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={productTimeFilterYear}
@@ -719,48 +722,48 @@ export default function Page() {
 
               {productFilterCategory === "cost" && (
                 <div className="mt-2">
-                  <p>Filter by Cost</p>
+                  <p>{t("products.filterByCost")}</p>
                   <select
                     className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                     value={productCostFilter}
                     onChange={(e) => setProductCostFilter(e.target.value)}
                   >
-                    <option value="highest">Highest to Lowest Price</option>
-                    <option value="lowest">Lowest to Highest Price</option>
+                    <option value="highest">{t("highestToLowest")}</option>
+                    <option value="lowest">{t("lowestToHighest")}</option>
                   </select>
                   <div className="mt-2">
-                    <p>Select Time Period</p>
+                    <p>{t("selectTimePeriod")}</p>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <p>From Month</p>
+                        <p>{t("fromMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={productStartMonth}
                           onChange={(e) => setProductStartMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>To Month</p>
+                        <p>{t("toMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={productEndMonth}
                           onChange={(e) => setProductEndMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>Year</p>
+                        <p>{t("year")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={productTimeFilterYear}
@@ -782,49 +785,52 @@ export default function Page() {
 
               {["id", "category", "name"].includes(productFilterCategory) && (
                 <div className="mt-2">
-                  <p>{`Enter Product ${
-                    productFilterCategory.charAt(0).toUpperCase() +
-                    productFilterCategory.slice(1)
-                  }`}</p>
+                  <p>
+                    {t("products.enter")}{" "}
+                    {t(`products.fields.${productFilterCategory}`)}
+                  </p>
                   <input
                     type="text"
                     className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                     value={productSearchTerm}
                     onChange={(e) => setProductSearchTerm(e.target.value)}
+                    placeholder={t(
+                      `products.placeholders.${productFilterCategory}`
+                    )}
                   />
                   <div className="mt-2">
-                    <p>Select Time Period</p>
+                    <p>{t("selectTimePeriod")}</p>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <p>From Month</p>
+                        <p>{t("fromMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={productStartMonth}
                           onChange={(e) => setProductStartMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>To Month</p>
+                        <p>{t("toMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={productEndMonth}
                           onChange={(e) => setProductEndMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>Year</p>
+                        <p>{t("year")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={productTimeFilterYear}
@@ -849,64 +855,73 @@ export default function Page() {
           {/* Material Section */}
           {documentType === "material" && (
             <div>
-              <p className="font-bold text-lg mb-2">Materials</p>
-              <p>Document Name</p>
+              <p className="font-bold text-lg mb-2">{t("materials.title")}</p>
+              <p>{t("documentName")}</p>
               <input
                 type="text"
                 className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green mb-2 w-full"
                 value={materialName}
                 onChange={(e) => setMaterialName(e.target.value)}
+                placeholder={t("materials.namePlaceholder")}
               />
-              <p>Select Category</p>
+              <p>{t("selectCategory")}</p>
               <select
                 className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                 value={materialFilterCategory}
                 onChange={(e) => setMaterialFilterCategory(e.target.value)}
               >
-                <option value="popularity">By Popularity in Orders</option>
-                <option value="cost">By Cost</option>
-                <option value="name">By Name</option>
-                <option value="id">By ID</option>
-                <option value="category">By Category</option>
-                <option value="color">By Color</option>
-                <option value="quantity">By Quantity</option>
+                <option value="popularity">
+                  {t("materials.categories.byPopularity")}
+                </option>
+                <option value="cost">{t("materials.categories.byCost")}</option>
+                <option value="name">{t("materials.categories.byName")}</option>
+                <option value="id">{t("materials.categories.byId")}</option>
+                <option value="category">
+                  {t("materials.categories.byCategory")}
+                </option>
+                <option value="color">
+                  {t("materials.categories.byColor")}
+                </option>
+                <option value="quantity">
+                  {t("materials.categories.byQuantity")}
+                </option>
               </select>
 
               {/* Material Time Filter */}
               {materialFilterCategory === "popularity" && (
                 <div className="mt-2">
-                  <p>Select Time Period</p>
+                  <p>{t("selectTimePeriod")}</p>
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <p>From Month</p>
+                      <p>{t("fromMonth")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={materialStartMonth}
                         onChange={(e) => setMaterialStartMonth(e.target.value)}
                       >
-                        {months.map((month) => (
+                        {months.map((month, index) => (
                           <option key={month} value={month}>
-                            {month}
+                            {t(`months.${index}`)}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="flex-1">
-                      <p>To Month</p>
+                      <p>{t("toMonth")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={materialEndMonth}
                         onChange={(e) => setMaterialEndMonth(e.target.value)}
                       >
-                        {months.map((month) => (
+                        {months.map((month, index) => (
                           <option key={month} value={month}>
-                            {month}
+                            {t(`months.${index}`)}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="flex-1">
-                      <p>Year</p>
+                      <p>{t("year")}</p>
                       <select
                         className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                         value={materialTimeFilterYear}
@@ -927,20 +942,20 @@ export default function Page() {
 
               {materialFilterCategory === "cost" && (
                 <div className="mt-2">
-                  <p>Filter by Cost</p>
+                  <p>{t("materials.filterByCost")}</p>
                   <select
                     className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                     value={materialCostFilter}
                     onChange={(e) => setMaterialCostFilter(e.target.value)}
                   >
-                    <option value="highest">Highest to Lowest Price</option>
-                    <option value="lowest">Lowest to Highest Price</option>
+                    <option value="highest">{t("highestToLowest")}</option>
+                    <option value="lowest">{t("lowestToHighest")}</option>
                   </select>
                   <div className="mt-2">
-                    <p>Select Time Period</p>
+                    <p>{t("selectTimePeriod")}</p>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <p>From Month</p>
+                        <p>{t("fromMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={materialStartMonth}
@@ -948,29 +963,29 @@ export default function Page() {
                             setMaterialStartMonth(e.target.value)
                           }
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>To Month</p>
+                        <p>{t("toMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={materialEndMonth}
                           onChange={(e) => setMaterialEndMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>Year</p>
+                        <p>{t("year")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={materialTimeFilterYear}
@@ -994,21 +1009,24 @@ export default function Page() {
                 materialFilterCategory
               ) && (
                 <div className="mt-2">
-                  <p>{`Enter Material ${
-                    materialFilterCategory.charAt(0).toUpperCase() +
-                    materialFilterCategory.slice(1)
-                  }`}</p>
+                  <p>
+                    {t("materials.enter")}{" "}
+                    {t(`materials.fields.${materialFilterCategory}`)}
+                  </p>
                   <input
                     type="text"
                     className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                     value={materialSearchTerm}
                     onChange={(e) => setMaterialSearchTerm(e.target.value)}
+                    placeholder={t(
+                      `materials.placeholders.${materialFilterCategory}`
+                    )}
                   />
                   <div className="mt-2">
-                    <p>Select Time Period</p>
+                    <p>{t("selectTimePeriod")}</p>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <p>From Month</p>
+                        <p>{t("fromMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={materialStartMonth}
@@ -1016,29 +1034,29 @@ export default function Page() {
                             setMaterialStartMonth(e.target.value)
                           }
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>To Month</p>
+                        <p>{t("toMonth")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={materialEndMonth}
                           onChange={(e) => setMaterialEndMonth(e.target.value)}
                         >
-                          {months.map((month) => (
+                          {months.map((month, index) => (
                             <option key={month} value={month}>
-                              {month}
+                              {t(`months.${index}`)}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex-1">
-                        <p>Year</p>
+                        <p>{t("year")}</p>
                         <select
                           className="p-1 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green w-full"
                           value={materialTimeFilterYear}
@@ -1066,16 +1084,14 @@ export default function Page() {
             className="bg-green px-2 py-2 rounded-lg w-full text-center hover:bg-darkGreen mt-10 mx-auto"
             onClick={handleCreateDocument}
           >
-            Create{" "}
-            {documentType.charAt(0).toUpperCase() + documentType.slice(1)}{" "}
-            Document
+            {t("create")} {t(`docTypes.${documentType}`)}
           </button>
           <button
             type="button"
             className="bg-red px-2 py-2 rounded-lg w-full text-center hover:bg-rose-700 mx-auto"
             onClick={() => router.push("/documents")}
           >
-            Cancel
+            {t("cancel")}
           </button>
         </form>
         <Menu type="OnlySlideMenu" />

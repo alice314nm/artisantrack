@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useUserAuth } from "@/app/[locale]/_utils/auth-context";
@@ -36,6 +37,7 @@ const monthNames = [
 ];
 
 export default function DocumentDetailPage() {
+  const t = useTranslations("DocumentsID");
   const { documentid } = useParams();
   const searchParams = useSearchParams();
   const { user } = useUserAuth();
@@ -44,6 +46,31 @@ export default function DocumentDetailPage() {
   const [isLoadingDocument, setIsLoadingDocument] = useState(true);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const monthIndices = [
+    "",
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+  ];
+
+  useEffect(() => {
+    document.title = t("documentDetailsTitle");
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     const fetchDocumentAndData = async () => {
@@ -604,6 +631,159 @@ export default function DocumentDetailPage() {
   const handleGoBack = () => {
     router.back();
   };
+
+  const getCategoryDisplay = (doc) => {
+    if (!doc?.queryParams || !doc?.type) return t("unknownCategory");
+
+    const {
+      category,
+      sortOrder,
+      startMonth,
+      endMonth,
+      year,
+      month,
+      searchTerm,
+      deadlineFilter,
+    } = doc.queryParams;
+
+    // Format date range display
+    const formatDateRange = (startMonth, endMonth, year) => {
+      if (startMonth && endMonth && year) {
+        const translatedStartMonth = t(
+          `months.${monthIndices.indexOf(startMonth.toLowerCase())}`
+        );
+        const translatedEndMonth = t(
+          `months.${monthIndices.indexOf(endMonth.toLowerCase())}`
+        );
+
+        if (startMonth === endMonth) {
+          return `, ${translatedStartMonth} ${year}`;
+        }
+        return `, ${translatedStartMonth} ${t(
+          "to"
+        )} ${translatedEndMonth} ${year}`;
+      }
+      if (startMonth && year) {
+        const translatedMonth = t(
+          `months.${monthIndices.indexOf(startMonth.toLowerCase())}`
+        );
+        return `, ${translatedMonth} ${year}`;
+      }
+      if (endMonth && year) {
+        const translatedMonth = t(
+          `months.${monthIndices.indexOf(endMonth.toLowerCase())}`
+        );
+        return `, ${translatedMonth} ${year}`;
+      }
+      if (year) return `, ${year}`;
+      return "";
+    };
+
+    // For backward compatibility with older documents
+    const formatLegacyDate = (month, year) => {
+      if (month && year) {
+        const translatedMonth = t(
+          `months.${monthIndices.indexOf(month.toLowerCase())}`
+        );
+        return `, ${translatedMonth} ${year}`;
+      }
+      if (month) {
+        const translatedMonth = t(
+          `months.${monthIndices.indexOf(month.toLowerCase())}`
+        );
+        return `, ${translatedMonth}`;
+      }
+      if (year) return `, ${year}`;
+      return "";
+    };
+
+    const capitalize = (text) => text?.charAt(0).toUpperCase() + text?.slice(1);
+
+    let displayText = "";
+
+    switch (doc.type) {
+      case "order":
+        if (category === "cost") {
+          const sortText =
+            sortOrder === "desc"
+              ? t("highestToLowestPrice")
+              : t("lowestToHighestPrice");
+          displayText = `${t("ordersByCost")}: ${sortText}${formatDateRange(
+            startMonth,
+            endMonth,
+            year
+          )}`;
+        } else if (category === "deadline") {
+          let deadlineText;
+          if (deadlineFilter === "past") {
+            deadlineText = t("pastDueDeadline");
+          } else if (deadlineFilter === "upcoming") {
+            deadlineText = t("upcomingDeadline");
+          } else {
+            deadlineText = t("all");
+          }
+
+          displayText = `${t(
+            "ordersByDeadline"
+          )}: ${deadlineText}${formatDateRange(startMonth, endMonth, year)}`;
+        } else if (["customerName", "description"].includes(category)) {
+          // Translate the category name
+          const categoryTranslation =
+            category === "customerName" ? t("customerName") : t("description");
+
+          displayText = `${t("ordersBy")} ${categoryTranslation}: ${
+            searchTerm || t("notAvailable")
+          }${formatDateRange(startMonth, endMonth, year)}`;
+        } else if (startMonth || endMonth || year) {
+          // Time period display
+          if (startMonth === endMonth) {
+            const translatedMonth = startMonth
+              ? t(`months.${monthIndices.indexOf(startMonth.toLowerCase())}`)
+              : "";
+            displayText = `${t("ordersFor")} ${translatedMonth} ${
+              year || ""
+            }`.trim();
+          } else {
+            const translatedStartMonth = startMonth
+              ? t(`months.${monthIndices.indexOf(startMonth.toLowerCase())}`)
+              : "";
+            const translatedEndMonth = endMonth
+              ? t(`months.${monthIndices.indexOf(endMonth.toLowerCase())}`)
+              : "";
+
+            displayText = `${t("ordersFrom")} ${translatedStartMonth} ${t(
+              "to"
+            )} ${translatedEndMonth} ${year || ""}`.trim();
+          }
+        } else {
+          displayText = t("orders");
+        }
+        break;
+
+      case "product":
+        displayText = t("products");
+        // Similar translation patterns for products...
+        break;
+
+      case "material":
+        displayText = t("materials");
+        // Similar translation patterns for materials...
+        break;
+
+      default:
+        return t("unknownCategory");
+    }
+
+    return displayText;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <img src="/loading-gif.gif" className="h-10" />
+      </div>
+    );
+  }
 
   if (user) {
     return (

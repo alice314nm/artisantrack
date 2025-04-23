@@ -37,7 +37,7 @@ body {
 /* Chatbot styles */
 .chatbot-container {
   position: fixed;
-  bottom: 20px;
+  bottom: 150px; /* Moved up to avoid overlapping */
   right: 20px;
   width: 350px;
   height: 500px;
@@ -46,19 +46,19 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  display: none; /* Default state (hidden) */
   z-index: 1000;
+  display: none; /* Hidden by default */
 }
 
 .chatbot-container.open {
-  display: block; /* Show when 'open' class is added */
+  display: block; /* Show when open class is applied */
 }
 
 .chatbot-button {
   position: fixed;
-  bottom: 20px;
+  bottom: 80px; /* Moved up */
   right: 20px;
-  background-color: #A6A968;
+  background-color: theme("colors.darkGreen"); /* Updated color */
   color: #22150F;
   border: none;
   border-radius: 50%;
@@ -99,4 +99,12 @@ body {
   background-color: #FFF8E8 !important;
   color: #22150F !important;
   border: 1px solid #A6A968 !important;
+}
+
+.chatbot-container {
+  pointer-events: none; /* Disable pointer events on the whole container */
+}
+
+.chatbot-container.open iframe {
+  pointer-events: auto; /* Re-enable pointer events on the iframe only */
 }

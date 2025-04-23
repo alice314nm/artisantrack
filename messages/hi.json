@@ -1,0 +1,811 @@
+{
+    "WelcomePage": {
+      "pageTitle": "होम - Artisan Track",
+      "headerTitle": "Artisan Track",
+      "loadingAlt": "लोड हो रहा है",
+      "welcomeBack": "वापसी पर स्वागत है, {name}!",
+      "loading": "लोड हो रहा है...",
+  
+      "orders": {
+        "title": "ऑर्डर",
+        "inProgress": "प्रगति पर",
+        "completed": "पूर्ण",
+        "viewButton": "ऑर्डर देखें"
+      },
+  
+      "materials": {
+        "title": "सामग्री",
+        "total": "कुल सामग्री",
+        "viewButton": "सामग्री देखें"
+      },
+  
+      "products": {
+        "title": "उत्पाद",
+        "total": "कुल उत्पाद",
+        "viewButton": "उत्पाद देखें"
+      },
+  
+      "finance": {
+        "title": "वित्त",
+        "revenue": "राजस्व",
+        "expenses": "खर्च",
+        "viewButton": "वित्त देखें"
+      },
+  
+      "inventory": {
+        "imageAlt": "इन्वेंटरी आइकन",
+        "title": "अपनी इन्वेंटरी का ट्रैक रखें!",
+        "description1": "पैटर्न, सामग्री, मॉडल, और अधिक जोड़ें।",
+        "description2": "अपनी श्रेणियों पर नज़र रखें।"
+      },
+  
+      "trackOrders": {
+        "imageAlt": "ऑर्डर आइकन",
+        "title": "अपने ऑर्डर का ट्रैक रखें!",
+        "description1": "इन्वेंटरी से उत्पाद को ऑर्डर में जोड़ें।",
+        "description2": "समय सीमा निर्धारित करें और ग्राहकों को असाइन करें।"
+      },
+  
+      "trackFinances": {
+        "imageAlt": "वित्त आइकन",
+        "title": "अपने वित्त का ट्रैक रखें!",
+        "description1": "आय और खर्च पर मासिक और वार्षिक रिपोर्ट प्राप्त करें।",
+        "description2": "पता करें कि कौन से उत्पाद और सामग्री आपके ग्राहकों के बीच लोकप्रिय हैं।"
+      }
+    },
+    "loginPage": {
+      "pageTitle": "लॉगिन",
+      "resetPasswordTitle": "पासवर्ड रीसेट करें",
+      "loginTitle": "लॉग इन",
+      "enterEmail": "अपना ईमेल दर्ज करें",
+      "enterPassword": "पासवर्ड",
+      "sendResetLink": "रीसेट लिंक भेजें",
+      "backToLogin": "लॉग इन पर वापस जाएं",
+      "forgotPassword": "पासवर्ड भूल गए?",
+      "signUpPrompt": "अभी तक कोई खाता नहीं है?",
+      "signUpLink": "साइन अप",
+      "errorNoAccount": "इस ईमेल से कोई खाता नहीं मिला।",
+      "errorInvalidPassword": "गलत पासवर्ड। कृपया पुनः प्रयास करें।",
+      "errorMissingPassword": "लॉग इन करने के लिए कृपया पासवर्ड दर्ज करें।",
+      "errorInvalidEmail": "लॉग इन करने के लिए कृपया एक वैध ईमेल दर्ज करें।",
+      "resetPasswordMessage": "पासवर्ड रीसेट लिंक भेज दिया गया है! अपना ईमेल जांचें।",
+      "successMessage": "पासवर्ड रीसेट लिंक सफलतापूर्वक भेजा गया!"
+    },
+    "OrdersPage": {
+      "pageTitle": "ऑर्डर",
+      "appTitle": "Artisan Track",
+      "unknown": "अज्ञात",
+      "nameAscending": "नाम आरोही",
+      "nameDescending": "नाम अवरोही",
+      "category": "श्रेणी",
+      "earliestDeadline": "सबसे पहली समय सीमा",
+      "latestDeadline": "सबसे बाद की समय सीमा",
+      "days": "दिन",
+      "dueToday": "आज देय",
+      "noOrdersFound": "कोई ऑर्डर नहीं मिला",
+      "noDeadline": "कोई समय सीमा नहीं",
+      "createOrderButton": "ऑर्डर बनाएं +",
+      "months": {
+        "jan": "जन",
+        "feb": "फर",
+        "mar": "मार्च",
+        "apr": "अप्रैल",
+        "may": "मई",
+        "jun": "जून",
+        "jul": "जुल",
+        "aug": "अग",
+        "sep": "सित",
+        "oct": "अक्ट",
+        "nov": "नव",
+        "dec": "दिस"
+      }
+    },
+    "FilterTotal": {
+      "total": "कुल",
+      "filterAndSort": "फ़िल्टर और क्रमबद्ध करें",
+      "filterAlt": "फ़िल्टर आइकन"
+    },
+    "BlockHolder": {
+      "productId": "उत्पाद आईडी",
+      "orderId": "ऑर्डर आईडी",
+      "materialId": "सामग्री आईडी",
+      "category": "श्रेणी",
+      "deadline": "समय सीमा",
+      "total": "कुल",
+      "quantity": "मात्रा",
+      "color": "रंग",
+      "productImageAlt": "उत्पाद छवि",
+      "orderImageAlt": "ऑर्डर छवि",
+      "materialImageAlt": "सामग्री छवि"
+    },
+    "SearchBar": {
+      "placeholder": "खोजें...",
+      "searchAlt": "खोज आइकन"
+    },
+    "FilterWindow": {
+      "title": "फिल्टर",
+      "toggleDropdown": "ड्रॉपडाउन टॉगल करें",
+      "apply": "फिल्टर लागू करें",
+      "categories": {
+        "Sort by": "इसके अनुसार क्रमबद्ध करें",
+        "Categories": "श्रेणियाँ",
+        "Colors": "रंग",
+        "Clients": "ग्राहक"
+      },
+      "sort": {
+        "category": "श्रेणी",
+        "nameDesc": "नाम अवरोही",
+        "nameAsc": "नाम आरोही",
+        "idAsc": "आईडी आरोही",
+        "idDesc": "आईडी अवरोही",
+        "earliestDeadline": "सबसे पहली समय सीमा",
+        "latestDeadline": "सबसे बाद की समय सीमा"
+      }
+    },
+    "SlideMenu": {
+      "logout": "लॉग आउट",
+      "home": "होम",
+      "profile": "प्रोफ़ाइल",
+      "documents": "दस्तावेज़",
+      "finances": "वित्त",
+      "inventory": "इन्वेंटरी",
+      "products": "उत्पाद",
+      "materials": "सामग्री",
+      "orders": "ऑर्डर",
+      "expand": "विस्तार करें",
+      "collapse": "संकुचित करें"
+    },
+    "OrderPageID": {
+      "title": "ऑर्डर",
+      "yourView": "आपका दृश्य",
+      "clientView": "ग्राहक दृश्य:",
+      "back": "वापस",
+      "createReceipt": "रसीद बनाएं",
+      "edit": "संपादित करें",
+      "deadline": "समय सीमा:",
+      "noDeadline": "कोई समय सीमा नहीं",
+      "client": "ग्राहक:",
+      "noClient": "कोई ग्राहक निर्धारित नहीं।",
+      "description": "विवरण:",
+      "noDescription": "कोई विवरण निर्धारित नहीं।",
+      "materials": "सामग्री:",
+      "materialCost": "सामग्री लागत: ${cost}",
+      "total": "कुल:",
+      "noTotal": "कोई कुल निर्धारित नहीं।",
+      "delete": "हटाएं",
+      "setPaid": "भुगतान किया गया सेट करें",
+      "setUnpaid": "अवैतनिक के रूप में सेट करें",
+      "setCompleted": "पूर्ण के रूप में सेट करें",
+      "setIncomplete": "अपूर्ण के रूप में सेट करें",
+      "copyForClient": "ग्राहक के लिए कॉपी करें",
+      "viewForClient": "ग्राहक के लिए देखें",
+      "defaultView": "डिफ़ॉल्ट दृश्य",
+      "artisanTrack": "Artisan Track",
+      "prepayment": "अग्रिम भुगतान: {amount}$",
+      "dueToday": "(आज देय)",
+      "daysLeft": "({days} दिन)",
+      "months": {
+        "Jan": "जन",
+        "Feb": "फर",
+        "Mar": "मार्च",
+        "Apr": "अप्रैल",
+        "May": "मई",
+        "Jun": "जून",
+        "Jul": "जुल",
+        "Aug": "अग",
+        "Sep": "सित",
+        "Oct": "अक्ट",
+        "Nov": "नव",
+        "Dec": "दिस"
+      },
+      "orderID": "ऑर्डर आईडी",
+      "material": "सामग्री",
+      "quantity": "मात्रा",
+      "price": "मूल्य",
+      "product": "उत्पाद",
+      "workCost": "काम की लागत",
+      "noQuantity": "निर्दिष्ट नहीं",
+      "noCost": "निर्दिष्ट नहीं",
+      "noProduct": "उत्पाद निर्दिष्ट नहीं",
+      "totalCost": "कुल लागत",
+      "receipt": "रसीद"
+    },
+    "confirmationWindow": {
+      "message": "क्या आप वाकई चाहते हैं",
+      "delete": "हटाएं",
+      "cancel": "रद्द करें"
+    },
+    "EditOrder": {
+      "createOrderTitle": "एक ऑर्डर बनाएं",
+      "general": "सामान्य",
+      "titleOfOrder": "ऑर्डर का शीर्षक",
+      "enterTitle": "ऑर्डर के लिए शीर्षक दर्ज करें",
+      "deadline": "समय सीमा",
+      "startDate": "प्रारंभ तिथि",
+      "days": "दिन",
+      "customerName": "ग्राहक का नाम",
+      "enterCustomerName": "ग्राहक का नाम दर्ज करें",
+      "description": "विवरण",
+      "enterDetails": "ऑर्डर के बारे में विवरण दर्ज करें",
+      "characters": "अक्षर",
+      "productMaterials": "उत्पाद और सामग्री",
+      "product": "उत्पाद",
+      "selectProduct": "उत्पाद चुनें",
+      "selectedProduct": "चयनित उत्पाद",
+      "costForSelectedProduct": "चयनित उत्पाद के लिए लागत",
+      "materials": "सामग्री",
+      "selectMaterial": "सामग्री चुनें",
+      "materialsCost": "सामग्री लागत",
+      "workCost": "काम की लागत",
+      "totalCost": "कुल लागत",
+      "cancel": "रद्द करें",
+      "create": "बनाएं",
+      "noProducts": "इन्वेंटरी में कोई उत्पाद नहीं",
+      "noMaterials": "इन्वेंटरी में कोई सामग्री नहीं",
+      "createTitle": "एक ऑर्डर बनाएं",
+      "invalidDate": "कृपया सुनिश्चित करें कि प्रारंभ तिथि और समय सीमा वैध हैं।",
+      "deadlineError": "समय सीमा प्रारंभ तिथि के बाद होनी चाहिए।",
+      "errorAdding": "ऑर्डर जोड़ने में त्रुटि:"
+    },
+    "SelectHolder": {
+      "select": "चुनें",
+      "selected": "चयनित",
+      "averageCost": "औसत लागत",
+      "totalCost": "कुल लागत",
+      "quantity": "मात्रा"
+    },
+    "SelectedHolder": {
+      "select": "चुनें",
+      "selected": "चयनित",
+      "averageCost": "औसत लागत",
+      "totalCost": "कुल लागत",
+      "quantity": "मात्रा",
+      "remove": "हटाएं"
+    },
+    "menu": {
+      "goBack": "वापस जाएं",
+      "reset": "रीसेट करें",
+      "confirm": "पुष्टि करें",
+      "cancel": "रद्द करें",
+      "create": "बनाएं"
+    },
+    "materials": {
+      "pageTitle": "सामग्री",
+      "noMaterials": "अभी तक कोई सामग्री नहीं",
+      "copyForClient": "ग्राहक के लिए कॉपी करें",
+      "createMaterial": "सामग्री बनाएं +"
+    },
+    "IdMaterial": {
+      "pageTitle": "सामग्री",
+      "yourView": "आपका दृश्य",
+      "back": "वापस",
+      "edit": "संपादित करें",
+      "categories": "श्रेणियां:",
+      "noCategories": "कोई श्रेणियां निर्धारित नहीं",
+      "color": "रंग:",
+      "noColor": "कोई रंग निर्धारित नहीं",
+      "description": "विवरण:",
+      "noDescription": "कोई विवरण नहीं",
+      "shop": "दुकान:",
+      "noShop": "कोई विवरण नहीं",
+      "quantity": "मात्रा:",
+      "noQuantity": "कोई मात्रा निर्धारित नहीं",
+      "costPerUnit": "प्रति इकाई लागत:",
+      "noCostPerUnit": "कोई प्रति इकाई लागत निर्धारित नहीं।",
+      "total": "कुल:",
+      "noTotal": "लागत निर्धारित नहीं है",
+      "delete": "हटाएं",
+      "copyForClient": "ग्राहक के लिए कॉपी करें",
+      "defaultView": "डिफ़ॉल्ट दृश्य",
+      "title": "ग्राहक दृश्य"
+    },
+    "editMaterial": {
+      "title": "सामग्री संपादित करें",
+      "uploadError": "केवल PNG और JPG फाइलें अनुमत हैं।",
+      "requiredFields": "आईडी और नाम आवश्यक हैं।",
+      "idTooLong": "आईडी 12 वर्णों से कम होनी चाहिए।",
+      "duplicateId": "'{id}' आईडी वाला उत्पाद पहले से मौजूद है।",
+      "updateSuccess": "सामग्री सफलतापूर्वक अपडेट की गई!",
+      "updateError": "सामग्री अपडेट करने में त्रुटि:",
+      "general": "सामान्य",
+      "productId": "उत्पाद आईडी",
+      "productName": "उत्पाद का नाम",
+      "productDescription": "उत्पाद विवरण",
+      "details": "विवरण",
+      "productColor": "उत्पाद का रंग",
+      "categories": "श्रेणियां",
+      "addCategory": "जोड़ें",
+      "selectImages": "छवियां चुनें",
+      "requiredField": "* आवश्यक",
+      "characterCount": "{count} / 1000 अक्षर",
+      "removeCategory": "हटाएं",
+      "imagePreview": "चुनी गई छवियों का पूर्वावलोकन",
+      "price": "मूल्य",
+      "shop": "दुकान",
+      "enterShop": "एक दुकान दर्ज करें",
+      "quantity": "मात्रा",
+      "total": "कुल",
+      "costPerUnit": "प्रति इकाई लागत",
+      "currency": "मुद्रा",
+      "usd": "USD ($)",
+      "eur": "EUR (€)",
+      "cad": "CAD (C$)",
+      "rub": "RUB (₽)",
+      "cancel": "रद्द करें",
+      "save": "सहेजें"
+    },
+    "smallBlockHolder": {
+      "delete": "हटाएं"
+    },
+    "createMaterial": {
+      "pageTitle": "एक सामग्री बनाएं",
+      "id": "आईडी",
+      "name": "नाम",
+      "description": "विवरण",
+      "color": "रंग",
+      "categories": "श्रेणियां",
+      "shop": "दुकान",
+      "quantity": "मात्रा",
+      "total": "कुल",
+      "costPerUnit": "प्रति इकाई लागत",
+      "selectImages": "छवियां चुनें",
+      "addCategory": "जोड़ें",
+      "save": "सहेजें",
+      "cancel": "रद्द करें",
+      "idRequired": "आईडी और नाम आवश्यक हैं।",
+      "idTooLong": "आईडी 12 वर्णों से कम होनी चाहिए।",
+      "idExists": "'{id}' आईडी वाला उत्पाद पहले से मौजूद है।",
+      "invalidFiles": "केवल PNG और JPG फाइलें अनुमत हैं।",
+      "title": "एक सामग्री बनाएं",
+      "general": "सामान्य",
+      "idPlaceholder": "आईडी दर्ज करें (2-16 वर्ण)",
+      "namePlaceholder": "नाम दर्ज करें (2-64 वर्ण)",
+      "descriptionPlaceholder": "विवरण दर्ज करें",
+      "characters": "वर्ण",
+      "details": "विवरण",
+      "colorPlaceholder": "एक रंग दर्ज करें",
+      "categoriesPlaceholder": "सामग्री के लिए एक श्रेणी जोड़ें",
+      "add": "जोड़ें",
+      "shopPlaceholder": "एक दुकान दर्ज करें",
+      "quantityPlaceholder": "0.00",
+      "totalPlaceholder": "0.00",
+      "remove": "हटाएं",
+      "create": "बनाएं",
+      "price": "मूल्य"
+    },
+    "createOrder": {
+      "title": "एक ऑर्डर बनाएं",
+      "general": "सामान्य",
+      "orderTitle": "ऑर्डर का शीर्षक",
+      "required": "*",
+      "deadline": "समय सीमा",
+      "startDate": "प्रारंभ तिथि",
+      "days": "दिन",
+      "customerName": "ग्राहक का नाम",
+      "description": "विवरण",
+      "productMaterials": "उत्पाद और सामग्री",
+      "selectProduct": "उत्पाद चुनें",
+      "product": "उत्पाद",
+      "deadlineError": "समय सीमा प्रारंभ तिथि के बाद होनी चाहिए।",
+      "invalidDateError": "कृपया सुनिश्चित करें कि प्रारंभ तिथि और समय सीमा वैध हैं।",
+      "orderSuccess": "ऑर्डर सफलतापूर्वक जोड़ा गया",
+      "orderError": "ऑर्डर जोड़ने में त्रुटि",
+      "selectedProduct": "चयनित उत्पाद",
+      "productCost": "चयनित उत्पाद के लिए लागत",
+      "materials": "सामग्री",
+      "selectMaterial": "सामग्री चुनें",
+      "materialCost": "सामग्री लागत",
+      "workCost": "काम की लागत",
+      "totalCost": "कुल लागत",
+      "currency": "मुद्रा",
+      "cancel": "रद्द करें",
+      "create": "बनाएं",
+      "noProducts": "इन्वेंटरी में कोई उत्पाद नहीं",
+      "noMaterials": "इन्वेंटरी में कोई सामग्री नहीं"
+    },
+    "productPage": {
+      "title": "उत्पाद",
+      "noProducts": "अभी तक कोई उत्पाद नहीं",
+      "copyForClient": "ग्राहक के लिए कॉपी करें",
+      "createProduct": "उत्पाद बनाएं +"
+    },
+    "productId": {
+      "title": "उत्पाद",
+      "viewTitle": "आपका दृश्य",
+      "back": "वापस",
+      "edit": "संपादित करें",
+      "loading": "लोड हो रहा है...",
+      "imageAlt": "उत्पाद छवि",
+      "categories": "श्रेणियां",
+      "noCategories": "कोई श्रेणी निर्धारित नहीं",
+      "description": "विवरण",
+      "noDescription": "कोई विवरण नहीं",
+      "averageTotal": "औसत कुल",
+      "costNotSet": "लागत निर्धारित नहीं है",
+      "delete": "हटाएं",
+      "copyForClient": "ग्राहक के लिए कॉपी करें",
+      "viewForClient": "ग्राहक के लिए देखें",
+      "clientView": "ग्राहक दृश्य",
+      "products": "उत्पाद",
+      "productId": "उत्पाद आईडी",
+      "defaultView": "डिफ़ॉल्ट दृश्य"
+    },
+    "editProduct": {
+      "pageTitle": "उत्पाद संपादित करें",
+      "onlyPngJpgAllowed": "केवल PNG और JPG फाइलें अनुमत हैं।",
+      "imageUploadError": "छवि अपलोड को संभालने में विफल:",
+      "idNameRequired": "आईडी और नाम आवश्यक हैं।",
+      "idTooLong": "आईडी 12 वर्णों से कम होनी चाहिए।",
+      "idAlreadyExists": "'{id}' आईडी वाला उत्पाद पहले से मौजूद है।",
+      "updateError": "उत्पाद अपडेट करने में त्रुटि:",
+      "general": "सामान्य",
+      "id": "आईडी",
+      "name": "नाम",
+      "description": "विवरण",
+      "characters": "वर्ण",
+      "details": "विवरण",
+      "category": "श्रेणी",
+      "add": "जोड़ें",
+      "categoryList": "श्रेणी सूची",
+      "productImages": "उत्पाद छवियां",
+      "patternImages": "पैटर्न छवियां",
+      "selectImages": "छवियां चुनें",
+      "previewPatternImage": "पैटर्न छवि का पूर्वावलोकन",
+      "price": "मूल्य",
+      "averageCost": "औसत लागत",
+      "cancel": "रद्द करें",
+      "save": "सहेजें"
+    },
+    "createProduct": {
+      "pageTitle": "एक उत्पाद बनाएं",
+      "invalidImageFormat": "केवल PNG और JPG फाइलें अनुमत हैं।",
+      "requiredFields": "आईडी और नाम आवश्यक हैं।",
+      "idTooLong": "आईडी 12 वर्णों से कम होनी चाहिए।",
+      "productExists": "'{id}' आईडी वाला उत्पाद पहले से मौजूद है।",
+      "productAdded": "उत्पाद सफलतापूर्वक जोड़ा गया।",
+      "submit": "उत्पाद बनाएं",
+      "general": "सामान्य",
+      "id": "आईडी",
+      "idPlaceholder": "आईडी दर्ज करें (2-16 वर्ण)",
+      "name": "नाम",
+      "namePlaceholder": "नाम दर्ज करें (2-64 वर्ण)",
+      "description": "विवरण",
+      "descriptionPlaceholder": "विवरण दर्ज करें",
+      "characters": "वर्ण",
+      "details": "विवरण",
+      "category": "श्रेणी",
+      "categoryPlaceholder": "सामग्री के लिए एक श्रेणी जोड़ें",
+      "add": "जोड़ें",
+      "categoryList": "श्रेणी सूची",
+      "productImages": "उत्पाद छवियां",
+      "patternImages": "पैटर्न छवियां",
+      "selectImages": "छवियां चुनें",
+      "previewPatternImage": "पैटर्न छवि का पूर्वावलोकन",
+      "price": "मूल्य",
+      "cost": "लागत",
+      "currency": {
+        "usd": "USD ($)",
+        "eur": "EUR (€)",
+        "cad": "CAD (C$)",
+        "rub": "RUB (₽)"
+      },
+      "cancel": "रद्द करें",
+      "create": "बनाएं"
+    },
+    "signup": {
+      "title": "साइन अप",
+      "email": "ईमेल",
+      "name": "नाम",
+      "tax": "कर",
+      "password": "पासवर्ड",
+      "repeatPassword": "पासवर्ड दोहराएं",
+      "signUp": "साइन अप",
+      "signingUp": "साइन अप हो रहा है...",
+      "success": "खाता सफलतापूर्वक बनाया गया!",
+      "alreadyHaveAccount": "पहले से ही खाता है?",
+      "login": "लॉग इन",
+      "errors": {
+        "requiredFields": "* चिह्नित सभी फ़ील्ड आवश्यक हैं।",
+        "invalidEmail": "अमान्य ईमेल प्रारूप। कृपया पुन: प्रयास करें।",
+        "passwordMismatch": "पासवर्ड मेल नहीं खाते।",
+        "passwordLength": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।"
+      },
+      "placeholders": {
+        "email": "उदा. example@mail.com",
+        "name": "उदा. अलेक्स स्मिथ",
+        "tax": "उदा. 4%",
+        "password": "******",
+        "repeatPassword": "*******"
+      }
+    },
+    "notLogged": {
+      "welcome": "में आपका स्वागत है",
+      "description": " अपने उत्पादों, ऑर्डर, सामग्री, और वित्त का प्रबंधन करें।",
+      "prompt": "जारी रखने के लिए साइन इन करें या शुरू करने के लिए एक नया खाता बनाएं।",
+      "login": "लॉग इन",
+      "createAccount": "खाता बनाएं"
+    },
+    "Profile": {
+      "title": "प्रोफ़ाइल",
+      "accountDeleted": "खाता सफलतापूर्वक हटा दिया गया!",
+      "artisan": "कलाकार:",
+      "save": "सहेजें",
+      "saving": "सहेज रहा है...",
+      "cancel": "रद्द करें",
+      "edit": "प्रोफ़ाइल संपादित करें",
+      "currentEmail": "वर्तमान ईमेल:",
+      "changePassword": "पासवर्ड बदलें",
+      "inventory": "इन्वेंटरी:",
+      "totalProducts": "कुल उत्पाद",
+      "totalMaterials": "कुल सामग्री",
+      "orders": "ऑर्डर:",
+      "inProgressOrders": "प्रगति पर",
+      "completedOrders": "पूर्ण",
+      "setTax": "कर निर्धारित करें:",
+      "taxNotSet": "कर निर्धारित नहीं",
+      "deleteAccount": "खाता हटाएं",
+      "loading": "लोड हो रहा है..."
+    },
+    "ChangePassword": {
+      "resetTitle": "पासवर्ड रीसेट करें",
+      "changeTitle": "पासवर्ड बदलें",
+      "sendResetLink": "रीसेट लिंक भेजें",
+      "backToChange": "पासवर्ड बदलने पर वापस जाएं",
+  
+      "labels": {
+        "currentPassword": "वर्तमान पासवर्ड",
+        "newPassword": "नया पासवर्ड",
+        "confirmNewPassword": "नए पासवर्ड की पुष्टि करें"
+      },
+  
+      "placeholders": {
+        "enterEmail": "अपना ईमेल दर्ज करें",
+        "currentPassword": "वर्तमान पासवर्ड दर्ज करें",
+        "newPassword": "नया पासवर्ड दर्ज करें",
+        "confirmNewPassword": "नए पासवर्ड की पुष्टि करें"
+      },
+  
+      "messages": {
+        "passwordUpdated": "पासवर्ड सफलतापूर्वक अपडेट किया गया!",
+        "resetLinkSent": "पासवर्ड रीसेट लिंक भेजा गया! अपना ईमेल जांचें।"
+      },
+  
+      "errors": {
+        "passwordsDoNotMatch": "नए पासवर्ड मेल नहीं खाते।",
+        "passwordEmpty": "नया पासवर्ड खाली नहीं हो सकता।",
+        "passwordTooShort": "पासवर्ड कम से कम 6 अक्षर लंबा होना चाहिए।",
+        "noUser": "कोई उपयोगकर्ता साइन इन नहीं है।",
+        "invalidCredential": "वर्तमान पासवर्ड गलत है।",
+        "resetFailed": "रीसेट लिंक भेजने में विफल।"
+      },
+  
+      "passwordStrength": {
+        "weak": "कमजोर",
+        "medium": "मध्यम",
+        "strong": "मजबूत"
+      },
+      "buttons": {
+        "change": "बदलें",
+        "cancel": "रद्द करें"
+      },
+      "forgotPassword": "पासवर्ड भूल गए?"
+    },
+    "PasswordConfirmation": {
+      "errors": {
+        "noUserSignedIn": "कोई उपयोगकर्ता साइन इन नहीं है।",
+        "enterPassword": "कृपया अपना पासवर्ड दर्ज करें।",
+        "incorrectPassword": "वर्तमान पासवर्ड गलत है।",
+        "enterNewEmail": "कृपया एक नया ईमेल पता दर्ज करें।",
+        "sameEmail": "आपका नया ईमेल वर्तमान ईमेल के समान नहीं हो सकता।",
+        "verificationFailed": "सत्यापन ईमेल फिर से भेजने में विफल: {{message}}"
+      },
+      "heading": "अपने पासवर्ड की पुष्टि करें",
+      "placeholders": {
+        "password": "अपना पासवर्ड दर्ज करें"
+      },
+      "buttons": {
+        "cancel": "रद्द करें",
+        "confirm": "पुष्टि करें",
+        "close": "बंद करें",
+        "resend": "सत्यापन ईमेल पुनः भेजें"
+      },
+      "messages": {
+        "verificationSent": "एक सत्यापन ईमेल भेजा गया है",
+        "checkAndRefresh": " कृपया अपने ईमेल पते को सत्यापित करें और फिर इस पृष्ठ को रिफ्रेश करें।",
+        "resendIn": "आप {{seconds}} सेकंड में ईमेल पुनः भेज सकते हैं।"
+      }
+    },
+    "Finance": {
+      "pageTitle": "वित्त",
+      "allOrders": "सभी ऑर्डर",
+      "setTax": "कर निर्धारित करें",
+      "loading": "लोड हो रहा है...",
+      "inProgress": "प्रगति पर",
+      "completed": "पूर्ण",
+      "buttons": {
+        "save": "सहेजें",
+        "cancel": "रद्द करें",
+        "changeTax": "कर बदलें"
+      },
+      "thisMonth": "इस महीने ({month}):",
+      "thisYear": "इस वर्ष ({year}):",
+      "income": "आय",
+      "expenses": "खर्च",
+      "monthlyReport": "मासिक वित्तीय रिपोर्ट",
+      "yearlyReport": "वार्षिक वित्तीय रिपोर्ट"
+    },
+    "FinanceMonthly": {
+      "filters": {
+        "popularProduct": "इस महीने लोकप्रिय उत्पाद वाले ऑर्डर",
+        "popularMaterial": "इस महीने लोकप्रिय सामग्री वाले ऑर्डर",
+        "regularClient": "इस महीने नियमित ग्राहक के ऑर्डर"
+      },
+      "excel": {
+        "income": "आय:",
+        "expenses": "खर्च:",
+        "popularProduct": "लोकप्रिय उत्पाद:",
+        "popularMaterial": "लोकप्रिय सामग्री:",
+        "regularClient": "नियमित ग्राहक:",
+        "orders": "ऑर्डर",
+        "headers": {
+          "title": "ऑर्डर का शीर्षक",
+          "customerName": "ग्राहक का नाम",
+          "productId": "उत्पाद आईडी",
+          "productCost": "उत्पाद लागत",
+          "materialId": "सामग्री आईडी",
+          "quantity": "मात्रा",
+          "materialCost": "सामग्री लागत",
+          "workCost": "कार्य लागत",
+          "totalCost": "कुल लागत"
+        },
+        "products": "उत्पाद",
+        "productHeaders": {
+          "id": "उत्पाद आईडी",
+          "name": "उत्पाद का नाम",
+          "category": "श्रेणी",
+          "average": "औसत कुल"
+        },
+        "materials": "सामग्री",
+        "materialHeaders": {
+          "id": "सामग्री आईडी",
+          "name": "सामग्री का नाम",
+          "category": "श्रेणी",
+          "color": "रंग",
+          "shop": "दुकान",
+          "quantity": "मात्रा",
+          "costPerUnit": "प्रति इकाई लागत",
+          "total": "कुल"
+        }
+      },
+      "pageTitle": {
+        "monthlyReport": "मासिक रिपोर्ट"
+      },
+      "date": {
+        "months": {
+          "jan": "जन",
+          "feb": "फर",
+          "mar": "मार्च",
+          "apr": "अप्रैल",
+          "may": "मई",
+          "jun": "जून",
+          "jul": "जुल",
+          "aug": "अग",
+          "sep": "सित",
+          "oct": "अक्ट",
+          "nov": "नव",
+          "dec": "दिस"
+        },
+        "daysLeft": "दिन",
+        "dueToday": "आज देय"
+      },
+      "finance": {
+        "income": "आय",
+        "expenses": "खर्च",
+        "popularProduct": "इस महीने का लोकप्रिय उत्पाद",
+        "popularMaterial": "इस महीने की लोकप्रिय सामग्री",
+        "regularClient": "नियमित ग्राहक इस महीने"
+      },
+      "view": {
+        "show": "दिखाएं",
+        "orders": "ऑर्डर",
+        "products": "उत्पाद",
+        "materials": "सामग्री",
+        "clearFilter": "फ़िल्टर साफ़ करें",
+        "noDeadline": "कोई समय सीमा नहीं"
+      },
+      "menu": {
+        "goBack": "वापस जाएं",
+        "download": "डाउनलोड करें"
+      },
+      "products": {
+        "noProducts": "कोई उत्पाद उपलब्ध नहीं है"
+      },
+      "materials": {
+        "noMaterials": "कोई सामग्री उपलब्ध नहीं है"
+      },
+      "months": {
+        "0": "जनवरी",
+        "1": "फरवरी",
+        "2": "मार्च",
+        "3": "अप्रैल",
+        "4": "मई",
+        "5": "जून",
+        "6": "जुलाई",
+        "7": "अगस्त",
+        "8": "सितंबर",
+        "9": "अक्टूबर",
+        "10": "नवंबर",
+        "11": "दिसंबर"
+      }
+    },
+    "chart": {
+      "expenses": "खर्च",
+      "income": "आय",
+      "financial": "वित्तीय"
+    },
+    "financeYearly": {
+      "title": "वार्षिक रिपोर्ट",
+      "income": "आय",
+      "expenses": "खर्च",
+      "popularProduct": "इस वर्ष का लोकप्रिय उत्पाद",
+      "popularMaterial": "इस वर्ष की लोकप्रिय सामग्री",
+      "regularClient": "नियमित ग्राहक",
+      "amount": "राशि",
+      "days": "दिन",
+      "dueToday": "आज देय",
+      "months": {
+        "jan": "जन",
+        "feb": "फर",
+        "mar": "मार्च",
+        "apr": "अप्रैल",
+        "may": "मई",
+        "jun": "जून",
+        "jul": "जुल",
+        "aug": "अग",
+        "sep": "सित",
+        "oct": "अक्ट",
+        "nov": "नव",
+        "dec": "दिस"
+      },
+      "show": "दिखाएं",
+      "clearFilter": "फ़िल्टर साफ़ करें",
+      "noDeadline": "कोई समय सीमा नहीं",
+      "orders": "ऑर्डर",
+      "products": "उत्पाद",
+      "materials": "सामग्री",
+      "goBack": "वापस जाएं",
+      "download": "डाउनलोड करें"
+    },
+    "layout": {
+      "sessionExpired": "सत्र समाप्त हो गया है। कृपया फिर से लॉग इन करें।",
+      "areYouStillHere": "क्या आप अभी भी यहां हैं?",
+      "imHere": "हां, मैं यहां हूं",
+      "logOut": "नहीं, लॉग आउट करें"
+    },
+    "SignInOutWindow": {
+      "alreadySignedIn": "आप पहले से ही साइन इन हैं।",
+      "wantToSignOut": "क्या आप साइन आउट करना चाहते हैं?",
+      "signOut": "साइन आउट",
+      "pleaseSignIn": "{text} के लिए कृपया साइन इन करें",
+      "goToSignIn": "साइन इन पृष्ठ पर जाएं"
+    },
+    "MaterialOrderDisplay": {
+      "quantity": "मात्रा"
+    },
+    "auth": {
+      "errors": {
+        "emailInUse": "यह ईमेल पता पहले से ही किसी खाते से जुड़ा है।",
+        "invalidEmail": "कृपया एक वैध ईमेल पता दर्ज करें।"
+      },
+      "actions": {
+        "signOut": "साइन आउट",
+        "signIn": "साइन इन",
+        "createAccount": "खाता बनाएं",
+        "resetPassword": "पासवर्ड रीसेट करें"
+      },
+      "passwordReset": {
+        "success": "पासवर्ड रीसेट ईमेल भेज दिया गया है।",
+        "error": "पासवर्ड रीसेट करने में त्रुटि: "
+      }
+    }
+  }

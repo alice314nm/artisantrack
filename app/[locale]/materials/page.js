@@ -211,11 +211,9 @@ export default function Page() {
         />
 
         <Menu
-          type="TwoButtonsMenu"
-          iconFirst="/link.png"
-          firstTitle={t("materials.copyForClient")}
-          secondTitle={t("materials.createMaterial")}
-          onSecondFunction={handleNavigateToCreatePage}
+          type="OneButtonMenu"
+          firstTitle={t("materials.createMaterial")}
+          onFirstFunction={handleNavigateToCreatePage}
           data-id="menu-button"
         />
       </div>

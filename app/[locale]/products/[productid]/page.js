@@ -14,6 +14,7 @@ import SmallBlockHolder from "@/app/[locale]/components/small-block-holder";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import NotLoggedWindow from "../../components/not-logged-window";
 
 export default function ProductPage() {
   const t = useTranslations("productId");
@@ -118,12 +119,6 @@ export default function ProductPage() {
           <div className="mx-4 flex flex-col gap-6 pb-24">
             {/* Back Button and View Title */}
             <div className="flex flex-row justify-between items-center">
-              <p
-                className="font-bold text-xl text-blackBeige"
-                data-id="Your view"
-              >
-                {t("viewTitle")}
-              </p>
               <Link href="/products">
                 <button className={commonClasses.headerButton}>
                   <img src="/arrow-left.png" width={20} alt="Back" />
@@ -173,18 +168,7 @@ export default function ProductPage() {
 
               {/* Product Details Section (Right Side on Non-Mobile) */}
               <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                <div className="relative bg-green rounded-md w-40">
-                  <Link href={`./${productId}/edit`}>
-                    <button
-                      data-id="edit-button"
-                      className={commonClasses.editButton}
-                    >
-                      <p>{t("edit")}</p>
-                      <img src="/Pencil.png" alt="Pencil" className="w-4 h-4" />
-                    </button>
-                  </Link>
-                </div>
-
+                
                 <p className="text-2xl font-bold text-blackBeige">
                   #{product.productId} | {product.name}
                 </p>
@@ -222,14 +206,6 @@ export default function ProductPage() {
                   </p>
                 </div>
 
-                {/* Delete Button */}
-                <button
-                  className={commonClasses.deleteButton}
-                  onClick={openCloseConfirmation}
-                  data-id="delete-button"
-                >
-                  {t("delete")}
-                </button>
               </div>
             </div>
           </div>
@@ -243,196 +219,127 @@ export default function ProductPage() {
 
           {/* Menu */}
           <Menu
-            type="TwoButtonsMenu"
-            iconFirst="/link.png"
-            iconSecond="/eye.png"
-            firstTitle={t("copyForClient")}
-            secondTitle={t("viewForClient")}
-            onSecondFunction={changeView}
+            type="TwoButtonsMenuId"
+            iconSecond="/Pencil.png"
+            firstTitle={t("delete")}
+            secondTitle={t("edit")}
+            onFirstFunction={openCloseConfirmation}
+            onSecondFunction={() => (window.location.href = `./${productId}/edit`)}
           />
         </div>
       );
     }
 
     // View for unlogged users
-    else {
-      return (
-        <div className={commonClasses.container}>
-          <Header title={t("products")} showUserName={true} />
+    // else {
+    //   return (
+    //     <div className={commonClasses.container}>
+    //       <Header title={t("products")} showUserName={true} />
 
-          <div className="mx-4 flex flex-col gap-6 pb-24">
-            {/* Back Button and View Title */}
-            <div className="flex flex-row justify-between items-center">
-              <p
-                className="font-bold text-xl text-blackBeige"
-                data-id="Client view"
-              >
-                {t("clientView")}
-              </p>
-              <Link href="/products">
-                <button className={commonClasses.headerButton}>
-                  <img src="/arrow-left.png" width={20} alt="Back" />
-                  <p>{t("back")}</p>
-                </button>
-              </Link>
-            </div>
+    //       <div className="mx-4 flex flex-col gap-6 pb-24">
+    //         {/* Back Button and View Title */}
+    //         <div className="flex flex-row justify-between items-center">
+    //           <p
+    //             className="font-bold text-xl text-blackBeige"
+    //             data-id="Client view"
+    //           >
+    //             {t("clientView")}
+    //           </p>
+    //           <Link href="/products">
+    //             <button className={commonClasses.headerButton}>
+    //               <img src="/arrow-left.png" width={20} alt="Back" />
+    //               <p>{t("back")}</p>
+    //             </button>
+    //           </Link>
+    //         </div>
 
-            {/* Main Content */}
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Images Section (Left Side on Non-Mobile) */}
-              <div className="flex flex-col gap-4 md:w-1/2">
-                <img
-                  src={mainImage || "/noImage.png"}
-                  alt={t("imageAlt")}
-                  className={`${commonClasses.mainImage} ${
-                    transitioning
-                      ? "opacity-0 translate-y-1"
-                      : "opacity-100 translate-y-0"
-                  }`}
-                />
+    //         {/* Main Content */}
+    //         <div className="flex flex-col md:flex-row gap-6">
+    //           {/* Images Section (Left Side on Non-Mobile) */}
+    //           <div className="flex flex-col gap-4 md:w-1/2">
+    //             <img
+    //               src={mainImage || "/noImage.png"}
+    //               alt={t("imageAlt")}
+    //               className={`${commonClasses.mainImage} ${
+    //                 transitioning
+    //                   ? "opacity-0 translate-y-1"
+    //                   : "opacity-100 translate-y-0"
+    //               }`}
+    //             />
 
-                {(product?.productImages?.length > 0 ||
-                  product?.patternImages?.length > 0) && (
-                  <div className={commonClasses.thumbnailContainer}>
-                    {product?.productImages?.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
-                    {product?.patternImages?.map((image, index) => (
-                      <SmallBlockHolder
-                        key={index}
-                        type="plainPicture"
-                        imageSource={image.url}
-                        onButtonFunction={() => handleImageChange(image)}
-                        mainStatus={mainImage === image.url}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+    //             {(product?.productImages?.length > 0 ||
+    //               product?.patternImages?.length > 0) && (
+    //               <div className={commonClasses.thumbnailContainer}>
+    //                 {product?.productImages?.map((image, index) => (
+    //                   <SmallBlockHolder
+    //                     key={index}
+    //                     type="plainPicture"
+    //                     imageSource={image.url}
+    //                     onButtonFunction={() => handleImageChange(image)}
+    //                     mainStatus={mainImage === image.url}
+    //                   />
+    //                 ))}
+    //                 {product?.patternImages?.map((image, index) => (
+    //                   <SmallBlockHolder
+    //                     key={index}
+    //                     type="plainPicture"
+    //                     imageSource={image.url}
+    //                     onButtonFunction={() => handleImageChange(image)}
+    //                     mainStatus={mainImage === image.url}
+    //                   />
+    //                 ))}
+    //               </div>
+    //             )}
+    //           </div>
 
-              {/* Product Details Section (Right Side on Non-Mobile) */}
-              <div className={`${commonClasses.productDetails} md:w-1/2`}>
-                <p className="text-2xl font-bold text-blackBeige">
-                  #{product.productId} | {product.name}
-                </p>
+    //           {/* Product Details Section (Right Side on Non-Mobile) */}
+    //           <div className={`${commonClasses.productDetails} md:w-1/2`}>
+    //             <p className="text-2xl font-bold text-blackBeige">
+    //               #{product.productId} | {product.name}
+    //             </p>
 
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>
-                    {t("categories")}
-                  </p>
-                  <p className={commonClasses.sectionText}>
-                    {Array.isArray(product?.categories) &&
-                    product.categories.length > 0
-                      ? product.categories.join(", ")
-                      : "No set categories"}
-                  </p>
-                </div>
+    //             <div className="flex flex-col gap-2">
+    //               <p className={commonClasses.sectionTitle}>
+    //                 {t("categories")}
+    //               </p>
+    //               <p className={commonClasses.sectionText}>
+    //                 {Array.isArray(product?.categories) &&
+    //                 product.categories.length > 0
+    //                   ? product.categories.join(", ")
+    //                   : "No set categories"}
+    //               </p>
+    //             </div>
 
-                {/* Description */}
-                <div className="flex flex-col gap-2">
-                  <p className={commonClasses.sectionTitle}>
-                    {t("description")}:
-                  </p>
-                  <p className={commonClasses.sectionText}>
-                    {product.description || t("noDescription")}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+    //             {/* Description */}
+    //             <div className="flex flex-col gap-2">
+    //               <p className={commonClasses.sectionTitle}>
+    //                 {t("description")}:
+    //               </p>
+    //               <p className={commonClasses.sectionText}>
+    //                 {product.description || t("noDescription")}
+    //               </p>
+    //             </div>
+    //           </div>
+    //         </div>
+    //       </div>
 
-          {/* Menu */}
-          <Menu
-            type="TwoButtonsMenu"
-            iconFirst="/link.png"
-            iconSecond="/eye-crossed.png"
-            firstTitle={t("copyForClient")}
-            secondTitle={t("defaultView")}
-            onSecondFunction={changeView}
-          />
-        </div>
-      );
-    }
+    //       {/* Menu */}
+    //       <Menu
+    //         type="TwoButtonsMenu"
+    //         iconFirst="/link.png"
+    //         iconSecond="/eye-crossed.png"
+    //         firstTitle={t("copyForClient")}
+    //         secondTitle={t("defaultView")}
+    //         onSecondFunction={changeView}
+    //       />
+    //     </div>
+    //   );
+    // }
   } else {
     return (
-      <div className={commonClasses.container}>
-        <Header title="Artisan Track" />
-
-        <div className="mx-4 flex flex-col gap-6 pb-24">
-          {/* Main Content */}
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Images Section (Left Side on Non-Mobile) */}
-            <div className="flex flex-col gap-4 md:w-1/2">
-              <img
-                src={mainImage || "/noImage.png"}
-                alt={t("imageAlt")}
-                className={`${commonClasses.mainImage} ${
-                  transitioning
-                    ? "opacity-0 translate-y-1"
-                    : "opacity-100 translate-y-0"
-                }`}
-              />
-
-              {(product?.productImages?.length > 0 ||
-                product?.patternImages?.length > 0) && (
-                <div className={commonClasses.thumbnailContainer}>
-                  {product?.productImages?.map((image, index) => (
-                    <SmallBlockHolder
-                      key={index}
-                      type="plainPicture"
-                      imageSource={image.url}
-                      onButtonFunction={() => handleImageChange(image)}
-                      mainStatus={mainImage === image.url}
-                    />
-                  ))}
-                  {product?.patternImages?.map((image, index) => (
-                    <SmallBlockHolder
-                      key={index}
-                      type="plainPicture"
-                      imageSource={image.url}
-                      onButtonFunction={() => handleImageChange(image)}
-                      mainStatus={mainImage === image.url}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Product Details Section (Right Side on Non-Mobile) */}
-            <div className={`${commonClasses.productDetails} md:w-1/2`}>
-              <p className="text-2xl font-bold text-blackBeige">
-                #{product.productId} | {product.name}
-              </p>
-
-              {/* Categories */}
-              <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>{t("categories")}:</p>
-                <p className={commonClasses.sectionText}>
-                  {Array.isArray(product?.categories) &&
-                  product.categories.length > 0
-                    ? product.categories.join(", ")
-                    : t("noCategories")}
-                </p>
-              </div>
-
-              {/* Description */}
-              <div className="flex flex-col gap-2">
-                <p className={commonClasses.sectionTitle}>
-                  {t("description")}:
-                </p>
-                <p className={commonClasses.sectionText}>
-                  {product.description || t("noDescription")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col min-h-screen gap-4">
+        <Header title={t("pageTitle")} />
+        <NotLoggedWindow/>
       </div>
     );
   }

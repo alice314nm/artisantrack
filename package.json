@@ -15,13 +15,15 @@
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "firebase": "^11.6.0",
+    "i18next": "^24.2.3",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "next": "^15.2.4",
     "next-intl": "^4.0.2",
     "react": "^19.0.0",
     "react-datepicker": "^8.1.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-i18next": "^15.4.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

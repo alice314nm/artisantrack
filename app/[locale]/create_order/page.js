@@ -12,7 +12,7 @@ import Menu from "@/app/[locale]/components/menu";
 import SelectedHolder from "@/app/[locale]/components/selected-holder";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { dbAddOrder } from "@/app/[locale]/_services/order-service";
+import { dbAddOrder, getCustomers } from "@/app/[locale]/_services/order-service";
 import { fetchMaterialsForOrder } from "@/app/[locale]/_services/material-service";
 import { fetchProductsForOrder } from "@/app/[locale]/_services/product-service";
 import { doc } from "firebase/firestore";
@@ -27,9 +27,9 @@ export default function Page() {
   const [materials, setMaterials] = useState([]);
 
   const inputStyle =
-    "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green";
+    "w-full p-2 rounded-lg border border-darkBeige focus:outline-none focus:ring-2 focus:ring-green focus:bg-white";
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [searchTerm, setSearchTerm] = useState("");
   const [state, setState] = useState("form");
 
   const [orderName, setOrderName] = useState("");
@@ -37,6 +37,7 @@ export default function Page() {
   const [startDate, setStartDate] = useState("");
   const [daysCounter, setDaysCounter] = useState(0);
   const [customerName, setCustomerName] = useState("");
+  const [customersNames, setCustomersNames] = useState([])
   const [desc, setDesc] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedMaterials, setSelectedMaterials] = useState([]);
@@ -81,6 +82,7 @@ export default function Page() {
     if (user) {
       fetchProductsForOrder(user.uid, setProducts);
       fetchMaterialsForOrder(user.uid, setMaterials);
+      getCustomers(user.uid, setCustomersNames)
     }
   }, [user]);
 
@@ -235,7 +237,8 @@ export default function Page() {
         ? selectedMaterials.map((mat) => mat.id)
         : [],
       quantities: selectedMaterials.map((material) => ({
-        id: material.materialId,
+        id: material.id,
+        materialId: material.materialId,
         quantity: materialQuantities[material.materialId],
       })),
       materialsCost: isNaN(parseFloat(materialCost))
@@ -330,7 +333,8 @@ export default function Page() {
                     dateFormat="dd-MM-yyyy"
                     className={`${inputStyle} w-full`}
                     placeholderText="dd-mm-yyyy"
-                  />
+                    popperPlacement="bottom-start"                  
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1 w-3/4">
@@ -341,7 +345,8 @@ export default function Page() {
                     dateFormat="dd-MM-yyyy"
                     className={`${inputStyle} w-full`}
                     placeholderText="dd-mm-yyyy"
-                  />
+                    popperPlacement="bottom-start"                  
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1 w-1/4">
@@ -369,11 +374,17 @@ export default function Page() {
               </div>
               <input
                 className={inputStyle}
+                list="customers"
                 name="customerName"
                 value={customerName}
                 placeholder={t("customerName")}
                 onChange={(e) => setCustomerName(e.target.value)}
               />
+              <datalist id="customers">
+              {customersNames?.map((customer, index) => (
+                <option key={index} value={customer} />
+              ))}
+            </datalist>
             </div>
 
             {/* Description */}
@@ -418,7 +429,8 @@ export default function Page() {
                   onClick={handleSelectProductForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  {t("selectProduct")}
+                  {selectedProduct ? (<p>{t("changeProduct")}</p>) : (<p>{t("selectProduct")}</p>)}
+                                   
                 </button>
               </div>
             </div>
@@ -475,7 +487,8 @@ export default function Page() {
                   onClick={handleSelectMaterialForm}
                   className="text-center bg-green font-bold rounded-lg w-40 py-1 hover:bg-darkGreen transition-colors duration-300"
                 >
-                  {t("selectMaterial")}
+                  {selectedMaterials && selectedMaterials.length > 0 ? (<p>{t("changeMaterial")}</p>) : (<p>{t("selectMaterial")}</p>)}
+                
                 </button>
               </div>
             </div>
@@ -592,7 +605,10 @@ export default function Page() {
         {/* Products Selection State */}
         {state === "products" && (
           <div className="flex flex-col gap-4">
-            <SearchBar />
+            <SearchBar
+              onSearch={setSearchTerm}
+              data-id="search-bar"
+            />
 
             {products.length === 0 ? (
               <p className="flex flex-col items-center w-full py-40">
@@ -600,28 +616,33 @@ export default function Page() {
               </p>
             ) : (
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-                {products.map((product, index) => (
-                  <SelectHolder
-                    key={index}
-                    type="product"
-                    imageSource={
-                      product.productImages && product.productImages.length > 0
-                        ? product.productImages[0].url
-                        : "/noImage.png"
-                    }
-                    name={product.name}
-                    id={product.productId}
-                    cost={product.averageCost || "—"}
-                    currency={product.currency || ""}
-                    selected={
-                      selectedProduct &&
-                        product.productId === selectedProduct.productId
-                        ? 1
-                        : 0
-                    }
-                    onClick={(e) => handleSelectProduct(product)}
-                  />
-                ))}
+                {products
+                  .filter(product =>
+                    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (product.productId && product.productId.toString().includes(searchTerm))
+                  )
+                  .map((product, index) => (
+                    <SelectHolder
+                      key={index}
+                      type="product"
+                      imageSource={
+                        product.productImages && product.productImages.length > 0
+                          ? product.productImages[0].url
+                          : "/noImage.png"
+                      }
+                      name={product.name}
+                      id={product.productId}
+                      cost={product.averageCost || "—"}
+                      currency={product.currency || ""}
+                      selected={
+                        selectedProduct &&
+                          product.productId === selectedProduct.productId
+                          ? 1
+                          : 0
+                      }
+                      onClick={(e) => handleSelectProduct(product)}
+                    />
+                  ))}
               </div>
             )}
             <Menu
@@ -636,7 +657,10 @@ export default function Page() {
         {/* Materials Selection State */}
         {state === "materials" && (
           <div className="flex flex-col gap-4">
-            <SearchBar />
+            <SearchBar
+              onSearch={setSearchTerm}
+              data-id="search-bar"
+            />
 
             {materials.length === 0 ? (
               <p className="flex flex-col items-center w-full py-40">
@@ -644,30 +668,35 @@ export default function Page() {
               </p>
             ) : (
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-                {materials.map((material, index) => (
-                  <SelectHolder
-                    key={index}
-                    type="material"
-                    imageSource={
-                      material.images && material.images.length > 0
-                        ? material.images[0].url
-                        : "/noImage.png"
-                    }
-                    name={material.name}
-                    id={material.materialId}
-                    quantity={material.quantity || "—"}
-                    selected={selectedMaterials.includes(material)}
-                    selectedQuantity={materialQuantities[material.materialId]}
-                    cost={material.total || "—"}
-                    currency={material.currency || ""}
-                    onClick={
-                      selectedMaterials.includes(material)
-                        ? () => handleRemoveMaterial(material)
-                        : () => handleSelectMaterial(material)
-                    }
-                    onQuantityChange={handleMaterialQuantityChange}
-                  />
-                ))}
+                {materials
+                  .filter(material =>
+                    material.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (material.materialId && material.materialId.toString().includes(searchTerm))
+                  )
+                  .map((material, index) => (
+                    <SelectHolder
+                      key={index}
+                      type="material"
+                      imageSource={
+                        material.images && material.images.length > 0
+                          ? material.images[0].url
+                          : "/noImage.png"
+                      }
+                      name={material.name}
+                      id={material.materialId}
+                      quantity={material.quantity || "—"}
+                      selected={selectedMaterials.includes(material)}
+                      selectedQuantity={materialQuantities[material.materialId]}
+                      cost={material.total || "—"}
+                      currency={material.currency || ""}
+                      onClick={
+                        selectedMaterials.includes(material)
+                          ? () => handleRemoveMaterial(material)
+                          : () => handleSelectMaterial(material)
+                      }
+                      onQuantityChange={handleMaterialQuantityChange}
+                    />
+                  ))}
               </div>
             )}
             <Menu

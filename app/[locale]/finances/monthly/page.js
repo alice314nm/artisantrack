@@ -582,15 +582,18 @@ export default function WelcomePage() {
               {/* Finance text */}
               <div className="flex flex-row gap-2 text-xl">
                 <p>
-                  {t("finance.income")}: {income}$
+                  {t("finance.income")}: {income.toFixed(2)}$
                 </p>
                 <p>
-                  {t("finance.expenses")}: {expenses}$
+                  {t("finance.expenses")}: {expenses.toFixed(2)}$
                 </p>
               </div>
               {/* place for diagram */}
               <div className="flex justify-center px-4">
-                <PieChart income={income} expenses={expenses} />
+                {(income === 0 && expenses === 0) ? 
+                  (<p className="py-36">No data for finances yet</p>) : 
+                  (<PieChart income={income} expenses={expenses} />)
+                }             
               </div>
 
               <div className="pt-2">

@@ -16,16 +16,19 @@ export default function LanguageSelector() {
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "ru", name: "Русский", flag: "🇷🇺" },
+    { code: "fil", name: "Filipino", flag: "🇵🇭" },
+    { code: "zh", name: "中文", flag: "🇨🇳" },
+    { code: "hi", name: "हिन्दी", flag: "🇮🇳" }
   ];
 
   const handleLanguageChange = async (locale) => {
-    const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "");
+    const pathWithoutLocale = pathname.replace(/^\/(en|ru|fil|zh|hi)/, "");
     const newPath = `/${locale}${pathWithoutLocale || ""}`;
 
     if (user) {
       await updateUserLanguage(user, locale);
     }
-    router.push(newPath);
+    window.location.href = newPath;
     setIsOpen(false);
   };
 

@@ -24,6 +24,8 @@ export default function Menu({
   const greenButtonClasses =
     "py-2 bg-green rounded-md items-center justify-center flex flex-row gap-1 text-sm"; // Reduced py-3 to py-2
   const redButtonClasses = "py-3 bg-red rounded-md text-white text-sm"; // Reduced py-4 to py-3
+  const redButtonClass = "py-2 bg-red rounded-md text-white text-sm"; // Reduced py-4 to py-3
+
   const bottomMenuClasses =
     "flex flex-row h-16 bg-beige font-bold px-4 py-2 gap-2 items-center text-sm"; // Adjusted h-20 to h-16
 
@@ -52,6 +54,42 @@ export default function Menu({
 
             <button
               className={`${greenButtonClasses} w-[50%]`}
+              onClick={onFirstFunction}
+            >
+              <p>{firstTitle}</p>
+              {iconFirst && <img src={iconFirst} width={15} />}
+            </button>
+
+            <button
+              data-id="second-button"
+              className={`${greenButtonClasses} w-[50%]`}
+              onClick={onSecondFunction}
+            >
+              <p>{secondTitle}</p>
+              {iconSecond && <img src={iconSecond} width={15} />}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {type === "TwoButtonsMenuId" && (
+        <div className={containerClasses}>
+          <SlideMenu menuVisible={isMenuVisible} />
+          <div className={`${bottomMenuClasses} justify-center`}>
+            <button
+              data-id="menu-button"
+              className={buttonMenuClasses}
+              onClick={toggleMenu}
+            >
+              <img
+                src="/MenuBurger.png"
+                className={menuBurgerClasses}
+                alt="Menu"
+              />
+            </button>
+
+            <button
+              className={`${redButtonClass} w-[50%]`}
               onClick={onFirstFunction}
             >
               <p>{firstTitle}</p>

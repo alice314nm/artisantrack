@@ -1,13 +1,29 @@
-// app/[locale]/layout.js
-import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { notFound } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import { NextIntlClientProvider } from "next-intl";
+import ClientLayout from "./clientlayout";
+import "../globals.css";
+
+export const metadata = {
+  title: "Artisan Track",
+};
 
 export default async function LocaleLayout({ children, params }) {
   const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
+
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    messages = (await import(`../../messages/en.json`)).default;
   }
 
-  return <NextIntlClientProvider>{children}</NextIntlClientProvider>;
+  return (
+    <html lang={locale}>
+      <head></head>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ClientLayout>{children}</ClientLayout>
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }

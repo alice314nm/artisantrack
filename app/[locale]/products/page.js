@@ -50,7 +50,6 @@ export default function Home() {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log(productsData);
 
         setProducts(productsData);
       } catch (error) {
@@ -187,7 +186,7 @@ export default function Home() {
                     category={product.categories.join(", ") || "—"}
                     total={product.averageCost || "—"}
                     imageSource={
-                      product.productImages?.[0]?.url || "/noImage.png"
+                      product.productImages?.[0]?.url  || "/noImage.png"
                     }
                     type={"product"}
                   />
@@ -206,11 +205,9 @@ export default function Home() {
         />
 
         <Menu
-          type="TwoButtonsMenu"
-          iconFirst="/link.png"
-          firstTitle={t("copyForClient")}
-          secondTitle={t("createProduct")}
-          onSecondFunction={handleNavigateToCreatePage}
+          type="OneButtonMenu" 
+          firstTitle={t("createProduct")}
+          onFirstFunction={handleNavigateToCreatePage}
           data-id="menu-button"
         />
       </div>

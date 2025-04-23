@@ -26,7 +26,7 @@
     },
 
     "finance": {
-      "title": "Finance",
+      "title": "Finance this month",
       "revenue": "Revenue",
       "expenses": "Expenses",
       "viewButton": "View Finance"
@@ -216,7 +216,7 @@
     "cancel": "Cancel"
   },
   "EditOrder": {
-    "createOrderTitle": "Create an Order",
+    "EditOrderTitle": "Edit the Order",
     "general": "General",
     "titleOfOrder": "Title of the order",
     "enterTitle": "Enter title for the order",
@@ -230,16 +230,18 @@
     "characters": "characters",
     "productMaterials": "Product & Materials",
     "product": "Product",
-    "selectProduct": "Select product",
+    "selectProduct": "Select product",    
+    "changeProduct": "Change product",
     "selectedProduct": "Selected Product",
     "costForSelectedProduct": "Cost for selected product",
     "materials": "Materials",
     "selectMaterial": "Select material",
+    "changeMaterial": "Change material",
     "materialsCost": "Materials cost",
     "workCost": "Work cost",
     "totalCost": "Total cost",
     "cancel": "Cancel",
-    "create": "Create",
+    "edit": "Edit",
     "noProducts": "No products in inventory",
     "noMaterials": "No materials in inventory",
     "createTitle": "Create an Order",
@@ -250,9 +252,10 @@
   "SelectHolder": {
     "select": "Select",
     "selected": "Selected",
-    "averageCost": "Average cost",
+    "averageCost": "Cost",
     "totalCost": "Total cost",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "qty": "qty:"
   },
   "SelectedHolder": {
     "select": "Select",
@@ -385,6 +388,7 @@
     "description": "Description",
     "productMaterials": "Product & Materials",
     "selectProduct": "Select product",
+    "changeProduct": "Change product",
     "product": "Product",
     "deadlineError": "Deadline must be after the start date.",
     "invalidDateError": "Please ensure start date and deadline are valid.",
@@ -394,6 +398,7 @@
     "productCost": "Cost for selected product",
     "materials": "Materials",
     "selectMaterial": "Select material",
+    "changeMaterial": "Change material",
     "materialCost": "Materials cost",
     "workCost": "Work cost",
     "totalCost": "Total cost",
@@ -776,6 +781,40 @@
     "goBack": "Go back",
     "download": "Download"
   },
+  "layout": {
+    "sessionExpired": "Session expired. Please log in again.",
+    "areYouStillHere": "Are you still here?",
+    "imHere": "Yes, I'm here",
+    "logOut": "No, log out"
+  },
+  "SignInOutWindow": {
+    "alreadySignedIn": "You're already signed in.",
+    "wantToSignOut": "Do you want to sign out?",
+    "signOut": "Sign out",
+    "pleaseSignIn": "Please sign in to {text}",
+    "goToSignIn": "Go to sign in page"
+  },
+  "MaterialOrderDisplay": {
+    "quantity": "Quantity"
+  },
+  "auth": {
+    "errors": {
+      "emailInUse": "This email address is already associated with an account.",
+      "invalidEmail": "Please enter a valid email address."
+    },
+    "actions": {
+      "signOut": "Sign Out",
+      "signIn": "Sign In",
+      "createAccount": "Create Account",
+      "resetPassword": "Reset Password"
+    },
+    "passwordReset": {
+      "success": "Password reset email has been sent.",
+      "error": "Error resetting password: "
+    }
+
+  }
+},
   "DocumentsID": {
     "documentsTitle": "Documents",
     "appTitle": "Artisan Track",
@@ -1004,7 +1043,6 @@
     "11": "November",
     "12": "December"
   }
-}
 
 }
 

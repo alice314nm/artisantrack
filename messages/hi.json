@@ -807,5 +807,235 @@
         "success": "पासवर्ड रीसेट ईमेल भेज दिया गया है।",
         "error": "पासवर्ड रीसेट करने में त्रुटि: "
       }
+    },
+    "DocumentsID": {
+  "documentsTitle": "दस्तावेज़",
+  "appTitle": "Artisan Track",
+  "loadingDocumentDetails": "दस्तावेज़ विवरण लोड हो रहा है...",
+  "documentNotFound": "दस्तावेज़ नहीं मिला",
+  "loadingData": "डेटा लोड हो रहा है...",
+  "orders": "आर्डर",
+  "products": "उत्पाद",
+  "materials": "सामग्री",
+  "unknown": "अज्ञात",
+  "unknownCategory": "अज्ञात श्रेणी",
+  "unknownDocumentType": "अज्ञात दस्तावेज़ प्रकार",
+  "noOrdersFound": "इस दस्तावेज़ मानदंड से कोई आर्डर नहीं मिला।",
+  "noProductsFound": "चयनित मानदंड के लिए कोई उत्पाद नहीं मिला।",
+  "noMaterialsFound": "चयनित मानदंड के लिए कोई सामग्री नहीं मिली।",
+  "back": "वापस",
+  "to": "तक",
+  "from": "से",
+  "for": "के लिए",
+  "unnamedOrder": "बेनाम आर्डर",
+  "unnamedProduct": "बेनाम उत्पाद",
+  "unnamedMaterial": "बेनाम सामग्री",
+  "notAvailable": "उपलब्ध नहीं",
+  "daysRemaining": "दिन शेष",
+  "highestToLowestPrice": "उच्च से निम्न कीमत",
+  "lowestToHighestPrice": "निम्न से उच्च कीमत",
+  "ordersByCost": "लागत के अनुसार आर्डर",
+  "ordersByDeadline": "समय सीमा के अनुसार आर्डर",
+  "ordersBy": "आर्डर के अनुसार",
+  "ordersFor": "के लिए आर्डर",
+  "ordersFrom": "से आर्डर",
+  "customerName": "ग्राहक का नाम",
+  "description": "विवरण",
+  "pastDueDeadline": "समय सीमा पार हो गई",
+  "upcomingDeadline": "आगामी समय सीमा",
+  "all": "सभी",
+  "months": {
+    "1": "जनवरी",
+    "2": "फ़रवरी",
+    "3": "मार्च",
+    "4": "अप्रैल",
+    "5": "मई",
+    "6": "जून",
+    "7": "जुलाई",
+    "8": "अगस्त",
+    "9": "सितंबर",
+    "10": "अक्टूबर",
+    "11": "नवंबर",
+    "12": "दिसंबर"
+  },
+  "documentDetailsTitle": "दस्तावेज़ विवरण"
+},
+"Documents": {
+  "documentsTitle": "दस्तावेज़",
+  "total": "कुल",
+  "createDocument": "दस्तावेज़ बनाएँ +",
+  "createdOn": "निर्माण दिनांक",
+  "unknownCategory": "अज्ञात श्रेणी",
+  "highestToLowestPrice": "उच्च से निम्न कीमत",
+  "lowestToHighestPrice": "निम्न से उच्च कीमत",
+  "notAvailable": "उपलब्ध नहीं",
+  "ordersByCost": "लागत के अनुसार आर्डर",
+  "ordersByDeadline": "समय सीमा के अनुसार आर्डर",
+  "ordersByPeriod": "अवधि के अनुसार आर्डर",
+  "ordersBy": "आर्डर के अनुसार",
+  "customerName": "ग्राहक का नाम",
+  "description": "विवरण",
+  "pastDueDeadline": "समय सीमा पार हो गए आर्डर",
+  "upcomingDeadline": "आगामी समय सीमा वाले आर्डर",
+  "allTime": "संपूर्ण अवधि",
+  "productDocument": "उत्पाद दस्तावेज़",
+  "productsByCost": "लागत के अनुसार उत्पाद",
+  "productsBy": "उत्पाद के अनुसार",
+  "idCategory": "पहचान संख्या",
+  "categoryCategory": "श्रेणी",
+  "nameCategory": "नाम",
+  "productsByPopularity": "लोकप्रियता के अनुसार उत्पाद",
+  "materialDocument": "सामग्री दस्तावेज़",
+  "materialsByCost": "लागत के अनुसार सामग्री",
+  "materialsBy": "सामग्री के अनुसार",
+  "colorCategory": "रंग",
+  "quantityCategory": "मात्रा",
+  "materialsByPopularity": "लोकप्रियता के अनुसार सामग्री",
+  "months": {
+    "1": "जनवरी",
+    "2": "फ़रवरी",
+    "3": "मार्च",
+    "4": "अप्रैल",
+    "5": "मई",
+    "6": "जून",
+    "7": "जुलाई",
+    "8": "अगस्त",
+    "9": "सितंबर",
+    "10": "अक्टूबर",
+    "11": "नवंबर",
+    "12": "दिसंबर"
+  },
+  "to": "तक",
+  "search": "खोजें",
+  "noDocumentsFound": "कोई दस्तावेज़ नहीं मिला",
+  "searchPlaceholder": "दस्तावेज़ खोजें..."
+},
+"CreateDocument": {
+  "pageTitle": "दस्तावेज़ बनाएँ",
+  "documentName": "दस्तावेज़ का नाम",
+  "selectType": "प्रकार चुनें",
+  "selectCategory": "श्रेणी चुनें",
+  "selectTimePeriod": "समय अवधि चुनें",
+  "fromMonth": "महीना शुरू",
+  "toMonth": "महीना अंत",
+  "year": "वर्ष",
+  "highestToLowest": "उच्च से निम्न",
+  "lowestToHighest": "निम्न से उच्च",
+  "pastDueDeadline": "समय सीमा पार",
+  "upcomingDeadline": "आगामी समय सीमा",
+  "loading": "लोड हो रहा है...",
+  "create": "बनाएं",
+  "cancel": "रद्द करें",
+
+  "docTypes": {
+    "order": "आर्डर",
+    "product": "उत्पाद",
+    "material": "सामग्री"
+  },
+
+  "orders": {
+    "title": "आर्डर",
+    "namePlaceholder": "आर्डर दस्तावेज़ का नाम दर्ज करें",
+    "filterByCost": "लागत द्वारा फ़िल्टर करें",
+    "filterByDeadline": "समय सीमा द्वारा फ़िल्टर करें",
+    "categories": {
+      "byCost": "लागत के अनुसार",
+      "byDeadline": "समय सीमा के अनुसार",
+      "byPeriod": "अवधि के अनुसार"
     }
+  },
+
+  "products": {
+    "title": "उत्पाद",
+    "namePlaceholder": "उत्पाद दस्तावेज़ का नाम दर्ज करें",
+    "filterByCost": "लागत द्वारा फ़िल्टर करें",
+    "enter": "दर्ज करें",
+    "fields": {
+      "id": "उत्पाद पहचान संख्या",
+      "category": "उत्पाद श्रेणी",
+      "name": "उत्पाद का नाम"
+    },
+    "placeholders": {
+      "id": "उत्पाद पहचान संख्या दर्ज करें",
+      "category": "उत्पाद श्रेणी दर्ज करें",
+      "name": "उत्पाद का नाम दर्ज करें"
+    },
+    "categories": {
+      "byPopularity": "लोकप्रियता के अनुसार",
+      "byCost": "लागत के अनुसार",
+      "byId": "पहचान संख्या के अनुसार",
+      "byCategory": "श्रेणी के अनुसार",
+      "byName": "नाम के अनुसार"
+    }
+  },
+
+  "materials": {
+    "title": "सामग्री",
+    "namePlaceholder": "सामग्री दस्तावेज़ का नाम दर्ज करें",
+    "filterByCost": "लागत द्वारा फ़िल्टर करें",
+    "enter": "दर्ज करें",
+    "fields": {
+      "id": "सामग्री पहचान संख्या",
+      "category": "सामग्री श्रेणी",
+      "name": "सामग्री का नाम",
+      "color": "सामग्री का रंग",
+      "quantity": "सामग्री की मात्रा"
+    },
+    "placeholders": {
+      "id": "सामग्री पहचान संख्या दर्ज करें",
+      "category": "सामग्री श्रेणी दर्ज करें",
+      "name": "सामग्री का नाम दर्ज करें",
+      "color": "सामग्री का रंग दर्ज करें",
+      "quantity": "सामग्री की मात्रा दर्ज करें"
+    },
+    "categories": {
+      "byPopularity": "लोकप्रियता के अनुसार",
+      "byCost": "लागत के अनुसार",
+      "byName": "नाम के अनुसार",
+      "byId": "पहचान संख्या के अनुसार",
+      "byCategory": "श्रेणी के अनुसार",
+      "byColor": "रंग के अनुसार",
+      "byQuantity": "मात्रा के अनुसार"
+    }
+  },
+
+  "errors": {
+    "emptyName": "दस्तावेज़ नाम खाली नहीं हो सकता।",
+    "notLoggedIn": "उपयोगकर्ता लॉग इन नहीं है।",
+    "invalidDateRange": "अमान्य महीने की अवधि: प्रारंभ महीना अंतिम महीने से आगे नहीं हो सकता।",
+    "duplicateName": "इस नाम का दस्तावेज़ पहले से मौजूद है।",
+    "createOrderFailed": "आर्डर दस्तावेज़ बनाने में विफल।",
+    "selectDocType": "कृपया दस्तावेज़ का प्रकार चुनें।"
+  },
+
+  "console": {
+    "documentCreated": "दस्तावेज़ सब-कलेक्शन में जोड़ा गया, ID:",
+    "documentError": "दस्तावेज़ सब-कलेक्शन में जोड़ते समय त्रुटि:",
+    "orderDocBeforeSave": "सेव से पहले आर्डर दस्तावेज़ डेटा:",
+    "beforeCreateOrder": "createUserDocument (आर्डर) से पहले",
+    "afterCreateOrder": "createUserDocument (आर्डर) के बाद",
+    "orderError": "आर्डर दस्तावेज़ जोड़ने में त्रुटि:",
+    "beforeCreateProduct": "createUserDocument (उत्पाद) से पहले",
+    "afterCreateProduct": "createUserDocument (उत्पाद) के बाद",
+    "beforeCreateMaterial": "createUserDocument (सामग्री) से पहले",
+    "afterCreateMaterial": "createUserDocument (सामग्री) के बाद"
+  },
+
+  "months": {
+    "0": "जनवरी",
+    "1": "जनवरी",
+    "2": "फ़रवरी",
+    "3": "मार्च",
+    "4": "अप्रैल",
+    "5": "मई",
+    "6": "जून",
+    "7": "जुलाई",
+    "8": "अगस्त",
+    "9": "सितंबर",
+    "10": "अक्टूबर",
+    "11": "नवंबर",
+    "12": "दिसंबर"
+  }
+}
+
   }

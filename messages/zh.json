@@ -807,5 +807,235 @@
         "success": "密码重置邮件已发送。",
         "error": "重置密码错误："
       }
+    },
+    "DocumentsID": {
+  "documentsTitle": "文档",
+  "appTitle": "Artisan Track",
+  "loadingDocumentDetails": "正在加载文档详情...",
+  "documentNotFound": "未找到文档",
+  "loadingData": "正在加载数据...",
+  "orders": "订单",
+  "products": "产品",
+  "materials": "材料",
+  "unknown": "未知",
+  "unknownCategory": "未知类别",
+  "unknownDocumentType": "未知文档类型",
+  "noOrdersFound": "没有符合该文档标准的订单。",
+  "noProductsFound": "没有符合所选条件的产品。",
+  "noMaterialsFound": "没有符合所选条件的材料。",
+  "back": "返回",
+  "to": "至",
+  "from": "从",
+  "for": "用于",
+  "unnamedOrder": "未命名订单",
+  "unnamedProduct": "未命名产品",
+  "unnamedMaterial": "未命名材料",
+  "notAvailable": "无数据",
+  "daysRemaining": "天剩余",
+  "highestToLowestPrice": "价格从高到低",
+  "lowestToHighestPrice": "价格从低到高",
+  "ordersByCost": "按成本排序的订单",
+  "ordersByDeadline": "按截止日期排序的订单",
+  "ordersBy": "订单排序方式",
+  "ordersFor": "用于的订单",
+  "ordersFrom": "来自的订单",
+  "customerName": "客户姓名",
+  "description": "描述",
+  "pastDueDeadline": "已逾期",
+  "upcomingDeadline": "即将到期",
+  "all": "全部",
+  "months": {
+    "1": "一月",
+    "2": "二月",
+    "3": "三月",
+    "4": "四月",
+    "5": "五月",
+    "6": "六月",
+    "7": "七月",
+    "8": "八月",
+    "9": "九月",
+    "10": "十月",
+    "11": "十一月",
+    "12": "十二月"
+  },
+  "documentDetailsTitle": "文档详情"
+},
+"Documents": {
+  "documentsTitle": "文档",
+  "total": "总计",
+  "createDocument": "创建文档 +",
+  "createdOn": "创建日期",
+  "unknownCategory": "未知类别",
+  "highestToLowestPrice": "价格从高到低",
+  "lowestToHighestPrice": "价格从低到高",
+  "notAvailable": "无数据",
+  "ordersByCost": "按成本排序的订单",
+  "ordersByDeadline": "按截止日期排序的订单",
+  "ordersByPeriod": "按时间段排序的订单",
+  "ordersBy": "订单排序方式",
+  "customerName": "客户姓名",
+  "description": "描述",
+  "pastDueDeadline": "已逾期的订单",
+  "upcomingDeadline": "即将到期的订单",
+  "allTime": "所有时间",
+  "productDocument": "产品文档",
+  "productsByCost": "按成本排序的产品",
+  "productsBy": "产品排序方式",
+  "idCategory": "编号",
+  "categoryCategory": "类别",
+  "nameCategory": "名称",
+  "productsByPopularity": "按订单受欢迎程度排序的产品",
+  "materialDocument": "材料文档",
+  "materialsByCost": "按成本排序的材料",
+  "materialsBy": "材料排序方式",
+  "colorCategory": "颜色",
+  "quantityCategory": "数量",
+  "materialsByPopularity": "按订单受欢迎程度排序的材料",
+  "months": {
+    "1": "一月",
+    "2": "二月",
+    "3": "三月",
+    "4": "四月",
+    "5": "五月",
+    "6": "六月",
+    "7": "七月",
+    "8": "八月",
+    "9": "九月",
+    "10": "十月",
+    "11": "十一月",
+    "12": "十二月"
+  },
+  "to": "至",
+  "search": "搜索",
+  "noDocumentsFound": "未找到文档",
+  "searchPlaceholder": "搜索文档..."
+},
+"CreateDocument": {
+  "pageTitle": "创建文档",
+  "documentName": "文档名称",
+  "selectType": "选择类型",
+  "selectCategory": "选择类别",
+  "selectTimePeriod": "选择时间段",
+  "fromMonth": "开始月份",
+  "toMonth": "结束月份",
+  "year": "年份",
+  "highestToLowest": "价格从高到低",
+  "lowestToHighest": "价格从低到高",
+  "pastDueDeadline": "已逾期的订单",
+  "upcomingDeadline": "即将到期的订单",
+  "loading": "正在加载...",
+  "create": "创建",
+  "cancel": "取消",
+
+  "docTypes": {
+    "order": "订单",
+    "product": "产品",
+    "material": "材料"
+  },
+
+  "orders": {
+    "title": "订单",
+    "namePlaceholder": "输入订单文档名称",
+    "filterByCost": "按成本过滤",
+    "filterByDeadline": "按截止日期过滤",
+    "categories": {
+      "byCost": "按成本",
+      "byDeadline": "按截止日期",
+      "byPeriod": "按时间段"
     }
+  },
+
+  "products": {
+    "title": "产品",
+    "namePlaceholder": "输入产品文档名称",
+    "filterByCost": "按成本过滤",
+    "enter": "输入",
+    "fields": {
+      "id": "产品编号",
+      "category": "产品类别",
+      "name": "产品名称"
+    },
+    "placeholders": {
+      "id": "输入产品编号",
+      "category": "输入产品类别",
+      "name": "输入产品名称"
+    },
+    "categories": {
+      "byPopularity": "按订单受欢迎程度",
+      "byCost": "按成本",
+      "byId": "按编号",
+      "byCategory": "按类别",
+      "byName": "按名称"
+    }
+  },
+
+  "materials": {
+    "title": "材料",
+    "namePlaceholder": "输入材料文档名称",
+    "filterByCost": "按成本过滤",
+    "enter": "输入",
+    "fields": {
+      "id": "材料编号",
+      "category": "材料类别",
+      "name": "材料名称",
+      "color": "材料颜色",
+      "quantity": "材料数量"
+    },
+    "placeholders": {
+      "id": "输入材料编号",
+      "category": "输入材料类别",
+      "name": "输入材料名称",
+      "color": "输入材料颜色",
+      "quantity": "输入材料数量"
+    },
+    "categories": {
+      "byPopularity": "按订单受欢迎程度",
+      "byCost": "按成本",
+      "byName": "按名称",
+      "byId": "按编号",
+      "byCategory": "按类别",
+      "byColor": "按颜色",
+      "byQuantity": "按数量"
+    }
+  },
+
+  "errors": {
+    "emptyName": "文档名称不能为空。",
+    "notLoggedIn": "用户未登录。",
+    "invalidDateRange": "无效的月份范围：开始月份不能在结束月份之后",
+    "duplicateName": "已有同名文档。",
+    "createOrderFailed": "创建订单文档失败。",
+    "selectDocType": "请选择文档类型。"
+  },
+
+  "console": {
+    "documentCreated": "文档已添加至子集合，ID：",
+    "documentError": "添加文档到子集合时出错：",
+    "orderDocBeforeSave": "保存前订单文档数据：",
+    "beforeCreateOrder": "调用 createUserDocument（订单）之前",
+    "afterCreateOrder": "调用 createUserDocument（订单）之后",
+    "orderError": "添加订单文档时出错：",
+    "beforeCreateProduct": "调用 createUserDocument（产品）之前",
+    "afterCreateProduct": "调用 createUserDocument（产品）之后",
+    "beforeCreateMaterial": "调用 createUserDocument（材料）之前",
+    "afterCreateMaterial": "调用 createUserDocument（材料）之后"
+  },
+
+  "months": {
+    "0": "一月",
+    "1": "一月",
+    "2": "二月",
+    "3": "三月",
+    "4": "四月",
+    "5": "五月",
+    "6": "六月",
+    "7": "七月",
+    "8": "八月",
+    "9": "九月",
+    "10": "十月",
+    "11": "十一月",
+    "12": "十二月"
+  }
+}
+
   }

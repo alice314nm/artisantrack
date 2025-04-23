@@ -812,6 +812,236 @@
       "success": "Password reset email has been sent.",
       "error": "Error resetting password: "
     }
+
+  },
+  "DocumentsID": {
+    "documentsTitle": "Documents",
+    "appTitle": "Artisan Track",
+    "loadingDocumentDetails": "Loading document details...",
+    "documentNotFound": "Document Not Found",
+    "loadingData": "Loading data...",
+    "orders": "Orders",
+    "products": "Products", 
+    "materials": "Materials",
+    "unknown": "Unknown",
+    "unknownCategory": "Unknown Category",
+    "unknownDocumentType": "Unknown document type",
+    "noOrdersFound": "No orders found for this document's criteria.",
+    "noProductsFound": "No products found for the selected criteria.",
+    "noMaterialsFound": "No materials found for the selected criteria.",
+    "back": "Back",
+    "to": "to",
+    "from": "from",
+    "for": "for",
+    "unnamedOrder": "Unnamed Order",
+    "unnamedProduct": "Unnamed Product",
+    "unnamedMaterial": "Unnamed Material",
+    "notAvailable": "N/A",
+    "daysRemaining": "days remaining",
+    "highestToLowestPrice": "Highest to Lowest Price",
+    "lowestToHighestPrice": "Lowest to Highest Price",
+    "ordersByCost": "Orders by Cost",
+    "ordersByDeadline": "Orders by Deadline",
+    "ordersBy": "Orders by",
+    "ordersFor": "Orders for",
+    "ordersFrom": "Orders from",
+    "customerName": "Customer Name",
+    "description": "Description",
+    "pastDueDeadline": "Past Due Deadline",
+    "upcomingDeadline": "Upcoming Deadline",
+    "all": "All",
+    "months": {
+      "1": "January",
+      "2": "February", 
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June", 
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    },
+    "documentDetailsTitle": "Document Details"
+  },
+  "Documents": {
+  "documentsTitle": "Documents",
+  "total": "Total",
+  "createDocument": "Create Document +",
+  "createdOn": "Created On",
+  "unknownCategory": "Unknown Category",
+  "highestToLowestPrice": "Highest to Lowest Price",
+  "lowestToHighestPrice": "Lowest to Highest Price",
+  "notAvailable": "N/A",
+  "ordersByCost": "Orders by Cost",
+  "ordersByDeadline": "Orders by Deadline",
+  "ordersByPeriod": "Orders by Time Period",
+  "ordersBy": "Orders by",
+  "customerName": "Customer Name",
+  "description": "Description",
+  "pastDueDeadline": "Past Due Deadlines",
+  "upcomingDeadline": "Upcoming Deadlines",
+  "allTime": "All Time",
+  "productDocument": "Product Document",
+  "productsByCost": "Products by Cost",
+  "productsBy": "Products by",
+  "idCategory": "ID",
+  "categoryCategory": "Category",
+  "nameCategory": "Name",
+  "productsByPopularity": "Products by Popularity in Orders",
+  "materialDocument": "Material Document",
+  "materialsByCost": "Materials by Cost",
+  "materialsBy": "Materials by",
+  "colorCategory": "Color",
+  "quantityCategory": "Quantity",
+  "materialsByPopularity": "Materials by Popularity in Orders",
+  "months": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  },
+  "to": "to",
+  "search": "Search",
+  "noDocumentsFound": "No documents found",
+  "searchPlaceholder": "Search documents..."
+},
+"CreateDocument": {
+  "pageTitle": "Create Document",
+  "documentName": "Document Name",
+  "selectType": "Select Type",
+  "selectCategory": "Select Category",
+  "selectTimePeriod": "Select Time Period",
+  "fromMonth": "From Month",
+  "toMonth": "To Month",
+  "year": "Year",
+  "highestToLowest": "Highest to Lowest Price",
+  "lowestToHighest": "Lowest to Highest Price",
+  "pastDueDeadline": "Past Due Deadlines",
+  "upcomingDeadline": "Upcoming Deadlines",
+  "loading": "Loading...",
+  "create": "Create",
+  "cancel": "Cancel",
+
+  "docTypes": {
+    "order": "Order",
+    "product": "Product",
+    "material": "Material"
+  },
+
+  "orders": {
+    "title": "Orders",
+    "namePlaceholder": "Enter order document name",
+    "filterByCost": "Filter by Cost",
+    "filterByDeadline": "Filter by Deadline",
+    "categories": {
+      "byCost": "By Cost",
+      "byDeadline": "By Deadline",
+      "byPeriod": "By Time Period"
+    }
+  },
+
+  "products": {
+    "title": "Products",
+    "namePlaceholder": "Enter product document name",
+    "filterByCost": "Filter by Cost",
+    "enter": "Enter",
+    "fields": {
+      "id": "Product ID",
+      "category": "product category",
+      "name": "product name"
+    },
+    "placeholders": {
+      "id": "Enter Product ID",
+      "category": "Enter product category",
+      "name": "Enter product name"
+    },
+    "categories": {
+      "byPopularity": "By Popularity in Orders",
+      "byCost": "By Cost",
+      "byId": "By ID",
+      "byCategory": "By Category",
+      "byName": "By Name"
+    }
+  },
+
+  "materials": {
+    "title": "Materials",
+    "namePlaceholder": "Enter material document name",
+    "filterByCost": "Filter by Cost",
+    "enter": "Enter",
+    "fields": {
+      "id": "Material ID",
+      "category": "material category",
+      "name": "material name",
+      "color": "material color",
+      "quantity": "material quantity"
+    },
+    "placeholders": {
+      "id": "Enter Material ID",
+      "category": "Enter material category",
+      "name": "Enter material name",
+      "color": "Enter material color",
+      "quantity": "Enter material quantity"
+    },
+    "categories": {
+      "byPopularity": "By Popularity in Orders",
+      "byCost": "By Cost",
+      "byName": "By Name",
+      "byId": "By ID",
+      "byCategory": "By Category",
+      "byColor": "By Color",
+      "byQuantity": "By Quantity"
+    }
+  },
+
+  "errors": {
+    "emptyName": "Document name cannot be empty.",
+    "notLoggedIn": "User not authenticated.",
+    "invalidDateRange": "Invalid month range: 'From Month' cannot be after 'To Month'",
+    "duplicateName": "A document with this name already exists.",
+    "createOrderFailed": "Failed to create order document.",
+    "selectDocType": "Please select a document type."
+  },
+
+  "console": {
+    "documentCreated": "Document added to subcollection with ID: ",
+    "documentError": "Error adding document to subcollection: ",
+    "orderDocBeforeSave": "Order document data before saving:",
+    "beforeCreateOrder": "Before calling createUserDocument for order",
+    "afterCreateOrder": "After calling createUserDocument for order",
+    "orderError": "Error adding order document: ",
+    "beforeCreateProduct": "Before calling createUserDocument for product",
+    "afterCreateProduct": "After calling createUserDocument for product",
+    "beforeCreateMaterial": "Before calling createUserDocument for material",
+    "afterCreateMaterial": "After calling createUserDocument for material"
+  },
+
+  "months": {
+    "0": "January",
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
   }
+}
 }
 

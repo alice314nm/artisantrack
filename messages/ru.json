@@ -812,4 +812,233 @@
       "error": "Ошибка при сбросе пароля: "
     }
   }
+},
+  "DocumentsID": {
+  "documentsTitle": "Документы",
+  "appTitle": "Artisan Track",
+  "loadingDocumentDetails": "Загрузка деталей документа...",
+  "documentNotFound": "Документ не найден",
+  "loadingData": "Загрузка данных...",
+  "orders": "Заказы",
+  "products": "Продукты",
+  "materials": "Материалы",
+  "unknown": "Неизвестно",
+  "unknownCategory": "Неизвестная категория",
+  "unknownDocumentType": "Неизвестный тип документа",
+  "noOrdersFound": "Заказы по критериям этого документа не найдены.",
+  "noProductsFound": "Продукты по выбранным критериям не найдены.",
+  "noMaterialsFound": "Материалы по выбранным критериям не найдены.",
+  "back": "Назад",
+  "to": "до",
+  "from": "от",
+  "for": "для",
+  "unnamedOrder": "Безымянный заказ",
+  "unnamedProduct": "Безымянный продукт",
+  "unnamedMaterial": "Безымянный материал",
+  "notAvailable": "Н/Д",
+  "daysRemaining": "дней осталось",
+  "highestToLowestPrice": "От самой высокой к самой низкой цене",
+  "lowestToHighestPrice": "От самой низкой к самой высокой цене",
+  "ordersByCost": "Заказы по стоимости",
+  "ordersByDeadline": "Заказы по сроку",
+  "ordersBy": "Заказы по",
+  "ordersFor": "Заказы для",
+  "ordersFrom": "Заказы от",
+  "customerName": "Имя клиента",
+  "description": "Описание",
+  "pastDueDeadline": "Просроченный срок",
+  "upcomingDeadline": "Ближайший срок",
+  "all": "Все",
+  "months": {
+    "1": "Январь",
+    "2": "Февраль",
+    "3": "Март",
+    "4": "Апрель",
+    "5": "Май",
+    "6": "Июнь",
+    "7": "Июль",
+    "8": "Август",
+    "9": "Сентябрь",
+    "10": "Октябрь",
+    "11": "Ноябрь",
+    "12": "Декабрь"
+  },
+  "documentDetailsTitle": "Подробности документа"
+},
+"Documents": {
+    "documentsTitle": "Документы",
+    "total": "Всего",
+    "createDocument": "Создать документ +",
+    "createdOn": "Создано",
+    "unknownCategory": "Неизвестная категория",
+    "highestToLowestPrice": "По убыванию цены",
+    "lowestToHighestPrice": "По возрастанию цены",
+    "notAvailable": "Н/Д",
+    "ordersByCost": "Заказы по стоимости",
+    "ordersByDeadline": "Заказы по сроку",
+    "ordersByPeriod": "Заказы за период времени",
+    "ordersBy": "Заказы по",
+    "customerName": "Имя клиента",
+    "description": "Описание",
+    "pastDueDeadline": "Просроченные сроки",
+    "upcomingDeadline": "Предстоящие сроки",
+    "allTime": "За всё время",
+    "productDocument": "Документ продукта",
+    "productsByCost": "Продукты по стоимости",
+    "productsBy": "Продукты по",
+    "idCategory": "ID",
+    "categoryCategory": "Категория",
+    "nameCategory": "Наименование",
+    "productsByPopularity": "Продукты по популярности в заказах",
+    "materialDocument": "Документ материала",
+    "materialsByCost": "Материалы по стоимости",
+    "materialsBy": "Материалы по",
+    "colorCategory": "Цвет",
+    "quantityCategory": "Количество",
+    "materialsByPopularity": "Материалы по популярности в заказах",
+    "months": {
+      "1": "Январь",
+      "2": "Февраль", 
+      "3": "Март",
+      "4": "Апрель",
+      "5": "Май",
+      "6": "Июнь", 
+      "7": "Июль",
+      "8": "Август",
+      "9": "Сентябрь",
+      "10": "Октябрь",
+      "11": "Ноябрь",
+      "12": "Декабрь"
+    },
+    "to": "до",
+    "search": "Поиск",
+    "noDocumentsFound": "Документы не найдены",
+    "searchPlaceholder": "Поиск по документам..."
+  },
+  "CreateDocument": {
+  "pageTitle": "Создать документ",
+  "documentName": "Название документа",
+  "selectType": "Выбрать тип",
+  "selectCategory": "Выбрать категорию",
+  "selectTimePeriod": "Выбрать период времени",
+  "fromMonth": "От месяца",
+  "toMonth": "До месяца",
+  "year": "Год",
+  "highestToLowest": "От высокой к низкой цене",
+  "lowestToHighest": "От низкой к высокой цене",
+  "pastDueDeadline": "Просроченные сроки",
+  "upcomingDeadline": "Предстоящие сроки",
+  "loading": "Загрузка...",
+  "create": "Создать",
+  "cancel": "Отмена",
+  
+  "docTypes": {
+    "order": "Заказ",
+    "product": "Продукт",
+    "material": "Материал"
+  },
+  
+  "orders": {
+    "title": "Заказы",
+    "namePlaceholder": "Введите название документа заказа",
+    "filterByCost": "Фильтровать по стоимости",
+    "filterByDeadline": "Фильтровать по срокам",
+    "categories": {
+      "byCost": "По стоимости",
+      "byDeadline": "По срокам",
+      "byPeriod": "По периоду времени"
+    }
+  },
+  
+  "products": {
+    "title": "Продукты",
+    "namePlaceholder": "Введите название документа продукта",
+    "filterByCost": "Фильтровать по стоимости",
+    "enter": "Введите",
+    "fields": {
+      "id": "ID продукта",
+      "category": "категорию продукта",
+      "name": "название продукта"
+    },
+    "placeholders": {
+      "id": "Введите ID продукта",
+      "category": "Введите категорию продукта",
+      "name": "Введите название продукта"
+    },
+    "categories": {
+      "byPopularity": "По популярности в заказах",
+      "byCost": "По стоимости",
+      "byId": "По ID",
+      "byCategory": "По категории",
+      "byName": "По названию"
+    }
+  },
+  
+  "materials": {
+    "title": "Материалы",
+    "namePlaceholder": "Введите название документа материала",
+    "filterByCost": "Фильтровать по стоимости",
+    "enter": "Введите",
+    "fields": {
+      "id": "ID материала",
+      "category": "категорию материала",
+      "name": "название материала",
+      "color": "цвет материала",
+      "quantity": "количество материала"
+    },
+    "placeholders": {
+      "id": "Введите ID материала",
+      "category": "Введите категорию материала",
+      "name": "Введите название материала",
+      "color": "Введите цвет материала",
+      "quantity": "Введите количество материала"
+    },
+    "categories": {
+      "byPopularity": "По популярности в заказах",
+      "byCost": "По стоимости",
+      "byName": "По названию",
+      "byId": "По ID",
+      "byCategory": "По категории",
+      "byColor": "По цвету",
+      "byQuantity": "По количеству"
+    }
+  },
+  
+  "errors": {
+    "emptyName": "Название документа не может быть пустым.",
+    "notLoggedIn": "Пользователь не авторизован.",
+    "invalidDateRange": "Неверный диапазон месяцев: 'От месяца' не может быть после 'До месяца'",
+    "duplicateName": "Документ с таким именем уже существует.",
+    "createOrderFailed": "Не удалось создать документ заказа.",
+    "selectDocType": "Выберите тип документа."
+  },
+  
+  "console": {
+    "documentCreated": "Документ добавлен в подколлекцию документов с ID: ",
+    "documentError": "Ошибка при добавлении документа в подколлекцию: ",
+    "orderDocBeforeSave": "Данные документа заказа перед сохранением:",
+    "beforeCreateOrder": "Перед вызовом createUserDocument для заказа",
+    "afterCreateOrder": "После вызова createUserDocument для заказа",
+    "orderError": "Ошибка при добавлении документа заказа: ",
+    "beforeCreateProduct": "Перед вызовом createUserDocument для продукта",
+    "afterCreateProduct": "После вызова createUserDocument для продукта",
+    "beforeCreateMaterial": "Перед вызовом createUserDocument для материала",
+    "afterCreateMaterial": "После вызова createUserDocument для материала"
+  },
+  
+  "months": {
+    "0": "Январь", 
+    "1": "Январь",
+    "2": "Февраль", 
+    "3": "Март",
+    "4": "Апрель",
+    "5": "Май",
+    "6": "Июнь", 
+    "7": "Июль",
+    "8": "Август",
+    "9": "Сентябрь",
+    "10": "Октябрь",
+    "11": "Ноябрь",
+    "12": "Декабрь"
+  }
 }

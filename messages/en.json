@@ -850,20 +850,20 @@
     "pastDueDeadline": "Past Due Deadline",
     "upcomingDeadline": "Upcoming Deadline",
     "all": "All",
-    "months": {
-      "1": "January",
-      "2": "February", 
-      "3": "March",
-      "4": "April",
-      "5": "May",
-      "6": "June", 
-      "7": "July",
-      "8": "August",
-      "9": "September",
-      "10": "October",
-      "11": "November",
-      "12": "December"
-    },
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
     "documentDetailsTitle": "Document Details"
   },
   "Documents": {
@@ -897,20 +897,20 @@
   "colorCategory": "Color",
   "quantityCategory": "Quantity",
   "materialsByPopularity": "Materials by Popularity in Orders",
-  "months": {
-    "1": "January",
-    "2": "February",
-    "3": "March",
-    "4": "April",
-    "5": "May",
-    "6": "June",
-    "7": "July",
-    "8": "August",
-    "9": "September",
-    "10": "October",
-    "11": "November",
-    "12": "December"
-  },
+  "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
   "to": "to",
   "search": "Search",
   "noDocumentsFound": "No documents found",
@@ -1027,21 +1027,21 @@
     "afterCreateMaterial": "After calling createUserDocument for material"
   },
 
-  "months": {
-    "0": "January",
-    "1": "January",
-    "2": "February",
-    "3": "March",
-    "4": "April",
-    "5": "May",
-    "6": "June",
-    "7": "July",
-    "8": "August",
-    "9": "September",
-    "10": "October",
-    "11": "November",
-    "12": "December"
-  }
+  "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "back": "Back"
 }
 }
 

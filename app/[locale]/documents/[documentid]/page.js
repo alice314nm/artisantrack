@@ -21,7 +21,6 @@ import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import Menu from "@/app/[locale]/components/menu";
 
 const monthNames = [
-  "",
   "January",
   "February",
   "March",
@@ -48,7 +47,6 @@ export default function DocumentDetailPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const monthIndices = [
-    "",
     "january",
     "february",
     "march",
@@ -649,11 +647,14 @@ export default function DocumentDetailPage() {
     // Format date range display
     const formatDateRange = (startMonth, endMonth, year) => {
       if (startMonth && endMonth && year) {
+        const startMonthLower = startMonth.toLowerCase();
+        const endMonthLower = endMonth.toLowerCase();
+
         const translatedStartMonth = t(
-          `months.${monthIndices.indexOf(startMonth.toLowerCase())}`
+          `months.${monthIndices.indexOf(startMonthLower)}`
         );
         const translatedEndMonth = t(
-          `months.${monthIndices.indexOf(endMonth.toLowerCase())}`
+          `months.${monthIndices.indexOf(endMonthLower)}`
         );
 
         if (startMonth === endMonth) {

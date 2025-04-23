@@ -844,20 +844,20 @@
   "pastDueDeadline": "Lampas sa Takdang Oras",
   "upcomingDeadline": "Paparating na Deadline",
   "all": "Lahat",
-  "months": {
-    "1": "Enero",
-    "2": "Pebrero",
-    "3": "Marso",
-    "4": "Abril",
-    "5": "Mayo",
-    "6": "Hunyo",
-    "7": "Hulyo",
-    "8": "Agosto",
-    "9": "Setyembre",
-    "10": "Oktubre",
-    "11": "Nobyembre",
-    "12": "Disyembre"
-  },
+  "months": [
+  "Enero",
+  "Pebrero",
+  "Marso",
+  "Abril",
+  "Mayo",
+  "Hunyo",
+  "Hulyo",
+  "Agosto",
+  "Setyembre",
+  "Oktubre",
+  "Nobyembre",
+  "Disyembre"
+],
   "documentDetailsTitle": "Detalye ng Dokumento"
 },
 "Documents": {
@@ -891,20 +891,20 @@
   "colorCategory": "Kulay",
   "quantityCategory": "Dami",
   "materialsByPopularity": "Mga Materyales ayon sa Kasikatan sa mga Order",
-  "months": {
-    "1": "Enero",
-    "2": "Pebrero",
-    "3": "Marso",
-    "4": "Abril",
-    "5": "Mayo",
-    "6": "Hunyo",
-    "7": "Hulyo",
-    "8": "Agosto",
-    "9": "Setyembre",
-    "10": "Oktubre",
-    "11": "Nobyembre",
-    "12": "Disyembre"
-  },
+  "months": [
+  "Enero",
+  "Pebrero",
+  "Marso",
+  "Abril",
+  "Mayo",
+  "Hunyo",
+  "Hulyo",
+  "Agosto",
+  "Setyembre",
+  "Oktubre",
+  "Nobyembre",
+  "Disyembre"
+],
   "to": "hanggang",
   "search": "Maghanap",
   "noDocumentsFound": "Walang dokumentong natagpuan",
@@ -1021,21 +1021,21 @@
     "afterCreateMaterial": "Pagkatapos tawagin ang createUserDocument para sa materyal"
   },
 
-  "months": {
-    "0": "Enero",
-    "1": "Enero",
-    "2": "Pebrero",
-    "3": "Marso",
-    "4": "Abril",
-    "5": "Mayo",
-    "6": "Hunyo",
-    "7": "Hulyo",
-    "8": "Agosto",
-    "9": "Setyembre",
-    "10": "Oktubre",
-    "11": "Nobyembre",
-    "12": "Disyembre"
-  }
+  "months": [
+  "Enero",
+  "Pebrero",
+  "Marso",
+  "Abril",
+  "Mayo",
+  "Hunyo",
+  "Hulyo",
+  "Agosto",
+  "Setyembre",
+  "Oktubre",
+  "Nobyembre",
+  "Disyembre"
+],
+"back": "Bumalik"
 }
 
   }

@@ -1094,7 +1094,12 @@ export default function Page() {
             {t("cancel")}
           </button>
         </form>
-        <Menu type="OnlySlideMenu" />
+        <Menu
+          type="OneButtonMenu"
+          firstTitle={t("back")}
+          iconFirst="/arrow-left.png"
+          onFirstFunction={() => router.push("/documents")}
+        />
       </div>
     );
   } else {

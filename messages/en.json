@@ -813,8 +813,7 @@
       "error": "Error resetting password: "
     }
 
-  }
-},
+  },
   "DocumentsID": {
     "documentsTitle": "Documents",
     "appTitle": "Artisan Track",
@@ -1043,6 +1042,6 @@
     "11": "November",
     "12": "December"
   }
-
+}
 }
 

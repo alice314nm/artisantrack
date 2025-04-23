@@ -807,5 +807,235 @@
           "success": "Ang password reset email ay ipinadala na.",
           "error": "Error sa pag-reset ng password: "
         }
-      }
+      },
+      "DocumentsID": {
+  "documentsTitle": "Mga Dokumento",
+  "appTitle": "Artisan Track",
+  "loadingDocumentDetails": "Ikinakarga ang mga detalye ng dokumento...",
+  "documentNotFound": "Hindi Natagpuan ang Dokumento",
+  "loadingData": "Ikinakarga ang datos...",
+  "orders": "Mga Order",
+  "products": "Mga Produkto",
+  "materials": "Mga Materyales",
+  "unknown": "Hindi Alam",
+  "unknownCategory": "Hindi Alam na Kategorya",
+  "unknownDocumentType": "Hindi alam na uri ng dokumento",
+  "noOrdersFound": "Walang mga order na natagpuan para sa pamantayan ng dokumentong ito.",
+  "noProductsFound": "Walang mga produkto na natagpuan para sa napiling pamantayan.",
+  "noMaterialsFound": "Walang mga materyales na natagpuan para sa napiling pamantayan.",
+  "back": "Bumalik",
+  "to": "hanggang",
+  "from": "mula",
+  "for": "para sa",
+  "unnamedOrder": "Hindi Pangalanang Order",
+  "unnamedProduct": "Hindi Pangalanang Produkto",
+  "unnamedMaterial": "Hindi Pangalanang Materyal",
+  "notAvailable": "Walang Datos",
+  "daysRemaining": "natitirang araw",
+  "highestToLowestPrice": "Pinakamataas hanggang Pinakamababang Presyo",
+  "lowestToHighestPrice": "Pinakamababa hanggang Pinakamataas na Presyo",
+  "ordersByCost": "Mga Order ayon sa Gastos",
+  "ordersByDeadline": "Mga Order ayon sa Deadline",
+  "ordersBy": "Mga Order ayon sa",
+  "ordersFor": "Mga Order para sa",
+  "ordersFrom": "Mga Order mula sa",
+  "customerName": "Pangalan ng Kustomer",
+  "description": "Deskripsyon",
+  "pastDueDeadline": "Lampas sa Takdang Oras",
+  "upcomingDeadline": "Paparating na Deadline",
+  "all": "Lahat",
+  "months": {
+    "1": "Enero",
+    "2": "Pebrero",
+    "3": "Marso",
+    "4": "Abril",
+    "5": "Mayo",
+    "6": "Hunyo",
+    "7": "Hulyo",
+    "8": "Agosto",
+    "9": "Setyembre",
+    "10": "Oktubre",
+    "11": "Nobyembre",
+    "12": "Disyembre"
+  },
+  "documentDetailsTitle": "Detalye ng Dokumento"
+},
+"Documents": {
+  "documentsTitle": "Mga Dokumento",
+  "total": "Kabuuan",
+  "createDocument": "Gumawa ng Dokumento +",
+  "createdOn": "Ginawa noong",
+  "unknownCategory": "Hindi Alam na Kategorya",
+  "highestToLowestPrice": "Pinakamataas hanggang Pinakamababang Presyo",
+  "lowestToHighestPrice": "Pinakamababa hanggang Pinakamataas na Presyo",
+  "notAvailable": "Walang Datos",
+  "ordersByCost": "Mga Order ayon sa Gastos",
+  "ordersByDeadline": "Mga Order ayon sa Deadline",
+  "ordersByPeriod": "Mga Order ayon sa Panahon",
+  "ordersBy": "Mga Order ayon sa",
+  "customerName": "Pangalan ng Kustomer",
+  "description": "Deskripsyon",
+  "pastDueDeadline": "Mga Order na Lampas sa Takdang Oras",
+  "upcomingDeadline": "Mga Order na may Paparating na Deadline",
+  "allTime": "Buong Panahon",
+  "productDocument": "Dokumento ng Produkto",
+  "productsByCost": "Mga Produkto ayon sa Gastos",
+  "productsBy": "Mga Produkto ayon sa",
+  "idCategory": "ID",
+  "categoryCategory": "Kategorya",
+  "nameCategory": "Pangalan",
+  "productsByPopularity": "Mga Produkto ayon sa Kasikatan sa mga Order",
+  "materialDocument": "Dokumento ng Materyal",
+  "materialsByCost": "Mga Materyales ayon sa Gastos",
+  "materialsBy": "Mga Materyales ayon sa",
+  "colorCategory": "Kulay",
+  "quantityCategory": "Dami",
+  "materialsByPopularity": "Mga Materyales ayon sa Kasikatan sa mga Order",
+  "months": {
+    "1": "Enero",
+    "2": "Pebrero",
+    "3": "Marso",
+    "4": "Abril",
+    "5": "Mayo",
+    "6": "Hunyo",
+    "7": "Hulyo",
+    "8": "Agosto",
+    "9": "Setyembre",
+    "10": "Oktubre",
+    "11": "Nobyembre",
+    "12": "Disyembre"
+  },
+  "to": "hanggang",
+  "search": "Maghanap",
+  "noDocumentsFound": "Walang dokumentong natagpuan",
+  "searchPlaceholder": "Maghanap ng mga dokumento..."
+},
+"CreateDocument": {
+  "pageTitle": "Gumawa ng Dokumento",
+  "documentName": "Pangalan ng Dokumento",
+  "selectType": "Pumili ng Uri",
+  "selectCategory": "Pumili ng Kategorya",
+  "selectTimePeriod": "Pumili ng Panahon",
+  "fromMonth": "Mula sa Buwan",
+  "toMonth": "Hanggang Buwan",
+  "year": "Taon",
+  "highestToLowest": "Pinakamataas hanggang Pinakamababa na Presyo",
+  "lowestToHighest": "Pinakamababa hanggang Pinakamataas na Presyo",
+  "pastDueDeadline": "Mga Deadline na Lampas na",
+  "upcomingDeadline": "Paparating na mga Deadline",
+  "loading": "Ikinakarga...",
+  "create": "Gumawa",
+  "cancel": "Kanselahin",
+
+  "docTypes": {
+    "order": "Order",
+    "product": "Produkto",
+    "material": "Materyal"
+  },
+
+  "orders": {
+    "title": "Mga Order",
+    "namePlaceholder": "Ilagay ang pangalan ng dokumento ng order",
+    "filterByCost": "I-filter ayon sa Gastos",
+    "filterByDeadline": "I-filter ayon sa Deadline",
+    "categories": {
+      "byCost": "Ayon sa Gastos",
+      "byDeadline": "Ayon sa Deadline",
+      "byPeriod": "Ayon sa Panahon"
+    }
+  },
+
+  "products": {
+    "title": "Mga Produkto",
+    "namePlaceholder": "Ilagay ang pangalan ng dokumento ng produkto",
+    "filterByCost": "I-filter ayon sa Gastos",
+    "enter": "Ilagay",
+    "fields": {
+      "id": "ID ng Produkto",
+      "category": "kategorya ng produkto",
+      "name": "pangalan ng produkto"
+    },
+    "placeholders": {
+      "id": "Ilagay ang ID ng Produkto",
+      "category": "Ilagay ang kategorya ng produkto",
+      "name": "Ilagay ang pangalan ng produkto"
+    },
+    "categories": {
+      "byPopularity": "Ayon sa Kasikatan sa mga Order",
+      "byCost": "Ayon sa Gastos",
+      "byId": "Ayon sa ID",
+      "byCategory": "Ayon sa Kategorya",
+      "byName": "Ayon sa Pangalan"
+    }
+  },
+
+  "materials": {
+    "title": "Mga Materyales",
+    "namePlaceholder": "Ilagay ang pangalan ng dokumento ng materyal",
+    "filterByCost": "I-filter ayon sa Gastos",
+    "enter": "Ilagay",
+    "fields": {
+      "id": "ID ng Materyal",
+      "category": "kategorya ng materyal",
+      "name": "pangalan ng materyal",
+      "color": "kulay ng materyal",
+      "quantity": "dami ng materyal"
+    },
+    "placeholders": {
+      "id": "Ilagay ang ID ng Materyal",
+      "category": "Ilagay ang kategorya ng materyal",
+      "name": "Ilagay ang pangalan ng materyal",
+      "color": "Ilagay ang kulay ng materyal",
+      "quantity": "Ilagay ang dami ng materyal"
+    },
+    "categories": {
+      "byPopularity": "Ayon sa Kasikatan sa mga Order",
+      "byCost": "Ayon sa Gastos",
+      "byName": "Ayon sa Pangalan",
+      "byId": "Ayon sa ID",
+      "byCategory": "Ayon sa Kategorya",
+      "byColor": "Ayon sa Kulay",
+      "byQuantity": "Ayon sa Dami"
+    }
+  },
+
+  "errors": {
+    "emptyName": "Hindi maaaring walang laman ang pangalan ng dokumento.",
+    "notLoggedIn": "Hindi naka-authenticate ang user.",
+    "invalidDateRange": "Hindi wastong saklaw ng buwan: hindi maaaring mauna ang 'Mula sa Buwan' kaysa sa 'Hanggang Buwan'",
+    "duplicateName": "May dokumento na may ganitong pangalan.",
+    "createOrderFailed": "Nabigong gumawa ng dokumento ng order.",
+    "selectDocType": "Mangyaring pumili ng uri ng dokumento."
+  },
+
+  "console": {
+    "documentCreated": "Idinagdag ang dokumento sa subcollection na may ID: ",
+    "documentError": "Error sa pagdagdag ng dokumento sa subcollection: ",
+    "orderDocBeforeSave": "Datos ng order na dokumento bago i-save:",
+    "beforeCreateOrder": "Bago tawagin ang createUserDocument para sa order",
+    "afterCreateOrder": "Pagkatapos tawagin ang createUserDocument para sa order",
+    "orderError": "Error sa pagdagdag ng dokumento ng order: ",
+    "beforeCreateProduct": "Bago tawagin ang createUserDocument para sa produkto",
+    "afterCreateProduct": "Pagkatapos tawagin ang createUserDocument para sa produkto",
+    "beforeCreateMaterial": "Bago tawagin ang createUserDocument para sa materyal",
+    "afterCreateMaterial": "Pagkatapos tawagin ang createUserDocument para sa materyal"
+  },
+
+  "months": {
+    "0": "Enero",
+    "1": "Enero",
+    "2": "Pebrero",
+    "3": "Marso",
+    "4": "Abril",
+    "5": "Mayo",
+    "6": "Hunyo",
+    "7": "Hulyo",
+    "8": "Agosto",
+    "9": "Setyembre",
+    "10": "Oktubre",
+    "11": "Nobyembre",
+    "12": "Disyembre"
+  }
+}
+
   }

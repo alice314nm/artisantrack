@@ -216,7 +216,7 @@
     "cancel": "Cancel"
   },
   "EditOrder": {
-    "createOrderTitle": "Create an Order",
+    "EditOrderTitle": "Edit the Order",
     "general": "General",
     "titleOfOrder": "Title of the order",
     "enterTitle": "Enter title for the order",
@@ -241,7 +241,7 @@
     "workCost": "Work cost",
     "totalCost": "Total cost",
     "cancel": "Cancel",
-    "create": "Create",
+    "edit": "Edit",
     "noProducts": "No products in inventory",
     "noMaterials": "No materials in inventory",
     "createTitle": "Create an Order",

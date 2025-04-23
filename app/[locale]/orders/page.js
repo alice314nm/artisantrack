@@ -5,7 +5,6 @@ import BlockHolder from "@/app/[locale]/components/block-holder";
 import FilterWindow from "@/app/[locale]/components/filter-window";
 import Header from "@/app/[locale]/components/header";
 import Menu from "@/app/[locale]/components/menu";
-import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import SearchBar from "@/app/[locale]/components/search-bar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -19,6 +18,7 @@ import {
 } from "firebase/firestore";
 import FilterTotal from "../components/filter-total";
 import { useTranslations } from "next-intl";
+import NotLoggedWindow from "../components/not-logged-window";
 
 export default function Page() {
   const t = useTranslations("OrdersPage");

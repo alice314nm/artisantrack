@@ -12,7 +12,7 @@ import Menu from "@/app/[locale]/components/menu";
 import SelectedHolder from "@/app/[locale]/components/selected-holder";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { dbAddOrder } from "@/app/[locale]/_services/order-service";
+import { dbAddOrder, getCustomers } from "@/app/[locale]/_services/order-service";
 import { fetchMaterialsForOrder } from "@/app/[locale]/_services/material-service";
 import { fetchProductsForOrder } from "@/app/[locale]/_services/product-service";
 import { doc } from "firebase/firestore";
@@ -37,6 +37,7 @@ export default function Page() {
   const [startDate, setStartDate] = useState("");
   const [daysCounter, setDaysCounter] = useState(0);
   const [customerName, setCustomerName] = useState("");
+  const [customersNames, setCustomersNames] = useState([])
   const [desc, setDesc] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedMaterials, setSelectedMaterials] = useState([]);
@@ -81,6 +82,7 @@ export default function Page() {
     if (user) {
       fetchProductsForOrder(user.uid, setProducts);
       fetchMaterialsForOrder(user.uid, setMaterials);
+      getCustomers(user.uid, setCustomersNames)
     }
   }, [user]);
 
@@ -372,11 +374,17 @@ export default function Page() {
               </div>
               <input
                 className={inputStyle}
+                list="customers"
                 name="customerName"
                 value={customerName}
                 placeholder={t("customerName")}
                 onChange={(e) => setCustomerName(e.target.value)}
               />
+              <datalist id="customers">
+              {customersNames?.map((customer, index) => (
+                <option key={index} value={customer} />
+              ))}
+            </datalist>
             </div>
 
             {/* Description */}

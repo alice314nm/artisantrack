@@ -16,6 +16,7 @@ import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import {
   dbAddOrder,
   dbGetOrderById,
+  dbUpdateOrder,
 } from "@/app/[locale]/_services/order-service";
 import { fetchMaterialsForOrder } from "@/app/[locale]/_services/material-service";
 import { fetchProductsForOrder } from "@/app/[locale]/_services/product-service";
@@ -91,7 +92,7 @@ export default function Page() {
       fetchMaterialsForOrder(user.uid, setMaterials);
       dbGetOrderById(user.uid, id, setSelectedOrder);
     }
-  }, [user]);
+  }, [user, id]);
 
   useEffect(() => {
     if (!selectedOrder || Object.keys(selectedOrder).length === 0) return;
@@ -111,19 +112,17 @@ export default function Page() {
     setCustomerName(selectedOrder.customerName || "");
     setDesc(selectedOrder.description || "");
     setSelectedProduct(selectedOrder.productForOrderData || null);
-    console.log(0,selectedOrder.materialsForOrderData )
     setSelectedMaterials(selectedOrder.materialsForOrderData || []);
 
     if (selectedOrder.quantities && Array.isArray(selectedOrder.quantities)) {
       const quantitiesObj = {};
       selectedOrder.quantities.forEach((item) => {
         if (item && item.id) {
-          console.log(1,item.quantity)
           quantitiesObj[item.id] = item.quantity;
         }
       });
       setMaterialQuantities(quantitiesObj);
-    } 
+    }
 
     setProductCost(selectedOrder.productCost || 0);
     setMaterialCost(selectedOrder.materialsCost || 0);
@@ -133,25 +132,32 @@ export default function Page() {
     setLoading(false);
   }, [selectedOrder]);
 
-  // useEffect(() => {
-  //   if (!selectedMaterials || selectedMaterials.length === 0) {
-  //     setMaterialCost(0);
-  //     return;
-  //   }
+  const calculateMaterialsCost = () => {
+    if (!selectedMaterials || selectedMaterials.length === 0) {
+      setMaterialCost(0);
+      return;
+    }
 
-  //   let totalCost = 0;
+    let totalCost = 0;
 
-  //   selectedMaterials.forEach((material) => {
-  //     const quantity = parseFloat(materialQuantities[material.materialId] || 0);
-  //     const cost = parseFloat(material.costPerUnit || 0);
+    selectedMaterials.forEach((material) => {
+      const materialId = material.materialId || material.id;
+      const quantity = parseFloat(materialQuantities[materialId] || 0);
+      // Get cost per unit - find it in material data
+      const materialData = materials.find(m => m.id === materialId || m.materialId === materialId);
+      const cost = parseFloat(materialData?.costPerUnit || 0);
 
-  //     if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
-  //       totalCost += quantity * cost;
-  //     }
-  //   });
+      if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
+        totalCost += quantity * cost;
+      }
+    });
 
-  //   setMaterialCost(Number(totalCost.toFixed(2)));
-  // }, [selectedMaterials, materialQuantities]);
+    setMaterialCost(Number(totalCost.toFixed(2)));
+  };
+
+  useEffect(() => {
+    calculateMaterialsCost();
+  }, [selectedMaterials, materialQuantities, materials]);
 
   const handleSelectProductForm = () => {
     setState("products");
@@ -196,7 +202,6 @@ export default function Page() {
 
   const handleGoBackFromProducts = () => {
     setState("form");
-    setSelectedProduct("");
   };
 
   const handleGoBackFromMaterials = () => {
@@ -210,59 +215,42 @@ export default function Page() {
   };
 
   const handleSelectMaterial = (material) => {
-    if (!selectedMaterials.includes(material)) {
+    const materialId = material.materialId || material.id;
+    const existingMaterial = selectedMaterials.find(m => 
+      (m.materialId === materialId) || (m.id === materialId)
+    );
+
+    if (!existingMaterial) {
       setSelectedMaterials([...selectedMaterials, material]);
-      setMaterialQuantities({
-        ...materialQuantities,
-        [material.materialId]: "",
-      });
+      setMaterialQuantities(prev => ({
+        ...prev,
+        [materialId]: "",
+      }));
     }
-    calculateMaterialsCost();
   };
 
   const handleMaterialQuantityChange = (materialId, value) => {
     setMaterialQuantities((prev) => ({
       ...prev,
-      [materialId]: value,
+      [materialId]: parseFloat(value) || 0,
     }));
   };
 
   const handleRemoveMaterial = (material) => {
-    setSelectedMaterials(selectedMaterials.filter((m) => m !== material));
+    const materialId = material.materialId || material.id;
+    setSelectedMaterials(selectedMaterials.filter(m => 
+      (m.materialId !== materialId) && (m.id !== materialId)
+    ));
 
     const updatedQuantities = { ...materialQuantities };
-    delete updatedQuantities[material.materialId];
+    delete updatedQuantities[materialId];
 
     setMaterialQuantities(updatedQuantities);
-    //calculateMaterialsCost();
   };
-
-  // useEffect(() => {
-  //   calculateMaterialsCost();
-  // }, [selectedMaterials, materialQuantities]);
-
-  // const calculateMaterialsCost = () => {
-  //   if (!selectedMaterials || selectedMaterials.length === 0) {
-  //     setMaterialCost(0);
-  //     return;
-  //   }
-
-  //   let totalCost = 0;
-
-  //   selectedMaterials.forEach((material) => {
-  //     const quantity = parseFloat(materialQuantities[material.materialId] || 0);
-  //     const cost = parseFloat(material.costPerUnit || 0);
-
-  //     if (!isNaN(quantity) && !isNaN(cost) && quantity > 0) {
-  //       totalCost += quantity * cost;
-  //     }
-  //   });
-
-  //   setMaterialCost(Number(totalCost.toFixed(2)));
-  // };
 
   const handleResetSelectedMaterial = () => {
     setSelectedMaterials([]);
+    setMaterialQuantities({});
   };
 
   const handleNavigateToListPage = () => {
@@ -270,11 +258,11 @@ export default function Page() {
   };
 
   const handleCancelProductSelection = () => {
-    setSelectedProduct("");
+    setSelectedProduct(null);
     setProductCost(0);
   };
 
-  const handleCreateOrder = async (e) => {
+  const handleUpdateOrder = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage("");
@@ -287,20 +275,22 @@ export default function Page() {
 
     const daysUntilDeadline = calculateDaysCounter(startDate, deadline);
     const parsedWorkCost = parseFloat(workCost) || 0;
-    console.log("Days Until Deadline:", daysUntilDeadline);
 
     const orderObj = {
       nameOrder: orderName?.trim() || "",
       customerName: customerName?.trim() || "",
       description: desc?.trim() || "",
-      productId: selectedProduct?.id || null,
+      productId: selectedProduct?.id || selectedProduct?.productId || null,
       materialIds: Array.isArray(selectedMaterials)
-        ? selectedMaterials.map((mat) => mat.id)
+        ? selectedMaterials.map((mat) => mat.id || mat.materialId)
         : [],
-      quantities: selectedMaterials.map((material) => ({
-        id: material.materialId,
-        quantity: materialQuantities[material.materialId],
-      })),
+      quantities: selectedMaterials.map((material) => {
+        const materialId = material.materialId || material.id;
+        return {
+          id: materialId,
+          quantity: parseFloat(materialQuantities[materialId] || 0)
+        };
+      }),
       materialsCost: isNaN(parseFloat(materialCost))
         ? "0.00"
         : parseFloat(materialCost).toFixed(2),
@@ -309,23 +299,23 @@ export default function Page() {
         : parseFloat(productCost).toFixed(2),
       workCost: isNaN(parsedWorkCost) ? "0.00" : parsedWorkCost.toFixed(2),
       totalCost:
-        isNaN(total) || total === null || total === undefined ? 0.0 : total,
+        isNaN(parseFloat(total)) || total === null || total === undefined ? "0.00" : parseFloat(total).toFixed(2),
       startDate: startDate || null,
       deadline: deadline || null,
       daysUntilDeadline: daysUntilDeadline || 0,
-      completed: false,
-      paid: false,
-      currency: selectedProduct?.currency || "",
-      orderImages: [selectedProduct?.id || null],
+      completed: selectedOrder.completed || false,
+      paid: selectedOrder.paid || false,
+      currency: currency || selectedProduct?.currency || "USD",
+      orderImages: selectedProduct ? [selectedProduct.id || selectedProduct.productId || null] : [],
     };
 
     try {
-      await dbAddOrder(user.uid, orderObj);
-      console.log("Order added successfully");
-      window.location.href = "/orders";
+      await dbUpdateOrder(user.uid, id, orderObj);
+      console.log("Order updated successfully");
+      window.location.href = `/orders/${id}`;
     } catch (error) {
-      console.error("Error adding order:", error);
-      setErrorMessage(`${t("errorAdding")} ${error.message}`);
+      console.error("Error updating order:", error);
+      setErrorMessage(`${t("errorUpdating") || "Error updating order:"} ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -334,7 +324,7 @@ export default function Page() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <img src="/loading-gif.gif" className="h-10" />
+        <img src="/loading-gif.gif" className="h-10" alt="Loading" />
       </div>
     );
   }
@@ -342,12 +332,12 @@ export default function Page() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title={t("createOrderTitle")} />
+        <Header title={t("EditOrderTitle")} />
 
         {state === "form" && (
           <form
             className="mx-4 flex flex-col gap-4"
-            onSubmit={handleCreateOrder}
+            onSubmit={handleUpdateOrder}
           >
             {errorMessage && errorMessage.length > 0 && (
               <p className="text-red">{errorMessage}</p>
@@ -364,6 +354,7 @@ export default function Page() {
                 <img
                   src={orderName === "" ? "/cross.png" : "/check.png"}
                   className={orderName === "" ? "h-4" : "h-6 text-green"}
+                  alt={orderName === "" ? "Missing" : "Complete"}
                 />
               </div>
               <input
@@ -385,12 +376,13 @@ export default function Page() {
                 <img
                   src={daysCounter === 0 ? "/cross.png" : "/check.png"}
                   className={daysCounter === 0 ? "h-4" : "h-6 text-green"}
+                  alt={daysCounter === 0 ? "Missing" : "Complete"}
                 />
               </div>
 
               <div className="flex gap-4">
                 {/* Start Date */}
-                <div data-id="start-date" className="flex flex-col gap-1 w-3/4">
+                <div data-id="start-date" className="flex flex-col gap-1 w-1/3">
                   <div className="flex flex-row justify-between">
                     <label className="text-xs">{t("startDate")}</label>
                   </div>
@@ -404,7 +396,7 @@ export default function Page() {
                 </div>
 
                 {/* Deadline */}
-                <div data-id="deadline" className="flex flex-col gap-1 w-3/4">
+                <div data-id="deadline" className="flex flex-col gap-1 w-1/3">
                   <div className="flex flex-row justify-between">
                     <label className="text-xs">{t("deadline")}</label>
                   </div>
@@ -417,22 +409,8 @@ export default function Page() {
                   />
                 </div>
 
-                {/* Deadline */}
-                <div data-id="deadline" className="flex flex-col gap-1 w-3/4">
-                  <div className="flex flex-row justify-between">
-                    <label className="text-xs">Deadline</label>
-                  </div>
-                  <DatePicker
-                    selected={deadline ? new Date(deadline) : null}
-                    onChange={(date) => setDeadline(date)}
-                    dateFormat="dd-MM-yyyy"
-                    className={`${inputStyle} w-full`}
-                    placeholderText="dd-mm-yyyy"
-                  />
-                </div>
-
                 {/* Days Counter */}
-                <div className="flex flex-col gap-1 w-1/4">
+                <div className="flex flex-col gap-1 w-1/3">
                   <div className="flex flex-row justify-between">
                     <label className="text-xs">{t("days")}</label>
                   </div>
@@ -456,6 +434,7 @@ export default function Page() {
                 <img
                   src={customerName === "" ? "/cross.png" : "/check.png"}
                   className={customerName === "" ? "h-4" : "h-6 text-green"}
+                  alt={customerName === "" ? "Missing" : "Complete"}
                 />
               </div>
               <input
@@ -475,6 +454,7 @@ export default function Page() {
                 <img
                   src={desc === "" ? "/cross.png" : "/check.png"}
                   className={desc === "" ? "h-4" : "h-6 text-green"}
+                  alt={desc === "" ? "Missing" : "Complete"}
                 />
               </div>
               <textarea
@@ -506,6 +486,7 @@ export default function Page() {
                 <img
                   src={selectedProduct ? "/check.png" : "/cross.png"}
                   className={selectedProduct ? "h-6 text-green" : "h-4"}
+                  alt={selectedProduct ? "Selected" : "Not Selected"}
                 />
               </div>
               <div className="flex flex-row justify-between">
@@ -526,13 +507,13 @@ export default function Page() {
                 <SelectedHolder
                   type="product"
                   imageSrc={
-                    selectedProduct.productImages &&
+                    selectedProduct.productImages && 
                     selectedProduct.productImages.length > 0
                       ? selectedProduct.productImages[0].url
                       : "/noImage.png"
                   }
-                  name={selectedProduct.name}
-                  id={selectedProduct.productId}
+                  name={selectedProduct.name || selectedProduct.productName}
+                  id={selectedProduct.productId || selectedProduct.id}
                   onRemove={handleCancelProductSelection}
                 />
               </div>
@@ -549,7 +530,7 @@ export default function Page() {
                 value={
                   productCost === 0
                     ? ""
-                    : `${productCost} ${selectedProduct?.currency || ""}`
+                    : `${productCost} ${currency || (selectedProduct?.currency || "")}`
                 }
                 name="productCost"
                 placeholder="0.00"
@@ -572,6 +553,7 @@ export default function Page() {
                       ? "h-6 text-green"
                       : "h-4"
                   }
+                  alt={selectedMaterials && selectedMaterials.length > 0 ? "Selected" : "Not Selected"}
                 />
               </div>
               <div className="flex flex-row justify-between">
@@ -589,22 +571,27 @@ export default function Page() {
             {/* Selected Materials Display */}
             {selectedMaterials && selectedMaterials.length > 0 && (
               <div className="flex flex-col gap-2">
-                {selectedMaterials.map((material, index) => (
-                  <SelectedHolder
-                    key={material.materialId || index}
-                    type="material"
-                    imageSrc={
-                      material.images && material.images.length > 0 || material.materialImage.url
-                        ? material.materialImage.url
-                        : "/noImage.png"
-                    }
-                    name={material.name}
-                    id={material.materialId}
-                    index={index + 1}
-                    quantity={materialQuantities[material.materialId] || "0"}
-                    onRemove={() => handleRemoveMaterial(material)}
-                  />
-                ))}
+                {selectedMaterials.map((material, index) => {
+                  const materialId = material.materialId || material.id;
+                  return (
+                    <SelectedHolder
+                      key={materialId || index}
+                      type="material"
+                      imageSrc={
+                        material.materialImage?.url || 
+                        (material.images && material.images.length > 0 
+                          ? material.images[0].url 
+                          : "/noImage.png")
+                      }
+                      name={material.name || material.materialName}
+                      id={materialId}
+                      index={index + 1}
+                      quantity={materialQuantities[materialId] || "0"}
+                      onRemove={() => handleRemoveMaterial(material)}
+                      onQuantityChange={(value) => handleMaterialQuantityChange(materialId, value)}
+                    />
+                  );
+                })}
               </div>
             )}
 
@@ -629,6 +616,7 @@ export default function Page() {
                 <img
                   src={workCost === 0 ? "/cross.png" : "/check.png"}
                   className={workCost === 0 ? "h-4" : "h-6 text-green"}
+                  alt={workCost === 0 ? "Missing" : "Complete"}
                 />
               </div>
               <input
@@ -663,6 +651,7 @@ export default function Page() {
                       ? "h-4"
                       : "h-6 text-green"
                   }
+                  alt={total === 0 || total === "" || total == "0.00" ? "Missing" : "Complete"}
                 />
               </div>
               <div className="flex flex-row gap-2">
@@ -694,7 +683,7 @@ export default function Page() {
             <Menu
               type="CreateMenu"
               firstTitle={t("cancel")}
-              secondTitle={t("create")}
+              secondTitle={t("edit")}
               onFirstFunction={handleNavigateToListPage}
             />
           </form>
@@ -713,7 +702,7 @@ export default function Page() {
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
                 {products.map((product, index) => (
                   <SelectHolder
-                    key={index}
+                    key={product.id || index}
                     type="product"
                     imageSource={
                       product.productImages && product.productImages.length > 0
@@ -726,7 +715,8 @@ export default function Page() {
                     currency={product.currency || ""}
                     selected={
                       selectedProduct &&
-                      product.productId === selectedProduct.productId
+                      ((product.productId === selectedProduct.productId) || 
+                       (product.id === selectedProduct.id))
                         ? 1
                         : 0
                     }
@@ -755,30 +745,37 @@ export default function Page() {
               </p>
             ) : (
               <div className="items-center mx-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center pb-24">
-                {materials.map((material, index) => (
-                  <SelectHolder
-                    key={index}
-                    type="material"
-                    imageSource={
-                      material.images && material.images.length > 0
-                        ? material.images[0].url
-                        : "/noImage.png"
-                    }
-                    name={material.name}
-                    id={material.materialId}
-                    quantity={material.quantity || "—"}
-                    selected={selectedMaterials.includes(material)}
-                    selectedQuantity={materialQuantities[material.materialId]}
-                    cost={material.total || "—"}
-                    currency={material.currency || ""}
-                    onClick={
-                      selectedMaterials.includes(material)
-                        ? () => handleRemoveMaterial(material)
-                        : () => handleSelectMaterial(material)
-                    }
-                    onQuantityChange={handleMaterialQuantityChange}
-                  />
-                ))}
+                {materials.map((material, index) => {
+                  const materialId = material.materialId || material.id;
+                  const isSelected = selectedMaterials.some(m => 
+                    (m.materialId === materialId) || (m.id === materialId)
+                  );
+                  
+                  return (
+                    <SelectHolder
+                      key={materialId || index}
+                      type="material"
+                      imageSource={
+                        material.images && material.images.length > 0
+                          ? material.images[0].url
+                          : "/noImage.png"
+                      }
+                      name={material.name}
+                      id={materialId}
+                      quantity={material.quantity || "—"}
+                      selected={isSelected}
+                      selectedQuantity={materialQuantities[materialId]}
+                      cost={material.total || "—"}
+                      currency={material.currency || ""}
+                      onClick={
+                        isSelected
+                          ? () => handleRemoveMaterial(material)
+                          : () => handleSelectMaterial(material)
+                      }
+                      onQuantityChange={(value) => handleMaterialQuantityChange(materialId, value)}
+                    />
+                  );
+                })}
               </div>
             )}
             <Menu

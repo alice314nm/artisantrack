@@ -216,7 +216,7 @@
     "cancel": "Отмена"
   },
   "EditOrder": {
-    "createOrderTitle": "Создать заказ",
+    "EditOrderTitle": "Редактировать Заказ",
     "general": "Общие",
     "titleOfOrder": "Название заказа",
     "enterTitle": "Введите название заказа",
@@ -241,7 +241,7 @@
     "workCost": "Стоимость работы",
     "totalCost": "Общая стоимость",
     "cancel": "Отмена",
-    "create": "Создать",
+    "edit": "Редактировать",
     "noProducts": "Нет моделей в инвентаре",
     "noMaterials": "Нет материалов в инвентаре",
     "createTitle": "Создать заказ",

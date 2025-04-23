@@ -762,13 +762,119 @@ export default function DocumentDetailPage() {
         break;
 
       case "product":
-        displayText = t("products");
-        // Similar translation patterns for products...
+        if (category === "cost") {
+          const sortText =
+            sortOrder === "desc"
+              ? t("highestToLowestPrice")
+              : t("lowestToHighestPrice");
+          displayText = `${t("productsByCost")}: ${sortText}${formatDateRange(
+            startMonth,
+            endMonth,
+            year
+          )}`;
+        } else if (category === "popularity") {
+          displayText = `${t("productsByPopularity")}${formatDateRange(
+            startMonth,
+            endMonth,
+            year
+          )}`;
+        } else if (["id", "category", "name"].includes(category)) {
+          // Translate the category name
+          const categoryTranslation =
+            category === "id"
+              ? t("productId")
+              : category === "category"
+              ? t("category")
+              : t("productName");
+
+          displayText = `${t("productsBy")} ${categoryTranslation}: ${
+            searchTerm || t("notAvailable")
+          }${formatDateRange(startMonth, endMonth, year)}`;
+        } else if (startMonth || endMonth || year) {
+          // Time period display
+          if (startMonth === endMonth) {
+            const translatedMonth = startMonth
+              ? t(`months.${monthIndices.indexOf(startMonth.toLowerCase())}`)
+              : "";
+            displayText = `${t("productsFor")} ${translatedMonth} ${
+              year || ""
+            }`.trim();
+          } else {
+            const translatedStartMonth = startMonth
+              ? t(`months.${monthIndices.indexOf(startMonth.toLowerCase())}`)
+              : "";
+            const translatedEndMonth = endMonth
+              ? t(`months.${monthIndices.indexOf(endMonth.toLowerCase())}`)
+              : "";
+
+            displayText = `${t("productsFrom")} ${translatedStartMonth} ${t(
+              "to"
+            )} ${translatedEndMonth} ${year || ""}`.trim();
+          }
+        } else {
+          displayText = t("products");
+        }
         break;
 
       case "material":
-        displayText = t("materials");
-        // Similar translation patterns for materials...
+        if (category === "cost") {
+          const sortText =
+            sortOrder === "desc"
+              ? t("highestToLowestPrice")
+              : t("lowestToHighestPrice");
+          displayText = `${t("materialsByCost")}: ${sortText}${formatDateRange(
+            startMonth,
+            endMonth,
+            year
+          )}`;
+        } else if (category === "popularity") {
+          displayText = `${t("materialsByPopularity")}${formatDateRange(
+            startMonth,
+            endMonth,
+            year
+          )}`;
+        } else if (
+          ["id", "category", "name", "color", "quantity"].includes(category)
+        ) {
+          // Translate the category name
+          const categoryTranslation =
+            category === "id"
+              ? t("materialId")
+              : category === "category"
+              ? t("category")
+              : category === "name"
+              ? t("materialName")
+              : category === "color"
+              ? t("color")
+              : t("quantity");
+
+          displayText = `${t("materialsBy")} ${categoryTranslation}: ${
+            searchTerm || t("notAvailable")
+          }${formatDateRange(startMonth, endMonth, year)}`;
+        } else if (startMonth || endMonth || year) {
+          // Time period display
+          if (startMonth === endMonth) {
+            const translatedMonth = startMonth
+              ? t(`months.${monthIndices.indexOf(startMonth.toLowerCase())}`)
+              : "";
+            displayText = `${t("materialsFor")} ${translatedMonth} ${
+              year || ""
+            }`.trim();
+          } else {
+            const translatedStartMonth = startMonth
+              ? t(`months.${monthIndices.indexOf(startMonth.toLowerCase())}`)
+              : "";
+            const translatedEndMonth = endMonth
+              ? t(`months.${monthIndices.indexOf(endMonth.toLowerCase())}`)
+              : "";
+
+            displayText = `${t("materialsFrom")} ${translatedStartMonth} ${t(
+              "to"
+            )} ${translatedEndMonth} ${year || ""}`.trim();
+          }
+        } else {
+          displayText = t("materials");
+        }
         break;
 
       default:
@@ -948,7 +1054,12 @@ export default function DocumentDetailPage() {
               type="HamburgerMenu"
               style={{ width: "50px", height: "50px" }}
             />
-            <Menu type="OnlySlideMenu" iconFirst="/link.png" />
+            <Menu
+              type="OneButtonMenu"
+              firstTitle={t("back")}
+              iconFirst="/arrow-left.png"
+              onFirstFunction={() => router.push("/documents")}
+            />
           </div>
         </div>
       </div>

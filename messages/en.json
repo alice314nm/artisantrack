@@ -864,7 +864,9 @@
       "November",
       "December"
     ],
-    "documentDetailsTitle": "Document Details"
+    "documentDetailsTitle": "Document Details",
+    "productId": "Product ID",
+    "productsBy":"Products by"
   },
   "Documents": {
   "documentsTitle": "Documents",

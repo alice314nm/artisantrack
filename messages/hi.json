@@ -858,7 +858,9 @@
   "नवंबर",
   "दिसंबर"
 ],
-  "documentDetailsTitle": "दस्तावेज़ विवरण"
+  "documentDetailsTitle": "दस्तावेज़ विवरण",
+  "productId": "उत्पाद आईडी",
+  "productsBy": "उत्पाद के अनुसार"
 },
 "Documents": {
   "documentsTitle": "दस्तावेज़",

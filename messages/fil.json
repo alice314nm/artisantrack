@@ -858,7 +858,9 @@
   "Nobyembre",
   "Disyembre"
 ],
-  "documentDetailsTitle": "Detalye ng Dokumento"
+  "documentDetailsTitle": "Detalye ng Dokumento",
+  "productId": "ID ng Produkto",
+  "productsBy": "Mga Produkto ayon sa"
 },
 "Documents": {
   "documentsTitle": "Mga Dokumento",

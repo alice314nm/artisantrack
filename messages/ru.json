@@ -862,7 +862,9 @@
   "Ноябрь",
   "Декабрь"
 ],
-  "documentDetailsTitle": "Подробности документа"
+  "documentDetailsTitle": "Подробности документа",
+  "productId": "ID продукта",
+  "productsBy": "Продукты по"
 },
 "Documents": {
     "documentsTitle": "Документы",

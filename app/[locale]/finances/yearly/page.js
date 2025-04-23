@@ -465,7 +465,10 @@ export default function WelcomePage() {
 
               {/* Diagram */}
               <div className="flex justify-center px-4">
-                <PieChart income={income} expenses={expenses} />
+              {(income === 0 && expenses === 0) ? 
+                (<p className="py-36">No data for finances yet</p>) : 
+                (<PieChart income={income} expenses={expenses} />)
+              }
               </div>
 
               <div className="pt-2">

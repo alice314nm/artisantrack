@@ -50,7 +50,6 @@ export default function Home() {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log(productsData);
 
         setProducts(productsData);
       } catch (error) {
@@ -187,7 +186,7 @@ export default function Home() {
                     category={product.categories.join(", ") || "—"}
                     total={product.averageCost || "—"}
                     imageSource={
-                      product.productImages?.[0]?.url || "/noImage.png"
+                      product.productImages?.[0]?.url  || "/noImage.png"
                     }
                     type={"product"}
                   />

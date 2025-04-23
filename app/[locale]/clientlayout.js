@@ -29,7 +29,11 @@ export default function ClientLayout({ children }) {
       )}
       {children}
       <button className="chatbot-button" onClick={() => setIsOpen(!isOpen)}>
-        💬
+        {isOpen ? (
+          <p className="text-white text-3xl">✖</p>
+        ) : (
+          <p>💬</p>
+        )}
       </button>
       <div className={`chatbot-container ${isOpen ? "open" : ""}`}>
         <iframe

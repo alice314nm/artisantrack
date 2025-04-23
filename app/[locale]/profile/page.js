@@ -222,22 +222,8 @@ export default function Page() {
         <Header title={t('title')} />
         <div className="flex flex-col gap-4 overflow-auto pb-16">
           {/* Profile Header with Edit Button */}
-          <div className="flex flex-row justify-between items-center gap-4 border-b border-b-darkBeige px-5 pb-4">
-            <div className={sectionStyle}>
-              <p className="text-xl font-semibold">{t('artisan')}</p>
-              {isEditing ? (
-                <input
-                  data-id="new-name"
-                  type="text"
-                  value={editableDisplayName}
-                  onChange={(e) => setEditableDisplayName(e.target.value)}
-                  className={inputStyle}
-                  disabled={saving}
-                />
-              ) : (
-                <p>{user.displayName}</p>
-              )}
-            </div>
+          <div className="flex flex-col justify-between  gap-4 border-b border-b-darkBeige px-5 pb-4">
+            
             <div className="flex gap-2">
               {isEditing ? (
                 <>
@@ -279,6 +265,21 @@ export default function Page() {
                 </button>
               )}
             </div>
+            <div className={sectionStyle}>
+              <p className="text-xl font-semibold">{t('artisan')}</p>
+              {isEditing ? (
+                <input
+                  data-id="new-name"
+                  type="text"
+                  value={editableDisplayName}
+                  onChange={(e) => setEditableDisplayName(e.target.value)}
+                  className={inputStyle}
+                  disabled={saving}
+                />
+              ) : (
+                <p>{user.displayName}</p>
+              )}
+            </div>
           </div>
 
           {/* Email Section */}
@@ -299,45 +300,6 @@ export default function Page() {
                 <p>{user.email || "email@example.com"}</p>
               )}
             </div>
-          </div>
-
-          {/* Change Password Section */}
-          <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
-            <button
-              data-id="change-password-button"
-              className="hover:bg-darkGreen bg-green self-start p-2 rounded-md"
-              onClick={openChangePasswordWindow}
-            >
-              {t('changePassword')}
-            </button>
-            {confirmWindowVisibility && (
-              <ChangePasswordWindow
-                windowVisibility={confirmWindowVisibility}
-                onClose={closeChangePasswordWindow}
-              />
-            )}
-          </div>
-
-          {/* Inventory Section */}
-          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
-            <p className="underline">{t('inventory')}</p>
-            <p className={sectionStyle}>
-              {t('totalProducts')}: {userData?.productCount ?? t('loading')}
-            </p>
-            <p className={sectionStyle}>
-              {t('totalMaterials')}: {userData?.materialCount ?? t('loading')}
-            </p>
-          </div>
-
-          {/* Orders Section */}
-          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
-            <p className="underline">{t('orders')}</p>
-            <p className={sectionStyle}>
-              {t('inProgressOrders')}: {userData?.inProgressOrders ?? t('loading')}
-            </p>
-            <p className={sectionStyle}>
-              {t('completedOrders')}: {userData?.completedOrders ?? t('loading')}
-            </p>
           </div>
 
           {/* Tax Section */}
@@ -364,11 +326,55 @@ export default function Page() {
             </div>
           </div>
 
+          {/* Inventory Section */}
+          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
+            <p className="underline">{t('inventory')}</p>
+            <div>
+              <p className={sectionStyle}>
+                {t('totalProducts')}: {userData?.productCount ?? t('loading')}
+              </p>
+              <p className={sectionStyle}>
+                {t('totalMaterials')}: {userData?.materialCount ?? t('loading')}
+              </p>
+            </div>
+            
+          </div>
+
+          {/* Orders Section */}
+          <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-4">
+            <p className="underline">{t('orders')}</p>
+            <div>
+              <p className={sectionStyle}>
+                {t('inProgressOrders')}: {userData?.inProgressOrders ?? t('loading')}
+              </p>
+              <p className={sectionStyle}>
+                {t('completedOrders')}: {userData?.completedOrders ?? t('loading')}
+              </p>
+            </div>            
+          </div>
+
+          {/* Change Password Section */}
+          <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
+            <button
+              data-id="change-password-button"
+              className="hover:bg-darkGreen bg-green self-start p-2 rounded-md"
+              onClick={openChangePasswordWindow}
+            >
+              {t('changePassword')}
+            </button>
+            {confirmWindowVisibility && (
+              <ChangePasswordWindow
+                windowVisibility={confirmWindowVisibility}
+                onClose={closeChangePasswordWindow}
+              />
+            )}
+          </div>
+
           {/* Delete Account Section */}
           <div className="flex flex-col gap-4 border-b border-b-darkBeige px-5 pb-4">
             <button
               data-id="delete-account"
-              className="bg-red self-start p-2 rounded-md hover:bg-rose-800"
+              className="bg-red text-white self-start p-2 rounded-md hover:bg-rose-800"
               onClick={openDeleteConfirmWindow}
             >
               {t('deleteAccount')}

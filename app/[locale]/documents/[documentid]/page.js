@@ -14,6 +14,7 @@ import {
   orderBy,
   orderDoc,
 } from "firebase/firestore";
+import BlockHolder from "@/app/[locale]/components/block-holder";
 import Header from "@/app/[locale]/components/header";
 import NotLoggedWindow from "@/app/[locale]/components/not-logged-window";
 import Menu from "@/app/[locale]/components/menu";
@@ -184,7 +185,7 @@ export default function DocumentDetailPage() {
     }
 
     if (queryParams?.category === "cost") {
-      // ...
+      // ... existing cost query logic
     } else if (queryParams?.category === "deadline") {
       const now = new Date();
       if (queryParams.deadlineFilter === "past") {
@@ -206,10 +207,55 @@ export default function DocumentDetailPage() {
 
     try {
       const querySnapshot = await getDocs(q);
-      let fetchedOrders = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      let fetchedOrders = [];
+
+      // Process each order and fetch the associated product image
+      for (const orderDoc of querySnapshot.docs) {
+        const orderData = { id: orderDoc.id, ...orderDoc.data() };
+
+        // Check if the order has product references in orderImages
+        if (orderData.orderImages && orderData.orderImages.length > 0) {
+          // Get the first product ID from the orderImages array
+          const productId = orderData.orderImages[0];
+
+          try {
+            // Fetch the product document to get the image
+            const productDoc = await getDoc(
+              doc(db, "users", user.uid, "products", productId)
+            );
+
+            if (productDoc.exists()) {
+              const productData = productDoc.data();
+
+              // Add the product image URL to the order data
+              if (
+                productData.productImages &&
+                productData.productImages.length > 0 &&
+                productData.productImages[0].url
+              ) {
+                orderData.imageUrl = productData.productImages[0].url;
+                console.log(
+                  `Found image for order ${orderData.id}: ${orderData.imageUrl}`
+                );
+              } else {
+                console.log(`No productImages found for product ${productId}`);
+                orderData.imageUrl = "/noImage.png";
+              }
+            } else {
+              console.log(`Product ${productId} not found`);
+              orderData.imageUrl = "/noImage.png";
+            }
+          } catch (error) {
+            console.error(`Error fetching product ${productId}:`, error);
+            orderData.imageUrl = "/noImage.png";
+          }
+        } else {
+          console.log(`No orderImages array found for order ${orderData.id}`);
+          orderData.imageUrl = "/noImage.png";
+        }
+
+        fetchedOrders.push(orderData);
+      }
 
       if (queryParams?.category === "cost" && queryParams?.sortOrder) {
         fetchedOrders.sort((a, b) => {
@@ -230,6 +276,7 @@ export default function DocumentDetailPage() {
         });
       }
 
+      console.log("Fetched Orders with Images:", fetchedOrders);
       setData(fetchedOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -561,20 +608,22 @@ export default function DocumentDetailPage() {
   if (user) {
     return (
       <div className="flex flex-col min-h-screen gap-4 relative pb-20">
-        <Header title="Documents" showUserName={true} />
+        <Header title={t("documentsTitle")} showUserName={true} />
 
         {/* Loading / Document Header */}
         <div className="mx-4 mt-4">
           {isLoadingDocument ? (
             <h2 className="text-lg font-semibold mb-2">
-              Loading document details...
+              {t("loadingDocumentDetails")}
             </h2>
           ) : documentData ? (
             <h2 className="text-lg font-semibold mb-2">
               {getCategoryDisplay(documentData)}
             </h2>
           ) : (
-            <h2 className="text-lg font-semibold mb-2">Document Not Found</h2>
+            <h2 className="text-lg font-semibold mb-2">
+              {t("documentNotFound")}
+            </h2>
           )}
         </div>
 
@@ -582,156 +631,123 @@ export default function DocumentDetailPage() {
         <div className="mx-4 pb-24">
           <h2 className="text-xl font-semibold mb-4">
             {documentData?.type === "order"
-              ? "Orders"
+              ? t("orders")
               : documentData?.type === "product"
-              ? "Products"
+              ? t("products")
               : documentData?.type === "material"
-              ? "Materials"
-              : "Unknown"}
+              ? t("materials")
+              : t("unknown")}
           </h2>
 
           {isLoadingData ? (
-            <p>Loading data...</p>
+            <p>{t("loadingData")}</p>
           ) : documentData?.type === "order" ? (
             data.length > 0 ? (
-              <ul className="space-y-0">
-                {data.map((item) => (
-                  <li
-                    key={item.id}
-                    className="py-4 border-b border-gray-300 last:border-b-0"
-                  >
-                    <p>
-                      <span className="font-semibold">Order ID:</span> {item.id}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Order Name:</span>{" "}
-                      {item.nameOrder}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Start Date:</span>{" "}
-                      {new Date(
-                        item.startDate?.seconds * 1000
-                      ).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Deadline:</span>{" "}
-                      {new Date(
-                        item.deadline?.seconds * 1000
-                      ).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <span className="font-semibold">
-                        Days Until Deadline:
-                      </span>{" "}
-                      {item.daysUntilDeadline}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Description:</span>{" "}
-                      {item.description}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Paid:</span>{" "}
-                      {item.paid ? "Yes" : "No"}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Total Cost:</span> $
-                      {item.totalCost}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {data.map((item) => {
+                  const imageUrl = item.imageUrl || "/noImage.png";
+                  const daysRemaining = item.daysUntilDeadline || 0;
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <BlockHolder
+                        id={item.id}
+                        title={item.nameOrder || t("unnamedOrder")}
+                        category={item.category || t("notAvailable")}
+                        client={item.customerName || t("notAvailable")}
+                        deadline={[
+                          new Date(
+                            item.deadline?.seconds * 1000
+                          ).toLocaleDateString(),
+                          "",
+                          `${daysRemaining} ${t("daysRemaining")}`,
+                        ]}
+                        total={item.totalCost || "0"}
+                        currency="$"
+                        imageSource={imageUrl}
+                        type="order"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
-              <p>No orders found for this document's criteria.</p>
+              <p>{t("noOrdersFound")}</p>
             )
           ) : documentData?.type === "product" ? (
             data.length > 0 ? (
-              <ul className="space-y-0">
-                {data.map((item, index) => (
-                  <li
-                    key={`${item.orderId}-${index}`}
-                    className="py-4 border-b border-gray-300 last:border-b-0"
-                  >
-                    <p>
-                      <span className="font-semibold">Document ID:</span>{" "}
-                      {item.orderId}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Product ID:</span>{" "}
-                      {item.product?.productId}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Name:</span>{" "}
-                      {item.product?.name}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Description:</span>{" "}
-                      {item.product?.description}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Categories:</span>{" "}
-                      {item.product?.categories?.join(", ") || "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Average Cost:</span> $
-                      {item.product?.averageCost}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {data.map((item, index) => {
+                  const productImages = item.product?.productImages || [];
+                  const imageUrl =
+                    productImages.length > 0 && productImages[0].url
+                      ? productImages[0].url
+                      : "/noImage.png";
+
+                  return (
+                    <div
+                      key={`${item.orderId}-${index}`}
+                      className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <BlockHolder
+                        id={item.product?.productId || item.productId}
+                        title={item.product?.name || t("unnamedProduct")}
+                        category={
+                          item.product?.categories &&
+                          item.product.categories.length > 0
+                            ? item.product.categories[0]
+                            : t("notAvailable")
+                        }
+                        total={item.product?.averageCost || "0"}
+                        currency="$"
+                        imageSource={imageUrl}
+                        type="product"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
-              <p>No products found for the selected criteria.</p>
+              <p>{t("noProductsFound")}</p>
             )
           ) : documentData?.type === "material" ? (
             data.length > 0 ? (
-              <ul className="space-y-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {data.map((item, index) => {
-                  console.log("Material Item:", item);
+                  const materialImages = item.material?.images || [];
+                  const imageUrl =
+                    materialImages.length > 0 && materialImages[0]?.url
+                      ? materialImages[0].url
+                      : "/noImage.png";
+
                   return (
-                    <li
+                    <div
                       key={`${item.material?.materialId || "unknown"}-${index}`}
-                      className="py-4 border-b border-gray-300 last:border-b-0"
+                      className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
                     >
-                      <p>
-                        <span className="font-semibold">Material ID:</span>{" "}
-                        {item.material?.materialId}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Name:</span>{" "}
-                        {item.material?.name}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Description:</span>{" "}
-                        {item.material?.description}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Total Cost:</span> $
-                        {item.material?.total}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Shop:</span>{" "}
-                        {item.material?.shop}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Quantity:</span>{" "}
-                        {item.material?.quantity}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Color:</span>{" "}
-                        {item.material?.color}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Categories:</span>{" "}
-                        {item.material?.categories?.join(", ") || "N/A"}
-                      </p>
-                    </li>
+                      <BlockHolder
+                        id={item.material?.materialId || item.material?.id}
+                        title={item.material?.name || t("unnamedMaterial")}
+                        category={item.category || t("notAvailable")}
+                        quantity={item.material?.quantity || "0"}
+                        color={item.material?.color || t("notAvailable")}
+                        total={item.material?.total || "0"}
+                        currency="$"
+                        imageSource={imageUrl}
+                        type="material"
+                      />
+                    </div>
                   );
                 })}
-              </ul>
+              </div>
             ) : (
-              <p>No materials found for the selected criteria.</p>
+              <p>{t("noMaterialsFound")}</p>
             )
           ) : (
-            <p>Unknown document type.</p>
+            <p>{t("unknownDocumentType")}</p>
           )}
         </div>
 
@@ -742,7 +758,7 @@ export default function DocumentDetailPage() {
             onClick={handleGoBack}
             className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-green-400"
           >
-            Back
+            {t("back")}
           </button>
 
           {/* Hamburger Menu */}
@@ -759,174 +775,9 @@ export default function DocumentDetailPage() {
   } else {
     return (
       <div className="flex flex-col min-h-screen gap-4">
-        <Header title="Artisan Track" />
+        <Header title={t("appTitle")} />
         <NotLoggedWindow />
       </div>
     );
   }
 }
-
-const getCategoryDisplay = (doc) => {
-  if (!doc?.queryParams || !doc?.type) return "Unknown Category";
-
-  const {
-    category,
-    sortOrder,
-    startMonth,
-    endMonth,
-    year,
-    month, // Handle legacy 'month' parameter for backward compatibility
-    searchTerm,
-    deadlineFilter,
-  } = doc.queryParams;
-
-  // Format date range display
-  const formatDateRange = (startMonth, endMonth, year) => {
-    if (startMonth && endMonth && year) {
-      if (startMonth === endMonth) {
-        return `, ${startMonth} ${year}`;
-      }
-      return `, ${startMonth} to ${endMonth} ${year}`;
-    }
-    if (startMonth && year) return `, ${startMonth} ${year}`;
-    if (endMonth && year) return `, ${endMonth} ${year}`;
-    if (year) return `, ${year}`;
-    return "";
-  };
-
-  // For backward compatibility with older documents that use 'month' instead of startMonth/endMonth
-  const formatLegacyDate = (month, year) => {
-    if (month && year) return `, ${month} ${year}`;
-    if (month) return `, ${month}`;
-    if (year) return `, ${year}`;
-    return "";
-  };
-
-  const capitalize = (text) => text?.charAt(0).toUpperCase() + text?.slice(1);
-
-  let displayText = "";
-
-  switch (doc.type) {
-    case "order":
-      if (category === "cost") {
-        const sortText =
-          sortOrder === "desc"
-            ? "Highest to Lowest Price"
-            : "Lowest to Highest Price";
-        displayText = `Orders by Cost: ${sortText}${formatDateRange(
-          startMonth,
-          endMonth,
-          year
-        )}`;
-      } else if (category === "deadline") {
-        const deadlineText =
-          deadlineFilter === "past"
-            ? "Past Due Deadline"
-            : deadlineFilter === "upcoming"
-            ? "Upcoming Deadline"
-            : "All";
-        displayText = `Orders by Deadline: ${deadlineText}${formatDateRange(
-          startMonth,
-          endMonth,
-          year
-        )}`;
-      } else if (["customerName", "description"].includes(category)) {
-        displayText = `Orders by ${capitalize(category)}: ${
-          searchTerm || "N/A"
-        }${formatDateRange(startMonth, endMonth, year)}`;
-      } else if (startMonth || endMonth || year) {
-        // Time period display
-        if (startMonth === endMonth) {
-          displayText = `Orders for ${startMonth || ""} ${year || ""}`.trim();
-        } else {
-          displayText = `Orders from ${startMonth || ""} to ${endMonth || ""} ${
-            year || ""
-          }`.trim();
-        }
-      } else {
-        displayText = "Orders";
-      }
-      break;
-
-    case "product":
-      displayText = "Products";
-      if (["name", "id"].includes(category)) {
-        displayText += ` by ${capitalize(category)}: ${searchTerm || "All"}${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (category === "cost") {
-        const sortText =
-          sortOrder === "desc"
-            ? "Highest to Lowest Price"
-            : "Lowest to Highest Price";
-        displayText += ` by Cost: ${sortText}${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (category === "popularity") {
-        displayText += ` by Popularity in Orders${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (searchTerm) {
-        displayText = `Products by Category: ${capitalize(searchTerm)}${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (startMonth || endMonth || year) {
-        if (startMonth === endMonth) {
-          displayText = `Products for ${startMonth || ""} ${year || ""}`.trim();
-        } else {
-          displayText = `Products from ${startMonth || ""} to ${
-            endMonth || ""
-          } ${year || ""}`.trim();
-        }
-      }
-      break;
-
-    case "material":
-      displayText = "Materials";
-      if (["name", "id", "color", "quantity"].includes(category)) {
-        displayText += ` by ${capitalize(category)}: ${searchTerm || "All"}${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (category === "cost") {
-        const sortText =
-          sortOrder === "desc"
-            ? "Highest to Lowest Price"
-            : "Lowest to Highest Price";
-        displayText += ` by Cost: ${sortText}${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (category === "popularity") {
-        displayText += ` by Popularity in Orders${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (searchTerm) {
-        displayText = `Materials by Category: ${capitalize(searchTerm)}${
-          formatDateRange(startMonth, endMonth, year) ||
-          formatLegacyDate(month, year)
-        }`;
-      } else if (startMonth || endMonth || year) {
-        if (startMonth === endMonth) {
-          displayText = `Materials for ${startMonth || ""} ${
-            year || ""
-          }`.trim();
-        } else {
-          displayText = `Materials from ${startMonth || ""} to ${
-            endMonth || ""
-          } ${year || ""}`.trim();
-        }
-      }
-      break;
-
-    default:
-      return "Unknown Category";
-  }
-
-  return displayText;
-};

@@ -169,10 +169,18 @@ export default function Page() {
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>{t("thisMonth", { month: currentMonth })}</p>
           <p>
-            {t("income")}: {userData?.monthlyIncome ?? t("loading")}$
+            {t("income")}:{" "}
+            {userData?.monthlyIncome
+              ? userData.monthlyIncome.toFixed(2)
+              : t("loading")}
+            $
           </p>
           <p>
-            {t("expenses")}: {userData?.monthlyExpenses ?? t("loading")}$
+            {t("expenses")}:{" "}
+            {userData?.monthlyExpenses
+              ? userData.monthlyExpenses.toFixed(2)
+              : t("loading")}
+            $
           </p>
           <Link href="finances/monthly" className={buttonStyle}>
             {t("monthlyReport")}
@@ -183,10 +191,18 @@ export default function Page() {
         <div className="flex flex-col gap-2 border-b border-b-darkBeige px-5 pb-3">
           <p>{t("thisYear", { year: new Date().getFullYear() })}</p>
           <p>
-            {t("income")}: {userData?.yearlyIncome ?? t("loading")}$
+            {t("income")}:{" "}
+            {userData?.yearlyIncome
+              ? userData.yearlyIncome.toFixed(2)
+              : t("loading")}
+            $
           </p>
           <p>
-            {t("expenses")}: {userData?.yearlyExpenses ?? t("loading")}$
+            {t("expenses")}:{" "}
+            {userData?.yearlyExpenses
+              ? userData.yearlyExpenses.toFixed(2)
+              : t("loading")}
+            $
           </p>
           <Link href="finances/yearly" className={buttonStyle}>
             {t("yearlyReport")}

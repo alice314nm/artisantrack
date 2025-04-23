@@ -582,10 +582,10 @@ export default function WelcomePage() {
               {/* Finance text */}
               <div className="flex flex-row gap-2 text-xl">
                 <p>
-                  {t("finance.income")}: {income}$
+                  {t("finance.income")}: {income.toFixed(2)}$
                 </p>
                 <p>
-                  {t("finance.expenses")}: {expenses}$
+                  {t("finance.expenses")}: {expenses.toFixed(2)}$
                 </p>
               </div>
               {/* place for diagram */}

@@ -82,7 +82,6 @@ export default function SelectHolder({
                   value={selectedQuantity === 0 ? "" : selectedQuantity}
                   onChange={(e) =>
                     onQuantityChange(
-                      id,
                       e.target.value ? Number(e.target.value) : 0
                     )
                   }

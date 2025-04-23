@@ -278,25 +278,30 @@ export async function dbUpdateOrder(userId, orderId, orderObj) {
         // Get the previous order data
         const previousOrder = orderDoc.data();
         
-        // Return materials from previous order back to inventory
+        // STEP 1: Return materials from previous order back to inventory
         if (previousOrder.quantities && Array.isArray(previousOrder.quantities)) {
             const materialsCollection = collection(userRef, "materials");
             
-            for (let i = 0; i < previousOrder.quantities.length; i++) {
-                const materialId = previousOrder.quantities[i].id;
-                const quantityUsed = previousOrder.quantities[i].quantity;
+            for (const materialItem of previousOrder.quantities) {
+                const materialId = materialItem.id;
+                const quantityUsed = parseFloat(materialItem.quantity) || 0;
+                
+                if (!materialId || quantityUsed <= 0) continue;
                 
                 const materialDocRef = doc(materialsCollection, materialId);
                 const materialSnapshot = await getDoc(materialDocRef);
                 
                 if (materialSnapshot.exists()) {
                     const materialData = materialSnapshot.data();
-                    const currentQty = materialData.quantity || 0;
-                    const costPerUnit = materialData.costPerUnit || 0;
-                    const currentTotal = materialData.total || 0;
+                    const currentQty = parseFloat(materialData.quantity) || 0;
+                    const costPerUnit = parseFloat(materialData.costPerUnit) || 0;
+                    const currentTotal = parseFloat(materialData.total) || 0;
                     
+                    // Return the previously used quantity back to inventory
                     const updatedQty = currentQty + quantityUsed;
                     const updatedTotal = currentTotal + (quantityUsed * costPerUnit);
+                    
+                    console.log(`Returning ${quantityUsed} of material ${materialId} to inventory`);
                     
                     await updateDoc(materialDocRef, {
                         quantity: updatedQty,
@@ -307,39 +312,43 @@ export async function dbUpdateOrder(userId, orderId, orderObj) {
         }
         
         const customerId = await getOrAddCustomer(userId, orderObj.customerName);
-        // Update the order
+        
+        // STEP 2: Update the order document
         await updateDoc(orderRef, orderObj);
         
-        // Subtract new materials from inventory
-        const materialsCollection = collection(userRef, "materials");
-        
-        for (let i = 0; i < orderObj.quantities.length; i++) {
-            const materialId = orderObj.quantities[i].id;
-            const quantityUsed = orderObj.quantities[i].quantity;
+        // STEP 3: Subtract new materials from inventory
+        if (orderObj.quantities && Array.isArray(orderObj.quantities)) {
+            const materialsCollection = collection(userRef, "materials");
             
-            const materialDocRef = doc(materialsCollection, materialId);
-            const materialSnapshot = await getDoc(materialDocRef);
-            
-            if (materialSnapshot.exists()) {
-                const materialData = materialSnapshot.data();
-                const currentQty = materialData.quantity || 0;
-                const costPerUnit = materialData.costPerUnit || 0;
-                const currentTotal = materialData.total || 0;
+            for (const materialItem of orderObj.quantities) {
+                const materialId = materialItem.id;
+                const quantityUsed = parseFloat(materialItem.quantity) || 0;
                 
-                const updatedQty = currentQty - quantityUsed;
-                const costToSubtract = quantityUsed * costPerUnit;
-                const updatedTotal = currentTotal - costToSubtract;
+                if (!materialId || quantityUsed <= 0) continue;
                 
-                if (updatedQty < 0) {
-                    console.warn(`Material "${materialId}" has insufficient quantity.`);
+                const materialDocRef = doc(materialsCollection, materialId);
+                const materialSnapshot = await getDoc(materialDocRef);
+                
+                if (materialSnapshot.exists()) {
+                    const materialData = materialSnapshot.data();
+                    const currentQty = parseFloat(materialData.quantity) || 0;
+                    const costPerUnit = parseFloat(materialData.costPerUnit) || 0;
+                    const currentTotal = parseFloat(materialData.total) || 0;
+                    
+                    // Subtract the new quantity from inventory
+                    const updatedQty = Math.max(0, currentQty - quantityUsed);
+                    const costToSubtract = quantityUsed * costPerUnit;
+                    const updatedTotal = Math.max(0, currentTotal - costToSubtract);
+                    
+                    console.log(`Removing ${quantityUsed} of material ${materialId} from inventory`);
+                    
+                    await updateDoc(materialDocRef, {
+                        quantity: updatedQty,
+                        total: updatedTotal
+                    });
+                } else {
+                    console.warn(`Material with ID "${materialId}" not found.`);
                 }
-                
-                await updateDoc(materialDocRef, {
-                    quantity: updatedQty >= 0 ? updatedQty : 0,
-                    total: updatedTotal >= 0 ? updatedTotal : 0,
-                });
-            } else {
-                console.warn(`Material with ID "${materialId}" not found.`);
             }
         }
         

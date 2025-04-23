@@ -230,22 +230,39 @@ export default function Page() {
   };
 
   const handleMaterialQuantityChange = (materialId, value) => {
-    setMaterialQuantities((prev) => ({
-      ...prev,
-      [materialId]: parseFloat(value) || 0,
-    }));
+    console.log(`Changing quantity for ${materialId} to ${value}`);
+    
+    // Allow empty inputs during typing
+    const numValue = value === '' ? '' : parseFloat(value) || 0;
+    
+    setMaterialQuantities(prev => {
+      const updated = {
+        ...prev,
+        [materialId]: numValue
+      };
+      console.log('Updated quantities:', updated);
+      return updated;
+    });
   };
 
   const handleRemoveMaterial = (material) => {
     const materialId = material.materialId || material.id;
+    
+    // Store the quantity being removed before updating the state
+    const quantityToReturn = parseFloat(materialQuantities[materialId] || 0);
+    
+    // Remove the material from selectedMaterials
     setSelectedMaterials(selectedMaterials.filter(m => 
       (m.materialId !== materialId) && (m.id !== materialId)
     ));
-
+  
+    // Remove the quantity from materialQuantities
     const updatedQuantities = { ...materialQuantities };
     delete updatedQuantities[materialId];
-
     setMaterialQuantities(updatedQuantities);
+    
+    // Recalculate the material cost
+    calculateMaterialsCost();
   };
 
   const handleResetSelectedMaterial = () => {

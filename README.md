@@ -65,6 +65,6 @@ The application will act as a **centralized hub** where artisans can:
    npm run dev
    ```
 
-4. **Access the app** at http://localhost:3000
+4. **Access the app** at http://localhost:3000 **or at already existing page:** https://artisan-track.vercel.app/
 
 ---
